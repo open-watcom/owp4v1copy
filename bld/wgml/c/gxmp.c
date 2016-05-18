@@ -167,8 +167,6 @@ void gml_exmp( const gmltag * entry )
     scr_process_break();
     if( cur_group_type != gt_xmp ) {       // no preceding :XMP tag
         g_err_tag_prec( "XMP" );
-        scan_start = scan_stop + 1;
-        return;
     }
     g_curr_font = font_save;
     ProcFlags.concat = concat_save;

@@ -49,17 +49,13 @@ void    gml_graphic( const gmltag * entry )
     su              cur_su;
     uint32_t        depth;
     uint32_t        scale                   = 100;
-/// *** this should actually be the column width
-    // the initial value of width is only correct for one-column pages.
-    uint32_t    width                   = g_net_page_width;
-    int32_t     xoff                    = 0;
-    int32_t     yoff                    = 0;
+    uint32_t        width                   = t_page.max_width;
+    int32_t         xoff                    = 0;
+    int32_t         yoff                    = 0;
 
     if( (ProcFlags.doc_sect < doc_sect_gdoc) ) {
         if( (ProcFlags.doc_sect_nxt < doc_sect_gdoc) ) {
             xx_tag_err( err_tag_before_gdoc, entry->tagname );
-            scan_start = scan_stop + 1;
-            return;
         }
     }
     file[0] = '\0';
@@ -102,15 +98,15 @@ void    gml_graphic( const gmltag * entry )
                     break;
                 }
                 depth_found = true;
-                pa = val_start;
                 if( att_val_to_su( &cur_su, true ) ) {
-                    return;
+                    break;
                 }
                 depth = conv_vert_unit( &cur_su, spacing );
                 if( depth == 0 ) {
-                    xx_line_err( err_inv_depth_graphic, pa );
-                    scan_start = scan_stop + 1;
-                    return;
+                    xx_line_err( err_inv_depth_graphic_1, val_start );
+                }
+                if( depth > t_page.max_depth ) {
+                    xx_line_err( err_inv_depth_graphic_2, val_start );
                 }
                 if( ProcFlags.tag_end_found ) {
                     break;
@@ -121,20 +117,23 @@ void    gml_graphic( const gmltag * entry )
                 if( val_start == NULL ) {
                     break;
                 }
+
+                /* GRAPHIC uses the current column width even if "page" is specified */
+
                 if( !strnicmp( "page", val_start, 4 ) ) {
                     // default value is the correct value to use
                 } else if( !strnicmp( "column", val_start, 6 ) ) {
                     // default value is the correct value to use
                 } else {    // value actually specifies the width
-                    pa = val_start;
                     if( att_val_to_su( &cur_su, true ) ) {
-                        return;
+                        break;
                     }
                     width = conv_hor_unit( &cur_su );
                     if( width == 0 ) {
-                        xx_line_err( err_inv_width_graphic, pa );
-                        scan_start = scan_stop + 1;
-                        return;
+                        xx_line_err( err_inv_width_graphic_1, val_start );
+                    }
+                    if( width > t_page.max_width ) {
+                        xx_line_err( err_inv_width_graphic_2, val_start );
                     }
                 }
                 if( ProcFlags.tag_end_found ) {
@@ -148,9 +147,7 @@ void    gml_graphic( const gmltag * entry )
                 }
                 pb = val_start;
                 if( (*pb == '+') || (*pb == '-') ) {  // signs not allowed
-                    xx_line_err( err_num_too_large, pa );
-                    scan_start = scan_stop + 1;
-                    return;
+                    xx_line_err( err_num_too_large, val_start );
                 }
                 scale = 0;
                 while( (*pb >= '0') && (*pb <= '9') ) { // convert to number
@@ -162,13 +159,9 @@ void    gml_graphic( const gmltag * entry )
                 }
                 if( scale > 0x7fffffff ) {              // wgml 4.0 limit
                     xx_line_err( err_num_too_large, val_start );
-                    scan_start = scan_stop + 1;
-                    return;
                 }
                 if( (pb - val_start) < val_len ) {      // value continues on
                     xx_line_err( err_num_too_large, val_start );
-                    scan_start = scan_stop + 1;
-                    return;
                 }
                 if( ProcFlags.tag_end_found ) {
                     break;
@@ -180,7 +173,7 @@ void    gml_graphic( const gmltag * entry )
                     break;
                 }
                 if( att_val_to_su( &cur_su, false ) ) {
-                    return;
+                    break;
                 }
                 xoff = conv_hor_unit( &cur_su );
                 if( ProcFlags.tag_end_found ) {
@@ -193,7 +186,7 @@ void    gml_graphic( const gmltag * entry )
                     break;
                 }
                 if( att_val_to_su( &cur_su, false ) ) {
-                    return;
+                    break;
                 }
                 yoff = conv_vert_unit( &cur_su, spacing );
                 if( ProcFlags.tag_end_found ) {
@@ -209,10 +202,7 @@ void    gml_graphic( const gmltag * entry )
 
     if( !depth_found || !file_found ) { // detect missing required attributes
         xx_err( err_att_missing );
-        scan_start = scan_stop + 1;
-        return;
     }
-///                /* there should be a check somewhere for width > page width */
 
     scr_process_break();                // flush existing text
     start_doc_sect();                   // if not already done
@@ -241,5 +231,7 @@ void    gml_graphic( const gmltag * entry )
     }
 
     scan_start = scan_stop + 1;
+    return;
 }
+
 

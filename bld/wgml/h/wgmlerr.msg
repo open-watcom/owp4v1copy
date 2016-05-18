@@ -510,17 +510,26 @@ pick( ERR_INV_CW_SEP,           "Invalid control word separator",
 
 /* BINCLUDE/GRAPHIC-specific error messages */
 
+pick( ERR_INV_DEPTH_BINCLUDE,   "Depth of BINCLUDE file is greater than a page",
+                                "Depth of BINCLUDE file is greater than a page" )
+
 pick( WNG_REC_TYPE_BINCLUDE,    "BINCLUDE tag treats all record types as '(t)'",
                                 "BINCLUDE tag treats all record types as '(t)'" )
 
 pick( WNG_REC_TYPE_GRAPHIC,     "GRAPHIC tag ignores record types",
                                 "GRAPHIC tag ignores record types" )
 
-pick( ERR_INV_DEPTH_GRAPHIC,    "The GRAPHIC depth must be greater than zero",
+pick( ERR_INV_DEPTH_GRAPHIC_1,  "The GRAPHIC depth must be greater than zero",
                                 "The GRAPHIC depth must be greater than zero" )
 
-pick( ERR_INV_WIDTH_GRAPHIC,    "The GRAPHIC width must be greater than zero",
+pick( ERR_INV_DEPTH_GRAPHIC_2,  "The GRAPHIC depth is greater than the page depth",
+                                "The GRAPHIC depth is greater than the page depth" )
+
+pick( ERR_INV_WIDTH_GRAPHIC_1,  "The GRAPHIC width must be greater than zero",
                                 "The GRAPHIC width must be greater than zero" )
+
+pick( ERR_INV_WIDTH_GRAPHIC_2,  "The GRAPHIC width is greater than the page width",
+                                "The GRAPHIC width is greater than the page width" )
 
 /* Attribute value/control word operand parsing error messages */
 
@@ -705,8 +714,20 @@ pick( ERR_FIG_ID_CAP,           "Figure with an Id must have a caption",
 pick( ERR_INV_BOX_POS,          "Invalid box position",
                                 "Invalid box position")
 
-pick( ERR_INV_WIDTH_FIG,        "The FIG width must be greater than zero",
+pick( ERR_INV_WIDTH_FIG_1,      "The FIG width must be greater than zero",
                                 "The FIG width must be greater than zero" )
+
+pick( ERR_INV_WIDTH_FIG_2,      "For a multiple column figure, place attribute must equal TOP",
+                                "For a multiple column figure, place attribute must equal TOP" )
+
+pick( ERR_INV_WIDTH_FIG_3,      "Figure is too wide",
+                                "Figure is too wide" )
+
+pick( ERR_INV_MARGINS_1,        "Cannot fit the figure in the adjusted left and right margins",
+                                "Cannot fit the figure in the adjusted left and right margins" )
+
+pick( ERR_INV_MARGINS_2,        "Cannot fit the figure with a frame in the adjusted left and right margins",
+                                "Cannot fit the figure with a frame in the adjusted left and right margins" )
 
 pick( ERR_SPC_NOT_VALID,        "Space value is not valid",
                                 "Space value is not valid")

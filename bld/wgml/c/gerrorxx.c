@@ -60,7 +60,7 @@ static void show_line_error_len( const char * pa, size_t len )
     out_msg( "%s\n", buf );
     // number of characters before the offending input + "*" at start of offending input
     if( pa > buff2 ) {
-        cnt = pa - buff2 - 1;
+        cnt = pa - buff2;
     } else {
         cnt = 0;
     }

@@ -1081,6 +1081,8 @@ typedef struct {
             uint32_t            main_top;
             uint32_t            max_depth;
             uint32_t            cur_depth;
+            uint32_t            col_count;      // number of columns
+            uint32_t            max_width;      // width of current column (or page, if col_count == 1)
             doc_element     *   last_col_main;
             doc_element     *   last_col_bot;
             doc_element     *   last_col_fn;

@@ -564,6 +564,20 @@ static void document_new_position( void )
 }
 
 /***************************************************************************/
+/*  set up the columns                                                     */
+/*  Note: only sets t_page.max_width; the new column structure is to come  */
+/***************************************************************************/
+
+static void set_cols( void )
+{
+//  <<set up new-form columns when multicolumn is being implemented>>
+//    t_page.max_width = g_net_page_width/t_page.col_count;
+//    t_page.max_width -= conv_hor_unit(&layout_work.defaults.gutter);
+    t_page.max_width = g_cl * box_col_width;
+    return;
+}
+
+/***************************************************************************/
 /*  start_doc_sect true section start                                      */
 /***************************************************************************/
 
@@ -596,7 +610,9 @@ void start_doc_sect( void )
     page_e = ej_no;                 // no page eject
     ProcFlags.start_section = true;
     ProcFlags.keep_left_margin = false;
-    ds = ProcFlags.doc_sect_nxt;        // new section
+    t_page.col_count = layout_work.defaults.columns;
+    set_cols();
+    ds = ProcFlags.doc_sect_nxt;    // new section
 
     if( ds == doc_sect_none ) {
         ds = doc_sect_body;      // if text without section start assume body
@@ -608,6 +624,8 @@ void start_doc_sect( void )
 
     switch( ds ) {
     case   doc_sect_body:
+        t_page.col_count = layout_work.body.columns;
+        set_cols();
         page_r = layout_work.body.page_reset;
         page_e = layout_work.body.page_eject;
         if( layout_work.body.header ) {
@@ -621,6 +639,8 @@ void start_doc_sect( void )
         }
         break;
     case   doc_sect_titlep:             // for preceding :BINCLUDE/:GRAPHIC
+        t_page.col_count = layout_work.titlep.columns;
+        set_cols();
         if( t_page.last_col_main != NULL ) {
             page_e = ej_yes;
         }
@@ -630,6 +650,8 @@ void start_doc_sect( void )
         nest_cb->p_stack->lineno = titlep_lineno; // correct line number
         break;
     case   doc_sect_abstract:
+        t_page.col_count = layout_work.abstract.columns;
+        set_cols();
         page_r = layout_work.abstract.page_reset;
         page_e = layout_work.abstract.page_eject;
         if( layout_work.abstract.header ) {
@@ -643,6 +665,8 @@ void start_doc_sect( void )
         }
         break;
     case   doc_sect_preface:
+        t_page.col_count = layout_work.preface.columns;
+        set_cols();
         page_r = layout_work.preface.page_reset;
         page_e = layout_work.preface.page_eject;
         if( layout_work.preface.header ) {
@@ -657,9 +681,13 @@ void start_doc_sect( void )
         break;
     case   doc_sect_figlist:
     case   doc_sect_figliste:
+        t_page.col_count = layout_work.figlist.columns;
+        set_cols();
         page_e = ej_yes;
         break;
     case   doc_sect_appendix:
+        t_page.col_count = layout_work.appendix.columns;
+        set_cols();
         page_r = layout_work.appendix.page_reset;
         page_e = layout_work.appendix.page_eject;
         if( layout_work.appendix.header ) {
@@ -673,6 +701,8 @@ void start_doc_sect( void )
         }
         break;
     case   doc_sect_backm:
+        t_page.col_count = layout_work.backm.columns;
+        set_cols();
         page_r = layout_work.backm.page_reset;
         page_e = layout_work.backm.page_eject;
         if( layout_work.backm.header ) {
@@ -686,6 +716,8 @@ void start_doc_sect( void )
         }
         break;
     case   doc_sect_index:
+        t_page.col_count = layout_work.index.columns;
+        set_cols();
         page_r = layout_work.index.page_reset;
         page_e = layout_work.index.page_eject;
         if( layout_work.index.header ) {
@@ -700,6 +732,8 @@ void start_doc_sect( void )
         break;
     case   doc_sect_toc:
     case   doc_sect_toce:
+        t_page.col_count = layout_work.toc.columns;
+        set_cols();
         page_e = ej_yes;
         h_spc = layout_work.toc.spacing;
         break;

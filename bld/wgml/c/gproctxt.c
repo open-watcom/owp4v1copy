@@ -1608,8 +1608,6 @@ void process_line_full( text_line * a_line, bool justify )
             do_justify( ju_x_start, g_page_right, a_line );
         }
 
-        /* TOC (maybe FIGLIST/INDEX - TBD) can change spacing in mid-paragraph */
-
         if( t_element == NULL ) {
             if( !ProcFlags.skips_valid) {
                 set_skip_vars( NULL, NULL, NULL, spacing, g_curr_font );
@@ -1617,11 +1615,6 @@ void process_line_full( text_line * a_line, bool justify )
             t_element = init_doc_el( el_text, a_line->line_height );
             t_element->element.text.first = a_line;
             t_el_last = t_element->element.text.first;
-//        } else if( t_element->element.text.spacing != spacing ) {
-//            t_element->next = init_doc_el( el_text, a_line->line_height );
-//            t_element->next->depth += a_line->line_height + t_element->next->element.text.spacing;
-//            t_element->next->element.text.first = a_line;
-//            t_el_last = t_element->next->element.text.first;
         } else {
             t_element->depth += a_line->line_height + a_line->spacing;
             t_el_last->next = a_line;
@@ -2152,9 +2145,8 @@ void process_text( const char *text, font_number font )
                     t_line->last = n_chars;
                 }
                 // reset n_chars to contain the rest of the split text
-                n_chars = alloc_text_chars(
-                        &t_line->last->text[t_line->last->count], count,
-                                                    t_line->last->font );
+                n_chars = alloc_text_chars( &t_line->last->text[t_line->last->count],
+                                            count, t_line->last->font );
                 if( t_line->first == t_line->last ) {
                     fm_chars = NULL;
                 } else {

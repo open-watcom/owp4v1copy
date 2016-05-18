@@ -396,14 +396,23 @@ void    do_layout_end_processing( void )
         /*  sysvars &SYSPAGERM and &SYSPAGED which are used in document    */
         /*  :init for device PS                                            */
         /*******************************************************************/
+
         init_page_geometry();
 
         /*******************************************************************/
         /*  This should be where all processing and error-checking         */
         /*  required after all LAYOUT blocks have been processed is done.  */
         /*******************************************************************/
+
         finish_lists();
         finish_banners();
+
+        /*******************************************************************/
+        /*  Since we have given BODY a columns value, this ensures that it */
+        /*  is set to the default value.                                   */
+        /*******************************************************************/
+
+        layout_work.body.columns = layout_work.defaults.columns;
 
         /*******************************************************************/
         /*  This is a good place to start document processing.             */

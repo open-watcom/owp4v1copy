@@ -134,6 +134,8 @@ void init_global_vars( void )
     t_page.main_top         = 0;
     t_page.max_depth        = 0;
     t_page.cur_depth        = 0;
+    t_page.col_count        = 0;
+    t_page.max_width        = 0;
     t_page.last_col_main    = NULL;
     t_page.last_col_bot     = NULL;
     t_page.last_col_fn      = NULL;

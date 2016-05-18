@@ -95,7 +95,7 @@ void gml_fig( const gmltag * entry )
     if( frame.type == char_frame ) {
         strcpy_s( frame.string, str_size, layout_work.fig.default_frame.string );
     }
-    width = g_net_page_width;           // this is rm - lm, so may not be entirely correct with more than one column
+    width = t_page.max_width;           // default value regardless of number of columns
 
     if( *p == '.' ) {
         /* already at tag end */
@@ -113,7 +113,7 @@ void gml_fig( const gmltag * entry )
                     break;
                 }
                 if( att_val_to_su( &cur_su, true ) ) {
-                    return;
+                    break;
                 }
                 depth = conv_vert_unit( &cur_su, spacing );
                 if( ProcFlags.tag_end_found ) {
@@ -174,8 +174,6 @@ void gml_fig( const gmltag * entry )
                     place = top_place;
                 } else {
                     xx_line_err( err_inv_att_val, val_start );
-                    scan_start = scan_stop + 1;
-                    return;
                 }
                 if( ProcFlags.tag_end_found ) {
                     break;
@@ -193,13 +191,11 @@ void gml_fig( const gmltag * entry )
                 } else {    // value actually specifies the width
                     pa = val_start;
                     if( att_val_to_su( &cur_su, true ) ) {
-                        return;
+                        break;
                     }
                     width = conv_hor_unit( &cur_su );
                     if( width == 0 ) {
-                        xx_line_err( err_inv_width_fig, pa );
-                        scan_start = scan_stop + 1;
-                        return;
+                        xx_line_err( err_inv_width_fig_1, val_start );
                     }
                 }
                 if( ProcFlags.tag_end_found ) {
@@ -212,9 +208,13 @@ void gml_fig( const gmltag * entry )
         }
     }
 
-// Cannot fit the figure in the adjusted left and right margins
-// Cannot fit the figure with a frame in the adjusted left and right margins
-                /* there should be a check somewhere for width > page width */
+    if( width > t_page.max_width ) {
+        if( (t_page.col_count > 1) && (place != top_place) ) {
+            xx_line_err( err_inv_width_fig_2, val_start );
+        } else if( t_page.col_count == 1 ) {
+            xx_line_err( err_inv_width_fig_3, val_start );
+        }
+    }
 
     init_nest_cb();
     nest_cb->p_stack = copy_to_nest_stack();
@@ -228,11 +228,29 @@ void gml_fig( const gmltag * entry )
     g_curr_font = nest_cb->font;
 
     g_cur_left += nest_cb->left_indent;
-    g_page_right += nest_cb->right_indent;
-/// space for VLINE may depend on whether there /is/ a VLINE!
+    g_page_right = g_cur_left + width;
+    if( ProcFlags.ps_device ) {                 // this is purely empirical & TBD
+        g_page_right -= box_col_width;
+    }
+    if( g_page_right < nest_cb->right_indent ) {
+        g_page_right = 0;                       // negative right margin not allowed
+    } else {
+        g_page_right += nest_cb->right_indent;
+    }
+
+    if( (g_cur_left >= g_page_right) || (g_cur_left >= g_page_right_org) ) {
+            xx_line_err( err_inv_margins_1, val_start );
+    }
+
     if( frame.type == box_frame ) {
-        g_cur_left += wgml_fonts[g_curr_font].spc_width;    // TBD, space for VLINE?
-        g_page_right += wgml_fonts[g_curr_font].spc_width;  // TBD, space for VLINE?
+//        g_cur_left += wgml_fonts[g_curr_font].spc_width;    // TBD, space for VLINE?
+//        g_page_right -= wgml_fonts[g_curr_font].spc_width;  // TBD, space for VLINE?
+        g_cur_left += box_col_width;    // TBD, space for VLINE?
+        g_page_right -= box_col_width;  // TBD, space for VLINE?
+    }
+
+    if( (g_cur_left >= g_page_right) || (g_cur_left >= g_page_right_org) ) {
+            xx_line_err( err_inv_margins_2, val_start );
     }
 
     g_cur_h_start = g_cur_left;
@@ -307,8 +325,6 @@ void gml_efig( const gmltag * entry )
 
     if( cur_group_type != gt_fig ) {       // no preceding :FIG tag
         g_err_tag_prec( "FIG" );
-        scan_start = scan_stop + 1;
-        return;
     }
 
     ProcFlags.concat = concat_save;

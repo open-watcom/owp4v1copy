@@ -506,18 +506,18 @@ bool att_val_to_su( su * in_su, bool pos )
 
     s->su_u = SU_undefined;
     if( *ps == '+' ) {                   // not allowed with tags
-        xx_line_err( err_inv_att_val, ps );
+        xx_line_err( err_inv_att_val, val_start );
         scan_start = scan_stop + 1;
         return( cvterr );
     } else if( *ps == '-' ) {            // not relative, just negative
         if( pos ) {                     // value must be positive
-            xx_line_err( err_inv_att_val, ps );
+            xx_line_err( err_inv_att_val, val_start );
             scan_start = scan_stop + 1;
             return( cvterr );
         }
         sign = *ps;
         if( *(ps + 1) == '+' || *(ps + 1) == '-' ) {  // only one sign is allowed
-            xx_line_err( err_inv_att_val, ps );
+            xx_line_err( err_inv_att_val, val_start );
             scan_start = scan_stop + 1;
             return( cvterr );
         }
@@ -525,7 +525,7 @@ bool att_val_to_su( su * in_su, bool pos )
         sign = '+';
     }
     if( !*ps ) {                          // value end reached, not valid
-        xx_line_err( err_inv_att_val, ps );
+        xx_line_err( err_inv_att_val, val_start );
         scan_start = scan_stop + 1;
         return( cvterr );
     }

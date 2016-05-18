@@ -56,8 +56,6 @@ void    gml_binclude( const gmltag * entry )
     if( (ProcFlags.doc_sect < doc_sect_gdoc) ) {
         if( (ProcFlags.doc_sect_nxt < doc_sect_gdoc) ) {
             xx_tag_err( err_tag_before_gdoc, entry->tagname );
-            scan_start = scan_stop + 1;
-            return;
         }
     }
     file[0] = '\0';
@@ -103,9 +101,12 @@ void    gml_binclude( const gmltag * entry )
                 }
                 depth_found = true;
                 if( att_val_to_su( &depth_su, true ) ) {
-                    return;
+                    break;
                 }
                 depth = conv_vert_unit( &depth_su, spacing );
+                if( depth > t_page.max_depth ) {
+                    xx_line_err( err_inv_depth_binclude, val_start );
+                }
                 if( ProcFlags.tag_end_found ) {
                     break;
                 }   
@@ -122,8 +123,6 @@ void    gml_binclude( const gmltag * entry )
                     reposition = false; // device at proper position after insertion
                 } else {
                     xx_line_err( err_inv_att_val, val_start );
-                    scan_start = scan_stop + 1;
-                    return;
                 }
                 if( ProcFlags.tag_end_found ) {
                     break;
@@ -139,8 +138,6 @@ void    gml_binclude( const gmltag * entry )
     // detect missing required attributes
     if( !depth_found || !file_found || !reposition_found ) {
         xx_err( err_att_missing );
-        scan_start = scan_stop + 1;
-        return;
     }
 
     scr_process_break();                // flush existing text
@@ -164,5 +161,6 @@ void    gml_binclude( const gmltag * entry )
     insert_col_main( cur_el );
 
     scan_start = scan_stop + 1;         // skip following text
+    return;
 }
 
