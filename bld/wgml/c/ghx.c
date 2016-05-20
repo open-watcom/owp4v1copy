@@ -311,6 +311,7 @@ void gen_heading( su * p_sk, su * top_sk, font_number n_font, font_number t_font
                   int8_t spc, page_ej page_e, char * hnumstr, char * p,
                   int hx_lvl, char * id, hdsrc src )
 {
+    doc_element *   cur_el;
     group_type      sav_group_type;         // save prior group type
     size_t          current;
     size_t          txtlen;
@@ -407,13 +408,17 @@ void gen_heading( su * p_sk, su * top_sk, font_number n_font, font_number t_font
             }
 
             while( cur_doc_el_group->first != NULL ) {
-                insert_col_main( cur_doc_el_group->first );
-                cur_doc_el_group->first = cur_doc_el_group->first->next;
+            cur_el = cur_doc_el_group->first;
+            cur_doc_el_group->first = cur_doc_el_group->first->next;
+            cur_el->next = NULL;
+            insert_col_main( cur_el );
             }
         } else {
             while( cur_doc_el_group->first != NULL ) {
-                insert_page_width( cur_doc_el_group->first );
+                cur_el = cur_doc_el_group->first;
                 cur_doc_el_group->first = cur_doc_el_group->first->next;
+                cur_el->next = NULL;
+                insert_page_width( cur_el );
             }
         }
 

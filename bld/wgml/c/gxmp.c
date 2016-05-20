@@ -25,8 +25,6 @@
 *  ========================================================================
 *
 * Description:  WGML tags :XMP and :eXMP and helper functions
-*               depth attribute is not supported   TBD
-*
 *
 ****************************************************************************/
 #include    "wgml.h"
@@ -62,15 +60,18 @@ static  ju_enum     justify_save;           // for ProcFlags.justify
 
 void gml_xmp( const gmltag * entry )
 {
-    char    *   p;
-    char    *   pa;
+    char        *   p;
+    char        *   pa;
+    su              cur_su;
+    uint32_t        depth;
 
     start_doc_sect();
     scr_process_break();
     scan_err = false;
 
-    g_keep_nest( "Example" );               // catch nesting errors
+    g_keep_nest( "Example" );           // catch nesting errors
 
+    depth = 0;                          // default value: depth will be depth of box contents
     p = scan_start;
     if( *p == '.' ) {
         /* already at tag end */
@@ -84,15 +85,17 @@ void gml_xmp( const gmltag * entry )
 
             if( !strnicmp( "depth", p, 5 ) ) {
                 p += 5;
-
-               /***************************************************************/
-               /*  Although unsupported, scan depth='xxx'                     */
-               /***************************************************************/
-
                 p = get_att_value( p );
-                g_warn( wng_unsupp_att, "depth" );
-                wng_count++;
-                file_mac_info();
+                if( val_start == NULL ) {
+                    break;
+                }
+                if( att_val_to_su( &cur_su, true ) ) {
+                    break;
+                }
+                depth = conv_vert_unit( &cur_su, spacing );
+                if( ProcFlags.tag_end_found ) {
+                    break;
+                }
             } else {
                 p = pa; // restore any spaces before non-attribute value
                 break;
@@ -138,7 +141,12 @@ void gml_xmp( const gmltag * entry )
     concat_save = ProcFlags.concat;
     ProcFlags.concat = false;
     justify_save = ProcFlags.justify;
-    ProcFlags.justify = ju_off;         // TBD
+    ProcFlags.justify = ju_off;
+
+    if( depth > 0 ) {
+        g_blank_lines = depth;
+        scr_process_break();
+    }
 
     if( !ProcFlags.reprocess_line && *p ) {
         if( *p == '.' ) p++;                // possible tag end
@@ -161,8 +169,9 @@ void gml_xmp( const gmltag * entry )
 
 void gml_exmp( const gmltag * entry )
 {
-    char    *   p;
-    tag_cb  *   wk;
+    char        *   p;
+    doc_element *   cur_el;
+    tag_cb      *   wk;
 
     scr_process_break();
     if( cur_group_type != gt_xmp ) {       // no preceding :XMP tag
@@ -205,8 +214,10 @@ void gml_exmp( const gmltag * entry )
         }
 
         while( cur_doc_el_group->first != NULL ) {
-            insert_col_main( cur_doc_el_group->first );
+            cur_el = cur_doc_el_group->first;
             cur_doc_el_group->first = cur_doc_el_group->first->next;
+            cur_el->next = NULL;
+            insert_col_main( cur_el );
         }
 
         add_doc_el_group_to_pool( cur_doc_el_group );

@@ -191,6 +191,7 @@ if( fn_entry == NULL ) {
 void gml_efn( const gmltag * entry )
 {
     char    *   p;
+    doc_element *   cur_el;
     tag_cb  *   wk;
 
     scr_process_break();
@@ -240,8 +241,10 @@ void gml_efn( const gmltag * entry )
         }
 
         while( cur_doc_el_group->first != NULL ) {
-            insert_col_main( cur_doc_el_group->first );
+            cur_el = cur_doc_el_group->first;
             cur_doc_el_group->first = cur_doc_el_group->first->next;
+            cur_el->next = NULL;
+            insert_col_main( cur_el );
         }
 
         add_doc_el_group_to_pool( cur_doc_el_group );

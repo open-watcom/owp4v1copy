@@ -89,7 +89,8 @@ void gml_address( const gmltag * entry )
 
 void gml_eaddress( const gmltag * entry )
 {
-    tag_cb  *   wk;
+    doc_element *   cur_el;
+    tag_cb      *   wk;
 
     if( cur_group_type != gt_address ) {   // no preceding :ADDRESS tag
         g_err_tag_prec( "ADDRESS" );
@@ -131,8 +132,10 @@ void gml_eaddress( const gmltag * entry )
         }
 
         while( cur_doc_el_group->first != NULL ) {
-            insert_col_main( cur_doc_el_group->first );
+            cur_el = cur_doc_el_group->first;
             cur_doc_el_group->first = cur_doc_el_group->first->next;
+            cur_el->next = NULL;
+            insert_col_main( cur_el );
         }
 
         add_doc_el_group_to_pool( cur_doc_el_group );

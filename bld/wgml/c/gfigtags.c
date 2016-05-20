@@ -298,6 +298,11 @@ void gml_fig( const gmltag * entry )
         }
     }
 
+    if( depth > 0 ) {
+        g_blank_lines = depth;
+        scr_process_break();
+    }
+
     if( !ProcFlags.reprocess_line && *p ) {
         if( *p == '.' ) p++;                // possible tag end
         if( *p ) {
@@ -317,8 +322,9 @@ void gml_fig( const gmltag * entry )
 
 void gml_efig( const gmltag * entry )
 {
-    char    *   p;
-    tag_cb  *   wk;
+    char        *   p;
+    doc_element *   cur_el;
+    tag_cb      *   wk;
 
     scr_process_break();
     rs_loc = 0;
@@ -369,8 +375,10 @@ void gml_efig( const gmltag * entry )
         }
 
         while( cur_doc_el_group->first != NULL ) {
-            insert_col_main( cur_doc_el_group->first );
+            cur_el = cur_doc_el_group->first;
             cur_doc_el_group->first = cur_doc_el_group->first->next;
+            cur_el->next = NULL;
+            insert_col_main( cur_el );
         }
 
         add_doc_el_group_to_pool( cur_doc_el_group );
