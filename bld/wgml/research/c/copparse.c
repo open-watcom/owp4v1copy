@@ -109,7 +109,7 @@ static void display_device( cop_device * in_device )
     printf_s( "Page Offset X Value:       %i\n", in_device->x_offset );
     printf_s( "Page Offset Y Value:       %i\n", in_device->y_offset );
     if( in_device->box.font_name == NULL ) \
-        printf_s( "Box Font Number:           %i\n", in_device->box.font_number);
+        printf_s( "Box Font Number:           %i\n", in_device->box.font );
     else printf_s( "Box Font Name:             %s\n", in_device->box.font_name );
     printf_s( "Horizontal line character: %c\n", in_device->box.horizontal_line );
     printf_s( "Vertical line character:   %c\n", in_device->box.vertical_line );
@@ -126,7 +126,7 @@ static void display_device( cop_device * in_device )
                                         puts( "Underscore Font Not Specified");
     else if( in_device->underscore.font_name == NULL ) \
         printf_s( "Underscore Font Number:    %i\n", \
-                                            in_device->underscore.font_number);
+                                            in_device->underscore.font );
     else printf_s( "Underscore Font Name:      %s\n", \
                                             in_device->underscore.font_name );
     printf_s( "Underscore character:      %c\n", \

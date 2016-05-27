@@ -37,9 +37,11 @@ typedef enum {
     gs_toc      = 2,    // document specification includes TOC
 } gen_sect;
 
+static  bool        concat_save;                // for ProcFlags.concat
 static  gen_sect    figlist_toc     = false;    // used with FIGLIST, TOC and eGDOC
 static  int32_t     save_indent     =0;         // used with TITLEP/eTITLEP
 static  int32_t     save_indentr    =0;         // used with TITLEP/eTITLEP
+static  ju_enum     justify_save;               // for ProcFlags.justify
 static  line_number titlep_lineno   =0;         // TITLEP tag line number
 
 /***************************************************************************/
@@ -244,8 +246,10 @@ static void gen_figlist( void )
 
     /* Output FIGLIST */
 
-    ProcFlags.concat = true;            // concatenation on
-    ProcFlags.justify = ju_off;         // justification off
+    concat_save = ProcFlags.concat;
+    ProcFlags.concat = true;
+    justify_save = ProcFlags.justify;
+    ProcFlags.justify = ju_off;
     ProcFlags.keep_left_margin = true;  // keep all indents while outputting text
     curr = fig_list;
     while( curr != NULL ) {
@@ -297,6 +301,8 @@ static void gen_figlist( void )
         scr_process_break();                // ensure line break
         curr = curr->next;
     }
+    ProcFlags.concat = concat_save;
+    ProcFlags.justify = justify_save;
     return;
 }
 
@@ -447,8 +453,10 @@ static void gen_toc( void )
 
     /* Output TOC */
 
-    ProcFlags.concat = true;            // concatenation on
-    ProcFlags.justify = ju_off;         // justification off
+    concat_save = ProcFlags.concat;
+    ProcFlags.concat = true;
+    justify_save = ProcFlags.justify;
+    ProcFlags.justify = ju_off;
     ProcFlags.keep_left_margin = true;  // keep all indents while outputting text
     curr = hd_list;
     while( curr != NULL ) {
@@ -516,6 +524,8 @@ static void gen_toc( void )
         levels[cur_level] = true;                   // first entry of level done
         curr = curr->next;
     }
+    ProcFlags.concat = concat_save;
+    ProcFlags.justify = justify_save;
     return;
 }
 
@@ -802,11 +812,20 @@ void start_doc_sect( void )
         }
     }
     g_cur_left = g_page_left_org;
-    g_cur_h_start = g_page_left_org + g_indent;
     if( header && (ds != doc_sect_appendix) ) { // The APPENDIX header is used differently
-        gen_heading( p_sk, top_sk, FONT0, font, h_spc, ej_no, NULL, h_string, 0, NULL,
-                     hs_val );
+        line_pos = pos_center;
+        concat_save = ProcFlags.concat;
+        ProcFlags.concat = true;
+        justify_save = ProcFlags.justify;
+        ProcFlags.justify = ju_off;
+        gen_heading( p_sk, top_sk, FONT0, font, h_spc, (page_e != ej_no), NULL,
+                     h_string, 0, NULL, hs_val );
+        g_indent = 0;                           // reset for section body
+        ProcFlags.concat = concat_save;
+        ProcFlags.justify = justify_save;
+        line_pos = pos_left;
     }
+    g_cur_h_start = g_page_left_org + g_indent;
     ProcFlags.doc_sect = ds;
 }
 

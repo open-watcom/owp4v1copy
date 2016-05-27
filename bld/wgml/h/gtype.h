@@ -1053,7 +1053,7 @@ typedef enum {
 } group_type;
 
 typedef struct doc_el_group {
-    struct  doc_el_group    *   prev;
+    struct  doc_el_group    *   next;
             uint32_t            depth;
             doc_element     *   first;
             doc_element     *   last;
@@ -1069,13 +1069,20 @@ typedef struct doc_column {
     struct  doc_column  *   next;
             uint32_t        fig_top;
             uint32_t        fn_top;
-            uint32_t        main_top;
             doc_element *   main;
             doc_element *   bot_fig;
             doc_element *   footnote;
 } doc_column;
 
 struct banner_lay_tag;  // avoids include circularity with gtypelay.h
+
+/***************************************************************************/
+/*  This will be changing, possibly quite a bit, as multicolumn support    */
+/*  is added; fields added for multicolumn support are commented           */
+/*  The "last" pointers are used to keep track of where to add each new    */
+/*  doc_element as it appears, both in doc_page and doc_next_page below    */
+/*  NOTE: g_page_top is currently used to hold the top of page_width       */
+/***************************************************************************/
 
 typedef struct {
             uint32_t            main_top;
@@ -1094,12 +1101,18 @@ typedef struct {
             ban_column      *   bot_ban;
 } doc_page;
 
+/***************************************************************************/
+/*  The terminology here is a little strange: each item is used to keep    */
+/*  items for the corresponding section of doc_page, but both the use of   */
+/*  "col_" and the use of "top" for "page_width" is unclear                */
+/***************************************************************************/
+
 typedef struct {
-            doc_element     *   last_col_top;
+            doc_el_group    *   last_col_top;
             doc_element     *   last_col_main;
             doc_element     *   last_col_bot;
             doc_element     *   last_col_fn;
-            doc_element     *   col_top;
+            doc_el_group    *   col_top;
             doc_element     *   col_main;
             doc_element     *   col_bot;
             doc_element     *   col_fn;

@@ -192,6 +192,7 @@ bool    free_resources( errno_t in_errno )
 
 void    free_some_mem( void )
 {
+    doc_element *   cur_el;
 
     if( token_buf != NULL ) {
         mem_free( token_buf );
@@ -324,8 +325,14 @@ void    free_some_mem( void )
         add_ban_col_to_pool( t_page.bot_ban );
     }
     if( n_page.col_top != NULL ) {
-        clear_doc_element( n_page.col_top );
-        add_doc_el_to_pool( n_page.col_top );
+        while( n_page.col_top->first != NULL ) {
+            cur_el = n_page.col_top->first;
+            n_page.col_top->first = n_page.col_top->first->next;
+            cur_el->next = NULL;
+            clear_doc_element( cur_el );
+            add_doc_el_to_pool( cur_el );
+        }
+        add_doc_el_group_to_pool( n_page.col_top );
     }
     if( n_page.col_main != NULL ) {
         clear_doc_element( n_page.col_main );

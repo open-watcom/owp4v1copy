@@ -355,6 +355,7 @@ global  uint32_t    g_spacing;          // spacing (in vertical base units)
 global  int32_t     g_skip;             // .sk skip value ( -1 to +nn )
 global  uint32_t    spacing;            // spacing between lines (line count)
 
+global  page_pos    line_pos;           // horizontal line positioning
 global  uint32_t    post_space;         // spacing within a line
 global  uint32_t    ju_x_start;         // .. formatting
 

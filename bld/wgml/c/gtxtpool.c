@@ -347,7 +347,6 @@ doc_column * alloc_doc_col( void )
     curr->next = NULL;
     curr->fig_top = g_page_bottom;
     curr->fn_top = g_page_bottom;
-    curr->main_top = t_page.main_top;
     curr->main = NULL;
     curr->bot_fig = NULL;
     curr->footnote = NULL;
@@ -477,19 +476,19 @@ doc_el_group * alloc_doc_el_group( group_type type )
 
     if( doc_el_group_pool != NULL ) {   // there is one to use
         curr = doc_el_group_pool;
-        doc_el_group_pool = curr->prev;
+        doc_el_group_pool = curr->next;
     } else {                            // pool is empty
         curr = mem_alloc( sizeof( doc_el_group ) );
         doc_el_group_pool = curr;
         for( k = 0; k < 10; k++ ) {     // alloc 10 box_col_sets if pool empty
-            curr->prev = mem_alloc( sizeof( *curr ) );
-            curr = curr->prev;
+            curr->next = mem_alloc( sizeof( *curr ) );
+            curr = curr->next;
         }
-        curr->prev = NULL;
+        curr->next = NULL;
         curr = doc_el_group_pool;
-        doc_el_group_pool = curr->prev;
+        doc_el_group_pool = curr->next;
     }
-    curr->prev = NULL;
+    curr->next = NULL;
     curr->depth = 0;
     curr->first = NULL;
     curr->last = NULL;
@@ -508,7 +507,7 @@ void add_doc_el_group_to_pool( doc_el_group * a_group )
         return;
     }
 
-    a_group->prev = doc_el_group_pool;
+    a_group->next = doc_el_group_pool;
     doc_el_group_pool = a_group;
 }
 
@@ -620,7 +619,7 @@ void    free_pool_storage( void )
     }
 
     for( v = doc_el_group_pool; v != NULL; ) {
-        wv = ( (doc_el_group *) v)->prev;
+        wv = ( (doc_el_group *) v)->next;
         mem_free( v );
         v = wv;
     }

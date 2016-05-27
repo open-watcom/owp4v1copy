@@ -1049,22 +1049,19 @@ void ob_binclude( binclude_element * in_el )
             count = fread( binc_buff.text, sizeof( uint8_t ), binc_buff.length, try_fp );
             while( count == binc_buff.length ) {
                 binc_buff.current = count;
-                ob_flush();
                 if( fwrite( binc_buff.text, sizeof( uint8_t ), binc_buff.current, out_file_fp )
                         < binc_buff.current ) {
                     xx_simple_err_c( err_write_out_file, out_file );
                     count = 0;
                     break;
                 }
+                ob_flush();
                 count = fread( binc_buff.text, sizeof( uint8_t ), binc_buff.length, try_fp );
             }
             binc_buff.current = count;
             if( fwrite( binc_buff.text, sizeof( uint8_t ), binc_buff.current, out_file_fp )
                     < binc_buff.current ) {
                 xx_simple_err_c( err_write_out_file, out_file );
-            }
-            if( in_el->depth > 0 ) {
-                ob_flush();
             }
             if( ferror( try_fp ) ) {
                 xx_simple_err_cc( err_in_file, "BINCLUDE", try_file_name );

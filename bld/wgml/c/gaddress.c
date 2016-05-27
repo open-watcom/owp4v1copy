@@ -74,7 +74,7 @@ void gml_address( const gmltag * entry )
     sav_group_type = cur_group_type;
     cur_group_type = gt_address;
     cur_doc_el_group = alloc_doc_el_group( gt_address );
-    cur_doc_el_group->prev = t_doc_el_group;
+    cur_doc_el_group->next = t_doc_el_group;
     t_doc_el_group = cur_doc_el_group;
     cur_doc_el_group = NULL;
 
@@ -110,8 +110,8 @@ void gml_eaddress( const gmltag * entry )
     cur_group_type = sav_group_type;
     if( t_doc_el_group != NULL ) {
         cur_doc_el_group = t_doc_el_group;      // detach current element group
-        t_doc_el_group = t_doc_el_group->prev;  // processed doc_elements go to next group, if any
-        cur_doc_el_group->prev = NULL;
+        t_doc_el_group = t_doc_el_group->next;  // processed doc_elements go to next group, if any
+        cur_doc_el_group->next = NULL;
 
         if( cur_doc_el_group->first != NULL ) {
             cur_doc_el_group->depth += (cur_doc_el_group->first->blank_lines +

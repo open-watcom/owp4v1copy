@@ -561,7 +561,7 @@ static text_chars * oc_alloc_text_chars(  char * in_text, size_t count,
     }
     retval->next = NULL;
     retval->prev = NULL;
-    retval->font_number = font_number;
+    retval->font = font_number;
     retval->type = type;
     retval->x_address = 0;
     retval->width = 0;
@@ -1447,7 +1447,7 @@ static text_chars * oc_wgml_tabs( text_chars * in_chars )
                                                                       cur_count);
             in_chars->count = cur_count;
             in_chars->width = cop_text_width( in_chars->text, in_chars->count, \
-                                                          in_chars->font_number );
+                                                          in_chars->font );
             cur_h_address += in_chars->width;
         }
 
@@ -1494,13 +1494,13 @@ static text_chars * oc_wgml_tabs( text_chars * in_chars )
 
             cur_count = i - start;
             retval = oc_alloc_text_chars( &cur_text[start], cur_count, \
-                                        in_chars->font_number, in_chars->type );
+                                        in_chars->font, in_chars->type );
             retval->x_address = cur_h_address;
             cur_chars->next = retval;
             retval->prev = cur_chars;
             cur_chars = cur_chars->next;
             retval->width = cop_text_width( retval->text, retval->count, \
-                                                    in_chars->font_number );
+                                                    in_chars->font );
             cur_h_address += retval->width;
 
             /* Set up for the next word. */
@@ -1516,7 +1516,7 @@ static text_chars * oc_wgml_tabs( text_chars * in_chars )
 
         i = count - 1;
         if( (cur_text[i] == '\t') || (cur_text[i] == tab_char) ) {
-            retval = oc_alloc_text_chars( NULL, 0, in_chars->font_number, \
+            retval = oc_alloc_text_chars( NULL, 0, in_chars->font, \
                                                             in_chars->type );
             retval->x_address = cur_h_address;
             cur_chars->next = retval;
@@ -1581,10 +1581,10 @@ static uint32_t oc_split_text( text_chars * in_chars, uint32_t limit )
 
             /* A more exact computation is needed. */
 
-            test_count = test_limit / wgml_fonts[in_chars->font_number].\
+            test_count = test_limit / wgml_fonts[in_chars->font].\
                                                                 default_width;
             test_width = cop_text_width( in_chars->text, test_count, \
-                                                        in_chars->font_number );
+                                                        in_chars->font );
 
             if( test_width != test_limit ) {
 
@@ -1594,13 +1594,13 @@ static uint32_t oc_split_text( text_chars * in_chars, uint32_t limit )
                     while( test_width < test_limit ) {
                         test_count++;
                         test_width = cop_text_width( in_chars->text, \
-                                            test_count, in_chars->font_number );
+                                            test_count, in_chars->font );
                     }
                 } else {
                     while( test_width > test_limit ) {
                         test_count--;
                         test_width = cop_text_width( in_chars->text, \
-                                            test_count, in_chars->font_number );
+                                            test_count, in_chars->font );
                     }
                 }
 
@@ -2210,7 +2210,7 @@ static void oc_process_text( char * input_text, uint8_t font_number )
             next_chars->width = 0;
         } else {
             next_chars->width = oc_text_chars_width( next_chars->text, \
-                                next_chars->count, next_chars->font_number );
+                                next_chars->count, next_chars->font );
         }
         increment = next_chars->width;
 
@@ -2364,7 +2364,7 @@ static void oc_process_text( char * input_text, uint8_t font_number )
 
                             next_chars = oc_alloc_text_chars( \
                                 &the_line->last->text[the_line->last->count], \
-                                        count, the_line->last->font_number, \
+                                        count, the_line->last->font, \
                                                         the_line->last->type );
 
                             /* Finalize the_line->last. */
@@ -2456,7 +2456,7 @@ static void oc_process_text( char * input_text, uint8_t font_number )
 
                     /* Adjust the line_height, if appropriate. */
 
-                    cur_height = wgml_fonts[save_chars->font_number].line_height;
+                    cur_height = wgml_fonts[save_chars->font].line_height;
                     if( the_line->line_height < cur_height ) {
                         the_line->line_height = cur_height;
                     }
@@ -2476,7 +2476,7 @@ static void oc_process_text( char * input_text, uint8_t font_number )
                         /* Adjust the line_height, if appropriate. */
 
                         cur_height = \
-                                wgml_fonts[save_chars->font_number].line_height;
+                                wgml_fonts[save_chars->font].line_height;
                         if( the_line->line_height < cur_height ) {
                             the_line->line_height = cur_height;
                         }
@@ -2498,7 +2498,7 @@ static void oc_process_text( char * input_text, uint8_t font_number )
                  */
 
                 next_chars->width = oc_text_chars_width( next_chars->text, \
-                                next_chars->count, next_chars->font_number );
+                                next_chars->count, next_chars->font );
                 increment = next_chars->width;
             }
 
@@ -2550,7 +2550,7 @@ static void oc_process_text( char * input_text, uint8_t font_number )
 
                         next_chars = oc_alloc_text_chars( \
                             &the_line->last->text[the_line->last->count], \
-                                        count, the_line->last->font_number, \
+                                        count, the_line->last->font, \
                                                         the_line->last->type );
                     }
 
@@ -2582,7 +2582,7 @@ static void oc_process_text( char * input_text, uint8_t font_number )
 
                     next_chars->x_address = cur_h_address;
                     next_chars->width = oc_text_chars_width( next_chars->text, \
-                                next_chars->count, next_chars->font_number );
+                                next_chars->count, next_chars->font );
 
                     /* See if next_chars is still too long. */
 
@@ -2821,7 +2821,7 @@ static void emulate_wgml( void )
     oc_text_chars_pool = \
                 (text_chars *) mem_alloc( sizeof( text_chars ) + TEXT_START );
     oc_text_chars_pool->next = NULL;
-    oc_text_chars_pool->font_number = 0;
+    oc_text_chars_pool->font = 0;
     oc_text_chars_pool->x_address = 0;
     oc_text_chars_pool->width = 0;
     oc_text_chars_pool->count = 0;
@@ -2832,7 +2832,7 @@ static void emulate_wgml( void )
                 (text_chars *) mem_alloc( sizeof( text_chars ) + TEXT_START );
         tc_pool_ptr = tc_pool_ptr->next;
         tc_pool_ptr->next = NULL;
-        tc_pool_ptr->font_number = 0;
+        tc_pool_ptr->font = 0;
         tc_pool_ptr->x_address = 0;
         tc_pool_ptr->width = 0;
         tc_pool_ptr->count = 0;

@@ -134,14 +134,9 @@ static void gml_hx_common( const gmltag * entry, int hx_lvl )
     char            id[ID_LEN];
     char        *   p;
     char        *   pa;
-//    group_type      sav_group_type;         // save prior group type
     int             k;
     int             rc;
-//    size_t          current;
     size_t          headlen;
-//    size_t          txtlen;
-//    ref_entry   *   cur_ref;
-//    uint32_t        hx_depth;
 
     static char     headx[7]    = "$headX";
     static char     htextx[8]   = "$htextX";
@@ -295,8 +290,8 @@ static void gml_hx_common( const gmltag * entry, int hx_lvl )
     gen_heading( &layout_work.hx[hx_lvl].post_skip,
                  &layout_work.hx[hx_lvl].pre_top_skip, 
                  layout_work.hx[hx_lvl].number_font, layout_work.hx[hx_lvl].font,
-                 layout_work.hx[hx_lvl].page_eject, spacing, hnumstr, p, hx_lvl, id,
-                 hs_hn );
+                 (layout_work.hx[hx_lvl].page_eject != ej_no), spacing, hnumstr,
+                 p, hx_lvl, id, hs_hn );
 
     scan_start = scan_stop + 1;
     return;
@@ -308,7 +303,7 @@ static void gml_hx_common( const gmltag * entry, int hx_lvl )
 /******************************************************************************/
 
 void gen_heading( su * p_sk, su * top_sk, font_number n_font, font_number t_font,
-                  int8_t spc, page_ej page_e, char * hnumstr, char * p,
+                  int8_t spc, bool ejected, char * hnumstr, char * p,
                   int hx_lvl, char * id, hdsrc src )
 {
     doc_element *   cur_el;
@@ -377,7 +372,7 @@ void gen_heading( su * p_sk, su * top_sk, font_number n_font, font_number t_font
     sav_group_type = cur_group_type;
     cur_group_type = gt_hx;
     cur_doc_el_group = alloc_doc_el_group( gt_hx );
-    cur_doc_el_group->prev = t_doc_el_group;
+    cur_doc_el_group->next = t_doc_el_group;
     t_doc_el_group = cur_doc_el_group;
     cur_doc_el_group = NULL;
 
@@ -389,10 +384,10 @@ void gen_heading( su * p_sk, su * top_sk, font_number n_font, font_number t_font
     cur_group_type = sav_group_type;
     if( t_doc_el_group != NULL) {
         cur_doc_el_group = t_doc_el_group;      // detach current element group
-        t_doc_el_group = t_doc_el_group->prev;  // processed doc_elements go to next group, if any
-        cur_doc_el_group->prev = NULL;
+        t_doc_el_group = t_doc_el_group->next;  // processed doc_elements go to next group, if any
+        cur_doc_el_group->next = NULL;
 
-        if( page_e == ej_no ) {
+        if( !ejected ) {
             hx_depth = cur_doc_el_group->depth + wgml_fonts[layout_work.hx[hx_lvl].font].line_height + g_post_skip;
             if( (hx_depth + t_page.cur_depth) > t_page.max_depth ) {
 
@@ -408,25 +403,20 @@ void gen_heading( su * p_sk, su * top_sk, font_number n_font, font_number t_font
             }
 
             while( cur_doc_el_group->first != NULL ) {
-            cur_el = cur_doc_el_group->first;
-            cur_doc_el_group->first = cur_doc_el_group->first->next;
-            cur_el->next = NULL;
-            insert_col_main( cur_el );
-            }
-        } else {
-            while( cur_doc_el_group->first != NULL ) {
                 cur_el = cur_doc_el_group->first;
                 cur_doc_el_group->first = cur_doc_el_group->first->next;
                 cur_el->next = NULL;
-                insert_page_width( cur_el );
+                insert_col_main( cur_el );
             }
+            add_doc_el_group_to_pool( cur_doc_el_group );
+            cur_doc_el_group = NULL;
+        } else {
+            insert_page_width( cur_doc_el_group );
         }
 
         if( pass == 1 ) {                        // only on first pass
             hd_entry->pageno = page + 1;
         }
-        add_doc_el_group_to_pool( cur_doc_el_group );
-        cur_doc_el_group = NULL;
     } else if( pass == 1 ) {                        // only on first pass
         hd_entry->pageno = page + 1;
     }

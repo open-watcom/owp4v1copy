@@ -372,7 +372,7 @@ static void do_doc_column_out( doc_column * a_column, uint32_t v_start )
         last = NULL;
         cur_el[i] = NULL;
         if( cur_col->main != NULL ) {
-            set_v_positions( cur_col->main, cur_col->main_top );
+            set_v_positions( cur_col->main, t_page.main_top );
             if( cur_el[i] == NULL ) {
                 cur_el[i] = cur_col->main;
                 last = cur_col->main;
@@ -428,39 +428,24 @@ static void update_t_page( void )
 
     reset_t_page();
 
-    /*  some section headings are placed in t_page.page_width when          */
-    /*  processed. One FIG in n_page.col_top goes into t_page.page_width    */
-    /*  if it is empty                                                      */
-    /*  t_page.page_width can only hold one doc_element                     */
-    /*  This is preliminary and may be changed as needed.                   */
+    /***********************************************************************/
+    /*  some section headings are placed in t_page.page_width when         */
+    /*  processed. One FIG in n_page.col_top goes into t_page.page_width   */
+    /*  if it is empty                                                     */
+    /*  t_page.page_width can only hold one doc_element                    */
+    /*  This is preliminary and may be changed as needed.                  */
+    /***********************************************************************/
 
     depth = t_page.cur_depth;
     fig_placed = false;
     if( t_page.page_width == NULL ) {       // skip if section full
         if( n_page.col_top != NULL ) {   // at most one item can be placed
-            switch( n_page.col_top->type ) {
-            // add code for FIG when needed
-            case el_text :  // all elements should be FIGs
-            default :
-                internal_err( __FILE__, __LINE__ );
+            if( n_page.col_top->owner == gt_fig ) {
+                fig_placed = true;
             }
+            t_page.page_width = n_page.col_top->first;
+            n_page.col_top = n_page.col_top->next;
         }
-    }
-
-    /*  one FIG in n_page.col_top goes into t_page.main->top_fig if none    */
-    /*  was placed in t_page.page_width                                     */
-    /*  this is preliminary and may be changed as needed                    */
-    /*  Note: t_page.main is NULL at this point, initialize if needed       */
-    
-    if( !fig_placed ) {
-        if( n_page.col_top != NULL ) {   // at most one item can be placed
-            switch( n_page.col_top->type ) {
-            // add code for FIG when needed
-            case el_text :  // all elements should be FIGs
-            default :
-                internal_err( __FILE__, __LINE__ );
-            }
-        } 
     }
 
     /***********************************************************************/
@@ -1150,50 +1135,38 @@ void insert_col_main( doc_element * a_element )
 /*  insert a doc_element into t_page.page_width                            */
 /***************************************************************************/
 
-void insert_page_width( doc_element * a_element )
+void insert_page_width( doc_el_group * cur_doc_el_group )
 {
-    uint32_t    depth;
 
-    /* depth is used to update t_page.cur_depth and so must be kept separate */
+    /****************************************************************/
+    /*  Only headings with page_eject set to any value except ej_no */
+    /*  and FIG/eFIG blocks with place set to top come here         */
+    /*  Both must be sized before submission because both have      */
+    /*  special requirements                                        */
+    /****************************************************************/
 
-    if( !ProcFlags.page_started ) {
-        depth = a_element->top_skip;
-        ProcFlags.page_started = true;
+    if( (cur_doc_el_group->depth + t_page.cur_depth) <= t_page.max_depth ) {
+        if( t_page.page_width == NULL ) {   // must be empty
+            t_page.page_width = cur_doc_el_group->first;
+            cur_doc_el_group->first = NULL;
+            t_page.cur_depth += cur_doc_el_group->depth;
+            if( bin_driver->y_positive == 0 ) {
+                t_page.main_top -= cur_doc_el_group->depth;
+            } else {
+                t_page.main_top += cur_doc_el_group->depth;
+            }
+            add_doc_el_group_to_pool( cur_doc_el_group );
+            cur_doc_el_group = NULL;
+        } else {        // save on n_page as a block, not as doc_elements
+            if( n_page.col_top == NULL ) {
+                n_page.col_top = cur_doc_el_group;
+                n_page.last_col_top = n_page.col_top;
+            } else {
+                n_page.last_col_top->next = cur_doc_el_group;
+                n_page.last_col_top = n_page.last_col_top->next;
+            }
+        }        
     } else {
-        depth = a_element->subs_skip;
-    }
-    depth += a_element->depth;
-
-    /****************************************************************/
-    /*  Does the first line minimum apply here? If so, it needs to  */
-    /*  be implemented. Note that cur_el->depth does not reflect it */
-    /*  because there is no way to tell if it will apply when the   */
-    /*  is computed.                                                */
-    /*  Note: if a "last element" pointer turns out to be needed,   */
-    /*        create one for that purpose: do not use last_col_main */
-    /****************************************************************/
-
-    switch( a_element->type ) {
-    // TOP FIG processing goes here
-    case el_text :                      // section heading: must go on t_page
-        if( (depth + t_page.cur_depth) <= t_page.max_depth ) {
-            if( t_page.page_width == NULL ) {   // must be empty
-                t_page.page_width = a_element;
-//                t_page.last_col_main = t_page.page_width;
-                t_page.cur_depth += depth;
-                if( bin_driver->y_positive == 0 ) {
-                    t_page.main_top -= depth;
-                } else {
-                    t_page.main_top += depth;
-                }
-            } else {        // discard second section heading
-                internal_err( __FILE__, __LINE__ );
-            }        
-        } else {
-            xx_err( err_heading_too_deep );
-        }
-        break;
-    default:
         internal_err( __FILE__, __LINE__ );
     }
 

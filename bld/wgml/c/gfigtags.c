@@ -230,7 +230,7 @@ void gml_fig( const gmltag * entry )
     g_cur_left += nest_cb->left_indent;
     g_page_right = g_cur_left + width;
     if( ProcFlags.ps_device ) {                 // this is purely empirical & TBD
-        g_page_right -= box_col_width;
+        g_page_right -= tab_col;
     }
     if( g_page_right < nest_cb->right_indent ) {
         g_page_right = 0;                       // negative right margin not allowed
@@ -245,8 +245,8 @@ void gml_fig( const gmltag * entry )
     if( frame.type == box_frame ) {
 //        g_cur_left += wgml_fonts[g_curr_font].spc_width;    // TBD, space for VLINE?
 //        g_page_right -= wgml_fonts[g_curr_font].spc_width;  // TBD, space for VLINE?
-        g_cur_left += box_col_width;    // TBD, space for VLINE?
-        g_page_right -= box_col_width;  // TBD, space for VLINE?
+        g_cur_left += tab_col;      // TBD, space for VLINE?
+        g_page_right -= tab_col;    // TBD, space for VLINE?
     }
 
     if( (g_cur_left >= g_page_right) || (g_cur_left >= g_page_right_org) ) {
@@ -267,14 +267,14 @@ void gml_fig( const gmltag * entry )
     sav_group_type = cur_group_type;
     cur_group_type = gt_fig;
     cur_doc_el_group = alloc_doc_el_group( gt_fig );
-    cur_doc_el_group->prev = t_doc_el_group;
+    cur_doc_el_group->next = t_doc_el_group;
     t_doc_el_group = cur_doc_el_group;
     cur_doc_el_group = NULL;
 
     concat_save = ProcFlags.concat;
     ProcFlags.concat = false;
     justify_save = ProcFlags.justify;
-    ProcFlags.justify = ju_off;         // TBD
+    ProcFlags.justify = ju_off;
 
     /* Only create the entry on the first pass */
 
@@ -358,8 +358,8 @@ void gml_efig( const gmltag * entry )
     cur_group_type = sav_group_type;
     if( t_doc_el_group != NULL) {
         cur_doc_el_group = t_doc_el_group;      // detach current element group
-        t_doc_el_group = t_doc_el_group->prev;  // processed doc_elements go to next group, if any
-        cur_doc_el_group->prev = NULL;
+        t_doc_el_group = t_doc_el_group->next;  // processed doc_elements go to next group, if any
+        cur_doc_el_group->next = NULL;
 
         if( (cur_doc_el_group->depth + t_page.cur_depth) > t_page.max_depth ) {
 

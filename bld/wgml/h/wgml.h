@@ -121,7 +121,7 @@ extern  void        insert_col_bot( doc_element * a_element );
 extern  void        insert_col_fn( doc_element * a_element );
 extern  void        insert_col_main( doc_element * a_element );
 extern  void        insert_col_top( doc_element * a_element );
-extern  void        insert_page_width( doc_element * a_element );
+extern  void        insert_page_width( doc_el_group * cur_doc_el_group );
 extern  void        last_page_out( void );
 extern  void        reset_t_page( void );
 extern  void        set_skip_vars( su * pre_skip, su * pre_top_skip, su * post_skip, uint32_t spacing, font_number font );
@@ -191,7 +191,7 @@ extern  condcode    getnum( getnum_block * gn );
 
 /* ghx.c                                */
 
-extern  void    gen_heading( su * p_sk, su * top_sk, font_number n_font, font_number t_font, int8_t spc, page_ej page_e, char * hnumstr, char * p, int hx_lvl, char * id, hdsrc src );
+extern  void    gen_heading( su * p_sk, su * top_sk, font_number n_font, font_number t_font, int8_t spc, bool ejected, char * hnumstr, char * p, int hx_lvl, char * id, hdsrc src );
 
 /* gindexut.c                           */
 extern ix_e_blk *   fill_ix_e_blk( ix_e_blk * * anchor, ix_h_blk * ref, ereftyp ptyp, char * text, int text_len );
