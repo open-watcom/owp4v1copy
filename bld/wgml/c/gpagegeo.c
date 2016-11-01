@@ -76,13 +76,13 @@ void    init_page_geometry( void )
     }
     g_curr_font = layout_work.defaults.font;
 
-    lm = conv_hor_unit( &layout_work.page.left_margin )
+    lm = conv_hor_unit( &layout_work.page.left_margin, g_curr_font )
          - bin_device->x_offset;        // left margin &syspagelm
     if( lm < 0 ) {                      // wgml 4.0 limits value
         lm = 0;
     }
 
-    rm = conv_hor_unit( &layout_work.page.right_margin )
+    rm = conv_hor_unit( &layout_work.page.right_margin, g_curr_font )
          - bin_device->x_offset;        // right margin &syspagerm
 
     rm_test = bin_device->horizontal_base_units / 4;
@@ -128,9 +128,9 @@ void    init_page_geometry( void )
     g_ll = 60;                              // default value per TSO
     g_gutter = 0;
 
-    top_margin = conv_vert_unit( &layout_work.page.top_margin, 1 );
+    top_margin = conv_vert_unit( &layout_work.page.top_margin, 1, g_curr_font );
 
-    page_depth_org = conv_vert_unit( &layout_work.page.depth, 1 );
+    page_depth_org = conv_vert_unit( &layout_work.page.depth, 1, g_curr_font );
     if( bin_device->y_offset > page_depth_org ) {
         xx_err( err_page_depth_too_small ); // candidate Severe Error
         g_suicide();                        // no recovery possible
@@ -337,13 +337,13 @@ static void finish_banners( void )
         top_line_reg = NULL;
         for( cur_reg = cur_ban->region; cur_reg != NULL; cur_reg = cur_reg->next ) {
             g_curr_font = font_save;   // horizontal attributes use default font
-            cur_reg->reg_indent = conv_hor_unit( &cur_reg->indent );
-            cur_reg->reg_hoffset = conv_hor_unit( &cur_reg->hoffset );
-            cur_reg->reg_width = conv_hor_unit( &cur_reg->width );
+            cur_reg->reg_indent = conv_hor_unit( &cur_reg->indent, g_curr_font );
+            cur_reg->reg_hoffset = conv_hor_unit( &cur_reg->hoffset, g_curr_font );
+            cur_reg->reg_width = conv_hor_unit( &cur_reg->width, g_curr_font );
 
             g_curr_font = cur_reg->font; // vertical attributes use the banregion font
-            cur_reg->reg_voffset = conv_vert_unit( &cur_reg->voffset, 1 );
-            cur_reg->reg_depth = conv_vert_unit( &cur_reg->depth, 1 );
+            cur_reg->reg_voffset = conv_vert_unit( &cur_reg->voffset, 1, g_curr_font );
+            cur_reg->reg_depth = conv_vert_unit( &cur_reg->depth, 1, g_curr_font );
 
             if( max_reg_depth < cur_reg->reg_voffset + cur_reg->reg_depth ) {
                 max_reg_depth = cur_reg->reg_voffset + cur_reg->reg_depth;
@@ -358,11 +358,11 @@ static void finish_banners( void )
             }
         }
         g_curr_font = font_save;       // horizontal attributes use default font
-        cur_ban->ban_left_adjust = conv_hor_unit( &cur_ban->left_adjust );
-        cur_ban->ban_right_adjust = conv_hor_unit( &cur_ban->right_adjust );
+        cur_ban->ban_left_adjust = conv_hor_unit( &cur_ban->left_adjust, g_curr_font );
+        cur_ban->ban_right_adjust = conv_hor_unit( &cur_ban->right_adjust, g_curr_font );
 
         g_curr_font = max_reg_font; // vertical attribute uses the largest banregion font
-        cur_ban->ban_depth = conv_vert_unit( &cur_ban->depth, 1 );
+        cur_ban->ban_depth = conv_vert_unit( &cur_ban->depth, 1, g_curr_font );
 
         cur_ban->top_line = top_line_reg;
 
@@ -423,6 +423,7 @@ void    do_layout_end_processing( void )
         ProcFlags.fb_document_done = true;
 
         set_banners();                  // prepare banners for selection
+        set_pgnum_style();              // set the pgnum_style values
     }
 }
 

@@ -43,8 +43,8 @@ static void prep_date_line( text_line *p_line, const char *p )
     symsub      *   subdate;
     int             rc;
  
-    h_left = g_page_left + conv_hor_unit( &layout_work.date.left_adjust );
-    h_right = g_page_right - conv_hor_unit( &layout_work.date.right_adjust );
+    h_left = g_page_left + conv_hor_unit( &layout_work.date.left_adjust, g_curr_font );
+    h_right = g_page_right - conv_hor_unit( &layout_work.date.right_adjust, g_curr_font );
  
     if( *p ) {
         curr_t = alloc_text_chars( p, strlen( p ), g_curr_font );

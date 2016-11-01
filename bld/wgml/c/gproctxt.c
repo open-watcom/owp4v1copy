@@ -1606,7 +1606,7 @@ void process_line_full( text_line * a_line, bool justify )
         if( justify && GlobalFlags.lastpass && !ProcFlags.literal
                                          && ProcFlags.justify > ju_off ) {
             do_justify( ju_x_start, g_page_right, a_line );
-        } else if( line_pos == pos_center ) {   // center text on line
+        } else if( hd_info.line_pos == pos_center ) {       // center text on line
             if( g_page_right > (a_line->last->x_address + a_line->last->width) ) {
                 offset = (g_page_right - (a_line->last->x_address + a_line->last->width))/2;
                 split_chars = a_line->first;
@@ -1615,7 +1615,7 @@ void process_line_full( text_line * a_line, bool justify )
                     split_chars = split_chars->next;
                 }
             }
-        } else if( line_pos == pos_right ) {    // move text to end at right margin
+        } else if( hd_info.line_pos == pos_right ) {        // move text to end at right margin
             offset = g_page_right - (a_line->last->x_address + a_line->last->width);
             split_chars = a_line->first;
             while( split_chars != NULL ) {
@@ -1692,6 +1692,7 @@ void process_text( const char *text, font_number font )
     const char          *   pword;
     const char          *   p;
 
+    bool                    stop_fnd;
     font_number             temp_font       = 0;
     i_flags                 flags_x_eol;                // fmflags with II_eol removed
     size_t                  count;
@@ -2100,8 +2101,14 @@ void process_text( const char *text, font_number font )
                 }
 
                 if( t_line->first != NULL ) { // t_line is ready for output
-                    process_line_full( t_line, ProcFlags.concat
-                                      && (ProcFlags.justify > ju_off) );
+                    if( (t_element == NULL) && (ProcFlags.justify != ju_center)
+                            && (ProcFlags.justify != ju_right)
+                            && (ProcFlags.justify != ju_half) ) {    // catch first line
+                        process_line_full( t_line, false );
+                    } else {                            // subsequent line
+                        process_line_full( t_line, ProcFlags.concat
+                                          && (ProcFlags.justify > ju_off) );
+                    }
                     t_line = NULL;
                 }
                 // s_chars processing
@@ -2255,10 +2262,11 @@ void process_text( const char *text, font_number font )
             break;
         }
 
+        stop_fnd = is_stop_char( t_line->last->text[t_line->last->count - 1] );
         if( *p == ' ' ) {                                       // spaces to process
             pword = p;
             post_space = wgml_fonts[font].spc_width;
-            if( !ProcFlags.stop_xspc && is_stop_char( t_line->last->text[t_line->last->count - 1] )
+            if( !ProcFlags.stop_xspc && stop_fnd
                     && (cur_group_type != gt_xmp) ) {   // exclude XMP 
                 post_space += wgml_fonts[font].spc_width;
             }
@@ -2279,12 +2287,18 @@ void process_text( const char *text, font_number font )
                 && (input_cbs->fmflags & II_file)) { // insert spaces at actual end-of-line
             pword = p;
             post_space = wgml_fonts[font].spc_width;
-            if( !ProcFlags.stop_xspc && is_stop_char( t_line->last->text[t_line->last->count - 1] )
+            if( !ProcFlags.stop_xspc && stop_fnd
                     && (cur_group_type != gt_xmp) ) {   // exclude XMP 
                 post_space += wgml_fonts[font].spc_width;
             }
         }
         n_chars = NULL;
+        if( (ProcFlags.doc_sect != doc_sect_figlist) &&
+                (ProcFlags.doc_sect != doc_sect_toc) ) {
+            if( stop_fnd ) {    // only use on first stop except in FIGCAP, TOC or FIGLIST
+                ProcFlags.stop_xspc = false;
+            }
+        }
     }
 
     /***********************************************************************/

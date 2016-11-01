@@ -102,6 +102,7 @@ extern  void        out_ban_bot( void );
 extern  void        out_ban_top( void );
 extern  void        set_banners( void );
 extern  void        set_headx_banners( int hx_lvl );
+extern  void        set_pgnum_style( void );
 
 
 /* gdata.c                              */
@@ -114,16 +115,17 @@ extern  void    init_def_lay( void );
 
 
 /* gdocpage.c                           */
-extern  void        clear_doc_element( doc_element * element );
 extern  void        do_page_out( void );
 extern  void        full_page_out( void );
-extern  void        insert_col_bot( doc_element * a_element );
-extern  void        insert_col_fn( doc_element * a_element );
+extern  void        insert_col_bot( doc_el_group * a_group );
+extern  void        insert_col_fn( doc_el_group * a_group );
 extern  void        insert_col_main( doc_element * a_element );
-extern  void        insert_col_top( doc_element * a_element );
-extern  void        insert_page_width( doc_el_group * cur_doc_el_group );
+extern  void        insert_col_width( doc_el_group * a_group );
+extern  void        insert_page_width( doc_el_group * a_group );
 extern  void        last_page_out( void );
+extern  void        reset_bot_ban( void );
 extern  void        reset_t_page( void );
+extern  void        reset_top_ban( void );
 extern  void        set_skip_vars( su * pre_skip, su * pre_top_skip, su * post_skip, uint32_t spacing, font_number font );
 extern  bool        split_element( doc_element * a_element, uint32_t req_depth );
 extern  void        text_page_out( void );
@@ -191,7 +193,7 @@ extern  condcode    getnum( getnum_block * gn );
 
 /* ghx.c                                */
 
-extern  void    gen_heading( su * p_sk, su * top_sk, font_number n_font, font_number t_font, int8_t spc, bool ejected, char * hnumstr, char * p, int hx_lvl, char * id, hdsrc src );
+extern  void    gen_heading( void );
 
 /* gindexut.c                           */
 extern ix_e_blk *   fill_ix_e_blk( ix_e_blk * * anchor, ix_h_blk * ref, ereftyp ptyp, char * text, int text_len );
@@ -416,6 +418,7 @@ extern  void                add_doc_el_group_to_pool( doc_el_group * a_group );
 extern  doc_el_group    *   alloc_doc_el_group( group_type type );
 extern  void                add_tag_cb_to_pool( tag_cb * cb );
 extern  tag_cb          *   alloc_tag_cb( void );
+extern  void                clear_doc_element( doc_element * a_element );
 extern  void                free_pool_storage( void );
 extern  doc_element     *   init_doc_el( element_type type, uint32_t depth );
 
@@ -430,8 +433,8 @@ extern  bool        process_tag( gtentry * ge, mac_entry * me );
 
 /* gutil.c                              */
 extern  bool            att_val_to_su( su * spaceunit, bool pos );
-extern  int32_t         conv_hor_unit( su * spaceunit );
-extern  int32_t         conv_vert_unit( su * spaceunit, unsigned char spacing );
+extern  int32_t         conv_hor_unit( su * spaceunit, font_number font );
+extern  int32_t         conv_vert_unit( su * spaceunit, unsigned char spacing, font_number font );
 extern  bool            cw_val_to_su( char * * scaninput, su * spaceunit );
 extern  char        *   format_num( uint32_t n, char * r, size_t rsize, num_style ns );
 extern  void            free_ffh_list( ffh_entry * ffh_list );

@@ -762,6 +762,8 @@ int main( int argc, char * argv[] )
     clock_t     end_time;
 
 
+#undef TRMEM
+
     environment = &env;
     if( setjmp( env ) ) {               // if fatal error has occurred
         my_exit( 16 );
@@ -909,12 +911,7 @@ int main( int argc, char * argv[] )
 
     fini_msgs();                        // end of msg resources, no more msgs built from
                                         // resources possible after this point
-    mem_fini();
-
-/// test
-//    for( ; ; );
-
-/// test
+//    mem_fini();
 
     my_exit( err_count ? 8 : wng_count ? 4 : 0 );
     return( 0 );                    // never reached, but makes compiler happy

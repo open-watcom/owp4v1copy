@@ -688,7 +688,7 @@ bool lay_init_su( char * p, su * in_su )
 /*  return value is signed as space unit can be relative (+ -)             */
 /***************************************************************************/
 
-int32_t conv_hor_unit( su * s )
+int32_t conv_hor_unit( su * s, font_number font )
 {
     int32_t     ds;
 
@@ -700,7 +700,7 @@ int32_t conv_hor_unit( su * s )
         ds = s->su_whole;
         break;
     case SU_ems :
-        ds = s->su_whole * wgml_fonts[g_curr_font].em_base;
+        ds = s->su_whole * wgml_fonts[font].em_base;
         break;
     case SU_inch :
     case SU_cm :
@@ -716,7 +716,7 @@ int32_t conv_hor_unit( su * s )
     return( ds );
 }
 
-int32_t conv_vert_unit( su *s, unsigned char spc )
+int32_t conv_vert_unit( su *s, unsigned char spc, font_number font )
 {
     int32_t         ds;
     int32_t         fp;
@@ -731,7 +731,7 @@ int32_t conv_vert_unit( su *s, unsigned char spc )
     case SU_chars_lines :
     case SU_ems :
         // no decimals, use spacing, round negative values down
-        ds = space * s->su_whole * wgml_fonts[g_curr_font].line_height;
+        ds = space * s->su_whole * wgml_fonts[font].line_height;
         if( ds < 0 ) {
             ds++;
         }
@@ -858,10 +858,7 @@ char * format_num( uint32_t n, char * r, size_t rsize, num_style ns )
         p += pos1;
         break;
     default:
-        out_msg( "Logic error in gutil.c int_to_roman()\n" );
-        err_count++;
-        g_suicide();
-        break;
+        internal_err( __FILE__, __LINE__ );
     }
 
     if( ns & xd_style ) {
@@ -1014,8 +1011,8 @@ su * greater_su( su *su_a, su *su_b, unsigned char spacing )
     uint32_t    val_a;
     uint32_t    val_b;
 
-    val_a = conv_vert_unit( su_a, spacing );
-    val_b = conv_vert_unit( su_b, spacing );
+    val_a = conv_vert_unit( su_a, spacing, g_curr_font );
+    val_b = conv_vert_unit( su_b, spacing, g_curr_font );
 
     if( val_a > val_b ) {
         return( su_a );
@@ -1150,6 +1147,8 @@ void start_line_with_string( const char *text, font_number font, bool leave_1spa
 /*  initalize an ffh_entry instance and append insert to the ffh_list      */
 /*  Note: calling function must initialize ffh_list if it is NULL when the */
 /*        function returns by setting it to point to the return value      */
+/*  Note: function should be called immediately before use, so that the    */
+/*        style field is set from correct and current information          */
 /***************************************************************************/
 
 ffh_entry * init_ffh_entry( ffh_entry * ffh_list )
@@ -1167,11 +1166,41 @@ ffh_entry * init_ffh_entry( ffh_entry * ffh_list )
         curr = curr->next;
     }
     curr->next = NULL;
-    curr->flags = 0;
     curr->pageno = page + 1;
     curr->number = 0;
     curr->prefix = NULL;
     curr->text = NULL;
+    curr->flags = 0;
+
+    /****************************************************/
+    /* set the page style for the entry                 */
+    /* first restrict processing to those document      */
+    /* sections that can have a page number style       */
+    /* then use conditionals to set identify the entry  */
+    /* in pgnum_style to copy to curr->style            */
+    /****************************************************/
+
+    switch( ProcFlags.doc_sect ) {
+    case doc_sect_abstract :
+    case doc_sect_preface :
+    case doc_sect_body :
+    case doc_sect_appendix :
+    case doc_sect_backm :
+        if( ProcFlags.doc_sect == doc_sect_abstract ) {
+            curr->style = pgnum_style[pns_abstract];
+        } else if( ProcFlags.doc_sect == doc_sect_appendix ) {
+            curr->style = pgnum_style[pns_appendix];
+        } else if( ProcFlags.doc_sect == doc_sect_backm ) {
+            curr->style = pgnum_style[pns_backm];
+        } else if( ProcFlags.doc_sect == doc_sect_body ) {
+            curr->style = pgnum_style[pns_body];
+        } else if( ProcFlags.doc_sect == doc_sect_preface ) {
+            curr->style = pgnum_style[pns_preface];
+        }
+//        default :
+        /* retain the current value for all other sections */
+    }
+
     return( curr );
 }
 

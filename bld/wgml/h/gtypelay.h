@@ -46,23 +46,6 @@ typedef enum lay_att {
 #undef pick
  
 /***************************************************************************/
-/*  definitions for number style                                           */
-/***************************************************************************/
- 
-typedef enum num_style {
-    h_style     = 0x0001,               // hindu arabic
-    a_style     = 0x0002,               // lowercase alphabetic
-    b_style     = 0x0004,               // uppercase alphabetic
-    c_style     = 0x0080,               // uppercase roman
-    r_style     = 0x0010,               // lowercase roman
-    char1_style = a_style | b_style | c_style | h_style | r_style,
-    xd_style    = 0x0100,               // decimal point follows
-    xp_style    = 0x0600,               // in parenthesis
-    xpa_style   = 0x0200,               // only left parenthesis
-    xpb_style   = 0x0400                // only right parenthesis
-} num_style;
- 
-/***************************************************************************/
 /*  definitions for place for :BANNER and :FIG tag                         */
 /***************************************************************************/
  
@@ -137,13 +120,6 @@ typedef enum num_form {
     num_prop,
     num_new
 } num_form;
- 
-typedef enum page_pos {
-    pos_left,
-    pos_right,
-    pos_center,
-    pos_centre = pos_center
-} page_pos;
  
 typedef enum page_ej {
     ej_no,
@@ -853,6 +829,7 @@ typedef struct banner_lay_tag {
     su              depth;              // vertical space unit
     bf_place        place;              // special enum
     ban_docsect     docsect;            // special enum
+    content_enum    style;              // page number style defined by banner, if any
 //  bf_place        refplace;           // special enum no need to store
 //  ban_docsect     refdoc;             // special enum no need to store
 } banner_lay_tag;

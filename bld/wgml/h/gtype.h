@@ -614,6 +614,31 @@ typedef enum {
     SEV_FATAL_ERR
 } severity;
 
+
+/***************************************************************************/
+/* enum for generated document sections                                    */
+/***************************************************************************/
+
+typedef enum {
+    gs_none     = 0,    // document specification includes neither FIGLIST nor TOC
+    gs_figlist  = 1,    // document specification includes FIGLIST
+    gs_toc      = 2,    // document specification includes TOC
+} gen_sect;
+
+
+/***************************************************************************/
+/* enum for sections with page number styles and conversion struct         */
+/***************************************************************************/
+
+typedef enum {
+    pns_abstract = 0,
+    pns_preface  = 1,
+    pns_body     = 2,
+    pns_appendix = 3,
+    pns_backm    = 4,
+    pns_max      = 5    // for the pgnum_style array
+} pgnum_sect;
+
 /***************************************************************************/
 /* enum for document sections  sequence is important, don't change         */
 /***************************************************************************/
@@ -1055,9 +1080,10 @@ typedef enum {
 typedef struct doc_el_group {
     struct  doc_el_group    *   next;
             uint32_t            depth;
+            uint32_t            post_skip;  // figure or heading at top of column
             doc_element     *   first;
             doc_element     *   last;
-            group_type          owner;  // tag or control word using this instance
+            group_type          owner;      // tag or control word using this instance
 } doc_el_group;
 
 typedef struct ban_column {
@@ -1069,6 +1095,9 @@ typedef struct doc_column {
     struct  doc_column  *   next;
             uint32_t        fig_top;
             uint32_t        fn_top;
+            uint32_t        main_top;
+            uint32_t        post_skip;      // figure or heading at top of column
+            doc_element *   col_width;
             doc_element *   main;
             doc_element *   bot_fig;
             doc_element *   footnote;
@@ -1082,40 +1111,38 @@ struct banner_lay_tag;  // avoids include circularity with gtypelay.h
 /*  The "last" pointers are used to keep track of where to add each new    */
 /*  doc_element as it appears, both in doc_page and doc_next_page below    */
 /*  NOTE: g_page_top is currently used to hold the top of page_width       */
+/*  NOTE: page sections without "last" pointers do not need them because   */
+/*        they can only hold one item (heading or figure)                  */
 /***************************************************************************/
 
 typedef struct {
-            uint32_t            main_top;
+            uint32_t            cols_top;       // top of cols->col_width
             uint32_t            max_depth;
             uint32_t            cur_depth;
             uint32_t            col_count;      // number of columns
             uint32_t            max_width;      // width of current column (or page, if col_count == 1)
+            uint32_t            post_skip;      // figure or heading at top of page
             doc_element     *   last_col_main;
-            doc_element     *   last_col_bot;
             doc_element     *   last_col_fn;
     struct  banner_lay_tag  *   top_banner;
     struct  banner_lay_tag  *   bottom_banner;
             ban_column      *   top_ban;
             doc_element     *   page_width;
-            doc_column      *   main;
+            doc_column      *   cols;
             ban_column      *   bot_ban;
 } doc_page;
 
-/***************************************************************************/
-/*  The terminology here is a little strange: each item is used to keep    */
-/*  items for the corresponding section of doc_page, but both the use of   */
-/*  "col_" and the use of "top" for "page_width" is unclear                */
-/***************************************************************************/
-
 typedef struct {
-            doc_el_group    *   last_col_top;
+            doc_el_group    *   last_page_width;
+            doc_el_group    *   last_col_width;
             doc_element     *   last_col_main;
-            doc_element     *   last_col_bot;
-            doc_element     *   last_col_fn;
-            doc_el_group    *   col_top;
-            doc_element     *   col_main;
-            doc_element     *   col_bot;
-            doc_element     *   col_fn;
+            doc_el_group    *   last_col_bot;
+            doc_el_group    *   last_col_fn;
+            doc_el_group    *   page_width;     // page_width
+            doc_el_group    *   col_width;      // cols->col_width
+            doc_element     *   col_main;       // cols->main
+            doc_el_group    *   col_bot;        // cols->bot
+            doc_el_group    *   col_fn;         // cols->fn
 } doc_next_page;
 
 /***************************************************************************/
@@ -1161,21 +1188,65 @@ typedef struct ix_h_blk {               // index header with index term text
 /*  For use with gen_heading() in ghx.c                                    */
 /*  Note: "heading" here refers to something that appears in the TOC       */
 /*  Note: allows control of differences, such as which layout to use       */
-/*        APPENDIX has the correct attribute, but it is not clear if the   */
-/*        heading, as such, is ever used                                   */
 /***************************************************************************/
 
 typedef enum {
-    hs_none     =   0,  // none: TITLEP, 
-    hs_hn       =   1,  // Hn tag
-    hs_abstract =   2,  // ABSTRACT
-    hs_appendix =   3,  // APPENDIX -- TBD, docs show "Appendices" as TOC entry
-    hs_backm    =   4,  // BACKM
-    hs_body     =   5,  // BODY
-    hs_index    =   6,  // INDEX    -- TBD, not found in docs but may not be wanted
-    hs_preface  =   7,  // PREFACE
+    hds_none,       // none (default value)
+    hds_hn,         // Hn tag
+    hds_abstract,   // ABSTRACT
+    hds_appendix,   // APPENDIX (used for H1 tags in APPENDIX section)
+    hds_backm,      // BACKM
+    hds_body,       // BODY
+    hds_index,      // INDEX
+    hds_preface,    // PREFACE
 } hdsrc;
 
+/***************************************************************************/
+/*  Structure for storing information used to actually process and output  */
+/*  (if appropriate) headings, whether from an Hn tag or a secion tag.     */
+/***************************************************************************/
+
+typedef enum page_pos {         // needed here to avoid gtypelay.h circularity
+    pos_left,
+    pos_right,
+    pos_center,
+    pos_centre = pos_center
+} page_pos;
+ 
+typedef struct {
+    char        *   h_num;      // heading number
+    char        *   h_text;     // heading text
+    char        *   id;         // heading id
+    su          *   post_skip;  // post_skip
+    su          *   pre_skip;   // pre_skip
+    su          *   top_skip;   // pre_top_skip
+    int             hn_lvl;     // heading level
+    hdsrc           src;        // source
+    page_pos        line_pos;   // horizontal line positioning
+    font_number     num_font;   // heading number font
+    font_number     text_font;  // heading text font
+    int8_t          spacing;    // spacing
+    bool            ejected;    // true if page was ejected
+} hd_data;
+
+/***************************************************************************/
+/*  definitions for number style                                           */
+/*  moved from gtypelay.h to avoid inclusion circularity                   */
+/***************************************************************************/
+ 
+typedef enum num_style {
+    h_style     = 0x0001,               // hindu-arabic
+    a_style     = 0x0002,               // lowercase alphabetic
+    b_style     = 0x0004,               // uppercase alphabetic
+    c_style     = 0x0080,               // uppercase roman
+    r_style     = 0x0010,               // lowercase roman
+    char1_style = a_style | b_style | c_style | h_style | r_style,
+    xd_style    = 0x0100,               // decimal point follows
+    xp_style    = 0x0600,               // in parenthesis
+    xpa_style   = 0x0200,               // only left parenthesis
+    xpb_style   = 0x0400                // only right parenthesis
+} num_style;
+ 
 /***************************************************************************/
 /*  Structure for storing figure/heading information from :FIG, :FIGCAP,   */
 /*  :Fn, :Hn tags                                                          */
@@ -1191,11 +1262,12 @@ typedef enum {
 
 typedef struct ffh_entry {
     struct ffh_entry     *  next;
-    ffhflags                flags;
     uint32_t                pageno; // output page
-    uint32_t                number; // figure or footnote number or heading level
+    uint32_t                number; // figure/footnote number or heading level
     char                *   prefix; // figcap/heading generated text
-    char                *   text;   // text line or figcap text
+    char                *   text;   // figcap/heading text line
+    num_style               style;  // figcap/heading number format (based on section)
+    ffhflags                flags;
 } ffh_entry;
 
 /***************************************************************************/

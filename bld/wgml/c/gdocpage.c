@@ -26,19 +26,20 @@
 *
 * Description:  Page-oriented output
 *
-*               clear_doc_element       return all text_lines/text_chars to pools
 *               do_ban_column_out       output text from one or more ban_columns
 *               do_doc_column_out       output text from one or more doc_columns
 *               do_el_list_out          output text from an array of element lists
 *               do_page_out             actually output t_page
 *               full_page_out           output all full pages
-*               insert_col_bot          insert doc_element into t_page.main->bot_fig
-*               insert_col_fn           insert doc_element into t_page.main->footnote
-*               insert_col_main         insert doc_element into t_page.main->main
-*               insert_col_top          insert doc_element into top of t_page.main->main
-*               insert_page_width       insert doc_element into t_page.full_page
+*               insert_col_bot          insert doc_element into t_page.cols->bot_fig
+*               insert_col_fn           insert doc_element into t_page.cols->footnote
+*               insert_col_main         insert doc_element into t_page.cols->main
+*               insert_col_width        insert doc_element into t_page.col_width
+*               insert_page_width       insert doc_element into t_page.page_width
 *               last_page_out           force output of all remaining pages
+*               reset_bot_ban           reset t_page.bottom_banner and related externs
 *               reset_t_page            reset t_page and related externs
+*               reset_top_ban           reset t_page.top_banner and related externs
 *               set_skip_vars           merge the various skips into the externs
 *               set_v_positions         set vertical positions in an element list
 *               split_element           splits an element at given depth
@@ -52,6 +53,9 @@
 #include "wgml.h"
 #include "gvars.h"
 
+
+static  uint32_t    bottom_depth;   // used in setting banners
+static  uint32_t    top_depth;      // used in setting banners
 
 /***************************************************************************/
 /*  does the actual output to the device                                   */
@@ -121,7 +125,6 @@ static void do_el_list_out( doc_element * array, unsigned char count )
             }
             save = cur_el->next;
             cur_el->next = NULL;            // clear only current element
-            clear_doc_element( cur_el );
             add_doc_el_to_pool( cur_el ); 
             cur_el = save;
         }
@@ -142,15 +145,10 @@ static void set_v_positions( doc_element * list, uint32_t v_start )
     uint32_t        cur_spacing;
     uint32_t        old_v_start;
 
-    /* Other sections may need similar treatment */
-
-    if( v_start == t_page.main_top ) {  // start of main body
-        ProcFlags.page_started = false;
-    }
-
     g_cur_v_start = v_start;
 
     for( cur_el = list; cur_el != NULL; cur_el = cur_el->next ) {
+        use_spacing = false;
         if( !ProcFlags.page_started ) {
             if( cur_el->blank_lines > 0 ) {
                 cur_spacing = cur_el->blank_lines + cur_el->subs_skip;
@@ -158,9 +156,9 @@ static void set_v_positions( doc_element * list, uint32_t v_start )
                 cur_spacing = cur_el->top_skip;
             }
         } else {
-            cur_spacing = cur_el->subs_skip;
+            cur_spacing = cur_el->blank_lines + cur_el->subs_skip;
+            use_spacing = (cur_spacing == 0);       // see el_text below
         }
-        use_spacing = (cur_spacing == 0);       // see el_text below
 
         switch( cur_el->type ) {
         case el_binc :
@@ -226,6 +224,7 @@ static void set_v_positions( doc_element * list, uint32_t v_start )
                     cur_spacing += cur_line->spacing + cur_line->line_height;
                 } else {
                     cur_spacing += cur_line->line_height;
+                    use_spacing = true;         // use between lines
                 }
                 if( ProcFlags.page_started ) {              // not first element
                     if( cur_el->element.text.overprint ) {  // overprint
@@ -255,7 +254,8 @@ static void set_v_positions( doc_element * list, uint32_t v_start )
                         } else {
                             cur_spacing -= cur_line->line_height;
                         }
-                    } else if( t_page.top_banner == NULL ) {    // minimum height
+                    } else if( (t_page.top_banner == NULL) &&
+                                (t_page.page_width == NULL) ) {    // minimum height
                         if( cur_spacing < wgml_fonts[g_curr_font].line_height ) {
                             cur_spacing = wgml_fonts[g_curr_font].line_height;
                         }
@@ -307,7 +307,6 @@ static void set_v_positions( doc_element * list, uint32_t v_start )
         default :
             internal_err( __FILE__, __LINE__ );
         }
-        ProcFlags.page_started = true;
     }
 
     return;
@@ -350,16 +349,16 @@ static void do_ban_column_out( ban_column * a_column, uint32_t v_start )
 
 
 /***************************************************************************/
-/*  output the doc_column(s)                                          */
+/*  output the doc_column(s)                                               */
 /***************************************************************************/
  
 static void do_doc_column_out( doc_column * a_column, uint32_t v_start )
 {
     doc_column  *       cur_col;
     doc_element *   *   cur_el;
-    doc_element *       last;
+    doc_element *       last_el;
     int                 i;
-    unsigned char       col_count;
+    uint8_t             col_count;
 
     col_count = 0;
     for( cur_col = a_column; cur_col != NULL; cur_col = cur_col->next ) {
@@ -369,27 +368,46 @@ static void do_doc_column_out( doc_column * a_column, uint32_t v_start )
 
     cur_col = a_column;
     for( i = 0; i < col_count; i++ ) {
-        last = NULL;
+        last_el = NULL;
         cur_el[i] = NULL;
+        ProcFlags.page_started = false;
+        if( cur_col->col_width != NULL ) {
+            set_v_positions( cur_col->col_width, t_page.cols_top );
+            cur_el[i] = cur_col->col_width;
+            last_el = cur_col->col_width;
+            while( last_el->next != NULL ) {    // find last element
+                last_el = last_el->next;
+            }
+            cur_col->col_width = NULL;
+            if( (cur_col->post_skip > 0) && (cur_col->main != NULL) ) {
+                cur_col->main->top_skip = cur_col->post_skip;
+                cur_col->post_skip = 0;
+            }
+        }
         if( cur_col->main != NULL ) {
-            set_v_positions( cur_col->main, t_page.main_top );
+            set_v_positions( cur_col->main, t_page.cols->main_top );
             if( cur_el[i] == NULL ) {
                 cur_el[i] = cur_col->main;
-                last = cur_col->main;
+                last_el = cur_col->main;
             } else {
-                for( ; last->next != NULL; last = last->next );
-                last->next = cur_col->main;
+                last_el->next = cur_col->main;
+            }
+            while( last_el->next != NULL ) {    // find last element
+                last_el = last_el->next;
             }
             cur_col->main = NULL;
         }
+        ProcFlags.page_started = true;
         if( cur_col->bot_fig != NULL ) {
             set_v_positions( cur_col->bot_fig, cur_col->fig_top );
             if( cur_el[i] == NULL ) {
                 cur_el[i] = cur_col->bot_fig;
-                last = cur_col->bot_fig;
+                last_el = cur_col->bot_fig;
             } else {
-                for( ; last->next != NULL; last = last->next );
-                last->next = cur_col->bot_fig;
+                last_el->next = cur_col->bot_fig;
+            }
+            while( last_el->next != NULL ) {    // find last element
+                last_el = last_el->next;
             }
             cur_col->bot_fig = NULL;
         }
@@ -397,10 +415,8 @@ static void do_doc_column_out( doc_column * a_column, uint32_t v_start )
             set_v_positions( cur_col->footnote, cur_col->fn_top );
             if( cur_el[i] == NULL ) {
                 cur_el[i] = cur_col->footnote;
-                last = cur_col->footnote;
             } else {
-                for( ; last->next != NULL; last = last->next );
-                last->next = cur_col->footnote;
+                last_el->next = cur_col->footnote;
             }
             cur_col->footnote = NULL;
         }
@@ -416,91 +432,177 @@ static void do_doc_column_out( doc_column * a_column, uint32_t v_start )
 
 /***************************************************************************/
 /*  update t_page from the elements in n_page                              */
-/*  n_page.col_main may or may not be empty on return                      */
+/*  the various n_page fields may or may not be empty on return            */
+/*  NOTE: the order used is:                                               */
+/*    page_width                                                           */
+/*    then in each column:                                                 */
+/*      col_width                                                          */
+/*      col_bot                                                            */
+/*      footnote                                                           */
+/*      main                                                               */
+/*    and this appears to match what wgml 4.0 does                         */
 /***************************************************************************/
 
 static void update_t_page( void )
 {
-    bool            fig_placed;
-    bool            splittable;
-    doc_element *   cur_el;
-    uint32_t        depth;
+    bool                splittable;
+    doc_element     *   cur_el;
+    doc_el_group    *   cur_group;
+    uint32_t            depth;
 
     reset_t_page();
 
     /***********************************************************************/
-    /*  some section headings are placed in t_page.page_width when         */
-    /*  processed. One FIG in n_page.col_top goes into t_page.page_width   */
-    /*  if it is empty                                                     */
-    /*  t_page.page_width can only hold one doc_element                    */
-    /*  This is preliminary and may be changed as needed.                  */
+    /*  The first block in n_page.page_width is processed                  */
+    /*  Remaining blocks will be processed at the rate of one per page     */
+    /*  until none are left in n_page.page_width                           */
+    /*  Note: t_page.page_width will always be NULL at this point          */
     /***********************************************************************/
 
-    depth = t_page.cur_depth;
-    fig_placed = false;
-    if( t_page.page_width == NULL ) {       // skip if section full
-        if( n_page.col_top != NULL ) {   // at most one item can be placed
-            if( n_page.col_top->owner == gt_fig ) {
-                fig_placed = true;
+    if( n_page.page_width != NULL ) {           // at most one item can be placed
+        cur_group = n_page.page_width;
+        t_page.page_width = cur_group->first;
+        t_page.post_skip = cur_group->post_skip;
+        if( bin_driver->y_positive == 0 ) {
+            t_page.cols_top -= cur_group->depth;
+        } else {
+            t_page.cols_top += cur_group->depth;
+        }
+        t_page.max_depth -= cur_group->depth;
+        n_page.page_width = n_page.page_width->next;
+        cur_group->next = NULL;
+        cur_group->first = NULL;
+        add_doc_el_group_to_pool( cur_group );
+    }
+
+    /***********************************************************************/
+    /*  The first block in n_page.col_width is processed                   */
+    /*  Remaining blocks will be processed at the rate of one per page     */
+    /*  until none are left in n_page.col_width                            */
+    /*  Note: t_page.cols and so t_page.cols->col_width will always be     */
+    /*        NULL at this point                                           */
+    /***********************************************************************/
+
+    if( n_page.col_width != NULL ) {                // at most one item can be placed
+        t_page.cols = alloc_doc_col();
+        cur_group = n_page.col_width;
+        t_page.cols->col_width = cur_group->first;
+        t_page.cols->post_skip = cur_group->post_skip;
+        if( bin_driver->y_positive == 0 ) {
+            t_page.cols->main_top -= cur_group->depth;
+        } else {
+            t_page.cols->main_top += cur_group->depth;
+        }
+        t_page.max_depth -= cur_group->depth;
+        n_page.col_width = n_page.col_width->next;
+        cur_group->next = NULL;
+        cur_group->first = NULL;
+        add_doc_el_group_to_pool( cur_group );
+    }
+
+    /***********************************************************************/
+    /*  The first block in n_page.col_bot is processed                     */
+    /*  Remaining blocks will be processed at the rate of one per page     */
+    /*  until none are left in n_page.col_bot                              */
+    /*  Note: t_page.cols will only be NULL at this point if no top column */
+    /*        width FIG has been placed on the page                        */
+    /*        t_page.cols->bot_fig will always be NULL at this point       */
+    /***********************************************************************/
+
+    if( n_page.col_bot != NULL ) {              // at most one item can be placed
+        if( t_page.cols == NULL ) {         // allocate t_page.cols
+            t_page.cols = alloc_doc_col();
+        }
+        cur_group = n_page.col_bot;
+        t_page.cols->bot_fig = cur_group->first;
+        if( bin_driver->y_positive == 0) {
+            t_page.cols->fig_top += cur_group->depth;
+        } else {
+            t_page.cols->fig_top -= cur_group->depth; 
+        }
+        t_page.max_depth -= cur_group->depth;
+        n_page.col_bot = n_page.col_bot->next;
+        cur_group->next = NULL;
+        cur_group->first = NULL;
+        add_doc_el_group_to_pool( cur_group );
+    }
+
+    /***********************************************************************/
+    /*  As many blocks from n_page.col_fn as will fit are processed        */
+    /*  Until a block that fits is found, each block is dropped and a      */
+    /*    warning is issued. Once such a block is found, all blocks are    */
+    /*    processed until one that will not fit is found                   */
+    /*  That block and all remaining blocks will be processed on future    */
+    /*    until none are left in n_page.col_fn                             */
+    /*  Note: t_page.cols will only be NULL at this point if no top column */
+    /*        width or bottom FIG has been placed on the page              */
+    /***********************************************************************/
+
+    if( n_page.col_fn != NULL ) {
+        if( t_page.cols == NULL ) {         // allocate t_page.cols
+            t_page.cols = alloc_doc_col();
+        }
+        while( n_page.col_fn != NULL ) {
+            cur_group = n_page.col_fn;
+            if( t_page.cur_depth + cur_group->depth > t_page.max_depth ) {
+                while( (cur_group->first != NULL) &&
+                        (t_page.cur_depth + cur_group->first->depth <= t_page.max_depth) ) {
+                    cur_el = cur_group->first; 
+                    if( t_page.cols->footnote == NULL ) {
+                        t_page.cols->footnote = cur_el;
+                    } else {
+                        t_page.last_col_fn->next = cur_el;
+                    }
+                    t_page.last_col_fn = cur_el;
+                    cur_group->first = cur_group->first->next;
+                    cur_el->next = NULL;
+                    if( bin_driver->y_positive == 0) {
+                        t_page.cols->fig_top += cur_el->depth;
+                        t_page.cols->fn_top += cur_el->depth; 
+                    } else {
+                        t_page.cols->fig_top -= cur_el->depth; 
+                        t_page.cols->fn_top -= cur_el->depth; 
+                    }
+                    t_page.max_depth -= cur_el->depth;
+                    cur_group->depth -= cur_el->depth;
+                }
+            } else {
+                cur_el = cur_group->first;          // here, cur_el is the last element
+                while( cur_el->next != NULL ) {
+                    cur_el = cur_el->next;
+                }
+                if( t_page.cols->footnote == NULL ) {
+                    t_page.cols->footnote = cur_group->first;
+                } else {
+                    t_page.last_col_fn->next = cur_group->first;
+                }
+                t_page.last_col_fn = cur_el;
+                if( bin_driver->y_positive == 0) {
+                    t_page.cols->fig_top += cur_group->depth;
+                    t_page.cols->fn_top += cur_group->depth;
+                } else {
+                    t_page.cols->fig_top -= cur_group->depth; 
+                    t_page.cols->fn_top -= cur_group->depth; 
+                }
+                t_page.max_depth -= cur_group->depth;
             }
-            t_page.page_width = n_page.col_top->first;
-            n_page.col_top = n_page.col_top->next;
+            n_page.col_fn = n_page.col_fn->next;
+            cur_group->next = NULL;
+            cur_group->first = NULL;
+            add_doc_el_group_to_pool( cur_group );
         }
     }
 
     /***********************************************************************/
-    /*  The order here is not clear.                                       */
-    /*  That shown is based on filling the t_page.main->bot_fig and the    */
-    /*  t_page.main->footnote parts before filling t_page.main->main, thus */
-    /*  having a firm depth for t_page.main->main to start with.           */
-    /*  However, if there is no top_fig, then the first doc_element in     */
-    /*  t_page.main->main must set its pre_skip to 0, and then what        */
-    /*  happens if there is no room for anything to be placed there?       */
-    /*  So this may need to be rethought when FN and FIG are implemented.  */
+    /*  As many blocks from n_page.col_main as will fit are processed      */
+    /*  A page is not full unless there is at least one element left in    */
+    /*    at least one of the sections of n_page                           */
+    /*  Note: a page which is not full will only be emitted if it is the   */
+    /*    last page in a section (or the document)                         */
+    /*  Note: t_page.cols will only be NULL at this point if neither       */
+    /*          footnotes nor a buttom FIG has been placed on the page     */
     /***********************************************************************/
 
-    /*  one FIG in n_page.col_bot goes into t_page.main->bot_fig            */
-    /*  entrained footnotes need to be moved to n_page.col_fn               */
-    /*  this is preliminary and may be changed as needed                    */
-    /*  Note: t_page.main may be NULL at this point, initialize if needed   */
-
-    if( n_page.col_bot != NULL ) {   // at most one item can be placed
-        switch( n_page.col_bot->type ) {
-        // add code for FIG & entrained footnotes when needed
-        case el_text :  // all elements should be FIGs or footnotes
-        default :
-            internal_err( __FILE__, __LINE__ );
-        }
-    }
-
-    /*  all footnotes in n_page.col_fn go into t_page.main->footnote        */
-    /*  this is preliminary and may be changed as needed                    */
-    /*  Note: t_page.main may be NULL at this point, initialize if needed   */
-
-    if( n_page.col_fn != NULL ) {   // at most one item can be placed
-        switch( n_page.col_fn->type ) {
-        // add code for footnotes when needed
-        case el_text :  // all elements should be footnotes
-        default :
-            internal_err( __FILE__, __LINE__ );
-        }
-    }
-
-    /*  t_page.main->main is used for the bulk of the elements              */
-    /*  it is filled last because the other deferred items are believed to  */
-    /*  have priority; this may change as the situation is clarified.       */
-    /*  unless the section is ended, there must be at least on element left */
-    /*  in n_page.col_main for the page to be full                          */
-    /*  Note: when FIG/FN processing is implemented, t_page.main may not be */
-    /*  NULL at this point                                                  */
-
-    /****************************************************************/
-    /*  test version until things get a bit more clear              */
-    /*  the theory here is that only one processing step should be  */
-    /*      here, and then the function calling update_t_page()     */
-    /*      should be relied on to output the page                  */
-    /****************************************************************/
-    
     while( n_page.col_main != NULL ) {
         cur_el = n_page.col_main;
         n_page.col_main = n_page.col_main->next;
@@ -534,13 +636,13 @@ static void update_t_page( void )
 
         if( !ProcFlags.page_started ) {
             if( cur_el->blank_lines > 0 ) {
-                depth += cur_el->blank_lines + cur_el->subs_skip;
+                depth = cur_el->blank_lines + cur_el->subs_skip;
             } else {
-                depth += cur_el->top_skip;
+                depth = cur_el->top_skip;
             }
             ProcFlags.page_started = true;
         } else {
-            depth += cur_el->blank_lines + cur_el->subs_skip;
+            depth = cur_el->blank_lines + cur_el->subs_skip;
         }
 
         if( depth >= t_page.max_depth ) {    // skip fills page
@@ -565,12 +667,12 @@ static void update_t_page( void )
                     }
                     cur_el->next = NULL;
                 }
-                if( t_page.main == NULL ) {
-                    t_page.main = alloc_doc_col();
+                if( t_page.cols == NULL ) {
+                    t_page.cols = alloc_doc_col();
                 }
-                if( t_page.main->main == NULL ) {
-                    t_page.main->main = cur_el;
-                    t_page.last_col_main = t_page.main->main;
+                if( t_page.cols->main == NULL ) {
+                    t_page.cols->main = cur_el;
+                    t_page.last_col_main = t_page.cols->main;
                 } else {
                     t_page.last_col_main->next = cur_el;
                     t_page.last_col_main = t_page.last_col_main->next;
@@ -578,7 +680,7 @@ static void update_t_page( void )
                 t_page.last_col_main->next = NULL;
                 t_page.cur_depth += cur_el->depth;
             } else {
-                if( (t_page.main == NULL) || (t_page.main->main == NULL) ) { // adapt when FIG/FN done
+                if( (t_page.cols == NULL) || (t_page.cols->main == NULL) ) { // adapt when FIG/FN done
                     xx_err( err_text_line_too_deep );
                     g_suicide();    // no line will fit on any page
                 }
@@ -589,12 +691,12 @@ static void update_t_page( void )
                 cur_el->next = NULL;
             }
         } else {                                    // cur_el fits as-is
-            if( t_page.main == NULL ) {
-                t_page.main = alloc_doc_col();
+            if( t_page.cols == NULL ) {
+                t_page.cols = alloc_doc_col();
             }
-            if( t_page.main->main == NULL ) {
-                t_page.main->main = cur_el;
-                t_page.last_col_main = t_page.main->main;
+            if( t_page.cols->main == NULL ) {
+                t_page.cols->main = cur_el;
+                t_page.last_col_main = t_page.cols->main;
             } else {
                 t_page.last_col_main->next = cur_el;
                 t_page.last_col_main = t_page.last_col_main->next;
@@ -611,44 +713,6 @@ static void update_t_page( void )
     return;
 }
 
-
-/***************************************************************************/
-/*  return all text_chars/text_lines in element to appropriate pool        */
-/*  only does el_text currently may need expansion in future               */
-/***************************************************************************/
-
-void clear_doc_element( doc_element * element )
-{
-    doc_element *   cur_el;
-    text_line   *   cur_line;
-    text_line   *   save;
-
-    for( cur_el = element; cur_el != NULL; cur_el = cur_el->next ) {
-        switch( cur_el->type ) {
-        case el_binc :
-        case el_dbox :
-        case el_graph :
-        case el_hline :
-        case el_vline :
-            break;      // should be nothing to do
-        case el_text :
-            cur_line = cur_el->element.text.first;
-            while( cur_line != NULL ) {
-                add_text_chars_to_pool( cur_line );
-                save = cur_line->next;
-                add_text_line_to_pool( cur_line );
-                cur_line = save;
-            }
-            break;
-        default :
-            internal_err( __FILE__, __LINE__ );
-        }
-    }
-
-    return;
-}
-
-
 /***************************************************************************/
 /*  actually output t_page to the device                                   */
 /***************************************************************************/
@@ -663,9 +727,9 @@ void do_page_out( void )
 /// items in document_top_banner() were moved here when that function was
 /// merged with this one; it is not known if they are actually needed in this
 /// context
-// these were in document_top_banner()
-    uint32_t    hs;
-    uint32_t    hl;
+// these were in document_top_banner() and were renamed when hs was needed elsewhere
+    uint32_t    sav_hs;
+    uint32_t    sav_hl;
 
     /* Set up for the new page */
 
@@ -679,8 +743,8 @@ void do_page_out( void )
 
 // this was document_top_banner()
     if( ProcFlags.keep_left_margin ) {
-        hs = g_cur_h_start;
-        hl = g_cur_left;
+        sav_hs = g_cur_h_start;
+        sav_hl = g_cur_left;
     }
     g_cur_h_start = g_page_left_org;
     g_cur_left    = g_page_left_org;
@@ -699,17 +763,17 @@ void do_page_out( void )
         /*       box line                                                   */
         /********************************************************************/
 
-        if( (t_page.page_width == NULL) && (t_page.main != NULL)
-                && (t_page.main->main != NULL) ) {
+        if( (t_page.page_width == NULL) && (t_page.cols != NULL)
+                && (t_page.cols->main != NULL) ) {
             work_el = NULL;
-            if( (t_page.main->main->type == el_hline) &&
-                    (t_page.main->main->element.hline.ban_adjust) ) {
-                work_el = t_page.main->main;
-            } else if( (t_page.main->main->type == el_text) &&
-                    (t_page.main->main->next != NULL) &&
-                    (t_page.main->main->next->type == el_hline) &&
-                    (t_page.main->main->next->element.hline.ban_adjust) ) {
-                work_el = t_page.main->main->next;
+            if( (t_page.cols->main->type == el_hline) &&
+                    (t_page.cols->main->element.hline.ban_adjust) ) {
+                work_el = t_page.cols->main;
+            } else if( (t_page.cols->main->type == el_text) &&
+                    (t_page.cols->main->next != NULL) &&
+                    (t_page.cols->main->next->type == el_hline) &&
+                    (t_page.cols->main->next->element.hline.ban_adjust) ) {
+                work_el = t_page.cols->main->next;
             }
             if( work_el != NULL ) {                     // top line is hline
                 curr_height = wgml_fonts[g_curr_font].line_height;
@@ -731,7 +795,7 @@ void do_page_out( void )
                         work_el->subs_skip += (prev_height - curr_height) / 2;
                     }
                 }
-                work_el = t_page.main->main;
+                work_el = t_page.cols->main;
                 while( (work_el != NULL) && (work_el->type != el_vline) ) {
                     work_el = work_el->next;
                 }
@@ -749,8 +813,8 @@ void do_page_out( void )
     }
 
     if( ProcFlags.keep_left_margin ) {
-        g_cur_h_start = hs;
-        g_cur_left = hl;
+        g_cur_h_start = sav_hs;
+        g_cur_left = sav_hl;
     }
 // end of former document_top_banner()
 
@@ -781,12 +845,18 @@ void do_page_out( void )
         set_v_positions( t_page.page_width, g_page_top );
         do_el_list_out( t_page.page_width, 1 );
         t_page.page_width = NULL;
+        if( (t_page.post_skip > 0) && (t_page.cols != NULL) && 
+                (t_page.cols->main != NULL) ) {
+            t_page.cols->main->top_skip = t_page.post_skip;
+            t_page.post_skip = 0;
+        }
     }
 
-    if( t_page.main != NULL ) {
-        do_doc_column_out( t_page.main, t_page.main_top );
-        add_doc_col_to_pool( t_page.main );
-        t_page.main = NULL;
+    if( t_page.cols != NULL ) {
+        do_doc_column_out( t_page.cols, t_page.cols_top );
+        add_doc_col_to_pool( t_page.cols );
+        t_page.cols = NULL;
+        ProcFlags.page_started = true;
     }
 
     if( t_page.bot_ban != NULL ) {
@@ -795,7 +865,17 @@ void do_page_out( void )
         t_page.bot_ban = NULL;
     }
 
-    ProcFlags.page_started = false; // reset after output done
+    /************************************************************/
+    /* If this page used banners associated with an Hn heading, */
+    /* reset the banners for the next page                      */
+    /************************************************************/
+
+    if( ProcFlags.heading_banner ) {
+        set_section_banners( ProcFlags.doc_sect );
+        ProcFlags.heading_banner = false;
+    }
+
+    ProcFlags.page_started = false;             // reset after output done
     return;
 }
 
@@ -809,8 +889,9 @@ void do_page_out( void )
 
 void full_page_out( void )
 {
-    while( (n_page.col_top != NULL) || (n_page.col_main != NULL)
-            || (n_page.col_bot != NULL) || (n_page.col_fn != NULL) ) {
+    while( (n_page.page_width != NULL) || (n_page.col_width != NULL)
+            || (n_page.col_main != NULL) || (n_page.col_bot != NULL)
+            || (n_page.col_fn != NULL) ) {
         do_page_out();
         update_t_page();
     }
@@ -819,130 +900,124 @@ void full_page_out( void )
 
 
 /****************************************************************************/
-/*  insert a doc_element into t_page.main->bot_fig                          */
-/*  may need to be updated as the use of this sections is clarified         */
+/*  insert a doc_element_group into t_page.cols->bot_fig                    */
 /****************************************************************************/
 
-void insert_col_bot( doc_element * a_element )
+void insert_col_bot( doc_el_group * a_group )
 {
-    bool        on_t_page;
     uint32_t    depth;
 
-    /*  the model used, may require update when FIG implemented         */
-    /*  if space exists, place a_element in t_page.main->bot_fig        */
-    /*      no space exists unless t_main-bot_fig is empty              */
-    /*      no space exists if a_element is too large to fit            */
-    /*  if no space exists, append a_element to n_page.last_col_bot     */
-    /*  note: "entrainment" of BOTTOM FIG by TOP FIG is ignored         */
-
-    if( !ProcFlags.page_started ) {
-        depth = a_element->top_skip;
-    } else {
-        depth = a_element->subs_skip;
-    }
-    depth += (t_page.cur_depth + a_element->depth);
-
     /****************************************************************/
-    /*  Does the first line minimum apply here? If so, it needs to  */
-    /*  be implemented. Note that cur_el->depth does not reflect it */
-    /*  because there is no way to tell if it will apply when the   */
-    /*  is computed.                                                */
+    /*  if t_main-bot_fig is empty and if it fits, place            */
+    /*  cur_doc_el_group in t_page.cols->bot_fig                    */
+    /*  otherwise, append cur_doc_el_groupto n_page.last_col_bot    */
+    /*  NOTE: FIG/eFIG blocks must fit on an empty page or, rather, */
+    /*        must be split so as to fit before they are submitted  */
     /****************************************************************/
 
-    on_t_page = false;
-    if( t_page.main == NULL ) {         // t_page.main->bot_fig can't be full
-        if( depth <= t_page.max_depth ) {  // a_element will fit
-            on_t_page = true;
+    depth = a_group->depth;
+
+    if( ((t_page.cols == NULL) || (t_page.cols->bot_fig == NULL)) &&
+        ((t_page.cur_depth + depth) <= t_page.max_depth) ) {    // the figure will fit
+
+        if( t_page.cols == NULL ) {
+            t_page.cols = alloc_doc_col();
         }
+        t_page.cols->bot_fig = a_group->first;
+        a_group->first = NULL;
+        add_doc_el_group_to_pool( a_group );
+        if( bin_driver->y_positive == 0) {
+            t_page.cols->fig_top += depth; 
+        } else {
+            t_page.cols->fig_top -= depth; 
+        }
+        t_page.max_depth -= depth;
     } else {
-        if( t_page.main->bot_fig == NULL ) { // t_page.main->bot_fig is empty
-            if( depth <= t_page.max_depth ) {  // a_element will fit
-                on_t_page = true;
+        if( n_page.col_bot == NULL ) {
+            n_page.col_bot = a_group;
+        } else {
+            n_page.last_col_bot->next = a_group;
+        }
+        n_page.last_col_bot = a_group;
+    }
+
+    return;
+}
+
+
+/***************************************************************************/
+/*  insert a doc_element into t_page.cols->footnote                        */
+/***************************************************************************/
+
+void insert_col_fn( doc_el_group * a_group )
+{
+    doc_element *   cur_el;
+    uint32_t        depth;
+    
+    /****************************************************************/
+    /*  if it fits, put the footnote on the current page            */
+    /*  if it does not fit, and it is the firt, split it            */
+    /*  otherwise, put the footnote on n_page.last_col_fn           */
+    /****************************************************************/
+
+    depth = a_group->depth;
+    if( (t_page.cur_depth + depth) > t_page.max_depth ) {
+        if( t_page.cols == NULL ) {
+            t_page.cols = alloc_doc_col();
+        }
+        while( (a_group->first != NULL) &&
+                (t_page.cur_depth + a_group->first->depth <= (t_page.max_depth)) ) {
+            cur_el = a_group->first; 
+            if( t_page.cols->footnote == NULL ) {
+                t_page.cols->footnote = cur_el;
+            } else {
+                t_page.last_col_fn->next = cur_el;
             }
+            t_page.last_col_fn = cur_el;
+            a_group->first = a_group->first->next;
+            cur_el->next = NULL;
+            if( bin_driver->y_positive == 0) {
+                t_page.cols->fig_top += cur_el->depth;
+                t_page.cols->fn_top += cur_el->depth; 
+            } else {
+                t_page.cols->fig_top -= cur_el->depth; 
+                t_page.cols->fn_top -= cur_el->depth; 
+            }
+            t_page.max_depth -= cur_el->depth;
+            a_group->depth -= cur_el->depth;
         }
-    }
-
-    if( on_t_page ) {
-        if( t_page.main == NULL ) {
-            t_page.main = alloc_doc_col();
+        if( a_group->first != NULL ) {          // more footnote text remains
+            if( n_page.col_fn == NULL ) {
+                n_page.col_fn = a_group;
+            } else {
+                n_page.last_col_fn->next = a_group;
+            }
+            n_page.last_col_fn = a_group;
         }
-        t_page.main->bot_fig = a_element;
-        t_page.last_col_bot = t_page.main->bot_fig;
+    } else {
+        if( t_page.cols == NULL ) {
+            t_page.cols = alloc_doc_col();
+        }
+        cur_el = a_group->first;            // here, cur_el is the last element
+        while( cur_el->next != NULL ) {
+            cur_el = cur_el->next;
+        }
+        if( t_page.cols->footnote == NULL ) {
+            t_page.cols->footnote = a_group->first;
+        } else {
+            t_page.last_col_fn->next = a_group->first;
+        }
+        t_page.last_col_fn = cur_el;
+        a_group->first = NULL;
+        add_doc_el_group_to_pool( a_group );
         if( bin_driver->y_positive == 0) {
-            t_page.main->fig_top += t_page.cur_depth; 
+            t_page.cols->fig_top += depth;
+            t_page.cols->fn_top += depth;
         } else {
-            t_page.main->fig_top -= t_page.cur_depth; 
+            t_page.cols->fig_top -= depth;
+            t_page.cols->fn_top -= depth;
         }
-    } else {
-        if( n_page.last_col_bot == NULL ) {
-            n_page.col_bot = a_element;
-            n_page.last_col_bot = n_page.col_bot;
-        } else {
-            n_page.last_col_bot->next = a_element;
-            n_page.last_col_bot = n_page.last_col_bot->next;
-        }
-    }
-
-    return;
-}
-
-/***************************************************************************/
-/*  insert a doc_element into t_page.main->footnote                        */
-/*  may need to be updated as the situation is clarified                   */
-/***************************************************************************/
-
-void insert_col_fn( doc_element * a_element )
-{
-    bool        on_t_page;
-    uint32_t    depth;
-
-    /*  the model used, may require update when FN implemented          */
-    /*  if space exists, place a_element in t_page.main->footnote       */
-    /*      no space exists if a_element is too large to fit            */
-    /*  if no space exists, append a_element to n_page.last_col_fn      */
-    /*  note: "entrainment" of FN by FIG is ignored                     */
-
-    if( !ProcFlags.page_started ) { // first element ignores pre_skip TBD
-        depth = a_element->top_skip;
-    } else {
-        depth = a_element->subs_skip;
-    }
-    depth += (t_page.cur_depth + a_element->depth);
-
-    /****************************************************************/
-    /*  Does the first line minimum apply here? If so, it needs to  */
-    /*  be implemented. Note that cur_el->depth does not reflect it */
-    /*  because there is no way to tell if it will apply when the   */
-    /*  is computed.                                                */
-    /****************************************************************/
-
-    if( depth <= t_page.max_depth ) {
-        on_t_page = true;
-    } else {
-        on_t_page = false;
-    }
-
-    if( on_t_page ) {
-        if( t_page.main == NULL ) {
-            t_page.main = alloc_doc_col();
-        }
-        t_page.main->footnote = a_element;
-        t_page.last_col_fn = t_page.main->footnote;
-        if( bin_driver->y_positive == 0) {
-            t_page.main->fig_top += t_page.cur_depth;
-            t_page.main->fn_top += t_page.cur_depth;
-        } else {
-            t_page.main->fig_top -= t_page.cur_depth;
-            t_page.main->fn_top -= t_page.cur_depth;
-        }
-    } else {
-        if( n_page.last_col_fn == NULL ) {
-            n_page.col_fn = a_element;
-            n_page.last_col_fn = n_page.col_fn;
-        } else {
-            n_page.last_col_fn->next = a_element;
-            n_page.last_col_fn = n_page.last_col_fn->next;
-        }
+        t_page.max_depth -= depth;
     }
 
     return;
@@ -950,9 +1025,9 @@ void insert_col_fn( doc_element * a_element )
 
 
 /***************************************************************************/
-/*  insert a doc_element into t_page.main->main                            */
+/*  insert a doc_element into t_page.cols->main                            */
 /*  may need update to work with multi-column pages: this would be a good  */
-/*  place to add the next column to t_page.main                            */
+/*  place to add the next column to t_page.cols                            */
 /***************************************************************************/
 
 void insert_col_main( doc_element * a_element )
@@ -973,12 +1048,16 @@ void insert_col_main( doc_element * a_element )
             t_doc_el_group->first = a_element;
             t_doc_el_group->last = t_doc_el_group->first;
             t_doc_el_group->depth = (a_element->blank_lines + a_element->subs_skip +
-                                    a_element->depth);
+                                     a_element->depth);
         } else {
             t_doc_el_group->last->next = a_element;
             t_doc_el_group->last = t_doc_el_group->last->next;
             t_doc_el_group->depth += (a_element->blank_lines + a_element->subs_skip +
-                                     a_element->depth);
+                                      a_element->depth);
+            if( a_element->type == el_text ) {  // subsequent text elements only
+                a_element->depth += g_spacing;
+                t_doc_el_group->depth += g_spacing;
+            }
         }
         return;
     }
@@ -1047,12 +1126,12 @@ void insert_col_main( doc_element * a_element )
     if( !page_full ) {
 
         /****************************************************************/
-        /*  At least part of the element should fit on the page.        */
-        /*  Does the first line minimum apply here? If so, it needs to  */
+        /*  at least part of the element should fit on the page         */
+        /*  does the first line minimum apply here? If so, it needs to  */
         /*  be implemented. Note that cur_el->depth does not reflect it */
         /*  because there is no way to tell if it will apply when the   */
         /*  is computed.                                                */
-        /*  Overprint lines pose a problem:                             */
+        /*  overprint lines pose a problem:                             */
         /*    anywhere but at the top of the page, they do not count as */
         /*      part of the page depth                                  */
         /*    if the page is full (t_page.cur_depth == t_page.max_depth)*/
@@ -1069,12 +1148,12 @@ void insert_col_main( doc_element * a_element )
             splittable = split_element( a_element, t_page.max_depth -
                                         t_page.cur_depth - cur_skip );
             if( a_element->next != NULL ) { // a_element was split
-                if( t_page.main == NULL ) {
-                    t_page.main = alloc_doc_col();
+                if( t_page.cols == NULL ) {
+                    t_page.cols = alloc_doc_col();
                 }
-                if( t_page.main->main == NULL ) {
-                    t_page.main->main = a_element;
-                    t_page.last_col_main = t_page.main->main;
+                if( t_page.cols->main == NULL ) {
+                    t_page.cols->main = a_element;
+                    t_page.last_col_main = t_page.cols->main;
                 } else {
                     t_page.last_col_main->next = a_element;
                     t_page.last_col_main = t_page.last_col_main->next;
@@ -1084,31 +1163,31 @@ void insert_col_main( doc_element * a_element )
                 t_page.last_col_main->next = NULL;
                 page_full = true;
             } else {                        // a_element could not be split
-                if( t_page.main == NULL ) { // adapt when FIG/FN done
+                if( t_page.cols == NULL ) { // adapt when FIG/FN done
                     xx_err( err_text_line_too_deep );
                     g_suicide();    // no line will fit on any page
                 }
-                if( t_page.main->main == NULL ) { // adapt when FIG/FN done
+                if( t_page.cols->main == NULL ) { // adapt when FIG/FN done
                     xx_err( err_text_line_too_deep );
                     g_suicide();    // no line will fit on any page
                 }
                 page_full = true;
             }
         } else {    // the entire element fits on the current page
-            if( t_page.main == NULL ) {
-                    t_page.main = alloc_doc_col();
+            if( t_page.cols == NULL ) {
+                    t_page.cols = alloc_doc_col();
                 }
-            if( t_page.main->main == NULL ) {
-                t_page.main->main = a_element;
-                t_page.last_col_main = t_page.main->main;
+            if( t_page.cols->main == NULL ) {
+                t_page.cols->main = a_element;
+                t_page.last_col_main = t_page.cols->main;
             } else {
                 t_page.last_col_main->next = a_element;
                 t_page.last_col_main = t_page.last_col_main->next;
             }
             t_page.cur_depth += depth;
         }
+        ProcFlags.page_started = true;
     }
-    ProcFlags.page_started = true;
 
     if( page_full ) {
 
@@ -1117,7 +1196,7 @@ void insert_col_main( doc_element * a_element )
         /*  t_page must be output                                       */
         /****************************************************************/
 
-        if( n_page.last_col_main == NULL ) {
+        if( n_page.col_main == NULL ) {
             n_page.col_main = a_element;
             n_page.last_col_main = n_page.col_main;
         } else {
@@ -1132,39 +1211,107 @@ void insert_col_main( doc_element * a_element )
 
 
 /***************************************************************************/
+/*  insert a doc_element into t_page.cols->col_width                       */
+/***************************************************************************/
+
+void insert_col_width( doc_el_group * a_group )
+{
+    uint32_t    depth;
+
+    /****************************************************************/
+    /*  if t_page.cols->col_width is empty and if it fits, place    */
+    /*    cur_doc_el_group in t_page.cols->col_width                */
+    /*  otherwise, append cur_doc_el_groupto n_page.last_col_width  */
+    /*  only FIG/eFIG blocks with place set to top and width no     */
+    /*    greater than "column" come here                           */
+    /*  NOTE: FIG/eFIG blocks must fit on an empty page or, rather, */
+    /*        must be split so as to fit before they are submitted  */
+    /****************************************************************/
+
+    if( t_page.cols == NULL ) {         // allocate t_page.cols
+        t_page.cols = alloc_doc_col();
+    }
+    depth = a_group->depth;
+    if( depth <= t_page.max_depth ) {
+        if( t_page.cols->col_width == NULL ) {          // must be empty
+            t_page.cols->col_width = a_group->first;
+            t_page.cols->post_skip = a_group->post_skip;
+            a_group->first = NULL;
+            t_page.max_depth -= depth;
+            ProcFlags.page_started = true;
+            if( bin_driver->y_positive == 0 ) {
+                t_page.cols->main_top -= depth;
+            } else {
+                t_page.cols->main_top += depth;
+            }
+            a_group->first = NULL;
+            add_doc_el_group_to_pool( a_group );
+        } else {        // save on n_page as a block, not as doc_elements
+            if( n_page.col_width == NULL ) {
+                n_page.col_width = a_group;
+            } else {
+                n_page.last_col_width->next = a_group;
+            }
+            n_page.last_col_width = a_group;
+        }        
+    } else {
+        if( n_page.col_width == NULL ) {
+            n_page.col_width = a_group;
+        } else {
+            n_page.last_col_width->next = a_group;
+        }
+        n_page.last_col_width = a_group;
+    }
+
+    return;
+}
+
+
+/***************************************************************************/
 /*  insert a doc_element into t_page.page_width                            */
 /***************************************************************************/
 
-void insert_page_width( doc_el_group * cur_doc_el_group )
+void insert_page_width( doc_el_group * a_group )
 {
+    uint32_t    depth;
 
     /****************************************************************/
-    /*  Only headings with page_eject set to any value except ej_no */
-    /*  and FIG/eFIG blocks with place set to top come here         */
-    /*  Both must be sized before submission because both have      */
-    /*  special requirements                                        */
+    /*  only headings with page_eject set to any value except ej_no */
+    /*  and FIG/eFIG blocks with place set to top and width greater */
+    /*  than "column" come here                                     */
+    /*  headings must be sized before submission as they cannot be  */
+    /*  split or delayed                                            */
+    /*  NOTE: FIG/eFIG blocks must fit on an empty page or, rather, */
+    /*        must be split so as to fit before they are submitted  */
     /****************************************************************/
 
-    if( (cur_doc_el_group->depth + t_page.cur_depth) <= t_page.max_depth ) {
-        if( t_page.page_width == NULL ) {   // must be empty
-            t_page.page_width = cur_doc_el_group->first;
-            cur_doc_el_group->first = NULL;
-            t_page.cur_depth += cur_doc_el_group->depth;
+    depth = a_group->depth;
+    if( depth <= t_page.max_depth ) {
+        if( t_page.page_width == NULL ) {       // must be empty
+            t_page.page_width = a_group->first;
+            t_page.post_skip = a_group->post_skip;
+            a_group->first = NULL;
+            t_page.max_depth -= depth;
+            ProcFlags.page_started = true;
+            if(t_page.cols == NULL ) {
+                t_page.cols = alloc_doc_col();
+            }
             if( bin_driver->y_positive == 0 ) {
-                t_page.main_top -= cur_doc_el_group->depth;
+                t_page.cols_top -= depth;
+                t_page.cols->main_top -= depth;
             } else {
-                t_page.main_top += cur_doc_el_group->depth;
+                t_page.cols_top += depth;
+                t_page.cols->main_top += depth;
             }
-            add_doc_el_group_to_pool( cur_doc_el_group );
-            cur_doc_el_group = NULL;
+            a_group->first = NULL;
+            add_doc_el_group_to_pool( a_group );
         } else {        // save on n_page as a block, not as doc_elements
-            if( n_page.col_top == NULL ) {
-                n_page.col_top = cur_doc_el_group;
-                n_page.last_col_top = n_page.col_top;
+            if( n_page.page_width == NULL ) {
+                n_page.page_width = a_group;
             } else {
-                n_page.last_col_top->next = cur_doc_el_group;
-                n_page.last_col_top = n_page.last_col_top->next;
+                n_page.last_page_width->next = a_group;
             }
+            n_page.last_page_width = a_group;
         }        
     } else {
         internal_err( __FILE__, __LINE__ );
@@ -1187,7 +1334,7 @@ void last_page_out( void )
 
     /* Emit last page only if it has content, not just banners */
 
-    if( (t_page.page_width != NULL) || (t_page.main != NULL) ) {
+    if( (t_page.page_width != NULL) || (t_page.cols != NULL) ) {
         do_page_out();
     }
 
@@ -1196,29 +1343,20 @@ void last_page_out( void )
 
 
 /***************************************************************************/
-/* reset t_page and related externs                                        */
+/*  set the bottom banner and adjust the max depth                         */
 /***************************************************************************/
 
-void reset_t_page( void )
+void reset_bot_ban( void )
 {
-    uint32_t    bottom_depth;
-    uint32_t    top_depth;
+    uint32_t    old_depth;
 
-    t_page.top_banner = sect_ban_top[!(page & 1)];
-    t_page.bottom_banner = sect_ban_bot[!(page & 1)];
-
-    if( t_page.top_banner != NULL ) {
-        top_depth = t_page.top_banner->ban_depth;
-        if( bin_driver->y_positive == 0x00 ) {
-            g_page_top = g_page_top_org - top_depth;
-        } else {
-            g_page_top = g_page_top_org + top_depth;
-        }
+    if( t_page.bottom_banner != NULL ) {
+        old_depth = t_page.bottom_banner->ban_depth;
     } else {
-        top_depth = 0;
-        g_page_top = g_page_top_org;
+        old_depth = 0;
     }
-    t_page.main_top = g_page_top;
+    
+    t_page.bottom_banner = sect_ban_bot[!(page & 1)];
 
     if( t_page.bottom_banner != NULL ) {
         bottom_depth = t_page.bottom_banner->ban_depth;
@@ -1231,10 +1369,76 @@ void reset_t_page( void )
         bottom_depth = 0;
         g_page_bottom = g_page_bottom_org;
     }
+
+    if( old_depth < bottom_depth ) {
+        max_depth -= (bottom_depth - old_depth);
+    } else if( bottom_depth < old_depth ) {
+        max_depth += (old_depth - bottom_depth);
+    }
+}
+
+
+/***************************************************************************/
+/*  set the top banner and adjust the max depth                            */
+/***************************************************************************/
+
+void reset_top_ban( void )
+{
+    uint32_t    old_depth;
+
+    if( t_page.top_banner != NULL ) {
+        old_depth = t_page.top_banner->ban_depth;
+    } else {
+        old_depth = 0;
+    }
+
+    t_page.top_banner = sect_ban_top[!(page & 1)];
+
+    if( t_page.top_banner != NULL ) {
+        top_depth = t_page.top_banner->ban_depth;
+        if( bin_driver->y_positive == 0x00 ) {
+            g_page_top = g_page_top_org - top_depth;
+        } else {
+            g_page_top = g_page_top_org + top_depth;
+        }
+    } else {
+        top_depth = 0;
+        g_page_top = g_page_top_org;
+    }
+    t_page.cols_top = g_page_top;
+
+    if( old_depth < top_depth ) {
+        t_page.max_depth -= (top_depth - old_depth);
+    } else if( top_depth < old_depth ) {
+        t_page.max_depth += (old_depth - top_depth);
+    }
+}
+
+
+/***************************************************************************/
+/* reset t_page and related externs                                        */
+/***************************************************************************/
+
+void reset_t_page( void )
+{
+    reset_top_ban();
+    reset_bot_ban();
+
+    if( t_page.top_banner != NULL ) {
+        top_depth = t_page.top_banner->ban_depth;
+    } else {
+        top_depth = 0;
+    }
+
+    if( t_page.bottom_banner != NULL ) {
+        bottom_depth = t_page.bottom_banner->ban_depth;
+    } else {
+        bottom_depth = 0;
+    }
+
     t_page.max_depth = g_page_depth - top_depth - bottom_depth;
     t_page.cur_depth = 0;
     t_page.last_col_main = NULL;
-    t_page.last_col_bot = NULL;
     t_page.last_col_fn = NULL;
     max_depth = t_page.max_depth - t_page.cur_depth;
 
@@ -1256,12 +1460,12 @@ void set_skip_vars( su * pre_skip, su * pre_top_skip, su * post_skip,
 
     skipsk = calc_skip_value();     // pending .sk value?
     if( pre_skip != NULL ) {
-        skippre = conv_vert_unit( pre_skip, spacing );
+        skippre = conv_vert_unit( pre_skip, spacing, font );
     } else {
         skippre = 0;
     }
     if( pre_top_skip != NULL ) {
-        skiptop = conv_vert_unit( pre_top_skip, spacing );
+        skiptop = conv_vert_unit( pre_top_skip, spacing, font );
     } else {
         skiptop = 0;
     }
@@ -1294,7 +1498,7 @@ void set_skip_vars( su * pre_skip, su * pre_top_skip, su * post_skip,
     g_top_skip = skiptop;
 
     if( post_skip != NULL ) {
-        g_post_skip = conv_vert_unit( post_skip, spacing );
+        g_post_skip = conv_vert_unit( post_skip, spacing, font );
     } else {
         g_post_skip = 0;
     }
@@ -1328,10 +1532,9 @@ bool split_element( doc_element * a_element, uint32_t req_depth )
     splittable = true;
 
     switch( a_element->type ) {
-    // add code for other element types; FIGs are documented to split only
-    // when they will not fit by themselves on a page
-    case el_binc :  // given how BINCLUDE/GRAPHIC work, this seems reasonable 
-    case el_dbox :  // splitting boxes/lines is probably best done elsewhere
+    // add code for other element types as appropriate
+    case el_binc :
+    case el_dbox :
     case el_graph :
     case el_hline :
     case el_vline :
@@ -1340,11 +1543,11 @@ bool split_element( doc_element * a_element, uint32_t req_depth )
     case el_text :
         for( cur_line = a_element->element.text.first; cur_line != NULL;
                                 cur_line = cur_line->next ) {
-            if( (cur_depth + cur_line->line_height) > req_depth ) {
+            if( (cur_depth + cur_line->line_height + cur_line->spacing) > req_depth ) {
                 break;
             }
             count++;
-            cur_depth += cur_line->line_height;
+            cur_depth += cur_line->line_height + cur_line->spacing;
             last = cur_line;
         }
 
@@ -1386,7 +1589,7 @@ bool split_element( doc_element * a_element, uint32_t req_depth )
 
 
 /***************************************************************************/
-/*  output all pages in which t_page.main->main is full                    */
+/*  output all pages in which t_page.cols->main is full                    */
 /*  t_page will not be empty but n_page.col_main will be empty on return   */
 /*  Note: may need to be expanded to consider doc_elements accumulated by  */
 /*  the various tags and control words that accumulate doc_elements        */

@@ -72,7 +72,6 @@ static void show_line_error_len( const char * pa, size_t len )
     out_msg( "\n" );
 }
 
-
 static void show_line_error( const char * pa )
 {
     show_line_error_len( pa, strlen( pa ) );
@@ -82,7 +81,7 @@ static void show_line_error( const char * pa )
 /*  display lineno of file/macro and include stack                         */
 /***************************************************************************/
 
-void    file_mac_info( void )
+void file_mac_info( void )
 {
     char        linestr[MAX_L_AS_STR];
     char        linemac[MAX_L_AS_STR];
@@ -102,14 +101,13 @@ void    file_mac_info( void )
     return;
 }
 
-
 /***************************************************************************/
 /*  display lineno of file/macro for open nested tags :sl :ol, ...         */
 /*                             and hilighting tags :HPx, :SF, ...          */
 /*   used if the corresponding end tag is missing                          */
 /***************************************************************************/
 
-void    file_mac_info_nest( void )
+void file_mac_info_nest( void )
 {
     char            linestr[MAX_L_AS_STR];
     char            linemac[MAX_L_AS_STR];
@@ -155,7 +153,6 @@ void    file_mac_info_nest( void )
     return;
 }
 
-
 void internal_err( const char * file, int line )
 {
     err_count++;
@@ -172,7 +169,7 @@ void list_level_err( const char * xl_tag, uint8_t xl_level )
     return;
 }
 
-void    att_val_err( const char * attname )
+void att_val_err( const char * attname )
 {
 //****ERROR**** SC--045: Value 'xxx' for the 'yyy' attribute is not defined
     err_count++;
@@ -181,8 +178,7 @@ void    att_val_err( const char * attname )
     return;
 }
 
-
-void    auto_att_err( void )
+void auto_att_err( void )
 {
 //****ERROR**** SC--041: Cannot specify the automatic attribute 'xxx'
     err_count++;
@@ -191,8 +187,7 @@ void    auto_att_err( void )
     return;
 }
 
-
-void    cw_err( void )
+void cw_err( void )
 {
 // SC--006: Unrecognized control word
     err_count++;
@@ -201,8 +196,7 @@ void    cw_err( void )
     return;
 }
 
-
-void    dc_opt_warn( const char * pa )
+void dc_opt_warn( const char * pa )
 {
     wng_count++;
     g_warn( err_dc_opt, pa );
@@ -211,8 +205,7 @@ void    dc_opt_warn( const char * pa )
     return;
 }
 
-
-void    dc_opt_warn_len( const char * pa, size_t len )
+void dc_opt_warn_len( const char * pa, size_t len )
 {
     wng_count++;
     g_warn( err_dc_opt, pa );
@@ -221,8 +214,7 @@ void    dc_opt_warn_len( const char * pa, size_t len )
     return;
 }
 
-
-void    parm_miss_err( const char * pa )
+void parm_miss_err( const char * pa )
 {
     err_count++;
     g_err( err_parm_missing, pa );
@@ -230,8 +222,7 @@ void    parm_miss_err( const char * pa )
     return;
 }
 
-
-void    parm_extra_err( const char * cw, const char * pa )
+void parm_extra_err( const char * cw, const char * pa )
 {
     err_count++;
     g_err( err_extra_ignored, cw, pa );
@@ -239,8 +230,7 @@ void    parm_extra_err( const char * cw, const char * pa )
     return;
 }
 
-
-void    numb_err( void )
+void numb_err( void )
 {
     char    linestr[MAX_L_AS_STR];
 
@@ -256,8 +246,7 @@ void    numb_err( void )
     return;
 }
 
-
-void    nottag_err( void )
+void nottag_err( void )
 {
     err_count++;
     g_err( err_user_tag, tagname );
@@ -265,8 +254,7 @@ void    nottag_err( void )
     return;
 }
 
-
-void    tag_name_missing_err( void )
+void tag_name_missing_err( void )
 {
     err_count++;
     g_err( err_missing_name, "" );
@@ -274,8 +262,7 @@ void    tag_name_missing_err( void )
     return;
 }
 
-
-void    tag_text_err( const char * tagname )
+void tag_text_err( const char * tagname )
 {
 //****ERROR**** SC--038: Tag text may not be specified for the 'xxx' tag
     err_count++;
@@ -284,8 +271,7 @@ void    tag_text_err( const char * tagname )
     return;
 }
 
-
-void    tag_text_req_err( const char * tagname )
+void tag_text_req_err( const char * tagname )
 {
 //****ERROR**** SC--039: Tag text must be specified with the 'xxx' tag
     err_count++;
@@ -294,8 +280,7 @@ void    tag_text_req_err( const char * tagname )
     return;
 }
 
-
-void    val_parse_err( const char * pa, bool tag )
+void val_parse_err( const char * pa, bool tag )
 {
     err_count++;
     if( tag ) {
@@ -308,7 +293,7 @@ void    val_parse_err( const char * pa, bool tag )
     return;
 }
 
-void    xx_tag_err( const msg_ids errid, char const * cw )
+void xx_tag_err( const msg_ids errid, char const * cw )
 {
     err_count++;
     g_err( errid, cw );
@@ -316,7 +301,7 @@ void    xx_tag_err( const msg_ids errid, char const * cw )
     return;
 }
 
-void    xx_nest_err( const msg_ids errid )
+void xx_nest_err( const msg_ids errid )
 {
     err_count++;
     g_err( errid );
@@ -324,8 +309,7 @@ void    xx_nest_err( const msg_ids errid )
     return;
 }
 
-
-void    xx_opt_err( const char * cw, const char * pa )
+void xx_opt_err( const char * cw, const char * pa )
 {
     err_count++;
     g_err( err_xx_opt, cw, pa );
@@ -334,8 +318,7 @@ void    xx_opt_err( const char * cw, const char * pa )
     return;
 }
 
-
-void    xx_opt_err_len( const char * cw, const char * pa, size_t len )
+void xx_opt_err_len( const char * cw, const char * pa, size_t len )
 {
     err_count++;
     g_err( err_xx_opt, cw, pa );
@@ -344,8 +327,7 @@ void    xx_opt_err_len( const char * cw, const char * pa, size_t len )
     return;
 }
 
-
-void    xx_line_err( const msg_ids errid, const char * pa )
+void xx_line_err( const msg_ids errid, const char * pa )
 {
     err_count++;
     g_err( errid );
@@ -354,7 +336,7 @@ void    xx_line_err( const msg_ids errid, const char * pa )
     return;
 }
 
-void    xx_line_err_len( const msg_ids errid, const char * pa, size_t len )
+void xx_line_err_len( const msg_ids errid, const char * pa, size_t len )
 {
     err_count++;
     g_err( errid );
@@ -363,42 +345,42 @@ void    xx_line_err_len( const msg_ids errid, const char * pa, size_t len )
     return;
 }
 
-void    xx_simple_err( const msg_ids errid )
+void xx_simple_err( const msg_ids errid )
 {
     err_count++;
     g_err( errid );
     return;
 }
 
-void    xx_simple_err_c( const msg_ids errid, const char * arg )
+void xx_simple_err_c( const msg_ids errid, const char * arg )
 {
     err_count++;
     g_err( errid, arg );
     return;
 }
 
-void    xx_simple_err_i( const msg_ids errid, int arg )
+void xx_simple_err_i( const msg_ids errid, int arg )
 {
     err_count++;
     g_err( errid, arg );
     return;
 }
 
-void    xx_simple_err_cc( const msg_ids errid, const char * arg1, const char * arg2 )
+void xx_simple_err_cc( const msg_ids errid, const char * arg1, const char * arg2 )
 {
     err_count++;
     g_err( errid, arg1, arg2 );
     return;
 }
 
-void    xx_simple_warn( const msg_ids errid )
+void xx_simple_warn( const msg_ids errid )
 {
     wng_count++;
     g_warn( errid );
     return;
 }
 
-void    xx_err( const msg_ids errid )
+void xx_err( const msg_ids errid )
 {
     err_count++;
     g_err( errid );
@@ -406,7 +388,7 @@ void    xx_err( const msg_ids errid )
     return;
 }
 
-void    xx_warn( const msg_ids errid )
+void xx_warn( const msg_ids errid )
 {
     wng_count++;
     g_warn( errid );
@@ -419,7 +401,7 @@ void    xx_warn( const msg_ids errid )
 /*  heading ids                                                            */
 /***************************************************************************/
 
-void    dup_id_err( const char * id, const char * context )
+void dup_id_err( const char * id, const char * context )
 {
     g_err( wng_id_xxx, id );
     g_info( inf_id_duplicate, context );
@@ -427,21 +409,21 @@ void    dup_id_err( const char * id, const char * context )
     err_count++;
 }
 
-void    fwd_id_warn( const char * id, const char * context )
+void fwd_id_warn( const char * id, const char * context )
 {
     g_warn( wng_id_xxx, id );
     g_info( inf_id_forward, context );
     wng_count++;
 }
 
-void    undef_id_warn( const char * id, const char * context )
+void undef_id_warn( const char * id, const char * context )
 {
     g_warn( wng_id_xxx, id );
     g_info( inf_id_unknown, context );
     wng_count++;
 }
 
-void    undef_id_warn_info( const char * id, const char * context )
+void undef_id_warn_info( const char * id, const char * context )
 {
     g_warn( wng_id_xxx, id );
     g_info( inf_id_unknown, context );
@@ -453,7 +435,7 @@ void    undef_id_warn_info( const char * id, const char * context )
 /*  error msgs for missing or duplicate :XXX :eXXX tags                    */
 /***************************************************************************/
 
-static  void    g_err_tag_common( const char * tag, bool nest )
+static void g_err_tag_common( const char * tag, bool nest )
 {
     char    tagn[TAG_NAME_LENGTH + 1];
 
@@ -468,19 +450,19 @@ static  void    g_err_tag_common( const char * tag, bool nest )
     return;
 }
 
-void    g_err_tag( const char * tag )
+void g_err_tag( const char * tag )
 {
     g_err_tag_common( tag, 0 );         // 'normal' stack display
     return;
 }
 
-void    g_err_tag_nest( const char * tag )
+void g_err_tag_nest( const char * tag )
 {
     g_err_tag_common( tag, 1 );         // nested tag stack display
     return;
 }
 
-void    g_err_tag_rsloc( locflags inloc, const char * pa )
+void g_err_tag_rsloc( locflags inloc, const char * pa )
 {
     const char  *   tag_name    = NULL;
     int             i;
@@ -500,7 +482,7 @@ void    g_err_tag_rsloc( locflags inloc, const char * pa )
     return;
 }
 
-void    g_err_tag_no( const char * tag )
+void g_err_tag_no( const char * tag )
 {
     char    tagn[TAG_NAME_LENGTH + 1];
 
@@ -511,7 +493,7 @@ void    g_err_tag_no( const char * tag )
     return;
 }
 
-void    g_err_tag_prec( const char * tag )
+void g_err_tag_prec( const char * tag )
 {
     char    tagn[TAG_NAME_LENGTH + 1];
 
@@ -522,7 +504,7 @@ void    g_err_tag_prec( const char * tag )
     return;
 }
 
-void    g_keep_nest( const char * cw_tag ) {
+void g_keep_nest( const char * cw_tag ) {
     switch( cur_group_type ) {
     case gt_fb :
         g_err( err_cw_tag_x_in_y, cw_tag, "a floating block" );

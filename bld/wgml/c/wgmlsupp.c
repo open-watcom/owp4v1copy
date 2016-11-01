@@ -192,8 +192,6 @@ bool    free_resources( errno_t in_errno )
 
 void    free_some_mem( void )
 {
-    doc_element *   cur_el;
-
     if( token_buf != NULL ) {
         mem_free( token_buf );
     }
@@ -232,6 +230,9 @@ void    free_some_mem( void )
     }
     if( macro_dict != NULL ) {
         free_macro_dict( &macro_dict );
+    }
+    if( line_buff.text != NULL ) {
+        mem_free( line_buff.text );
     }
     if( fig_list != NULL ) {
         free_ffh_list( fig_list );
@@ -293,58 +294,48 @@ void    free_some_mem( void )
     }
     if( t_page.top_ban != NULL ) {
         if( t_page.top_ban->first != NULL ) {
-            clear_doc_element( t_page.top_ban->first );
             add_doc_el_to_pool( t_page.top_ban->first );
         }
         add_ban_col_to_pool( t_page.top_ban );
     }
     if( t_page.page_width != NULL ) {
-        clear_doc_element( t_page.page_width );
         add_doc_el_to_pool( t_page.page_width );
     }
-    if( t_page.main != NULL ) {
-        if( t_page.main->main != NULL ) {
-            clear_doc_element( t_page.main->main );
-            add_doc_el_to_pool( t_page.main->main );
+    if( t_page.cols != NULL ) {
+        if( t_page.cols->col_width != NULL ) {
+            add_doc_el_to_pool( t_page.cols->col_width );
         }
-        if( t_page.main->bot_fig != NULL ) {
-            clear_doc_element( t_page.main->bot_fig );
-            add_doc_el_to_pool( t_page.main->bot_fig );
+        if( t_page.cols->main != NULL ) {
+            add_doc_el_to_pool( t_page.cols->main );
         }
-        if( t_page.main->footnote != NULL ) {
-            clear_doc_element( t_page.main->footnote );
-            add_doc_el_to_pool( t_page.main->footnote );
+        if( t_page.cols->bot_fig != NULL ) {
+            add_doc_el_to_pool( t_page.cols->bot_fig );
         }
-        add_doc_col_to_pool( t_page.main );
+        if( t_page.cols->footnote != NULL ) {
+            add_doc_el_to_pool( t_page.cols->footnote );
+        }
+        add_doc_col_to_pool( t_page.cols );
     }
     if( t_page.bot_ban != NULL ) {
         if( t_page.bot_ban->first != NULL ) {
-            clear_doc_element( t_page.bot_ban->first );
             add_doc_el_to_pool( t_page.bot_ban->first );
         }
         add_ban_col_to_pool( t_page.bot_ban );
     }
-    if( n_page.col_top != NULL ) {
-        while( n_page.col_top->first != NULL ) {
-            cur_el = n_page.col_top->first;
-            n_page.col_top->first = n_page.col_top->first->next;
-            cur_el->next = NULL;
-            clear_doc_element( cur_el );
-            add_doc_el_to_pool( cur_el );
-        }
-        add_doc_el_group_to_pool( n_page.col_top );
+    if( n_page.page_width != NULL ) {
+        add_doc_el_group_to_pool( n_page.page_width );
+    }
+    if( n_page.col_width != NULL ) {
+        add_doc_el_group_to_pool( n_page.col_width );
     }
     if( n_page.col_main != NULL ) {
-        clear_doc_element( n_page.col_main );
         add_doc_el_to_pool( n_page.col_main );
     }
     if( n_page.col_bot != NULL ) {
-        clear_doc_element( n_page.col_bot );
-        add_doc_el_to_pool( n_page.col_bot );
+        add_doc_el_group_to_pool( n_page.col_bot );
     }
     if( n_page.col_fn != NULL ) {
-        clear_doc_element( n_page.col_fn );
-        add_doc_el_to_pool( n_page.col_fn );
+        add_doc_el_group_to_pool( n_page.col_fn );
     }
 
     free_layout();

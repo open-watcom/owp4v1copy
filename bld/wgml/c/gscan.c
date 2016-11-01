@@ -512,18 +512,8 @@ static void     scan_script( void )
         if( toklen == SCR_KW_LENGTH ) {
             for( k = 0; k < SCR_TAGMAX; ++k ) {
                 if( !strcmp( scr_tags[k].tagname, token_buf ) ) {
-#if 0
-                    if( !ProcFlags.fb_document_done &&
-                          scr_tags[k].cwflags & cw_o_t ) {
-
-                        /***************************************************/
-                        /*  if this is the first cw  which produces output */
-                        /* set page geometry and margins from layout       */
-                        /***************************************************/
-                        do_layout_end_processing();
-                    }
-#endif
-                    if( !ProcFlags.layout && (scr_tags[k].cwflags & cw_o_t) ) {
+                    if( !ProcFlags.layout && !ProcFlags.fb_document_done
+                            && (scr_tags[k].cwflags & cw_o_t) ) {
 
                         /********************************************************/
                         /* this is the first control word which produces output */

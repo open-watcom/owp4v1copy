@@ -50,7 +50,7 @@ void    proc_p_pc( p_lay_tag * p_pc )
         ProcFlags.para_starting = false;    // clear for this tag's break
     }
     scr_process_break();
-    g_line_indent = conv_hor_unit( &(p_pc->line_indent) );
+    g_line_indent = conv_hor_unit( &(p_pc->line_indent), g_curr_font );
     g_cur_left = g_page_left + g_indent + nest_cb->left_indent + nest_cb->align;// left start    TBD
                                         // possibly indent first line
     g_cur_h_start = g_cur_left + g_line_indent;
@@ -114,9 +114,9 @@ extern  void    gml_note( const gmltag * entry )
     post_space = 0;
 
     if( nest_cb->c_tag == t_NONE ) {
-        g_cur_left = g_page_left + conv_hor_unit( &layout_work.note.left_indent );
+        g_cur_left = g_page_left + conv_hor_unit( &layout_work.note.left_indent, g_curr_font );
     } else {
-        g_cur_left += conv_hor_unit( &layout_work.note.left_indent );
+        g_cur_left += conv_hor_unit( &layout_work.note.left_indent, g_curr_font );
     }
     g_cur_h_start = g_cur_left;
     ProcFlags.keep_left_margin = true;  // keep special Note indent

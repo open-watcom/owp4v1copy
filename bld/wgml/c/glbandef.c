@@ -64,6 +64,7 @@ void    banner_defaults( void )
     lay_init_su( &n3, &(ban->depth) );
     ban->place = bottom_place;
     ban->docsect = head0_ban;
+    ban->style = no_content;
 
     reg = mem_alloc( sizeof( region_lay_tag ) );
     ban->region = reg;
@@ -88,13 +89,13 @@ void    banner_defaults( void )
     reg->script_region[1].string = NULL;
     reg->script_region[2].string = NULL;
 
+
     wk = ban;
     ban = mem_alloc( sizeof( banner_lay_tag ) );
     memcpy( ban, wk, sizeof( banner_lay_tag ) );
     wk->next = ban;
 
     ban->docsect = body_ban;
-
 
     regwk = mem_alloc( sizeof( region_lay_tag ) );
     memcpy( regwk, reg, sizeof( region_lay_tag ) );
@@ -111,8 +112,6 @@ void    banner_defaults( void )
     reg->script_region[2].string = NULL;
 
 
-
-
     wk = ban;
     ban = mem_alloc( sizeof( banner_lay_tag ) );
     memcpy( ban, wk, sizeof( banner_lay_tag ) );
@@ -120,7 +119,7 @@ void    banner_defaults( void )
 
     lay_init_su( &n4, &(ban->depth) );
     ban->docsect = abstract_ban;
-
+    ban->style = pgnumr_content;
 
     regwk = mem_alloc( sizeof( region_lay_tag ) );
     memcpy( regwk, reg, sizeof( region_lay_tag ) );
@@ -140,7 +139,6 @@ void    banner_defaults( void )
     reg->script_region[2].string = NULL;
 
 
-
     wk = ban;
     ban = mem_alloc( sizeof( banner_lay_tag ) );
     memcpy( ban, wk, sizeof( banner_lay_tag ) );
@@ -148,14 +146,11 @@ void    banner_defaults( void )
 
     ban->docsect = preface_ban;
 
-
     regwk = mem_alloc( sizeof( region_lay_tag ) );
     memcpy( regwk, reg, sizeof( region_lay_tag ) );
     reg = regwk;
     ban->region = reg;
     reg->next = NULL;
-
-
 
     wk = ban;
     ban = mem_alloc( sizeof( banner_lay_tag ) );
@@ -165,7 +160,7 @@ void    banner_defaults( void )
     lay_init_su( &n3, &(ban->depth) );
     ban->place = top_place;
     ban->docsect = toc_ban;
-
+    ban->style = no_content;
 
     regwk = mem_alloc( sizeof( region_lay_tag ) );
     memcpy( regwk, reg, sizeof( region_lay_tag ) );
@@ -193,7 +188,6 @@ void    banner_defaults( void )
     ban->place = top_place;
     ban->docsect = figlist_ban;
 
-
     regwk = mem_alloc( sizeof( region_lay_tag ) );
     memcpy( regwk, reg, sizeof( region_lay_tag ) );
     reg = regwk;
@@ -201,7 +195,6 @@ void    banner_defaults( void )
     reg->next = NULL;
     strcpy_s( reg->contents.string, sizeof( "List of Figures" ),
               "List of Figures" );
-
 
 
     wk = ban;
@@ -212,15 +205,12 @@ void    banner_defaults( void )
     ban->place = top_place;
     ban->docsect = index_ban;
 
-
     regwk = mem_alloc( sizeof( region_lay_tag ) );
     memcpy( regwk, reg, sizeof( region_lay_tag ) );
     reg = regwk;
     ban->region = reg;
     reg->next = NULL;
     strcpy_s( reg->contents.string, sizeof( "Index" ), "Index" );
-
-
 
 
     wk = ban;

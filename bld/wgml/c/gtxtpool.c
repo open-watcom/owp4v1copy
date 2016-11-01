@@ -345,8 +345,11 @@ doc_column * alloc_doc_col( void )
     }
 
     curr->next = NULL;
+    curr->post_skip = 0;
+    curr->main_top = t_page.cols_top;
     curr->fig_top = g_page_bottom;
     curr->fn_top = g_page_bottom;
+    curr->col_width = NULL;
     curr->main = NULL;
     curr->bot_fig = NULL;
     curr->footnote = NULL;
@@ -461,14 +464,17 @@ void add_doc_el_to_pool( doc_element * a_element )
         return;
     }
 
+    clear_doc_element( a_element );
     a_element->next = doc_el_pool;
     doc_el_pool = a_element;
+    return;
 }
 
 
 /***************************************************************************/
 /*  allocate / reuse a doc_el_group instance                                     */
 /***************************************************************************/
+
 doc_el_group * alloc_doc_el_group( group_type type )
 {
     doc_el_group    *   curr;
@@ -493,6 +499,7 @@ doc_el_group * alloc_doc_el_group( group_type type )
     curr->first = NULL;
     curr->last = NULL;
     curr->owner = type;
+    curr->post_skip = 0;
 
     return( curr );
 }
@@ -501,14 +508,25 @@ doc_el_group * alloc_doc_el_group( group_type type )
 /***************************************************************************/
 /*  add a doc_el_group instance to free pool for reuse                           */
 /***************************************************************************/
+
 void add_doc_el_group_to_pool( doc_el_group * a_group )
 {
+    doc_element *   cur_el;
+
     if( a_group == NULL ) {
         return;
     }
 
+    while( a_group->first != NULL ) {
+        cur_el = a_group->first;
+        a_group->first = a_group->first->next;
+        cur_el->next = NULL;
+        add_doc_el_to_pool( cur_el );
+    }
+
     a_group->next = doc_el_group_pool;
     doc_el_group_pool = a_group;
+    return;
 }
 
 
@@ -638,7 +656,44 @@ void    free_pool_storage( void )
 }
 
 /***************************************************************************/
-/*  initalize a doc_element instance (which it obtains from alloc_doc_el())*/
+/*  clear a doc_element                                                    */
+/*  this is a separate function because t_element is not a pointer         */
+/***************************************************************************/
+
+void clear_doc_element( doc_element * a_element )
+{
+    doc_element *   cur_el;
+    text_line   *   cur_line;
+    text_line   *   save;
+
+    for( cur_el = a_element; cur_el != NULL; cur_el = cur_el->next ) {
+        switch( cur_el->type ) {
+        case el_binc :
+        case el_dbox :
+        case el_graph :
+        case el_hline :
+        case el_vline :
+            break;      // should be nothing to do
+        case el_text :
+            cur_line = cur_el->element.text.first;
+            while( cur_line != NULL ) {
+                add_text_chars_to_pool( cur_line );
+                save = cur_line->next;
+                add_text_line_to_pool( cur_line );
+                cur_line = save;
+            }
+            break;
+        default :
+            internal_err( __FILE__, __LINE__ );
+        }
+    }
+
+    return;
+}
+
+
+/***************************************************************************/
+/*  initalize a doc_element instance, which it obtains from alloc_doc_el() */
 /***************************************************************************/
 
 doc_element * init_doc_el( element_type type, uint32_t depth )

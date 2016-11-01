@@ -41,7 +41,7 @@
  
 static  int32_t round_indent( su * work )
 {
-    return( conv_hor_unit( work ) * CPI / g_resh * g_resh / CPI );
+    return( conv_hor_unit( work, g_curr_font ) * CPI / g_resh * g_resh / CPI );
 }
  
 /***************************************************************************/

@@ -1095,10 +1095,10 @@ static void do_line_device( void )
 
     do_v_adjust = ProcFlags.page_started;
     if( do_v_adjust ) {     // check for initial empty doc_element on page
-        if( (t_page.main->main->next == NULL)
-                && (t_page.main->main->type == el_text)
-                && (t_page.main->main->element.text.first != NULL)
-                && (t_page.main->main->element.text.first->first == NULL) ) {
+        if( (t_page.cols->main->next == NULL)
+                && (t_page.cols->main->type == el_text)
+                && (t_page.cols->main->element.text.first != NULL)
+                && (t_page.cols->main->element.text.first->first == NULL) ) {
             do_v_adjust = false;
         }
     }
@@ -2364,7 +2364,7 @@ void scr_bx( void )
             }
             pa = p;
             if( !cw_val_to_su( &p, &boxcolwork ) ) {
-                cur_col = conv_hor_unit( &boxcolwork );
+                cur_col = conv_hor_unit( &boxcolwork, g_curr_font );
                 if( cur_col <= 0 ) {
                     xx_line_err( err_inv_box_pos, pa );
                 } else if( first_col ) {   // no prior column

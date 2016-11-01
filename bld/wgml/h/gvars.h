@@ -156,8 +156,10 @@ global  struct GlobalFlags {
 global struct ProcFlags {
     doc_section     doc_sect;           // which part are we in (FRONTM, BODY, ...
     doc_section     doc_sect_nxt;       // next section (tag already seen)
+#if 0 // no clear use found -- yet
     doc_section     header_sect;        // header      placeholder for now    TBD
     doc_section     header_sect_nxt;    // header nxt  placeholder for now    TBD
+#endif
     unsigned        frontm_seen    : 1; // FRONTM tag seen
     unsigned        start_section  : 1; // start section call done
 
@@ -175,6 +177,7 @@ global struct ProcFlags {
     unsigned        stitle_seen     : 1;// remember first stitle value
     unsigned        title_tag_top   : 1;// :TITLE pre_top_skip used
     unsigned        title_text_seen : 1;// remember first :TITLE tag text
+    unsigned        heading_banner  : 1;// banner replaced for heading (Hn)
     unsigned        para_starting   : 1;// :LP, :P or :PC first line/blank line
     unsigned        goto_active     : 1;// processing .go label
     unsigned        newLevelFile    : 1;// start new include Level (file)
@@ -196,12 +199,13 @@ global struct ProcFlags {
     unsigned        utc             : 1;// user tag with "continue" is active
     unsigned        in_trans        : 1;// esc char is specified (.ti set x)
     unsigned        reprocess_line  : 1;// unget for current input line
-#if 0
+#if 0   // used in docs, but doesn't seem to /do/ anything in wgml 4.0
     unsigned        sk_cond         : 1;// .sk n C found
 #endif
     unsigned        overprint       : 1;// .sk -1 active or not
     unsigned        tag_end_found   : 1;// '.' ending tag found
     unsigned        skips_valid     : 1;// controls set_skip_vars() useage
+    unsigned        new_pagenr      : 1;// FIG/heading page number changed
 
     unsigned        box_cols_cur    : 1;// current BX line had column list
     unsigned        bx_set_done     : 1;// BX SET was done last before current BX line
@@ -262,11 +266,12 @@ global  uint32_t            h_vl_offset;        // horizontal offset used to pos
 global  uint32_t            max_depth;          // space left on page (used by BX)
 
 // figure support
-global  uint32_t        fig_count;      // figure number
-global  ffh_entry   *   fig_entry;      // current fig_list entry
-global  fwd_ref     *   fig_fwd_refs;   // forward reference/undefined id/page change
-global  ffh_entry   *   fig_list;       // list of figures in order encountered
-global  ref_entry   *   fig_ref_dict;   // reference dictionary :FIG tags
+global  uint32_t            fig_count;      // figure number
+global  ffh_entry       *   fig_entry;      // current fig_list entry
+global  fwd_ref         *   fig_fwd_refs;   // forward reference/undefined id/page change
+global  ffh_entry       *   fig_list;       // list of figures in order encountered
+global  record_buffer       line_buff;      // used for some frame types
+global  ref_entry       *   fig_ref_dict;   // reference dictionary :FIG tags
 
 // footnote support
 global  uint32_t        fn_count;       // footnote number
@@ -280,11 +285,15 @@ global  ffh_entry   *   hd_entry;       // current hd_list entry
 global  fwd_ref     *   hd_fwd_refs;    // forward reference/undefined id/page change
 global  ref_entry   *   hd_ref_dict;    // reference dictionary :Hx tags
 global  ffh_entry   *   hd_list;        // list of headings in order encountered
+global  hd_data         hd_info;        // information for heading output         
 
 // index support
 global  ix_h_blk    *   index_dict;     // index structure dictionary
 global  ix_h_blk    *   ixhtag[4];      // last higher level :IH1 :IH2 tags in index
 global  ref_entry   *   ix_ref_dict;    // reference id dictionary :Ix :IHx :IREF
+
+// page number format
+global  num_style       pgnum_style[pns_max];
 
 // tab support
 global  tab_stop    *   c_stop;         // current tab_stop
@@ -309,6 +318,10 @@ global text_line        *   line_pool;          // for reuse of text_line struct
 global ban_column       *   ban_col_pool;       // for reuse of ban_column structs
 global doc_column       *   doc_col_pool;       // for reuse of doc_column structs
 global doc_element      *   doc_el_pool;        // for reuse of doc_element structs
+
+// document section support
+
+global gen_sect             figlist_toc;        // used with FIGLIST, TOC and eGDOC
 
 /***************************************************************************/
 /*  some globals which are to be redesigned when the :LAYOUT tag is coded. */
@@ -355,7 +368,6 @@ global  uint32_t    g_spacing;          // spacing (in vertical base units)
 global  int32_t     g_skip;             // .sk skip value ( -1 to +nn )
 global  uint32_t    spacing;            // spacing between lines (line count)
 
-global  page_pos    line_pos;           // horizontal line positioning
 global  uint32_t    post_space;         // spacing within a line
 global  uint32_t    ju_x_start;         // .. formatting
 

@@ -96,28 +96,27 @@ void gml_fn( const gmltag * entry )
         }
     }
 
+    g_curr_font = layout_work.fn.font;
     init_nest_cb();
     nest_cb->p_stack = copy_to_nest_stack();
-    /// this may not be the best way to handle line_indent!!!///
-    nest_cb->left_indent = conv_hor_unit( &layout_work.fn.line_indent );
+
+    nest_cb->left_indent = conv_hor_unit( &layout_work.fn.line_indent, g_curr_font );
     nest_cb->lm = g_cur_left;
     nest_cb->rm = g_page_right;
-    nest_cb->font = layout_work.fn.font;
+    nest_cb->font = g_curr_font;
     nest_cb->c_tag = t_FN;
 
-    g_curr_font = nest_cb->font;
-
     g_cur_left += nest_cb->left_indent;
-    g_cur_left += wgml_fonts[g_curr_font].spc_width;    // TBD, space for VLINE?
-    g_page_right += nest_cb->right_indent;
-
     g_cur_h_start = g_cur_left;
-    ProcFlags.keep_left_margin = true;  // keep special indent
+    ProcFlags.keep_left_margin = true;      // keep special indent
 
     spacing = layout_work.fn.spacing;
 
-/// pre_lines on first fn only, after that 0 -- perhaps ///
-    set_skip_vars( NULL, &layout_work.fn.pre_lines, NULL, spacing, g_curr_font );
+    if( t_page.cols->footnote == NULL ) {   // pre_lines affects first FN on page only
+        set_skip_vars( NULL, &layout_work.fn.pre_lines, NULL, spacing, g_curr_font );
+    } else {
+        set_skip_vars( NULL, NULL, NULL, spacing, g_curr_font );
+    }
 
     sav_group_type = cur_group_type;
     cur_group_type = gt_fn;
@@ -151,28 +150,33 @@ void gml_fn( const gmltag * entry )
             } else {
                 dup_id_err( cur_ref->id, "footnote" );
             }
-        } else {
-            if( (page + 1) != fn_entry->pageno ) {  // page number changed
-                fn_entry->pageno = page + 1;
+        }
+    } else {
+        if( (page + 1) != fn_entry->pageno ) {  // page number changed
+            fn_entry->pageno = page + 1;
+            if( (strlen( id ) > 0) ) {          // FN id exists
                 fn_fwd_refs = init_fwd_ref( fn_fwd_refs, id );
             }
         }
     }
 
 /// these will need to be used ... eventually
-//align
 //skip
-//number_font
 //frame
-if( fn_entry == NULL ) {
-    out_msg( "Yes!\n" );
-}
 
-    format_num( fn_entry->number, &buffer, sizeof( buffer ), layout_work.fn.number_style );
+    format_num( fn_entry->number, &buffer, sizeof( buffer ),
+                                                        layout_work.fn.number_style );
     input_cbs->fmflags &= ~II_eol;          // prefix is never EOL
     process_text( &buffer, layout_work.fn.number_font ); // FN prefix
+    g_cur_left = nest_cb->lm + conv_hor_unit( &layout_work.fn.align, g_curr_font );
+    g_cur_h_start = g_cur_left;
+    ProcFlags.keep_left_margin = true;  // keep special indent
+
     if( !ProcFlags.reprocess_line && *p ) {
         if( *p == '.' ) p++;                // possible tag end
+        while( *p == ' ' ) p++;             // skip preceding spaces
+        input_cbs->fmflags &= ~II_sol;      // number was SOL, so this is not
+        ProcFlags.concat = true;            // concatenation on
         if( *p ) {
             process_text( p, g_curr_font);  // if text follows
         }
@@ -191,7 +195,6 @@ if( fn_entry == NULL ) {
 void gml_efn( const gmltag * entry )
 {
     char    *   p;
-    doc_element *   cur_el;
     tag_cb  *   wk;
 
     scr_process_break();
@@ -214,41 +217,14 @@ void gml_efn( const gmltag * entry )
 
     g_curr_font = nest_cb->font;
 
-    /* Place the accumulated lines on the proper page */
+    /* Submit the FN/eFN block */
 
     cur_group_type = sav_group_type;
     if( t_doc_el_group != NULL) {
         cur_doc_el_group = t_doc_el_group;      // detach current element group
         t_doc_el_group = t_doc_el_group->next;  // processed doc_elements go to next group, if any
         cur_doc_el_group->next = NULL;
-
-        if( cur_doc_el_group->first != NULL ) {
-            cur_doc_el_group->depth += (cur_doc_el_group->first->blank_lines +
-                                cur_doc_el_group->first->subs_skip);
-        }
-
-        if( (cur_doc_el_group->depth + t_page.cur_depth) > t_page.max_depth ) {
-
-            /*  the block won't fit on this page */
-
-            if( cur_doc_el_group->depth  <= t_page.max_depth ) {
-
-                /*  the block will be on the next page */
-
-                do_page_out();
-                reset_t_page();
-            }
-        }
-
-        while( cur_doc_el_group->first != NULL ) {
-            cur_el = cur_doc_el_group->first;
-            cur_doc_el_group->first = cur_doc_el_group->first->next;
-            cur_el->next = NULL;
-            insert_col_main( cur_el );
-        }
-
-        add_doc_el_group_to_pool( cur_doc_el_group );
-        cur_doc_el_group = NULL;
+        insert_col_fn( cur_doc_el_group );
     }
 
     g_cur_h_start = g_cur_left;

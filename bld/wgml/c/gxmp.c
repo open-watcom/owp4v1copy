@@ -71,6 +71,8 @@ void gml_xmp( const gmltag * entry )
 
     g_keep_nest( "Example" );           // catch nesting errors
 
+    font_save = g_curr_font;
+    g_curr_font = layout_work.xmp.font;
     depth = 0;                          // default value: depth will be depth of box contents
     p = scan_start;
     if( *p == '.' ) {
@@ -92,7 +94,7 @@ void gml_xmp( const gmltag * entry )
                 if( att_val_to_su( &cur_su, true ) ) {
                     break;
                 }
-                depth = conv_vert_unit( &cur_su, spacing );
+                depth = conv_vert_unit( &cur_su, spacing, g_curr_font );
                 if( ProcFlags.tag_end_found ) {
                     break;
                 }
@@ -107,15 +109,12 @@ void gml_xmp( const gmltag * entry )
 
     init_nest_cb();
     nest_cb->p_stack = copy_to_nest_stack();
-    nest_cb->left_indent = conv_hor_unit( &layout_work.xmp.left_indent );
-    nest_cb->right_indent = -1 * conv_hor_unit( &layout_work.xmp.right_indent );
+    nest_cb->left_indent = conv_hor_unit( &layout_work.xmp.left_indent, g_curr_font );
+    nest_cb->right_indent = -1 * conv_hor_unit( &layout_work.xmp.right_indent, g_curr_font );
     nest_cb->lm = g_cur_left;
     nest_cb->rm = g_page_right;
-    nest_cb->font = layout_work.xmp.font;
+    nest_cb->font = g_curr_font;
     nest_cb->c_tag = t_XMP;
-
-    font_save = g_curr_font;
-    g_curr_font = nest_cb->font;
 
     g_cur_left += nest_cb->left_indent;
     g_page_right += nest_cb->right_indent;

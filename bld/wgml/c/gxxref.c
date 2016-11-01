@@ -26,7 +26,6 @@
 *
 * Description:  WGML tags :HDREF :FIGREF :FNREF processing
 *
-*                         :FNREF not yet implemented
 ****************************************************************************/
 #include    "wgml.h"
 #include    "gvars.h"
@@ -156,7 +155,8 @@ void gml_figref( const gmltag * entry )
         } else {
             len = strlen( cur_re->entry->prefix );        
             if( do_page ) {
-                ultoa( cur_re->entry->pageno, &buffer, 10);
+                format_num( cur_re->entry->pageno, &buffer, sizeof( buffer ), 
+                            cur_re->entry->style );
                 bu_len = strlen( buffer );
                 ref_text = (char *) mem_alloc( len + op_len + bu_len  + 1 );
                 strcpy_s( ref_text, len + 1, cur_re->entry->prefix );
@@ -254,7 +254,8 @@ void gml_hdref( const gmltag * entry )
     } else {
         len = strlen( cur_re->entry->text ) + 2;        // allow for quote chars
         if( do_page ) {
-            ultoa( cur_re->entry->pageno, &buffer, 10);
+            format_num( cur_re->entry->pageno, &buffer, sizeof( buffer ), 
+                        cur_re->entry->style );
             bu_len = strlen( buffer );
             len += (op_len + bu_len );
             ref_text = (char *) mem_alloc( len + 1 );
@@ -313,9 +314,15 @@ void gml_fnref( const gmltag * entry )
 
     p = get_ref_attributes();
 
+    /***********************************************************************/
     /* wgml 4.0: FNREF changes the font to "0" and does not change it back */
+    /* reactivate the next line and change the font used with the first    */
+    /* process_text() to g_curr_font to restore this behavior              */
+    /* our wgml does something a bit more sensible                         */
+    /***********************************************************************/
 
-    g_curr_font = FONT0;                // layout attribute "font" is ignored
+//    g_curr_font = FONT0;                // layout attribute "font" is ignored
+
     cur_re = find_refid( fn_ref_dict, refid );
     if( cur_re == NULL ) {              // undefined refid
         process_text( "(XX)", g_curr_font ); 
@@ -323,7 +330,7 @@ void gml_fnref( const gmltag * entry )
         format_num( cur_re->entry->number, &buffer, sizeof( buffer ),
                     layout_work.fnref.number_style );
         input_cbs->fmflags &= ~II_eol;
-        process_text( &buffer, g_curr_font ); 
+        process_text( &buffer, layout_work.fnref.font ); 
     }
 
     if( !ProcFlags.reprocess_line && *p ) {

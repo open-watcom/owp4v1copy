@@ -125,7 +125,7 @@ void    init_def_lay( void )
     layout_work.fig.font = 0;
     layout_work.fig.default_place = top_place;
     layout_work.fig.default_frame.type = rule_frame;
-    strcpy( layout_work.fig.default_frame.string, "????" ); // not used
+    layout_work.fig.default_frame.string[0] = '\0'; 
 
     /***********************************************************************/
     /*  :XMP   values                                                      */

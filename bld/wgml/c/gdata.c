@@ -109,7 +109,7 @@ void init_global_vars( void )
     tm                  = 0;            // top margin              &$tm
     bm                  = 0;            // bottom margin           &$bm
     fm                  = 0;            // footing margin          &$fm
-    fm                  = 0;            // heading margin          &$hm
+    hm                  = 0;            // heading margin          &$hm
 
     in_esc              = ' ';
     tab_char            = 0x09;
@@ -131,25 +131,27 @@ void init_global_vars( void )
 
     t_element               = NULL;
     t_el_last               = NULL;
-    t_page.main_top         = 0;
+    t_page.cols_top         = 0;
     t_page.max_depth        = 0;
     t_page.cur_depth        = 0;
     t_page.col_count        = 0;
     t_page.max_width        = 0;
+    t_page.post_skip        = 0;
     t_page.last_col_main    = NULL;
-    t_page.last_col_bot     = NULL;
     t_page.last_col_fn      = NULL;
     t_page.top_banner       = NULL;
     t_page.bottom_banner    = NULL;
     t_page.top_ban          = NULL;
     t_page.page_width       = NULL;
-    t_page.main             = NULL;
+    t_page.cols             = NULL;
     t_page.bot_ban          = NULL;
-    n_page.last_col_top     = NULL;
+    n_page.last_page_width  = NULL;
+    n_page.last_col_width   = NULL;
     n_page.last_col_main    = NULL;
     n_page.last_col_bot     = NULL;
     n_page.last_col_fn      = NULL;
-    n_page.col_top          = NULL;
+    n_page.page_width       = NULL;
+    n_page.col_width        = NULL;
     n_page.col_main         = NULL;
     n_page.col_bot          = NULL;
     n_page.col_fn           = NULL;
@@ -157,6 +159,20 @@ void init_global_vars( void )
     text_pool               = NULL;
     line_pool               = NULL;
     doc_el_pool             = NULL;
+
+    hd_info.h_num           = NULL;
+    hd_info.h_text          = NULL;
+    hd_info.id              = NULL;
+    hd_info.post_skip       = NULL;
+    hd_info.pre_skip        = NULL;
+    hd_info.top_skip        = NULL;
+    hd_info.src             = hds_none;
+    hd_info.line_pos        = pos_left;
+    hd_info.hn_lvl          = 0;
+    hd_info.num_font        = FONT0;
+    hd_info.text_font       = FONT0;
+    hd_info.spacing         = 1;
+    hd_info.ejected         = false;
 
     lay_files           = NULL;         // filename(s) from ( LAYout option
 
@@ -172,6 +188,10 @@ void init_global_vars( void )
     init_ref_dict( &hd_ref_dict );
     init_ref_dict( &ix_ref_dict );
 
+    line_buff.current   = 0;
+    line_buff.length    = 80;
+    line_buff.text      = mem_alloc( line_buff.length + 1 );
+
     fig_fwd_refs        = NULL;
     fn_fwd_refs         = NULL;
     hd_fwd_refs         = NULL;
@@ -179,6 +199,12 @@ void init_global_vars( void )
     fig_list            = NULL;
     fn_list             = NULL;
     hd_list             = NULL;
+
+    pgnum_style[0]      = h_style;
+    pgnum_style[1]      = h_style;
+    pgnum_style[2]      = h_style;
+    pgnum_style[3]      = h_style;
+    pgnum_style[4]      = h_style;
 
     tagname[0]          = '*';          // last defined GML tag name none
     tag_entry           = NULL;         // ... entry in tag_dict
@@ -259,6 +285,8 @@ void init_pass_data( void )
 
     g_indent            = 0;
     g_indentr           = 0;
+
+    figlist_toc         = gs_none;
 
     fig_count           = 0;
     fig_entry           = fig_list;     // start each pass at start of FIG list

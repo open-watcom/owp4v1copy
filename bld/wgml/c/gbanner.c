@@ -93,25 +93,25 @@ static  void    preprocess_script_region( banner_lay_tag * ban )
 
 /***************************************************************************/
 /*  set banner pointers for head x heading                                 */
-/*  perhaps the section banner needs to be set if no Hx banner exists TBD  */
+/*  NOTE: this ignores differences in line height ant their effect on page */
+/*        top and page depth and so on pagination                          */
 /***************************************************************************/
 void set_headx_banners( int hx_lvl )
 {
-
-    if( ban_top[hx_lvl + head0_ban][0] != NULL ) {
+    if( (ban_top[hx_lvl + head0_ban][0] != NULL) ||
+            (ban_top[hx_lvl + head0_ban][1] != NULL) ||
+            (ban_bot[hx_lvl + head0_ban][0] != NULL) ||
+            (ban_bot[hx_lvl + head0_ban][1] != NULL) ) {
+        ProcFlags.heading_banner = true;        // at least one Hn banner exists
+    }
+    if( ProcFlags.heading_banner ) {            // change all banners if any exist
         sect_ban_top[0] = ban_top[hx_lvl + head0_ban][0];
-    }
-    if( ban_top[hx_lvl + head0_ban][1] != NULL ) {
         sect_ban_top[1] = ban_top[hx_lvl + head0_ban][1];
-    }
-    if( ban_bot[hx_lvl + head0_ban][0] != NULL ) {
         sect_ban_bot[0] = ban_bot[hx_lvl + head0_ban][0];
-    }
-    if( ban_bot[hx_lvl + head0_ban][1] != NULL ) {
         sect_ban_bot[1] = ban_bot[hx_lvl + head0_ban][1];
     }
+    return;
 }
-
 
 /***************************************************************************/
 /*  set banner pointers                                                    */
@@ -131,6 +131,9 @@ void set_banners( void )
         { backm_ban,    t_BACKM    },
         { body_ban,     t_BODY     },
         { figlist_ban,  t_FIGLIST  },
+        { index_ban,    t_INDEX    },
+        { preface_ban,  t_PREFACE  },
+        { toc_ban,      t_TOC      },
         { head0_ban,    t_H0       },
         { head1_ban,    t_H1       },
         { head2_ban,    t_H2       },
@@ -141,9 +144,6 @@ void set_banners( void )
         { letfirst_ban, t_NONE     },   // dummy
         { letlast_ban,  t_NONE     },   // dummy
         { letter_ban,   t_NONE     },   // dummy
-        { index_ban,    t_INDEX    },
-        { preface_ban,  t_PREFACE  },
-        { toc_ban,      t_TOC      },
     };
 
     for( k = 0; k < max_ban; k++ ) {    // init banner list
@@ -188,6 +188,78 @@ void set_banners( void )
             }
         }
     }
+}
+
+
+/***************************************************************************/
+/*  actually set a pgnum_style value from a given banner                   */
+/***************************************************************************/
+
+static bool do_set_pgnum_style( banner_lay_tag * ban, uint8_t index )
+{
+    bool    retval  = true;
+
+    if( ban == NULL ) {         // nothing to do
+        retval = false;
+    } else if( ban->style == pgnuma_content ) {
+        pgnum_style[index] = h_style;
+    } else if( ban->style == pgnumad_content ) {
+        pgnum_style[index] = h_style | xd_style;
+    } else if( ban->style == pgnumr_content ) {
+        pgnum_style[index] = r_style;
+    } else if( ban->style == pgnumrd_content ) {
+        pgnum_style[index] = r_style | xd_style;
+    } else if( ban->style == pgnumc_content ) {
+        pgnum_style[index] = c_style;
+    } else if( ban->style == pgnumcd_content ) {
+        pgnum_style[index] = c_style | xd_style;
+    } else {    // banner content is not a page number style
+        retval = false;
+    }
+
+    return(retval);
+}
+
+
+/***************************************************************************/
+/*  set the pgnum_style array from the banner set arrays                   */
+/*      first use a switch to identify the banners to use                  */
+/*      then set the value by examining the banners in the order used by   */
+/*      wgml 4.0                                                           */
+/***************************************************************************/
+
+void set_pgnum_style( void )
+{
+    int         i;
+    ban_docsect ban_offset;
+
+    for( i = 0; i < pns_max; i++ ) {
+        switch( i ) {
+        case pns_abstract :
+            ban_offset = abstract_ban;
+            break;
+        case pns_appendix :
+            ban_offset = appendix_ban;
+            break;
+        case pns_backm :
+            ban_offset = backm_ban;
+            break;
+        case pns_body :
+            ban_offset = body_ban;
+            break;
+        case pns_preface :
+            ban_offset = preface_ban;
+            break;
+        }
+        if( do_set_pgnum_style( ban_top[ban_offset][0], i ) ) {
+        } else if( do_set_pgnum_style( ban_top[ban_offset][1], i ) ) {
+        } else if( do_set_pgnum_style( ban_bot[ban_offset][1], i ) ) {
+        } else if( do_set_pgnum_style( ban_bot[ban_offset][0], i ) ) {
+        } else {
+            pgnum_style[i] = h_style;
+        }
+    }
+    return;
 }
 
 

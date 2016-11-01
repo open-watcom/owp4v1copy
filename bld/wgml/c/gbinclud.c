@@ -103,7 +103,7 @@ void    gml_binclude( const gmltag * entry )
                 if( att_val_to_su( &depth_su, true ) ) {
                     break;
                 }
-                depth = conv_vert_unit( &depth_su, spacing );
+                depth = conv_vert_unit( &depth_su, spacing, g_curr_font );
                 if( depth > t_page.max_depth ) {
                     xx_line_err( err_inv_depth_binclude, val_start );
                 }

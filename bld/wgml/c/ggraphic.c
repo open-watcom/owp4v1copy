@@ -101,7 +101,7 @@ void    gml_graphic( const gmltag * entry )
                 if( att_val_to_su( &cur_su, true ) ) {
                     break;
                 }
-                depth = conv_vert_unit( &cur_su, spacing );
+                depth = conv_vert_unit( &cur_su, spacing, g_curr_font );
                 if( depth == 0 ) {
                     xx_line_err( err_inv_depth_graphic_1, val_start );
                 }
@@ -128,7 +128,7 @@ void    gml_graphic( const gmltag * entry )
                     if( att_val_to_su( &cur_su, true ) ) {
                         break;
                     }
-                    width = conv_hor_unit( &cur_su );
+                    width = conv_hor_unit( &cur_su, g_curr_font );
                     if( width == 0 ) {
                         xx_line_err( err_inv_width_graphic_1, val_start );
                     }
@@ -175,7 +175,7 @@ void    gml_graphic( const gmltag * entry )
                 if( att_val_to_su( &cur_su, false ) ) {
                     break;
                 }
-                xoff = conv_hor_unit( &cur_su );
+                xoff = conv_hor_unit( &cur_su, g_curr_font );
                 if( ProcFlags.tag_end_found ) {
                     break;
                 }
@@ -188,7 +188,7 @@ void    gml_graphic( const gmltag * entry )
                 if( att_val_to_su( &cur_su, false ) ) {
                     break;
                 }
-                yoff = conv_vert_unit( &cur_su, spacing );
+                yoff = conv_vert_unit( &cur_su, spacing, g_curr_font );
                 if( ProcFlags.tag_end_found ) {
                     break;
                 }

@@ -175,6 +175,7 @@ static  void    init_banner_wk( banner_lay_tag * ban )
     ban->ban_left_adjust = 0;
     ban->ban_right_adjust = 0;
     ban->ban_depth = 0;
+    ban->style = no_content;
  
     lay_init_su( &z0, &(ban->left_adjust) );
     lay_init_su( &z0, &(ban->right_adjust) );
@@ -429,6 +430,38 @@ void    lay_ebanner( const gmltag * entry )
                 del_ban = NULL;
             }
         } else {
+
+            /****************************************************************/
+            /* Set curr_ban->style to the number style, if any              */
+            /* This works for one region only; if multiple regions are      */
+            /* implemented, testing for the correct order of checking them  */
+            /* and then implementation of that order will be needed         */
+            /****************************************************************/
+                                                                            
+            switch( curr_ban->docsect ) {
+            case abstract_ban :
+            case appendix_ban :
+            case backm_ban :
+            case body_ban :
+            case preface_ban :
+
+            /* upage curr_ban->style if the region content_type is "pgnumX" */
+
+                switch( curr_ban->region->contents.content_type ) {
+                case pgnuma_content :
+                case pgnumad_content :
+                case pgnumr_content :
+                case pgnumrd_content :
+                case pgnumc_content :
+                case pgnumcd_content :
+                    curr_ban->style = curr_ban->region->contents.content_type;
+//                default :
+                    /* keep the default value, no_content, for all other content tags */
+                }
+//            default :
+                /* keep the default value, no_content, for all other banners */
+            }
+
             banwk = mem_alloc( sizeof( banner_lay_tag ) );
             memcpy( banwk, curr_ban, sizeof( banner_lay_tag ) );
  
