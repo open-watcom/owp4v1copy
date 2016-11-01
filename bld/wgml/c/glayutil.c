@@ -425,7 +425,7 @@ void    o_content( FILE * f, lay_att curr, content * tm )
 bool    i_default_frame( char * p, lay_att curr, def_frame * tm )
 {
     bool        cvterr;
-    int         len;
+//    int         len;
 
     cvterr = false;
     if( !strnicmp( "none", p, 4 ) ) {
@@ -437,17 +437,9 @@ bool    i_default_frame( char * p, lay_att curr, def_frame * tm )
     } else if( !is_quote_char( *p ) ) {
         cvterr = true;
     } else {
-        len = strlen( p );
-        if( *p != *(p + len - 1) ) {
-            cvterr = true;  // string not terminated
-        } else {
-            if( sizeof( tm->string ) > len - 2 ) {
-                *(p + len - 1 ) = '\0';
-                strcpy_s( tm->string, sizeof( tm->string ), p + 1 );
-                tm->type = char_frame;
-            } else {
-                cvterr = true; // string too long;
-            }
+        cvterr = i_xx_string( p, curr, tm->string );
+        if( !cvterr ) {
+            tm->type = char_frame;
         }
     }
     if( cvterr ) {
