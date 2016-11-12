@@ -286,6 +286,7 @@ global  fwd_ref     *   hd_fwd_refs;    // forward reference/undefined id/page c
 global  ref_entry   *   hd_ref_dict;    // reference dictionary :Hx tags
 global  ffh_entry   *   hd_list;        // list of headings in order encountered
 global  hd_data         hd_info;        // information for heading output         
+global  hd_num_data     hd_nums[hds_appendix];  // heading hierarchy numbering
 
 // index support
 global  ix_h_blk    *   index_dict;     // index structure dictionary

@@ -166,7 +166,7 @@ void init_global_vars( void )
     hd_info.post_skip       = NULL;
     hd_info.pre_skip        = NULL;
     hd_info.top_skip        = NULL;
-    hd_info.src             = hds_none;
+    hd_info.src             = hds_max;
     hd_info.line_pos        = pos_left;
     hd_info.hn_lvl          = 0;
     hd_info.num_font        = FONT0;
@@ -263,20 +263,20 @@ void init_pass_data( void )
     ProcFlags.in_trans  = (in_esc != ' ');// translation wanted
     ProcFlags.has_aa_block = aa_save;
     ProcFlags.ps_device = ps_save;
-    layout_work.hx[0].headn = 0;        // reset used header headn numbers
-    layout_work.hx[1].headn = 0;
-    layout_work.hx[2].headn = 0;
-    layout_work.hx[3].headn = 0;
-    layout_work.hx[4].headn = 0;
-    layout_work.hx[5].headn = 0;
-    layout_work.hx[6].headn = 0;
-    layout_work.hx[0].headnsub = NULL;   // and symvar values
-    layout_work.hx[1].headnsub = NULL;
-    layout_work.hx[2].headnsub = NULL;
-    layout_work.hx[3].headnsub = NULL;
-    layout_work.hx[4].headnsub = NULL;
-    layout_work.hx[5].headnsub = NULL;
-    layout_work.hx[6].headnsub = NULL;
+    hd_nums[hds_h0].headn = 0;          // reset used header headn numbers
+    hd_nums[hds_h1].headn = 0;
+    hd_nums[hds_h2].headn = 0;
+    hd_nums[hds_h3].headn = 0;
+    hd_nums[hds_h4].headn = 0;
+    hd_nums[hds_h5].headn = 0;
+    hd_nums[hds_h6].headn = 0;
+    hd_nums[hds_h0].headnsub = NULL;   // and symvar values
+    hd_nums[hds_h1].headnsub = NULL;
+    hd_nums[hds_h2].headnsub = NULL;
+    hd_nums[hds_h3].headnsub = NULL;
+    hd_nums[hds_h4].headnsub = NULL;
+    hd_nums[hds_h5].headnsub = NULL;
+    hd_nums[hds_h6].headnsub = NULL;
 
     tm = (bin_device->vertical_base_units * 6 ) / LPI;  // top margin &systm
     bm = tm;                                            // bottom margin &sysbm

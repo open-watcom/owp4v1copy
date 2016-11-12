@@ -322,8 +322,6 @@ typedef struct hx_lay_tag {
     su              pre_skip;           // vertical space unit
     su              post_skip;          // vertical space unit
     su              align;              // horizontal space unit
-    int32_t         headn;              // holds current number if numbered
-    symsub      *   headnsub;           // ptr to $HEADNUMx symvar entry
     int8_t          spacing;            // positive integer
     font_number     font;               // non-negative integer
     font_number     number_font;        // non-negative integer

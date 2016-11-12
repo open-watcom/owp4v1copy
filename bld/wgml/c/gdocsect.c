@@ -707,10 +707,10 @@ void start_doc_sect( void )
         if( page_e != ej_no ) {
             page_e = ej_yes;                        // "even" and "odd" act like "yes"
         }
-        for( k = 1; k < 7; k++ ) {                  // reset heading levels
-            layout_work.hx[k].headn = 0;
-            if( layout_work.hx[k].headnsub != NULL ) {
-                *(layout_work.hx[k].headnsub->value) = '\0';
+        for( k = 1; k < hds_appendix; k++ ) {       // reset heading levels
+            hd_nums[k].headn = 0;
+            if( hd_nums[k].headnsub != NULL ) {
+                *(hd_nums[k].headnsub->value) = '\0';
             }
         }
         break;

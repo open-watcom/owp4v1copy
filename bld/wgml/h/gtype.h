@@ -1185,26 +1185,39 @@ typedef struct ix_h_blk {               // index header with index term text
 
 /***************************************************************************/
 /*  Enum for distinguishing the source of a heading.                       */
-/*  For use with gen_heading() in ghx.c                                    */
+/*  For use with gen_heading() in ghx.c ***subject to change***            */
+/*  Note: the order of the tags matters, please do not reorganize them     */
 /*  Note: "heading" here refers to something that appears in the TOC       */
 /*  Note: allows control of differences, such as which layout to use       */
 /***************************************************************************/
 
 typedef enum {
-    hds_none,       // none (default value)
-    hds_hn,         // Hn tag
-    hds_abstract,   // ABSTRACT
-    hds_appendix,   // APPENDIX (used for H1 tags in APPENDIX section)
+    hds_h0,         // H0 tag
+    hds_h1,         // H1 tag
+    hds_h2,         // H2 tag
+    hds_h3,         // H3 tag
+    hds_h4,         // H4 tag
+    hds_h5,         // H5 tag
+    hds_h6,         // H6 tag
+    hds_appendix,   // APPENDIX (also for sizing the hierarchy-related arrays)
+    hds_abstract,   // ABSTRACT (also used for sizing the Hn-Appendix array)
     hds_backm,      // BACKM
     hds_body,       // BODY
     hds_index,      // INDEX
     hds_preface,    // PREFACE
+    hds_max         // used for sizing the Hn-Heading array
 } hdsrc;
 
 /***************************************************************************/
 /*  Structure for storing information used to actually process and output  */
 /*  (if appropriate) headings, whether from an Hn tag or a secion tag.     */
+/*  IN PROGRESS */
 /***************************************************************************/
+
+typedef struct {
+    int32_t         headn;              // holds current number if numbered
+    symsub      *   headnsub;           // ptr to $HEADNUMx symvar entry
+} hd_num_data;
 
 typedef enum page_pos {         // needed here to avoid gtypelay.h circularity
     pos_left,
