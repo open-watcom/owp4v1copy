@@ -173,58 +173,55 @@ void    lay_index( const gmltag * entry )
                 switch( curr ) {
                 case   e_post_skip:
                     cvterr = i_space_unit( p, curr,
-                                           &layout_work.index.post_skip );
+                                    &layout_work.hx.hx_sect[hds_index].post_skip );
                     break;
                 case   e_pre_top_skip:
                     cvterr = i_space_unit( p, curr,
-                                           &layout_work.index.pre_top_skip );
+                                    &layout_work.hx.hx_sect[hds_index].pre_top_skip );
                     break;
                 case   e_left_adjust:
-                    cvterr = i_space_unit( p, curr,
-                                           &layout_work.index.left_adjust );
+                    cvterr = i_space_unit( p, curr, &layout_work.index.left_adjust );
                     break;
                 case   e_right_adjust:
-                    cvterr = i_space_unit( p, curr,
-                                           &layout_work.index.right_adjust );
+                    cvterr = i_space_unit( p, curr, &layout_work.index.right_adjust );
                     break;
                 case   e_spacing:
-                    cvterr = i_int8( p, curr, &layout_work.index.spacing );
+                    cvterr = i_int8( p, curr,
+                                        &layout_work.hx.hx_sect[hds_index].spacing );
                     break;
                 case   e_columns:
                     cvterr = i_int8( p, curr, &layout_work.index.columns );
                     break;
                 case   e_see_string:
-                    cvterr = i_xx_string( p, curr,
-                                          &layout_work.index.see_string );
+                    cvterr = i_xx_string( p, curr, &layout_work.index.see_string );
                     break;
                 case   e_see_also_string:
                     cvterr = i_xx_string( p, curr,
-                                          &layout_work.index.see_also_string );
+                                                &layout_work.index.see_also_string );
                     break;
                 case   e_header:
-                    cvterr = i_yes_no( p, curr, &layout_work.index.header );
+                    cvterr = i_yes_no( p, curr,
+                                        &layout_work.hx.hx_sect[hds_index].header );
                     break;
                 case   e_index_string:
-                    cvterr = i_xx_string( p, curr,
-                                          &layout_work.index.index_string );
+                    cvterr = i_xx_string( p, curr, &layout_work.index.index_string );
                     break;
                 case   e_page_eject:
                     cvterr = i_page_eject( p, curr,
-                                           &layout_work.index.page_eject );
+                                    &layout_work.hx.hx_sect[hds_index].page_eject );
                     break;
                 case   e_page_reset:
-                    cvterr = i_yes_no( p, curr,
-                                       &layout_work.index.page_reset );
+                    cvterr = i_yes_no( p, curr, &layout_work.index.page_reset );
                     break;
                 case   e_font:
-                    cvterr = i_font_number( p, curr, &layout_work.index.font );
-                    if( layout_work.index.font >= wgml_font_cnt ) {
-                        layout_work.index.font = 0;
+                    cvterr = i_font_number( p, curr,
+                                            &layout_work.hx.hx_sect[hds_index].font );
+                    if( layout_work.hx.hx_sect[hds_index].font >= wgml_font_cnt ) {
+                        layout_work.hx.hx_sect[hds_index].font = 0;
                     }
                     break;
                 default:
-                    out_msg( "WGML logic error.\n");
-                    cvterr = true;
+                    internal_err( __FILE__, __LINE__ );
                     break;
                 }
                 if( cvterr ) {          // there was an error

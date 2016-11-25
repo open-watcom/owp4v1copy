@@ -238,86 +238,87 @@ void    lay_appendix( const gmltag * entry )
                 switch( curr ) {
                 case   e_indent:
                     cvterr = i_space_unit( p, curr,
-                                           &layout_work.appendix.indent );
+                                    &layout_work.hx.hx_head[hds_appendix].indent );
                     break;
                 case   e_pre_top_skip:
                     cvterr = i_space_unit( p, curr,
-                                           &layout_work.appendix.pre_top_skip );
+                                &layout_work.hx.hx_sect[hds_appendix].pre_top_skip );
                     break;
                 case   e_pre_skip:
                     cvterr = i_space_unit( p, curr,
-                                           &layout_work.appendix.pre_skip );
+                                    &layout_work.hx.hx_head[hds_appendix].pre_skip );
                     break;
                 case   e_post_skip:
                     cvterr = i_space_unit( p, curr,
-                                           &layout_work.appendix.post_skip );
+                                    &layout_work.hx.hx_sect[hds_appendix].post_skip );
                     break;
                 case   e_spacing:
-                    cvterr = i_int8( p, curr, &layout_work.appendix.spacing );
+                    cvterr = i_int8( p, curr,
+                                    &layout_work.hx.hx_sect[hds_appendix].spacing );
                     break;
                 case   e_font:
-                    cvterr = i_font_number( p, curr, &layout_work.appendix.font );
-                    if( layout_work.appendix.font >= wgml_font_cnt ) {
-                        layout_work.appendix.font = 0;
+                    cvterr = i_font_number( p, curr,
+                                        &layout_work.hx.hx_sect[hds_appendix].font );
+                    if( layout_work.hx.hx_sect[hds_appendix].font >= wgml_font_cnt ) {
+                        layout_work.hx.hx_sect[hds_appendix].font = 0;
                     }
                     break;
                 case   e_number_font:
-                    cvterr = i_font_number( p, curr, &layout_work.appendix.number_font );
-                    if( layout_work.appendix.number_font >= wgml_font_cnt ) {
-                        layout_work.appendix.number_font = 0;
+                    cvterr = i_font_number( p, curr,
+                                &layout_work.hx.hx_head[hds_appendix].number_font );
+                    if( layout_work.hx.hx_head[hds_appendix].number_font >= wgml_font_cnt ) {
+                        layout_work.hx.hx_head[hds_appendix].number_font = 0;
                     }
                     break;
                 case   e_number_form:
                     cvterr = i_number_form( p, curr,
-                                            &layout_work.appendix.number_form );
+                                &layout_work.hx.hx_head[hds_appendix].number_form );
                     break;
                 case   e_page_position:
                     cvterr = i_page_position( p, curr,
-                                          &layout_work.appendix.page_position );
+                                &layout_work.hx.hx_head[hds_appendix].page_position );
                     break;
                 case   e_number_style:
                     cvterr = i_number_style( p, curr,
-                                            &layout_work.appendix.number_style );
+                                &layout_work.hx.hx_head[hds_appendix].number_style );
                     break;
                 case   e_page_eject:
                     cvterr = i_page_eject( p, curr,
-                                           &layout_work.appendix.page_eject );
+                                &layout_work.hx.hx_sect[hds_appendix].page_eject );
                     break;
                 case   e_line_break:
                     cvterr = i_yes_no( p, curr,
-                                       &layout_work.appendix.line_break );
+                                &layout_work.hx.hx_head[hds_appendix].line_break );
                     break;
                 case   e_display_heading:
                     cvterr = i_yes_no( p, curr,
-                                       &layout_work.appendix.display_heading );
+                            &layout_work.hx.hx_head[hds_appendix].display_heading );
                     break;
                 case   e_number_reset:
                     cvterr = i_yes_no( p, curr,
-                                       &layout_work.appendix.number_reset );
+                                &layout_work.hx.hx_head[hds_appendix].number_reset );
                     break;
                 case   e_case:
                     cvterr = i_case( p, curr,
-                                     &layout_work.appendix.cases );
+                                     &layout_work.hx.hx_head[hds_appendix].cases );
                     break;
                 case   e_align:
                     cvterr = i_space_unit( p, curr,
-                                           &layout_work.appendix.align );
+                                        &layout_work.hx.hx_head[hds_appendix].align );
                     break;
                 case   e_header:
                     cvterr = i_yes_no( p, curr,
-                                       &layout_work.appendix.header );
+                                       &layout_work.hx.hx_sect[hds_appendix].header );
                     break;
                 case   e_appendix_string:
-                    cvterr = i_xx_string( p, curr,
-                                          &layout_work.appendix.string );
+                    cvterr = i_xx_string( p, curr, &layout_work.appendix.string );
                     break;
                 case   e_page_reset:
-                    cvterr = i_yes_no( p, curr,
-                                       &layout_work.appendix.page_reset );
+                    cvterr = i_yes_no( p, curr, &layout_work.appendix.page_reset );
                     break;
                 case   e_section_eject:
                     cvterr = i_page_eject( p, curr,
-                                           &layout_work.appendix.section_eject );
+                                                &layout_work.appendix.section_eject );
                     break;
                 case   e_columns:
                     cvterr = i_int8( p, curr, &layout_work.appendix.columns );

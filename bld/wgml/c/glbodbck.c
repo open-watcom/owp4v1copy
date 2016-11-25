@@ -122,7 +122,8 @@ void    lay_backbod( const gmltag * entry )
     att_args            l_args;
     int                 cvterr;
     lay_sub             x_tag;
-    backbod_lay_tag *   ap;
+    backbod_lay_tag *   bb;
+    hx_sect_lay_tag *   bbsect;
 
     p = scan_start;
     cvterr = false;
@@ -134,14 +135,14 @@ void    lay_backbod( const gmltag * entry )
     }
     if( !strcmp( "BACKM", entry->tagname ) ) {
         x_tag = el_backm;
-        ap  = &layout_work.backm;
+        bb  = &layout_work.backm;
+        bbsect = &layout_work.hx.hx_sect[hds_backm];
     } else if( !strcmp( "BODY", entry->tagname ) ) {
         x_tag = el_body;
-        ap  = &layout_work.body;
+        bb  = &layout_work.body;
+        bbsect = &layout_work.hx.hx_sect[hds_body];
     } else {
-         out_msg( "WGML logic error glbodbck.c.\n");
-         file_mac_info();
-         err_count++;
+        internal_err( __FILE__, __LINE__ );
     }
     if( ProcFlags.lay_xxx != x_tag ) {
         ProcFlags.lay_xxx = x_tag;
@@ -156,44 +157,43 @@ void    lay_backbod( const gmltag * entry )
 
                 switch( curr ) {
                 case   e_post_skip:
-                    cvterr = i_space_unit( p, curr, &(ap->post_skip) );
+                    cvterr = i_space_unit( p, curr, &(bbsect->post_skip) );
                     break;
                 case   e_pre_top_skip:
-                    cvterr = i_space_unit( p, curr, &(ap->pre_top_skip) );
+                    cvterr = i_space_unit( p, curr, &(bbsect->pre_top_skip) );
                     break;
                 case   e_header:
-                    cvterr = i_yes_no( p, curr, &(ap->header) );
+                    cvterr = i_yes_no( p, curr, &(bbsect->header) );
                     break;
                 case   e_body_string:
                     if( x_tag == el_body ) {
-                        cvterr = i_xx_string( p, curr, &(ap->string) );
+                        cvterr = i_xx_string( p, curr, &(bb->string) );
                     }
                     break;
                 case   e_backm_string:
                     if( x_tag == el_backm ) {
-                        cvterr = i_xx_string( p, curr, &(ap->string) );
+                        cvterr = i_xx_string( p, curr, &(bb->string) );
                     }
                     break;
                 case   e_page_eject:
-                    cvterr = i_page_eject( p, curr, &(ap->page_eject) );
+                    cvterr = i_page_eject( p, curr, &(bbsect->page_eject) );
                     break;
                 case   e_page_reset:
-                    cvterr = i_yes_no( p, curr, &(ap->page_reset) );
+                    cvterr = i_yes_no( p, curr, &(bb->page_reset) );
                     break;
                 case   e_font:
-                    cvterr = i_font_number( p, curr, &(ap->font) );
-                    if( ap->font >= wgml_font_cnt ) {
-                        ap->font = 0;
+                    cvterr = i_font_number( p, curr, &(bbsect->font) );
+                    if( bbsect->font >= wgml_font_cnt ) {
+                        bbsect->font = 0;
                     }
                     break;
                 case   e_columns:
                     if( x_tag == el_backm ) {
-                        cvterr = i_int8( p, curr, &(ap->columns) );
+                        cvterr = i_int8( p, curr, &(bb->columns) );
                     }
                     break;
                 default:
-                    out_msg( "WGML logic error.\n");
-                    cvterr = true;
+                    internal_err( __FILE__, __LINE__ );
                     break;
                 }
                 if( cvterr ) {          // there was an error

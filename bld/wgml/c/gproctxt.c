@@ -1606,7 +1606,7 @@ void process_line_full( text_line * a_line, bool justify )
         if( justify && GlobalFlags.lastpass && !ProcFlags.literal
                                          && ProcFlags.justify > ju_off ) {
             do_justify( ju_x_start, g_page_right, a_line );
-        } else if( hd_info.line_pos == pos_center ) {       // center text on line
+        } else if( line_position == pos_center ) {          // center text on line
             if( g_page_right > (a_line->last->x_address + a_line->last->width) ) {
                 offset = (g_page_right - (a_line->last->x_address + a_line->last->width))/2;
                 split_chars = a_line->first;
@@ -1615,7 +1615,7 @@ void process_line_full( text_line * a_line, bool justify )
                     split_chars = split_chars->next;
                 }
             }
-        } else if( hd_info.line_pos == pos_right ) {        // move text to end at right margin
+        } else if( line_position == pos_right ) {           // move text to end at right margin
             offset = g_page_right - (a_line->last->x_address + a_line->last->width);
             split_chars = a_line->first;
             while( split_chars != NULL ) {

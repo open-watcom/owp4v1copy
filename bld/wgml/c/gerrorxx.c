@@ -396,6 +396,15 @@ void xx_warn( const msg_ids errid )
     return;
 }
 
+void xx_warn_att( const msg_ids errid, const char * arg )
+{
+    wng_count++;
+    g_warn( errid, arg );
+    file_mac_info();
+    return;
+}
+
+
 /***************************************************************************/
 /*  messages for duplicate, forward, or undefined figure, footnote, or     */
 /*  heading ids                                                            */

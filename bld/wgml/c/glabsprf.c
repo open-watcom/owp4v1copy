@@ -136,6 +136,7 @@ void    lay_abspref( const gmltag * entry )
     int                 cvterr;
     lay_sub             x_tag;
     abspref_lay_tag *   ap;
+    hx_sect_lay_tag *   apsect;
 
     p = scan_start;
     cvterr = false;
@@ -148,13 +149,13 @@ void    lay_abspref( const gmltag * entry )
     if( !strcmp( "ABSTRACT", entry->tagname ) ) {
         x_tag = el_abstract;
         ap  = &layout_work.abstract;
+        apsect = &layout_work.hx.hx_sect[hds_abstract];
     } else if( !strcmp( "PREFACE", entry->tagname ) ) {
         x_tag = el_preface;
         ap  = &layout_work.preface;
+        apsect = &layout_work.hx.hx_sect[hds_preface];
     } else {
-         out_msg( "WGML logic error glabsprf.c.\n");
-         file_mac_info();
-         err_count++;
+        internal_err( __FILE__, __LINE__ );
     }
     if( ProcFlags.lay_xxx != x_tag ) {
         ProcFlags.lay_xxx = x_tag;
@@ -169,20 +170,20 @@ void    lay_abspref( const gmltag * entry )
 
                 switch( curr ) {
                 case   e_post_skip:
-                    cvterr = i_space_unit( p, curr, &(ap->post_skip) );
+                    cvterr = i_space_unit( p, curr, &(apsect->post_skip) );
                     break;
                 case   e_pre_top_skip:
-                    cvterr = i_space_unit( p, curr, &(ap->pre_top_skip) );
+                    cvterr = i_space_unit( p, curr, &(apsect->pre_top_skip) );
                     break;
                 case   e_font:
-                    cvterr = i_font_number( p, curr, &(ap->font) );
-                    if( ap->font >= wgml_font_cnt ) ap->font = 0;
+                    cvterr = i_font_number( p, curr, &(apsect->font) );
+                    if( apsect->font >= wgml_font_cnt ) apsect->font = 0;
                     break;
                 case   e_spacing:
-                    cvterr = i_int8( p, curr, &(ap->spacing) );
+                    cvterr = i_int8( p, curr, &(apsect->spacing) );
                     break;
                 case   e_header:
-                    cvterr = i_yes_no( p, curr, &(ap->header) );
+                    cvterr = i_yes_no( p, curr, &(apsect->header) );
                     break;
                 case   e_abstract_string:
                     if( x_tag == el_abstract ) {
@@ -195,7 +196,7 @@ void    lay_abspref( const gmltag * entry )
                     }
                     break;
                 case   e_page_eject:
-                    cvterr = i_page_eject( p, curr, &(ap->page_eject) );
+                    cvterr = i_page_eject( p, curr, &(apsect->page_eject) );
                     break;
                 case   e_page_reset:
                     cvterr = i_yes_no( p, curr, &(ap->page_reset) );
@@ -204,8 +205,7 @@ void    lay_abspref( const gmltag * entry )
                     cvterr = i_int8( p, curr, &(ap->columns) );
                     break;
                 default:
-                    out_msg( "WGML logic error.\n");
-                    cvterr = true;
+                    internal_err( __FILE__, __LINE__ );
                     break;
                 }
                 if( cvterr ) {          // there was an error

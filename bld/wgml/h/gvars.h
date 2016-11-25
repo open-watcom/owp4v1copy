@@ -305,20 +305,21 @@ global  uint32_t        tab_col;        // width of one column, as used with tab
 global  tag_cb      *   tt_stack;       // font stack entry to modify for tab tables
 
 // the document page and related items
+global ban_column       *   ban_col_pool;       // for reuse of ban_column structs
+global doc_column       *   doc_col_pool;       // for reuse of doc_column structs
+global doc_element      *   doc_el_pool;        // for reuse of doc_element structs
 global group_type           cur_group_type;     // current tag/cw in effect (gt_bx is not allowed)
 global doc_el_group     *   cur_doc_el_group;   // current doc_el_group, if any
 global doc_el_group     *   t_doc_el_group;     // stack of groups of doc_elements
 global doc_el_group     *   doc_el_group_pool;  // for reuse of doc_el_group structs
 global doc_element      *   t_element;          // the current element for main
-global text_line        *   t_el_last;          // attachment point to t_element
 global doc_page             t_page;             // for constructing output page
 global doc_next_page        n_page;             // for deferred elements
-global text_line        *   t_line;             // for constructing output line
+global page_pos             line_position;      // left, center, right
 global text_chars       *   text_pool;          // for reuse of text_chars structs
+global text_line        *   t_el_last;          // attachment point to t_element
+global text_line        *   t_line;             // for constructing output line
 global text_line        *   line_pool;          // for reuse of text_line structs
-global ban_column       *   ban_col_pool;       // for reuse of ban_column structs
-global doc_column       *   doc_col_pool;       // for reuse of doc_column structs
-global doc_element      *   doc_el_pool;        // for reuse of doc_element structs
 
 // document section support
 

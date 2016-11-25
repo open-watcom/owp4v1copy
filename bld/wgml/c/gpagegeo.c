@@ -415,8 +415,16 @@ void    do_layout_end_processing( void )
         layout_work.body.columns = layout_work.defaults.columns;
 
         /*******************************************************************/
+        /*  Since we have given BODY a spacing value, this ensures that it */
+        /*  is set to the default value.                                   */
+        /*******************************************************************/
+
+        layout_work.hx.hx_sect[hds_body].spacing = layout_work.defaults.spacing;
+
+        /*******************************************************************/
         /*  This is a good place to start document processing.             */
         /*******************************************************************/
+
         out_msg( "Formatting document\n" );
 
         fb_document();                 // DOCUMENT :PAUSE & :INIT processing.

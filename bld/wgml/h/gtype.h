@@ -1200,12 +1200,12 @@ typedef enum {
     hds_h5,         // H5 tag
     hds_h6,         // H6 tag
     hds_appendix,   // APPENDIX (also for sizing the hierarchy-related arrays)
-    hds_abstract,   // ABSTRACT (also used for sizing the Hn-Appendix array)
-    hds_backm,      // BACKM
-    hds_body,       // BODY
-    hds_index,      // INDEX
+    hds_abstract,   // ABSTRACT (also used for sizing the hx_head_lay_tag array)
     hds_preface,    // PREFACE
-    hds_max         // used for sizing the Hn-Heading array
+    hds_body,       // BODY
+    hds_backm,      // BACKM
+    hds_index,      // INDEX
+    hds_max         // used for sizing the hx_sect_lay_tag array
 } hdsrc;
 
 /***************************************************************************/
@@ -1230,15 +1230,8 @@ typedef struct {
     char        *   h_num;      // heading number
     char        *   h_text;     // heading text
     char        *   id;         // heading id
-    su          *   post_skip;  // post_skip
-    su          *   pre_skip;   // pre_skip
-    su          *   top_skip;   // pre_top_skip
     int             hn_lvl;     // heading level
     hdsrc           src;        // source
-    page_pos        line_pos;   // horizontal line positioning
-    font_number     num_font;   // heading number font
-    font_number     text_font;  // heading text font
-    int8_t          spacing;    // spacing
     bool            ejected;    // true if page was ejected
 } hd_data;
 

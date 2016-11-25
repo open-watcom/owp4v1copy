@@ -159,19 +159,12 @@ void init_global_vars( void )
     text_pool               = NULL;
     line_pool               = NULL;
     doc_el_pool             = NULL;
-
+    line_position           = pos_left;
     hd_info.h_num           = NULL;
     hd_info.h_text          = NULL;
     hd_info.id              = NULL;
-    hd_info.post_skip       = NULL;
-    hd_info.pre_skip        = NULL;
-    hd_info.top_skip        = NULL;
-    hd_info.src             = hds_max;
-    hd_info.line_pos        = pos_left;
     hd_info.hn_lvl          = 0;
-    hd_info.num_font        = FONT0;
-    hd_info.text_font       = FONT0;
-    hd_info.spacing         = 1;
+    hd_info.src             = hds_max;
     hd_info.ejected         = false;
 
     lay_files           = NULL;         // filename(s) from ( LAYout option

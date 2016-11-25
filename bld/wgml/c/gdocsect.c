@@ -641,15 +641,11 @@ void start_doc_sect( void )
         t_page.col_count = layout_work.body.columns;
         set_cols();
         page_r = layout_work.body.page_reset;
-        page_e = layout_work.body.page_eject;
-        if( layout_work.body.header ) {
+        page_e = layout_work.hx.hx_sect[hds_body].page_eject;
+        if( layout_work.hx.hx_sect[hds_body].header ) {
             header = true;
             hd_info.h_text = &layout_work.body.string;
             hd_info.src = hds_body;
-            hd_info.top_skip = &layout_work.body.pre_top_skip;
-            hd_info.post_skip = &layout_work.body.post_skip;
-            hd_info.text_font = layout_work.body.font;
-            hd_info.spacing = spacing;                // standard spacing
         }
         break;
     case   doc_sect_titlep:             // for preceding :BINCLUDE/:GRAPHIC
@@ -667,30 +663,22 @@ void start_doc_sect( void )
         t_page.col_count = layout_work.abstract.columns;
         set_cols();
         page_r = layout_work.abstract.page_reset;
-        page_e = layout_work.abstract.page_eject;
-        if( layout_work.abstract.header ) {
+        page_e = layout_work.hx.hx_sect[hds_abstract].page_eject;
+        if( layout_work.hx.hx_sect[hds_abstract].header ) {
             header = true;
             hd_info.h_text = &layout_work.abstract.string;
             hd_info.src = hds_abstract;
-            hd_info.top_skip = &layout_work.abstract.pre_top_skip;
-            hd_info.post_skip = &layout_work.abstract.post_skip;
-            hd_info.text_font = layout_work.abstract.font;
-            hd_info.spacing = layout_work.abstract.spacing;
         }
         break;
     case   doc_sect_preface:
         t_page.col_count = layout_work.preface.columns;
         set_cols();
         page_r = layout_work.preface.page_reset;
-        page_e = layout_work.preface.page_eject;
-        if( layout_work.preface.header ) {
+        page_e = layout_work.hx.hx_sect[hds_preface].page_eject;
+        if( layout_work.hx.hx_sect[hds_preface].header ) {
             header = true;
             hd_info.h_text = &layout_work.preface.string;
             hd_info.src = hds_preface;
-            hd_info.top_skip = &layout_work.preface.pre_top_skip;
-            hd_info.post_skip = &layout_work.preface.post_skip;
-            hd_info.text_font = layout_work.preface.font;
-            hd_info.spacing = layout_work.preface.spacing;
         }
         break;
     case   doc_sect_figlist:
@@ -718,30 +706,22 @@ void start_doc_sect( void )
         t_page.col_count = layout_work.backm.columns;
         set_cols();
         page_r = layout_work.backm.page_reset;
-        page_e = layout_work.backm.page_eject;
-        if( layout_work.backm.header ) {
+        page_e = layout_work.hx.hx_sect[hds_backm].page_eject;
+        if( layout_work.hx.hx_sect[hds_backm].header ) {
             header = true;
             hd_info.h_text = &layout_work.backm.string;
             hd_info.src = hds_backm;
-            hd_info.top_skip = &layout_work.backm.pre_top_skip;
-            hd_info.post_skip = &layout_work.backm.post_skip;
-            hd_info.text_font = layout_work.backm.font;
-            hd_info.spacing = spacing;         // standard spacing
         }
         break;
     case   doc_sect_index:
         t_page.col_count = layout_work.index.columns;
         set_cols();
         page_r = layout_work.index.page_reset;
-        page_e = layout_work.index.page_eject;
-        if( layout_work.index.header ) {
+        page_e = layout_work.hx.hx_sect[hds_index].page_eject;
+        if( layout_work.hx.hx_sect[hds_index].header ) {
             header = true;
             hd_info.h_text = &layout_work.index.index_string;
             hd_info.src = hds_index;
-            hd_info.top_skip = &layout_work.index.pre_top_skip;
-            hd_info.post_skip = &layout_work.index.post_skip;
-            hd_info.text_font = layout_work.index.font;
-            hd_info.spacing = layout_work.index.spacing;
         }
         break;
     case   doc_sect_toc:
@@ -749,7 +729,6 @@ void start_doc_sect( void )
         t_page.col_count = layout_work.toc.columns;
         set_cols();
         page_e = ej_yes;
-        hd_info.spacing = layout_work.toc.spacing;
         break;
     default:
         new_section( ds );
@@ -824,7 +803,7 @@ void start_doc_sect( void )
     }
     g_cur_left = g_page_left_org;
     if( header ) {
-        hd_info.line_pos = pos_center;
+        line_position = pos_center;
         concat_save = ProcFlags.concat;
         ProcFlags.concat = true;
         justify_save = ProcFlags.justify;
@@ -888,11 +867,11 @@ extern void gml_abstract( const gmltag * entry )
     }
     scr_process_break();
     gml_doc_xxx( doc_sect_abstract );
-    spacing = layout_work.abstract.spacing;
+    spacing = layout_work.hx.hx_sect[hds_abstract].spacing;
     g_cur_left = g_page_left;
     g_cur_h_start = g_page_left;
 
-    if( layout_work.abstract.header ) {
+    if( layout_work.hx.hx_sect[hds_abstract].header ) {
         start_doc_sect();                           // a header is enough
     }
     g_indent = 0;
@@ -907,7 +886,7 @@ extern void gml_appendix( const gmltag * entry )
     }
     scr_process_break();
     gml_doc_xxx( doc_sect_appendix );
-    spacing = layout_work.appendix.spacing;
+    spacing = layout_work.hx.hx_sect[hds_appendix].spacing;
     ProcFlags.frontm_seen = false;  // no longer in FRONTM section
     if( !ProcFlags.fb_document_done ) { // the very first section/page
         do_layout_end_processing();
@@ -929,11 +908,11 @@ extern void gml_backm( const gmltag * entry )
     scr_process_break();
     gml_doc_xxx( doc_sect_backm );
     ProcFlags.frontm_seen = false;  // no longer in FRONTM section
-    spacing = layout_work.abstract.spacing;
+    spacing = layout_work.hx.hx_sect[hds_abstract].spacing;
     g_cur_left = g_page_left;
     g_cur_h_start = g_page_left;
 
-    if( layout_work.backm.header ) {
+    if( layout_work.hx.hx_sect[hds_backm].header ) {
         start_doc_sect();                           // a header is enough
     }
     g_indent = 0;
@@ -957,7 +936,7 @@ extern void gml_body( const gmltag * entry )
     if( !ProcFlags.fb_document_done ) { // the very first section/page
         do_layout_end_processing();
     }
-    if( layout_work.body.header ) {
+    if( layout_work.hx.hx_sect[hds_body].header ) {
         start_doc_sect();                           // a header is enough
     }
     g_indent = 0;
@@ -1039,8 +1018,8 @@ extern void gml_preface( const gmltag * entry )
     }
     scr_process_break();
     gml_doc_xxx( doc_sect_preface );
-    spacing = layout_work.preface.spacing;
-    if( layout_work.preface.header ) {
+    spacing = layout_work.hx.hx_sect[hds_preface].spacing;
+    if( layout_work.hx.hx_sect[hds_preface].header ) {
         start_doc_sect();                           // a header is enough
     }
     g_indent = 0;

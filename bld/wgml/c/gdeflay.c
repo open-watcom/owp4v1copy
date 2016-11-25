@@ -152,60 +152,125 @@ void    init_def_lay( void )
     /*  :H0 - :H6 values                                                   */
     /***********************************************************************/
 
-    k = 0;                              // -----------------
-    layout_work.hx[k].group = 0;
-    lay_init_su( &i05, &layout_work.hx[k].indent );
-    lay_init_su( &n4, &layout_work.hx[k].pre_top_skip );
-    lay_init_su( &z0, &layout_work.hx[k].pre_skip );
-    lay_init_su( &n4, &layout_work.hx[k].post_skip );
-    layout_work.hx[k].spacing = 1;
-    layout_work.hx[k].font = 3;
-    layout_work.hx[k].number_font = 3;
-    layout_work.hx[k].number_form = num_none;
-    layout_work.hx[k].page_position = pos_left;
-    layout_work.hx[k].number_style = h_style;
-    layout_work.hx[k].page_eject = ej_yes;
-    layout_work.hx[k].line_break = true;
-    layout_work.hx[k].display_heading = true;
-    layout_work.hx[k].number_reset = true;
-    layout_work.hx[k].cases = case_mixed;
-    lay_init_su( &z0, &layout_work.hx[k].align );
+    layout_work.hx.group = 0;
 
-    k = 1;                              // -----------------
-    memcpy( &layout_work.hx[1], &layout_work.hx[0],
-            sizeof( layout_work.hx[0] ) );
-    lay_init_su( &z0, &layout_work.hx[k].indent );
-    lay_init_su( &n3, &layout_work.hx[k].pre_top_skip );
-    lay_init_su( &n3, &layout_work.hx[k].post_skip );
-    layout_work.hx[k].number_form = num_new;
+    k = hds_h0;                             // -----------------
+    lay_init_su( &i05, &layout_work.hx.hx_head[k].indent );
+    lay_init_su( &z0, &layout_work.hx.hx_head[k].pre_skip );
+    layout_work.hx.hx_head[k].number_font = 3;
+    layout_work.hx.hx_head[k].number_form = num_none;
+    layout_work.hx.hx_head[k].page_position = pos_left;
+    layout_work.hx.hx_head[k].number_style = h_style;
+    layout_work.hx.hx_head[k].line_break = true;
+    layout_work.hx.hx_head[k].display_heading = true;
+    layout_work.hx.hx_head[k].number_reset = true;
+    layout_work.hx.hx_head[k].cases = case_mixed;
+    lay_init_su( &z0, &layout_work.hx.hx_head[k].align );
 
-    k = 2;                              // -----------------
-    memcpy( &layout_work.hx[2], &layout_work.hx[1],
-            sizeof( layout_work.hx[0] ) );
-    lay_init_su( &n2, &layout_work.hx[k].pre_top_skip );
-    lay_init_su( &n2, &layout_work.hx[k].post_skip );
-    layout_work.hx[k].number_form = num_prop;
-    layout_work.hx[k].page_eject = ej_no;
+    lay_init_su( &n4, &layout_work.hx.hx_sect[k].pre_top_skip );
+    lay_init_su( &n4, &layout_work.hx.hx_sect[k].post_skip );
+    layout_work.hx.hx_sect[k].spacing = 1;
+    layout_work.hx.hx_sect[k].font = 3;
+    layout_work.hx.hx_sect[k].page_eject = ej_yes;
+    layout_work.hx.hx_sect[k].header = true;
 
-    k = 3;                              // -----------------
-    memcpy( &layout_work.hx[3], &layout_work.hx[2],
-            sizeof( layout_work.hx[0] ) );
+    k = hds_h1;                             // -----------------
+    memcpy( &layout_work.hx.hx_head[k], &layout_work.hx.hx_head[k-1],
+            sizeof( layout_work.hx.hx_head[0] ) );
+    lay_init_su( &z0, &layout_work.hx.hx_head[k].indent );
+    layout_work.hx.hx_head[k].number_form = num_new;
 
-    k = 4;                              // -----------------
-    memcpy( &layout_work.hx[4], &layout_work.hx[3],
-            sizeof( layout_work.hx[0] ) );
-    layout_work.hx[k].font = 2;
+    memcpy( &layout_work.hx.hx_sect[k], &layout_work.hx.hx_sect[k-1],
+            sizeof( layout_work.hx.hx_sect[0] ) );
+    lay_init_su( &n3, &layout_work.hx.hx_sect[k].pre_top_skip );
+    lay_init_su( &n3, &layout_work.hx.hx_sect[k].post_skip );
 
-    k = 5;                              // -----------------
-    memcpy( &layout_work.hx[5], &layout_work.hx[4],
-            sizeof( layout_work.hx[0] ) );
-    layout_work.hx[k].line_break = false;
+    k = hds_h2;                             // -----------------
+    memcpy( &layout_work.hx.hx_head[k], &layout_work.hx.hx_head[k-1],
+            sizeof( layout_work.hx.hx_head[0] ) );
+    layout_work.hx.hx_head[k].number_form = num_prop;
 
-    k = 6;                              // -----------------
-    memcpy( &layout_work.hx[6], &layout_work.hx[5],
-            sizeof( layout_work.hx[0] ) );
+    memcpy( &layout_work.hx.hx_sect[k], &layout_work.hx.hx_sect[k-1],
+            sizeof( layout_work.hx.hx_sect[0] ) );
+    lay_init_su( &n2, &layout_work.hx.hx_sect[k].pre_top_skip );
+    lay_init_su( &n2, &layout_work.hx.hx_sect[k].post_skip );
+    layout_work.hx.hx_sect[k].page_eject = ej_no;
 
-    layout_work.hx[k].font = 1;
+    k = hds_h3;                             // -----------------
+    memcpy( &layout_work.hx.hx_head[k], &layout_work.hx.hx_head[k-1],
+            sizeof( layout_work.hx.hx_head[0] ) );
+
+    memcpy( &layout_work.hx.hx_sect[k], &layout_work.hx.hx_sect[k-1],
+            sizeof( layout_work.hx.hx_sect[0] ) );
+
+    k = hds_h4;                             // -----------------
+    memcpy( &layout_work.hx.hx_head[k], &layout_work.hx.hx_head[k-1],
+            sizeof( layout_work.hx.hx_head[0] ) );
+
+    memcpy( &layout_work.hx.hx_sect[k], &layout_work.hx.hx_sect[k-1],
+            sizeof( layout_work.hx.hx_sect[0] ) );
+    layout_work.hx.hx_sect[k].font = 2;
+
+    k = hds_h5;                             // -----------------
+    memcpy( &layout_work.hx.hx_head[k], &layout_work.hx.hx_head[k-1],
+            sizeof( layout_work.hx.hx_head[0] ) );
+    layout_work.hx.hx_head[k].line_break = false;
+
+    memcpy( &layout_work.hx.hx_sect[k], &layout_work.hx.hx_sect[k-1],
+            sizeof( layout_work.hx.hx_sect[0] ) );
+
+    k = hds_h6;                             // -----------------
+    memcpy( &layout_work.hx.hx_head[k], &layout_work.hx.hx_head[k-1],
+            sizeof( layout_work.hx.hx_head[0] ) );
+
+    memcpy( &layout_work.hx.hx_sect[k], &layout_work.hx.hx_sect[k-1],
+            sizeof( layout_work.hx.hx_sect[0] ) );
+    layout_work.hx.hx_sect[k].font = 1;
+
+    /***********************************************************************/
+    /*  Section heading values for matching Hx attributes                  */
+    /***********************************************************************/
+
+    k = hds_appendix;                       // -----------------
+    memcpy( &layout_work.hx.hx_head[k], &layout_work.hx.hx_head[k-1],
+            sizeof( layout_work.hx.hx_head[0] ) );
+    layout_work.hx.hx_head[k].line_break = true;
+    layout_work.hx.hx_head[k].number_form = num_new;
+    layout_work.hx.hx_head[k].number_reset = false;
+    layout_work.hx.hx_head[k].number_style = b_style;
+
+    memcpy( &layout_work.hx.hx_sect[k], &layout_work.hx.hx_sect[k-1],
+            sizeof( layout_work.hx.hx_sect[0] ) );
+    layout_work.hx.hx_sect[k].font = 3;
+    layout_work.hx.hx_sect[k].page_eject = true;
+    lay_init_su( &n3, &layout_work.hx.hx_sect[k].post_skip );
+    lay_init_su( &z0, &layout_work.hx.hx_sect[k].pre_top_skip );
+
+    k = hds_abstract;                       // -----------------
+    memcpy( &layout_work.hx.hx_sect[k], &layout_work.hx.hx_sect[k-1],
+            sizeof( layout_work.hx.hx_sect[0] ) );
+    layout_work.hx.hx_sect[k].font = 1;
+    lay_init_su( &n1, &layout_work.hx.hx_sect[k].post_skip );
+    lay_init_su( &n1, &layout_work.hx.hx_sect[k].pre_top_skip );
+
+    k = hds_preface;                       // -----------------
+    memcpy( &layout_work.hx.hx_sect[k], &layout_work.hx.hx_sect[k-1],
+            sizeof( layout_work.hx.hx_sect[0] ) );
+
+    k = hds_body;                       // -----------------
+    memcpy( &layout_work.hx.hx_sect[k], &layout_work.hx.hx_sect[k-1],
+            sizeof( layout_work.hx.hx_sect[0] ) );
+    layout_work.hx.hx_sect[k].header = false;
+    lay_init_su( &z0, &layout_work.hx.hx_sect[k].post_skip );
+    lay_init_su( &z0, &layout_work.hx.hx_sect[k].pre_top_skip );
+
+    k = hds_backm;                       // -----------------
+    memcpy( &layout_work.hx.hx_sect[k], &layout_work.hx.hx_sect[k-1],
+            sizeof( layout_work.hx.hx_sect[0] ) );
+
+    k = hds_index;                       // -----------------
+    memcpy( &layout_work.hx.hx_sect[k], &layout_work.hx.hx_sect[k-1],
+            sizeof( layout_work.hx.hx_sect[0] ) );
 
     /***********************************************************************/
     /*  :HEADING  values                                                   */
@@ -263,51 +328,51 @@ void    init_def_lay( void )
     /***********************************************************************/
     /*  :ABSTRACT   values                                                 */
     /***********************************************************************/
-    lay_init_su( &n1, &layout_work.abstract.post_skip );
-    lay_init_su( &n1, &layout_work.abstract.pre_top_skip );
-    layout_work.abstract.font = 1;
-    layout_work.abstract.spacing = 1;
-    layout_work.abstract.header = true;
     strcpy( layout_work.abstract.string, "ABSTRACT" );
-    layout_work.abstract.page_eject = ej_yes;
     layout_work.abstract.page_reset = true;
     layout_work.abstract.columns = 1;
+    lay_init_su( &n1, &layout_work.hx.hx_sect[hds_abstract].post_skip );
+    lay_init_su( &n1, &layout_work.hx.hx_sect[hds_abstract].pre_top_skip );
+    layout_work.hx.hx_sect[hds_abstract].font = 1;
+    layout_work.hx.hx_sect[hds_abstract].spacing = 1;
+    layout_work.hx.hx_sect[hds_abstract].header = true;
+    layout_work.hx.hx_sect[hds_abstract].page_eject = ej_yes;
 
     /***********************************************************************/
     /*  :PREFACE    values                                                 */
     /***********************************************************************/
-    lay_init_su( &n1, &layout_work.preface.post_skip );
-    lay_init_su( &n1, &layout_work.preface.pre_top_skip );
-    layout_work.preface.font = 1;
-    layout_work.preface.spacing = 1;
-    layout_work.preface.header = true;
     strcpy( layout_work.preface.string, "PREFACE" );
-    layout_work.preface.page_eject = ej_yes;
     layout_work.preface.page_reset = false;
     layout_work.preface.columns = 1;
+    lay_init_su( &n1, &layout_work.hx.hx_sect[hds_preface].post_skip );
+    lay_init_su( &n1, &layout_work.hx.hx_sect[hds_preface].pre_top_skip );
+    layout_work.hx.hx_sect[hds_preface].font = 1;
+    layout_work.hx.hx_sect[hds_preface].spacing = 1;
+    layout_work.hx.hx_sect[hds_preface].header = true;
+    layout_work.hx.hx_sect[hds_preface].page_eject = ej_yes;
 
     /***********************************************************************/
     /*  :BODY       values                                                 */
     /***********************************************************************/
-    lay_init_su( &z0, &layout_work.body.post_skip );
-    lay_init_su( &z0, &layout_work.body.pre_top_skip );
-    layout_work.body.header = false;
     layout_work.body.string[0] = '\0';
-    layout_work.body.page_eject = ej_yes;
     layout_work.body.page_reset = true;
-    layout_work.body.font = 1;
+    lay_init_su( &z0, &layout_work.hx.hx_sect[hds_body].post_skip );
+    lay_init_su( &z0, &layout_work.hx.hx_sect[hds_body].pre_top_skip );
+    layout_work.hx.hx_sect[hds_body].header = false;
+    layout_work.hx.hx_sect[hds_body].page_eject = ej_yes;
+    layout_work.hx.hx_sect[hds_body].font = 1;
 
     /***********************************************************************/
     /*  :BACKM      values                                                 */
     /***********************************************************************/
-    lay_init_su( &z0, &layout_work.backm.post_skip );
-    lay_init_su( &z0, &layout_work.backm.pre_top_skip );
-    layout_work.backm.header = false;
     layout_work.backm.string[0] = '\0';
-    layout_work.backm.page_eject = ej_yes;
     layout_work.backm.page_reset = false;
     layout_work.backm.columns = 1;
-    layout_work.backm.font = 1;
+    lay_init_su( &z0, &layout_work.hx.hx_sect[hds_backm].post_skip );
+    lay_init_su( &z0, &layout_work.hx.hx_sect[hds_backm].pre_top_skip );
+    layout_work.hx.hx_sect[hds_backm].header = false;
+    layout_work.hx.hx_sect[hds_backm].page_eject = ej_yes;
+    layout_work.hx.hx_sect[hds_backm].font = 1;
 
     /***********************************************************************/
     /*  :LP       values                                                   */
@@ -322,19 +387,19 @@ void    init_def_lay( void )
     /***********************************************************************/
     /*  :INDEX    values                                                   */
     /***********************************************************************/
-    lay_init_su( &z0, &layout_work.index.post_skip );
-    lay_init_su( &z0, &layout_work.index.pre_top_skip );
     lay_init_su( &z0, &layout_work.index.left_adjust );
     lay_init_su( &z0, &layout_work.index.right_adjust );
-    layout_work.index.spacing = 1;
-    layout_work.index.columns = 1;
+    strcpy( layout_work.index.index_string, "Index" );
     strcpy( layout_work.index.see_string, "See " );
     strcpy( layout_work.index.see_also_string, "See also " );
-    layout_work.index.header = false;
-    strcpy( layout_work.index.index_string, "Index" );
-    layout_work.index.page_eject = ej_yes;
+    layout_work.index.columns = 1;
     layout_work.index.page_reset = false;
-    layout_work.index.font = 1;
+    lay_init_su( &z0, &layout_work.hx.hx_sect[hds_index].post_skip );
+    lay_init_su( &z0, &layout_work.hx.hx_sect[hds_index].pre_top_skip );
+    layout_work.hx.hx_sect[hds_index].spacing = 1;
+    layout_work.hx.hx_sect[hds_index].header = false;
+    layout_work.hx.hx_sect[hds_index].page_eject = ej_yes;
+    layout_work.hx.hx_sect[hds_index].font = 1;
 
     /***********************************************************************/
     /*  :IXHEAD   values                                                   */
@@ -557,27 +622,27 @@ void    init_def_lay( void )
     /***********************************************************************/
     /*  :APPENDIX   values                                                 */
     /***********************************************************************/
-    lay_init_su( &z0, &layout_work.appendix.indent );
-    lay_init_su( &z0, &layout_work.appendix.pre_top_skip );
-    lay_init_su( &z0, &layout_work.appendix.pre_skip );
-    lay_init_su( &n3, &layout_work.appendix.post_skip );
-    layout_work.appendix.spacing = 1;
-    layout_work.appendix.font = 3;
-    layout_work.appendix.number_font = 3;
-    layout_work.appendix.number_form = num_new;
-    layout_work.appendix.page_position = pos_left;
-    layout_work.appendix.number_style = b_style;
-    layout_work.appendix.page_eject = ej_yes;
-    layout_work.appendix.line_break = true;
-    layout_work.appendix.display_heading = true;
-    layout_work.appendix.number_reset = true;
-    layout_work.appendix.cases = case_mixed;
-    lay_init_su( &z0, &layout_work.appendix.align );
-    layout_work.appendix.header = true;
     strcpy( layout_work.appendix.string, "APPENDIX " );
     layout_work.appendix.page_reset = false;
     layout_work.appendix.section_eject = ej_yes;
     layout_work.appendix.columns = 1;
+    lay_init_su( &z0, &layout_work.hx.hx_head[hds_appendix].align );
+    lay_init_su( &z0, &layout_work.hx.hx_head[hds_appendix].indent );
+    lay_init_su( &z0, &layout_work.hx.hx_head[hds_appendix].pre_skip );
+    layout_work.hx.hx_head[hds_appendix].number_font = 3;
+    layout_work.hx.hx_head[hds_appendix].number_form = num_new;
+    layout_work.hx.hx_head[hds_appendix].page_position = pos_left;
+    layout_work.hx.hx_head[hds_appendix].number_style = b_style;
+    layout_work.hx.hx_head[hds_appendix].line_break = true;
+    layout_work.hx.hx_head[hds_appendix].display_heading = true;
+    layout_work.hx.hx_head[hds_appendix].number_reset = true;
+    layout_work.hx.hx_head[hds_appendix].cases = case_mixed;
+    lay_init_su( &z0, &layout_work.hx.hx_sect[hds_appendix].pre_top_skip );
+    lay_init_su( &n3, &layout_work.hx.hx_sect[hds_appendix].post_skip );
+    layout_work.hx.hx_sect[hds_appendix].spacing = 1;
+    layout_work.hx.hx_sect[hds_appendix].font = 3;
+    layout_work.hx.hx_sect[hds_appendix].page_eject = ej_yes;
+    layout_work.hx.hx_sect[hds_appendix].header = true;
 
     /***********************************************************************/
     /*  :SL         values                                                 */
