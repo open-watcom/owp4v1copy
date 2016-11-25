@@ -92,6 +92,7 @@
 #define SCR_CHAR_DEFAULT    '.'         // start of Script keyword
 #define CW_SEP_CHAR_DEFAULT ';'         // script controlline seperator
 
+#define CPI10          10               // 10 as a CPI value
 #define FONT0           0               // 0 as a font number
 
 /* string start / end characters Possible incomplete list*/

@@ -1164,7 +1164,7 @@ void cop_setup( void )
 
     /* Initialize the default tabs and related extern variables. */
 
-    tab_col = bin_device->horizontal_base_units / 10;
+    tab_col = bin_device->horizontal_base_units / CPI10;    // wgml 4.0 uses 10 cpi here regardless of what the user wants
     first_tab = (6 * tab_col) - 1;
     inter_tab = 5 * tab_col;
 
