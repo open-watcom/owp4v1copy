@@ -176,15 +176,15 @@ void    lay_backbod( const gmltag * entry )
                     }
                     break;
                 case   e_page_eject:
-                    cvterr = i_page_eject( p, curr, &(bbsect->page_eject) );
+                    cvterr = i_page_eject( p, curr, &(bbsect->section_eject) );
                     break;
                 case   e_page_reset:
                     cvterr = i_yes_no( p, curr, &(bb->page_reset) );
                     break;
                 case   e_font:
-                    cvterr = i_font_number( p, curr, &(bbsect->font) );
-                    if( bbsect->font >= wgml_font_cnt ) {
-                        bbsect->font = 0;
+                    cvterr = i_font_number( p, curr, &(bbsect->text_font) );
+                    if( bbsect->text_font >= wgml_font_cnt ) {
+                        bbsect->text_font = 0;
                     }
                     break;
                 case   e_columns:

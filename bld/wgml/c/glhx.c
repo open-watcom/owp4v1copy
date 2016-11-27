@@ -271,9 +271,9 @@ void    lay_hx( const gmltag * entry )
                     cvterr = i_int8( p, curr, &layout_work.hx.hx_sect[hx_l].spacing );
                     break;
                 case   e_font:
-                    cvterr = i_font_number( p, curr, &layout_work.hx.hx_sect[hx_l].font );
-                    if( layout_work.hx.hx_sect[hx_l].font >= wgml_font_cnt ) {
-                        layout_work.hx.hx_sect[hx_l].font = 0;
+                    cvterr = i_font_number( p, curr, &layout_work.hx.hx_sect[hx_l].text_font );
+                    if( layout_work.hx.hx_sect[hx_l].text_font >= wgml_font_cnt ) {
+                        layout_work.hx.hx_sect[hx_l].text_font = 0;
                     }
                     break;
                 case   e_number_font:
@@ -286,13 +286,13 @@ void    lay_hx( const gmltag * entry )
                     cvterr = i_number_form( p, curr, &layout_work.hx.hx_head[hx_l].number_form );
                     break;
                 case   e_page_position:
-                    cvterr = i_page_position( p, curr, &layout_work.hx.hx_head[hx_l].page_position );
+                    cvterr = i_page_position( p, curr, &layout_work.hx.hx_head[hx_l].line_position );
                     break;
                 case   e_number_style:
                     cvterr = i_number_style( p, curr, &layout_work.hx.hx_head[hx_l].number_style );
                     break;
                 case   e_page_eject:
-                    cvterr = i_page_eject( p, curr, &layout_work.hx.hx_sect[hx_l].page_eject );
+                    cvterr = i_page_eject( p, curr, &layout_work.hx.hx_sect[hx_l].section_eject );
                     break;
                 case   e_line_break:
                     cvterr = i_yes_no( p, curr, &layout_work.hx.hx_head[hx_l].line_break );
@@ -304,7 +304,7 @@ void    lay_hx( const gmltag * entry )
                     cvterr = i_yes_no( p, curr, &layout_work.hx.hx_head[hx_l].number_reset );
                     break;
                 case   e_case:
-                    cvterr = i_case( p, curr, &layout_work.hx.hx_head[hx_l].cases );
+                    cvterr = i_case( p, curr, &layout_work.hx.hx_head[hx_l].hd_case );
                     break;
                 case   e_align:
                     cvterr = i_space_unit( p, curr, &layout_work.hx.hx_head[hx_l].align );

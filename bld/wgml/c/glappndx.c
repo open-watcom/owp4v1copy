@@ -258,9 +258,9 @@ void    lay_appendix( const gmltag * entry )
                     break;
                 case   e_font:
                     cvterr = i_font_number( p, curr,
-                                        &layout_work.hx.hx_sect[hds_appendix].font );
-                    if( layout_work.hx.hx_sect[hds_appendix].font >= wgml_font_cnt ) {
-                        layout_work.hx.hx_sect[hds_appendix].font = 0;
+                                        &layout_work.hx.hx_sect[hds_appendix].text_font );
+                    if( layout_work.hx.hx_sect[hds_appendix].text_font >= wgml_font_cnt ) {
+                        layout_work.hx.hx_sect[hds_appendix].text_font = 0;
                     }
                     break;
                 case   e_number_font:
@@ -276,7 +276,7 @@ void    lay_appendix( const gmltag * entry )
                     break;
                 case   e_page_position:
                     cvterr = i_page_position( p, curr,
-                                &layout_work.hx.hx_head[hds_appendix].page_position );
+                                &layout_work.hx.hx_head[hds_appendix].line_position );
                     break;
                 case   e_number_style:
                     cvterr = i_number_style( p, curr,
@@ -284,7 +284,7 @@ void    lay_appendix( const gmltag * entry )
                     break;
                 case   e_page_eject:
                     cvterr = i_page_eject( p, curr,
-                                &layout_work.hx.hx_sect[hds_appendix].page_eject );
+                                &layout_work.hx.hx_head[hds_appendix].page_eject );
                     break;
                 case   e_line_break:
                     cvterr = i_yes_no( p, curr,
@@ -300,7 +300,7 @@ void    lay_appendix( const gmltag * entry )
                     break;
                 case   e_case:
                     cvterr = i_case( p, curr,
-                                     &layout_work.hx.hx_head[hds_appendix].cases );
+                                     &layout_work.hx.hx_head[hds_appendix].hd_case );
                     break;
                 case   e_align:
                     cvterr = i_space_unit( p, curr,
@@ -318,7 +318,7 @@ void    lay_appendix( const gmltag * entry )
                     break;
                 case   e_section_eject:
                     cvterr = i_page_eject( p, curr,
-                                                &layout_work.appendix.section_eject );
+                                &layout_work.hx.hx_sect[hds_appendix].section_eject );
                     break;
                 case   e_columns:
                     cvterr = i_int8( p, curr, &layout_work.appendix.columns );

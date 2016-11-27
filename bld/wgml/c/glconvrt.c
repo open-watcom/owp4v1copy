@@ -81,7 +81,7 @@ static  void    put_lay_abspref( FILE * layfile, abspref_lay_tag * ap,
             o_space_unit( layfile, curr, &apsect->pre_top_skip );
             break;
         case   e_font:
-            o_font_number( layfile, curr, &apsect->font );
+            o_font_number( layfile, curr, &apsect->text_font );
             break;
         case   e_spacing:
             o_int8( layfile, curr, &apsect->spacing );
@@ -100,7 +100,7 @@ static  void    put_lay_abspref( FILE * layfile, abspref_lay_tag * ap,
             }
             break;
         case   e_page_eject:
-            o_page_eject( layfile, curr, &apsect->page_eject );
+            o_page_eject( layfile, curr, &apsect->section_eject );
             break;
         case   e_page_reset:
             o_yes_no( layfile, curr, &ap->page_reset );
@@ -215,7 +215,7 @@ static  void    put_lay_appendix( FILE * layfile, layout_data * lay )
             o_int8( layfile, curr, &lay->hx.hx_sect[hds_appendix].spacing );
             break;
         case   e_font:
-            o_font_number( layfile, curr, &lay->hx.hx_sect[hds_appendix].font );
+            o_font_number( layfile, curr, &lay->hx.hx_sect[hds_appendix].text_font );
             break;
         case   e_number_font:
             o_font_number( layfile, curr, &lay->hx.hx_head[hds_appendix].number_font );
@@ -224,13 +224,13 @@ static  void    put_lay_appendix( FILE * layfile, layout_data * lay )
             o_number_form( layfile, curr, &lay->hx.hx_head[hds_appendix].number_form );
             break;
         case   e_page_position:
-            o_page_position( layfile, curr, &lay->hx.hx_head[hds_appendix].page_position );
+            o_page_position( layfile, curr, &lay->hx.hx_head[hds_appendix].line_position );
             break;
         case   e_number_style:
             o_number_style( layfile, curr, &lay->hx.hx_head[hds_appendix].number_style );
             break;
         case   e_page_eject:
-            o_page_eject( layfile, curr, &lay->hx.hx_sect[hds_appendix].page_eject );
+            o_page_eject( layfile, curr, &lay->hx.hx_sect[hds_appendix].section_eject );
             break;
         case   e_line_break:
             o_yes_no( layfile, curr, &lay->hx.hx_head[hds_appendix].line_break );
@@ -242,7 +242,7 @@ static  void    put_lay_appendix( FILE * layfile, layout_data * lay )
             o_yes_no( layfile, curr, &lay->hx.hx_head[hds_appendix].number_reset );
             break;
         case   e_case:
-            o_case( layfile, curr, &lay->hx.hx_head[hds_appendix].cases );
+            o_case( layfile, curr, &lay->hx.hx_head[hds_appendix].hd_case );
             break;
         case   e_align:
             o_space_unit( layfile, curr, &lay->hx.hx_head[hds_appendix].align );
@@ -257,7 +257,7 @@ static  void    put_lay_appendix( FILE * layfile, layout_data * lay )
             o_yes_no( layfile, curr, &lay->appendix.page_reset );
             break;
         case   e_section_eject:
-            o_page_eject( layfile, curr, &lay->appendix.section_eject );
+            o_page_eject( layfile, curr, &lay->hx.hx_sect[hds_appendix].section_eject );
             break;
         case   e_columns:
             o_int8( layfile, curr, &lay->appendix.columns );
@@ -343,7 +343,7 @@ static  void    put_lay_backbod( FILE * layfile, backbod_lay_tag * bb,
             }
             break;
         case   e_page_eject:
-            o_page_eject( layfile, curr, &bbsect->page_eject );
+            o_page_eject( layfile, curr, &bbsect->section_eject );
             break;
         case   e_page_reset:
             o_yes_no( layfile, curr, &bb->page_reset );
@@ -354,7 +354,7 @@ static  void    put_lay_backbod( FILE * layfile, backbod_lay_tag * bb,
             }
             break;
         case   e_font:
-            o_font_number( layfile, curr, &bbsect->font );
+            o_font_number( layfile, curr, &bbsect->text_font );
             break;
         default:
             internal_err( __FILE__, __LINE__ );
@@ -1032,7 +1032,7 @@ static  void    put_lay_hx( FILE * layfile, layout_data * lay )
                 o_int8( layfile, curr, &lay->hx.hx_sect[lvl].spacing );
                 break;
             case   e_font:
-                o_font_number( layfile, curr, &lay->hx.hx_sect[lvl].font );
+                o_font_number( layfile, curr, &lay->hx.hx_sect[lvl].text_font );
                 break;
             case   e_number_font:
                 o_font_number( layfile, curr, &lay->hx.hx_head[lvl].number_font );
@@ -1041,13 +1041,13 @@ static  void    put_lay_hx( FILE * layfile, layout_data * lay )
                 o_number_form( layfile, curr, &lay->hx.hx_head[lvl].number_form );
                 break;
             case   e_page_position:
-                o_page_position( layfile, curr, &lay->hx.hx_head[lvl].page_position );
+                o_page_position( layfile, curr, &lay->hx.hx_head[lvl].line_position );
                 break;
             case   e_number_style:
                 o_number_style( layfile, curr, &lay->hx.hx_head[lvl].number_style );
                 break;
             case   e_page_eject:
-                o_page_eject( layfile, curr, &lay->hx.hx_sect[lvl].page_eject );
+                o_page_eject( layfile, curr, &lay->hx.hx_sect[lvl].section_eject );
                 break;
             case   e_line_break:
                 o_yes_no( layfile, curr, &lay->hx.hx_head[lvl].line_break );
@@ -1059,7 +1059,7 @@ static  void    put_lay_hx( FILE * layfile, layout_data * lay )
                 o_yes_no( layfile, curr, &lay->hx.hx_head[lvl].number_reset );
                 break;
             case   e_case:
-                o_case( layfile, curr, &lay->hx.hx_head[lvl].cases );
+                o_case( layfile, curr, &lay->hx.hx_head[lvl].hd_case );
                 break;
             case   e_align:
                 o_space_unit( layfile, curr, &lay->hx.hx_head[lvl].align );
@@ -1202,13 +1202,13 @@ static  void    put_lay_index( FILE * layfile, layout_data * lay )
             o_xx_string( layfile, curr, &lay->index.index_string );
             break;
         case   e_page_eject:
-            o_page_eject( layfile, curr, &lay->hx.hx_sect[hds_index].page_eject );
+            o_page_eject( layfile, curr, &lay->hx.hx_sect[hds_index].section_eject );
             break;
         case   e_page_reset:
             o_yes_no( layfile, curr, &lay->index.page_reset );
             break;
         case   e_font:
-            o_font_number( layfile, curr, &lay->hx.hx_sect[hds_index].font );
+            o_font_number( layfile, curr, &lay->hx.hx_sect[hds_index].text_font );
             break;
         default:
             internal_err( __FILE__, __LINE__ );

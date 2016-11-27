@@ -641,7 +641,7 @@ void start_doc_sect( void )
         t_page.col_count = layout_work.body.columns;
         set_cols();
         page_r = layout_work.body.page_reset;
-        page_e = layout_work.hx.hx_sect[hds_body].page_eject;
+        page_e = layout_work.hx.hx_sect[hds_body].section_eject;
         if( layout_work.hx.hx_sect[hds_body].header ) {
             header = true;
             hd_info.h_text = &layout_work.body.string;
@@ -663,7 +663,7 @@ void start_doc_sect( void )
         t_page.col_count = layout_work.abstract.columns;
         set_cols();
         page_r = layout_work.abstract.page_reset;
-        page_e = layout_work.hx.hx_sect[hds_abstract].page_eject;
+        page_e = layout_work.hx.hx_sect[hds_abstract].section_eject;
         if( layout_work.hx.hx_sect[hds_abstract].header ) {
             header = true;
             hd_info.h_text = &layout_work.abstract.string;
@@ -674,7 +674,7 @@ void start_doc_sect( void )
         t_page.col_count = layout_work.preface.columns;
         set_cols();
         page_r = layout_work.preface.page_reset;
-        page_e = layout_work.hx.hx_sect[hds_preface].page_eject;
+        page_e = layout_work.hx.hx_sect[hds_preface].section_eject;
         if( layout_work.hx.hx_sect[hds_preface].header ) {
             header = true;
             hd_info.h_text = &layout_work.preface.string;
@@ -691,7 +691,7 @@ void start_doc_sect( void )
         t_page.col_count = layout_work.appendix.columns;
         set_cols();
         page_r = layout_work.appendix.page_reset;
-        page_e = layout_work.appendix.section_eject;
+        page_e = layout_work.hx.hx_sect[hds_appendix].section_eject;
         if( page_e != ej_no ) {
             page_e = ej_yes;                        // "even" and "odd" act like "yes"
         }
@@ -706,7 +706,7 @@ void start_doc_sect( void )
         t_page.col_count = layout_work.backm.columns;
         set_cols();
         page_r = layout_work.backm.page_reset;
-        page_e = layout_work.hx.hx_sect[hds_backm].page_eject;
+        page_e = layout_work.hx.hx_sect[hds_backm].section_eject;
         if( layout_work.hx.hx_sect[hds_backm].header ) {
             header = true;
             hd_info.h_text = &layout_work.backm.string;
@@ -717,7 +717,7 @@ void start_doc_sect( void )
         t_page.col_count = layout_work.index.columns;
         set_cols();
         page_r = layout_work.index.page_reset;
-        page_e = layout_work.hx.hx_sect[hds_index].page_eject;
+        page_e = layout_work.hx.hx_sect[hds_index].section_eject;
         if( layout_work.hx.hx_sect[hds_index].header ) {
             header = true;
             hd_info.h_text = &layout_work.index.index_string;

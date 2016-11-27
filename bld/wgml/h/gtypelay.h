@@ -290,7 +290,6 @@ typedef struct note_lay_tag {
 typedef struct appendix_lay_tag {
     xx_str          string[str_size];   // special string
     bool            page_reset;         // yes, no -> bool
-    page_ej         section_eject;      // enum for yes, no, odd, even
     int8_t          columns;            // non-negative integer
 } appendix_lay_tag;
  
@@ -306,10 +305,11 @@ typedef struct hx_head_lay_tag {        // attributes common to Hx and APPENDIX
     su              indent;             // horizontal space unit
     su              pre_skip;           // vertical space unit
     font_number     number_font;        // non-negative integer
-    case_t          cases;              // lower, upper, mixed
+    case_t          hd_case;            // lower, upper, mixed
     num_form        number_form;        // special enum ( none, prop, new )
     num_style       number_style;       // special enum
-    page_pos        page_position;      // special enum (left, right, center)
+    page_ej         page_eject;         // enum for yes, no, odd, even
+    page_pos        line_position;      // special enum (left, right, center)
     bool            display_heading;    // yes, no -> bool
     bool            line_break;         // yes, no -> bool
     bool            number_reset;       // yes, no -> bool
@@ -319,8 +319,8 @@ typedef struct hx_sect_lay_tag {        // attributes common to Hx and all Secti
     su              post_skip;          // vertical space unit
     su              pre_top_skip;       // vertical space unit
     int8_t          spacing;            // positive integer
-    font_number     font;               // non-negative integer
-    page_ej         page_eject;         // enum for yes, no, odd, even
+    font_number     text_font;          // non-negative integer
+    page_ej         section_eject;      // enum for yes, no, odd, even
     bool            header;             // yes, no -> bool
 } hx_sect_lay_tag;
 

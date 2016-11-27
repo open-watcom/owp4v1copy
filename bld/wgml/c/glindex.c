@@ -208,16 +208,16 @@ void    lay_index( const gmltag * entry )
                     break;
                 case   e_page_eject:
                     cvterr = i_page_eject( p, curr,
-                                    &layout_work.hx.hx_sect[hds_index].page_eject );
+                                    &layout_work.hx.hx_sect[hds_index].section_eject );
                     break;
                 case   e_page_reset:
                     cvterr = i_yes_no( p, curr, &layout_work.index.page_reset );
                     break;
                 case   e_font:
                     cvterr = i_font_number( p, curr,
-                                            &layout_work.hx.hx_sect[hds_index].font );
-                    if( layout_work.hx.hx_sect[hds_index].font >= wgml_font_cnt ) {
-                        layout_work.hx.hx_sect[hds_index].font = 0;
+                                            &layout_work.hx.hx_sect[hds_index].text_font );
+                    if( layout_work.hx.hx_sect[hds_index].text_font >= wgml_font_cnt ) {
+                        layout_work.hx.hx_sect[hds_index].text_font = 0;
                     }
                     break;
                 default:

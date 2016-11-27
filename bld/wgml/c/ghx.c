@@ -123,7 +123,7 @@ static void hx_header( void )
                            &layout_work.hx.hx_sect[hd_info.hn_lvl].pre_top_skip,
                            &layout_work.hx.hx_sect[hd_info.hn_lvl].post_skip,
                            layout_work.hx.hx_sect[hd_info.hn_lvl].spacing,
-                           layout_work.hx.hx_sect[hd_info.hn_lvl].font );
+                           layout_work.hx.hx_sect[hd_info.hn_lvl].text_font );
             if( g_post_skip == 0 ) {            // to match wgml 4.0
                 if( spacing == 1 ) {
                     if( nest_cb->prev == NULL ) {
@@ -133,9 +133,9 @@ static void hx_header( void )
                     }
 
                 } else {
-                    if( layout_work.hx.hx_sect[hd_info.hn_lvl].font >=
+                    if( layout_work.hx.hx_sect[hd_info.hn_lvl].text_font >=
                             layout_work.hx.hx_head[hd_info.hn_lvl].number_font ) {
-                        g_post_skip = wgml_fonts[layout_work.hx.hx_sect[hd_info.hn_lvl].font].line_height;
+                        g_post_skip = wgml_fonts[layout_work.hx.hx_sect[hd_info.hn_lvl].text_font].line_height;
                     } else {
                         g_post_skip = wgml_fonts[layout_work.hx.hx_head[hd_info.hn_lvl].number_font].line_height;
                     }
@@ -147,7 +147,7 @@ static void hx_header( void )
                            &layout_work.hx.hx_sect[hd_info.hn_lvl].pre_top_skip,
                            NULL,
                            layout_work.hx.hx_sect[hd_info.hn_lvl].spacing,
-                           layout_work.hx.hx_sect[hd_info.hn_lvl].font );
+                           layout_work.hx.hx_sect[hd_info.hn_lvl].text_font );
         }
     } else {                                    // from a section heading
         if( hd_info.src == hds_appendix ) {
@@ -157,7 +157,7 @@ static void hx_header( void )
                        &layout_work.hx.hx_sect[hd_info.hn_lvl].pre_top_skip,
                        &layout_work.hx.hx_sect[hd_info.hn_lvl].post_skip,
                        layout_work.hx.hx_sect[hd_info.hn_lvl].spacing,
-                       layout_work.hx.hx_sect[hd_info.hn_lvl].font );
+                       layout_work.hx.hx_sect[hd_info.hn_lvl].text_font );
     }
 
     post_space = 0;
@@ -168,11 +168,11 @@ static void hx_header( void )
             (hd_info.src == hds_appendix) && (layout_work.hx.hx_head[hds_appendix].number_form != none) ) {
         process_text( hd_info.h_num, layout_work.hx.hx_head[hd_info.hn_lvl].number_font );        
         post_space /= wgml_fonts[layout_work.hx.hx_head[hd_info.hn_lvl].number_font].spc_width;     // rescale post_space to correct font
-        post_space *= wgml_fonts[layout_work.hx.hx_sect[hd_info.hn_lvl].font].spc_width;
+        post_space *= wgml_fonts[layout_work.hx.hx_sect[hd_info.hn_lvl].text_font].spc_width;
     }
 
     if( (hd_info.h_text != NULL) && (*hd_info.h_text != '\0') ) {
-        process_text( hd_info.h_text, layout_work.hx.hx_sect[hd_info.hn_lvl].font );        
+        process_text( hd_info.h_text, layout_work.hx.hx_sect[hd_info.hn_lvl].text_font );        
     }
 }
 
@@ -307,7 +307,7 @@ void gen_heading( void )
             cur_doc_el_group = NULL;
         } else {
             hx_depth = cur_doc_el_group->depth +
-                            wgml_fonts[layout_work.hx.hx_sect[hd_info.hn_lvl].font].line_height +
+                            wgml_fonts[layout_work.hx.hx_sect[hd_info.hn_lvl].text_font].line_height +
                             g_post_skip;
             if( (hx_depth + t_page.cur_depth) > t_page.max_depth ) {
                 xx_err( err_heading_too_deep );     /* the block won't fit on this page */
@@ -476,15 +476,15 @@ static void gml_hx_common( const gmltag * entry, int hn_lvl )
     }
     if( *p ) {                          // text exists
         if( (ProcFlags.doc_sect == doc_sect_appendix) && (hn_lvl == 1) ) {
-            if( layout_work.hx.hx_head[hds_appendix].cases == case_lower ) {
+            if( layout_work.hx.hx_head[hds_appendix].hd_case == case_lower ) {
                 strlwr( p );
-            } else if( layout_work.hx.hx_head[hds_appendix].cases == case_upper ) {
+            } else if( layout_work.hx.hx_head[hds_appendix].hd_case == case_upper ) {
                 strupr( p );
             }
         } else {
-            if( layout_work.hx.hx_head[hn_lvl].cases == case_lower ) {
+            if( layout_work.hx.hx_head[hn_lvl].hd_case == case_lower ) {
                 strlwr( p );
-            } else if( layout_work.hx.hx_head[hn_lvl].cases == case_upper ) {
+            } else if( layout_work.hx.hx_head[hn_lvl].hd_case == case_upper ) {
                 strupr( p );
             }
         }
@@ -523,16 +523,16 @@ static void gml_hx_common( const gmltag * entry, int hn_lvl )
     /*  eject page(s) if specified                                         */
 
     if( (ProcFlags.doc_sect == doc_sect_appendix) && (hn_lvl == 1) ) {
-        if( layout_work.hx.hx_sect[hds_appendix].page_eject != ej_no ) {
+        if( layout_work.hx.hx_sect[hds_appendix].section_eject != ej_no ) {
             last_page_out();                // ensure we are on a new page
             if( ProcFlags.page_started ) {
                 do_page_out();
                 reset_t_page();
             }
-            if( (layout_work.hx.hx_sect[hds_appendix].page_eject == ej_odd) && (page & 1) ) {
+            if( (layout_work.hx.hx_sect[hds_appendix].section_eject == ej_odd) && (page & 1) ) {
                 do_page_out();              // next page would be even
                 reset_t_page();
-            } else if( (layout_work.hx.hx_sect[hds_appendix].page_eject == ej_even) && !(page & 1) ) {
+            } else if( (layout_work.hx.hx_sect[hds_appendix].section_eject == ej_even) && !(page & 1) ) {
                 do_page_out();              // next page would be odd
                 reset_t_page();
             }
@@ -541,16 +541,16 @@ static void gml_hx_common( const gmltag * entry, int hn_lvl )
             hd_info.ejected = true;
         }
     } else {
-        if( layout_work.hx.hx_sect[hn_lvl].page_eject != ej_no ) {
+        if( layout_work.hx.hx_sect[hn_lvl].section_eject != ej_no ) {
             last_page_out();                // ensure we are on a new page
             if( ProcFlags.page_started ) {
                 do_page_out();
                 reset_t_page();
             }
-            if( (layout_work.hx.hx_sect[hn_lvl].page_eject == ej_odd) && (page & 1) ) {
+            if( (layout_work.hx.hx_sect[hn_lvl].section_eject == ej_odd) && (page & 1) ) {
                 do_page_out();              // next page would be even
                 reset_t_page();
-            } else if( (layout_work.hx.hx_sect[hn_lvl].page_eject == ej_even) && !(page & 1) ) {
+            } else if( (layout_work.hx.hx_sect[hn_lvl].section_eject == ej_even) && !(page & 1) ) {
                 do_page_out();              // next page would be odd
                 reset_t_page();
             }
@@ -578,7 +578,7 @@ static void gml_hx_common( const gmltag * entry, int hn_lvl )
         hd_info.hn_lvl = hn_lvl;
         hd_info.src = hn_lvl;
     }
-    line_position = layout_work.hx.hx_head[hn_lvl].page_position;
+    line_position = layout_work.hx.hx_head[hn_lvl].line_position;
 
     gen_heading();
 
