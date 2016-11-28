@@ -291,6 +291,7 @@ typedef struct appendix_lay_tag {
     xx_str          string[str_size];   // special string
     bool            page_reset;         // yes, no -> bool
     int8_t          columns;            // non-negative integer
+    page_ej         section_eject;      // enum for yes, no, odd, even
 } appendix_lay_tag;
  
  
@@ -320,7 +321,6 @@ typedef struct hx_sect_lay_tag {        // attributes common to Hx and all Secti
     su              pre_top_skip;       // vertical space unit
     int8_t          spacing;            // positive integer
     font_number     text_font;          // non-negative integer
-    page_ej         section_eject;      // enum for yes, no, odd, even
     bool            header;             // yes, no -> bool
 } hx_sect_lay_tag;
 
@@ -452,6 +452,7 @@ typedef struct abspref_lay_tag {
     xx_str          string[str_size];   // special string
     bool            page_reset;         // yes, no -> bool
     int8_t          columns;            // positive integer
+    page_ej         page_eject;         // enum for yes, no, odd, even
 } abspref_lay_tag;
  
 /***************************************************************************/
@@ -461,8 +462,8 @@ typedef struct abspref_lay_tag {
 typedef struct backbod_lay_tag {
     xx_str          string[str_size];   // special string
     bool            page_reset;         // yes, no -> bool
-                            // columns leave last
     int8_t          columns;            // positive integer
+    page_ej         page_eject;         // enum for yes, no, odd, even
 } backbod_lay_tag;
  
 /***************************************************************************/
@@ -485,10 +486,11 @@ typedef struct lp_lay_tag {
 typedef struct index_lay_tag {
     su              left_adjust;        // horizontal space unit
     su              right_adjust;       // horizontal space unit
-    int8_t          columns;            // positive integer
     xx_str          index_string[str_size];// special string
     xx_str          see_string[str_size];// special string
     xx_str          see_also_string[str_size];  // special string
+    int8_t          columns;            // positive integer
+    page_ej         page_eject;         // enum for yes, no, odd, even
     bool            page_reset;         // yes, no -> bool
 } index_lay_tag;
  

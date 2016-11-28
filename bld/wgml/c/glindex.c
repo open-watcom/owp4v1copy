@@ -208,7 +208,7 @@ void    lay_index( const gmltag * entry )
                     break;
                 case   e_page_eject:
                     cvterr = i_page_eject( p, curr,
-                                    &layout_work.hx.hx_sect[hds_index].section_eject );
+                                    &layout_work.index.page_eject );
                     break;
                 case   e_page_reset:
                     cvterr = i_yes_no( p, curr, &layout_work.index.page_reset );

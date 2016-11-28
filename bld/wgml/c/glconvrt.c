@@ -100,7 +100,7 @@ static  void    put_lay_abspref( FILE * layfile, abspref_lay_tag * ap,
             }
             break;
         case   e_page_eject:
-            o_page_eject( layfile, curr, &apsect->section_eject );
+            o_page_eject( layfile, curr, &ap->page_eject );
             break;
         case   e_page_reset:
             o_yes_no( layfile, curr, &ap->page_reset );
@@ -230,7 +230,7 @@ static  void    put_lay_appendix( FILE * layfile, layout_data * lay )
             o_number_style( layfile, curr, &lay->hx.hx_head[hds_appendix].number_style );
             break;
         case   e_page_eject:
-            o_page_eject( layfile, curr, &lay->hx.hx_sect[hds_appendix].section_eject );
+            o_page_eject( layfile, curr, &lay->hx.hx_head[hds_appendix].page_eject );
             break;
         case   e_line_break:
             o_yes_no( layfile, curr, &lay->hx.hx_head[hds_appendix].line_break );
@@ -257,7 +257,7 @@ static  void    put_lay_appendix( FILE * layfile, layout_data * lay )
             o_yes_no( layfile, curr, &lay->appendix.page_reset );
             break;
         case   e_section_eject:
-            o_page_eject( layfile, curr, &lay->hx.hx_sect[hds_appendix].section_eject );
+            o_page_eject( layfile, curr, &lay->appendix.section_eject );
             break;
         case   e_columns:
             o_int8( layfile, curr, &lay->appendix.columns );
@@ -343,7 +343,7 @@ static  void    put_lay_backbod( FILE * layfile, backbod_lay_tag * bb,
             }
             break;
         case   e_page_eject:
-            o_page_eject( layfile, curr, &bbsect->section_eject );
+            o_page_eject( layfile, curr, &bb->page_eject );
             break;
         case   e_page_reset:
             o_yes_no( layfile, curr, &bb->page_reset );
@@ -1047,7 +1047,7 @@ static  void    put_lay_hx( FILE * layfile, layout_data * lay )
                 o_number_style( layfile, curr, &lay->hx.hx_head[lvl].number_style );
                 break;
             case   e_page_eject:
-                o_page_eject( layfile, curr, &lay->hx.hx_sect[lvl].section_eject );
+                o_page_eject( layfile, curr, &lay->hx.hx_head[lvl].page_eject );
                 break;
             case   e_line_break:
                 o_yes_no( layfile, curr, &lay->hx.hx_head[lvl].line_break );
@@ -1202,7 +1202,7 @@ static  void    put_lay_index( FILE * layfile, layout_data * lay )
             o_xx_string( layfile, curr, &lay->index.index_string );
             break;
         case   e_page_eject:
-            o_page_eject( layfile, curr, &lay->hx.hx_sect[hds_index].section_eject );
+            o_page_eject( layfile, curr, &lay->index.page_eject );
             break;
         case   e_page_reset:
             o_yes_no( layfile, curr, &lay->index.page_reset );

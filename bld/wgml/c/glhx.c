@@ -292,7 +292,7 @@ void    lay_hx( const gmltag * entry )
                     cvterr = i_number_style( p, curr, &layout_work.hx.hx_head[hx_l].number_style );
                     break;
                 case   e_page_eject:
-                    cvterr = i_page_eject( p, curr, &layout_work.hx.hx_sect[hx_l].section_eject );
+                    cvterr = i_page_eject( p, curr, &layout_work.hx.hx_head[hx_l].page_eject );
                     break;
                 case   e_line_break:
                     cvterr = i_yes_no( p, curr, &layout_work.hx.hx_head[hx_l].line_break );

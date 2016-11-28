@@ -318,7 +318,7 @@ void    lay_appendix( const gmltag * entry )
                     break;
                 case   e_section_eject:
                     cvterr = i_page_eject( p, curr,
-                                &layout_work.hx.hx_sect[hds_appendix].section_eject );
+                                                &layout_work.appendix.section_eject );
                     break;
                 case   e_columns:
                     cvterr = i_int8( p, curr, &layout_work.appendix.columns );

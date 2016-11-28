@@ -172,7 +172,6 @@ void    init_def_lay( void )
     lay_init_su( &n4, &layout_work.hx.hx_sect[k].post_skip );
     layout_work.hx.hx_sect[k].spacing = 1;
     layout_work.hx.hx_sect[k].text_font = 3;
-    layout_work.hx.hx_sect[k].section_eject = ej_no;
     layout_work.hx.hx_sect[k].header = true;
 
     k = hds_h1;                             // -----------------
@@ -245,7 +244,6 @@ void    init_def_lay( void )
     lay_init_su( &n3, &layout_work.hx.hx_sect[k].post_skip );
     lay_init_su( &z0, &layout_work.hx.hx_sect[k].pre_top_skip );
     layout_work.hx.hx_sect[k].text_font = 3;
-    layout_work.hx.hx_sect[k].section_eject = true;
 
     k = hds_abstract;                       // -----------------
     memcpy( &layout_work.hx.hx_sect[k], &layout_work.hx.hx_sect[k-1],
@@ -330,13 +328,15 @@ void    init_def_lay( void )
     /*  :ABSTRACT   values                                                 */
     /***********************************************************************/
     strcpy( layout_work.abstract.string, "ABSTRACT" );
-    layout_work.abstract.page_reset = true;
     layout_work.abstract.columns = 1;
+    layout_work.abstract.page_eject = true;
+    layout_work.abstract.page_reset = true;
 
     /***********************************************************************/
     /*  :PREFACE    values                                                 */
     /***********************************************************************/
     strcpy( layout_work.preface.string, "PREFACE" );
+    layout_work.preface.page_eject = true;
     layout_work.preface.page_reset = false;
     layout_work.preface.columns = 1;
 
@@ -344,12 +344,14 @@ void    init_def_lay( void )
     /*  :BODY       values                                                 */
     /***********************************************************************/
     layout_work.body.string[0] = '\0';
+    layout_work.body.page_eject = true;
     layout_work.body.page_reset = true;
 
     /***********************************************************************/
     /*  :BACKM      values                                                 */
     /***********************************************************************/
     layout_work.backm.string[0] = '\0';
+    layout_work.backm.page_eject = true;
     layout_work.backm.page_reset = false;
     layout_work.backm.columns = 1;
 
@@ -372,6 +374,7 @@ void    init_def_lay( void )
     strcpy( layout_work.index.see_string, "See " );
     strcpy( layout_work.index.see_also_string, "See also " );
     layout_work.index.columns = 1;
+    layout_work.index.page_eject = true;
     layout_work.index.page_reset = false;
 
     /***********************************************************************/
@@ -596,6 +599,7 @@ void    init_def_lay( void )
     /*  :APPENDIX   values                                                 */
     /***********************************************************************/
     strcpy( layout_work.appendix.string, "APPENDIX " );
+    layout_work.appendix.section_eject = true;
     layout_work.appendix.page_reset = false;
     layout_work.appendix.columns = 1;
 

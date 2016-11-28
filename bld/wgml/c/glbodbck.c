@@ -176,7 +176,7 @@ void    lay_backbod( const gmltag * entry )
                     }
                     break;
                 case   e_page_eject:
-                    cvterr = i_page_eject( p, curr, &(bbsect->section_eject) );
+                    cvterr = i_page_eject( p, curr, &(bb->page_eject) );
                     break;
                 case   e_page_reset:
                     cvterr = i_yes_no( p, curr, &(bb->page_reset) );

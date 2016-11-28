@@ -523,16 +523,16 @@ static void gml_hx_common( const gmltag * entry, int hn_lvl )
     /*  eject page(s) if specified                                         */
 
     if( (ProcFlags.doc_sect == doc_sect_appendix) && (hn_lvl == 1) ) {
-        if( layout_work.hx.hx_sect[hds_appendix].section_eject != ej_no ) {
+        if( layout_work.hx.hx_head[hds_appendix].page_eject != ej_no ) {
             last_page_out();                // ensure we are on a new page
             if( ProcFlags.page_started ) {
                 do_page_out();
                 reset_t_page();
             }
-            if( (layout_work.hx.hx_sect[hds_appendix].section_eject == ej_odd) && (page & 1) ) {
+            if( (layout_work.hx.hx_head[hds_appendix].page_eject == ej_odd) && (page & 1) ) {
                 do_page_out();              // next page would be even
                 reset_t_page();
-            } else if( (layout_work.hx.hx_sect[hds_appendix].section_eject == ej_even) && !(page & 1) ) {
+            } else if( (layout_work.hx.hx_head[hds_appendix].page_eject == ej_even) && !(page & 1) ) {
                 do_page_out();              // next page would be odd
                 reset_t_page();
             }
@@ -541,16 +541,16 @@ static void gml_hx_common( const gmltag * entry, int hn_lvl )
             hd_info.ejected = true;
         }
     } else {
-        if( layout_work.hx.hx_sect[hn_lvl].section_eject != ej_no ) {
+        if( layout_work.hx.hx_head[hn_lvl].page_eject != ej_no ) {
             last_page_out();                // ensure we are on a new page
             if( ProcFlags.page_started ) {
                 do_page_out();
                 reset_t_page();
             }
-            if( (layout_work.hx.hx_sect[hn_lvl].section_eject == ej_odd) && (page & 1) ) {
+            if( (layout_work.hx.hx_head[hn_lvl].page_eject == ej_odd) && (page & 1) ) {
                 do_page_out();              // next page would be even
                 reset_t_page();
-            } else if( (layout_work.hx.hx_sect[hn_lvl].section_eject == ej_even) && !(page & 1) ) {
+            } else if( (layout_work.hx.hx_head[hn_lvl].page_eject == ej_even) && !(page & 1) ) {
                 do_page_out();              // next page would be odd
                 reset_t_page();
             }

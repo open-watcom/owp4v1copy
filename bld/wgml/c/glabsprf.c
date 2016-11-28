@@ -196,7 +196,7 @@ void    lay_abspref( const gmltag * entry )
                     }
                     break;
                 case   e_page_eject:
-                    cvterr = i_page_eject( p, curr, &(apsect->section_eject) );
+                    cvterr = i_page_eject( p, curr, &(ap->page_eject) );
                     break;
                 case   e_page_reset:
                     cvterr = i_yes_no( p, curr, &(ap->page_reset) );

@@ -32,7 +32,6 @@
 #include    "gvars.h"
 
 static  bool        concat_save;                // for ProcFlags.concat
-static  doc_section ds_save;                    // for prior doc_sect (TOC/FIGLIST)
 static  int32_t     save_indent     =0;         // used with TITLEP/eTITLEP
 static  int32_t     save_indentr    =0;         // used with TITLEP/eTITLEP
 static  ju_enum     justify_save;               // for ProcFlags.justify
@@ -95,8 +94,6 @@ void set_section_banners( doc_section ds )
         appendix_ban,                   // doc_sect_appendix,
         backm_ban,                      // doc_sect_backm,
         index_ban,                      // doc_sect_index,
-        toc_ban,                        // doc_sect_toce (at end of file),
-        figlist_ban,                    // doc_sect_figliste (at end of file),
         no_ban                          // doc_sect_egdoc
     };
 
@@ -230,11 +227,12 @@ static void gen_figlist( void )
 
     if( fig_list == NULL ) return;  // no fig_list, no FIGLIST
 
-    if( ProcFlags.doc_sect != doc_sect_toc ) {
-        ds_save = ProcFlags.doc_sect;
-    }
+    /* Insert FIGLIST into current section */
 
-    start_doc_sect();
+    last_page_out();                // ensure are on new page
+    g_skip = 0;                     // ignore remaining skip value
+    set_section_banners( doc_sect_figlist );
+    reset_t_page();
 
     /* Set FIGLIST margins and other values */
 
@@ -305,6 +303,12 @@ static void gen_figlist( void )
 
     ProcFlags.concat = concat_save;
     ProcFlags.justify = justify_save;
+
+    /* Re-establish current section */
+
+    last_page_out();                // ensure all pages output
+    set_section_banners( ProcFlags.doc_sect );
+    reset_t_page();
 
     return;
 }
@@ -428,10 +432,12 @@ static void gen_toc( void )
 
     if( hd_list == NULL ) return;       // no hd_list, no TOC
 
-    ds_save = ProcFlags.doc_sect;
+    /* Insert TOC into current section */
 
-    scr_process_break();                // flush any pending text
-    start_doc_sect();
+    last_page_out();                // ensure are on new page
+    g_skip = 0;                     // ignore remaining skip value
+    set_section_banners( doc_sect_toc );
+    reset_t_page();
 
     /* Set TOC margins and other values */
     
@@ -534,6 +540,12 @@ static void gen_toc( void )
     ProcFlags.concat = concat_save;
     ProcFlags.justify = justify_save;
 
+    /* Re-establish current section */
+
+    last_page_out();                // ensure all pages output
+    set_section_banners( ProcFlags.doc_sect );
+    reset_t_page();
+
     return;
 }
 
@@ -597,6 +609,8 @@ static void set_cols( void )
 
 /***************************************************************************/
 /*  start_doc_sect true section start                                      */
+/*  Note: only used with TITLEP, ABSTRACT, PREFACE, BODY, APPENDIX, BACKM, */
+/*        INDEX, TOC, FIGLIST                                              */
 /***************************************************************************/
 
 void start_doc_sect( void )
@@ -641,7 +655,7 @@ void start_doc_sect( void )
         t_page.col_count = layout_work.body.columns;
         set_cols();
         page_r = layout_work.body.page_reset;
-        page_e = layout_work.hx.hx_sect[hds_body].section_eject;
+        page_e = layout_work.body.page_eject;
         if( layout_work.hx.hx_sect[hds_body].header ) {
             header = true;
             hd_info.h_text = &layout_work.body.string;
@@ -663,7 +677,7 @@ void start_doc_sect( void )
         t_page.col_count = layout_work.abstract.columns;
         set_cols();
         page_r = layout_work.abstract.page_reset;
-        page_e = layout_work.hx.hx_sect[hds_abstract].section_eject;
+        page_e = layout_work.abstract.page_eject;
         if( layout_work.hx.hx_sect[hds_abstract].header ) {
             header = true;
             hd_info.h_text = &layout_work.abstract.string;
@@ -674,24 +688,18 @@ void start_doc_sect( void )
         t_page.col_count = layout_work.preface.columns;
         set_cols();
         page_r = layout_work.preface.page_reset;
-        page_e = layout_work.hx.hx_sect[hds_preface].section_eject;
+        page_e = layout_work.preface.page_eject;
         if( layout_work.hx.hx_sect[hds_preface].header ) {
             header = true;
             hd_info.h_text = &layout_work.preface.string;
             hd_info.src = hds_preface;
         }
         break;
-    case   doc_sect_figlist:
-    case   doc_sect_figliste:
-        t_page.col_count = layout_work.figlist.columns;
-        set_cols();
-        page_e = ej_yes;
-        break;
     case   doc_sect_appendix:
         t_page.col_count = layout_work.appendix.columns;
         set_cols();
         page_r = layout_work.appendix.page_reset;
-        page_e = layout_work.hx.hx_sect[hds_appendix].section_eject;
+        page_e = layout_work.appendix.section_eject;
         if( page_e != ej_no ) {
             page_e = ej_yes;                        // "even" and "odd" act like "yes"
         }
@@ -706,7 +714,7 @@ void start_doc_sect( void )
         t_page.col_count = layout_work.backm.columns;
         set_cols();
         page_r = layout_work.backm.page_reset;
-        page_e = layout_work.hx.hx_sect[hds_backm].section_eject;
+        page_e = layout_work.backm.page_eject;
         if( layout_work.hx.hx_sect[hds_backm].header ) {
             header = true;
             hd_info.h_text = &layout_work.backm.string;
@@ -717,21 +725,17 @@ void start_doc_sect( void )
         t_page.col_count = layout_work.index.columns;
         set_cols();
         page_r = layout_work.index.page_reset;
-        page_e = layout_work.hx.hx_sect[hds_index].section_eject;
+        page_e = layout_work.index.page_eject;
         if( layout_work.hx.hx_sect[hds_index].header ) {
             header = true;
             hd_info.h_text = &layout_work.index.index_string;
             hd_info.src = hds_index;
         }
         break;
-    case   doc_sect_toc:
-    case   doc_sect_toce:
-        t_page.col_count = layout_work.toc.columns;
-        set_cols();
-        page_e = ej_yes;
+    case   doc_sect_egdoc:
         break;
     default:
-        new_section( ds );
+        internal_err( __FILE__, __LINE__ );
         break;
     }
 
@@ -749,11 +753,6 @@ void start_doc_sect( void )
         switch( page_e ) {              // page eject requested
         case ej_yes :
             finish_page_section( ds, true );// emit last page in old section
-            if( pass > 1 ) {
-                if( (ds != doc_sect_toc) && (ds != doc_sect_figlist) ) { 
-                    figlist_toc = gs_none;  // cancel use of ds_save
-                }
-            }
             reset_t_page();
             if( page_r ) {
                 page = 0;
@@ -761,13 +760,6 @@ void start_doc_sect( void )
             break;
         case ej_odd :
             finish_page_section( ds, true );// emit last page in old section
-            if( pass > 1 ) {
-                if( figlist_toc != gs_none ) {
-                    set_section_banners( ds_save );
-                    reset_t_page();
-                    figlist_toc = gs_none;
-                }
-            }
             if( (page & 1) ) {          // first page will be odd
                 do_page_out();          // emit blank page
             }
@@ -779,13 +771,6 @@ void start_doc_sect( void )
             break;
         case ej_even :
             finish_page_section( ds, true );// emit last page in old section
-            if( pass > 1 ) {
-                if( figlist_toc != gs_none ) {
-                    set_section_banners( ds_save );
-                    reset_t_page();
-                    figlist_toc = gs_none;
-                }
-            }
             if( !(page & 1) ) {         // first page will be even
                 do_page_out();          // emit blank page
             }
@@ -947,8 +932,6 @@ extern void gml_body( const gmltag * entry )
 extern void gml_figlist( const gmltag * entry )
 {
     scr_process_break();
-    gml_doc_xxx( doc_sect_figlist );
-    spacing = layout_work.figlist.spacing;
     figlist_toc |= gs_figlist;
     if( GlobalFlags.lastpass && (pass > 1) ) { 
         gen_figlist();
@@ -1081,8 +1064,6 @@ extern void gml_etitlep( const gmltag * entry )
 extern void gml_toc( const gmltag * entry )
 {
     scr_process_break();
-    gml_doc_xxx( doc_sect_toc );
-    spacing = layout_work.toc.spacing;
     figlist_toc |= gs_toc;
     if( GlobalFlags.lastpass && (pass > 1) ) { 
         gen_toc();
@@ -1101,11 +1082,9 @@ extern void gml_egdoc( const gmltag * entry )
     if( GlobalFlags.lastpass ) {                // output on last pass only
         if( passes == 1 ) {                     // first and only pass
             if( figlist_toc & gs_toc ) {        // only if TOC was found
-                gml_doc_xxx( doc_sect_toce );
                 gen_toc();
             }
             if( figlist_toc & gs_figlist ) {    // only if FIGLIST was found
-                gml_doc_xxx( doc_sect_figliste );
                 gen_figlist();
             }
             curr = fig_fwd_refs;
