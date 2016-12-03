@@ -2,10 +2,11 @@
 #
 # Initialization
 # ==============
-owroot=/OW
-wwwpath=/www
+owroot=~/ow
+wwwpath=~/www
 arch7z=7za
-#
+md5=md5sum
+
 if [ ! -d $owroot/pass1 ]; then
     echo "Missing $owroot/pass1. Can't continue with rotation."
     exit -1
@@ -28,14 +29,22 @@ if [ -d $wwwpath/snapshot ]; then
 fi
 mv $owroot/pass1/ $wwwpath/snapshot
 
-# Move Archives
-# =============
+# Move Archives and calc md5
+# ==========================
 mv -f $wwwpath/snapshots/ss.zip $wwwpath/snapshots/ow-snapshot.zip
 mv -f $wwwpath/snapshots/ss.7z $wwwpath/snapshots/ow-snapshot.7z
+cd $wwwpath/snapshots
+$md5 ow-snapshot.zip >ow-snapshot.zip.md5
+$md5 ow-snapshot.7z >ow-snapshot.7z.md5
 
-# Move installers
-# =============
+# Move installers and calc md5
+# ============================
 mv -f $owroot/distrib/ow/open-watcom-* $wwwpath/installers/
+cd $wwwpath/installers
+rm -f *.md5
+for i in open-watcom-c* open-watcom-f* ; do 
+  $md5 $i >$i.md5
+done
 
 # Final Cleanup
 # =============

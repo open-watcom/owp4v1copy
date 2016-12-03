@@ -6,6 +6,7 @@ set OWROOT=\OW
 set WWWPATH=\www
 set ARCH7Z=c:\Program Files\7-Zip\7z
 set RM=%OWROOT%\build\bin\rm
+set MD5=md5sum
 
 rem Initialization
 rem ==============
@@ -29,16 +30,27 @@ if exist %WWWPATH%\snapshot move %WWWPATH%\snapshot %WWWPATH%\snapshot.bak
 if exist %WWWPATH%\snapshot goto done
 move %OWROOT%\pass1 %WWWPATH%\snapshot
 
-rem Move Archives
-rem =============
+rem Move Archives and calc md5
+rem ==========================
 if exist %WWWPATH%\snapshots\ow-snapshot.zip %RM% -f %WWWPATH%\snapshots\ow-snapshot.zip
 if exist %WWWPATH%\snapshots\ow-snapshot.7z %RM% -f %WWWPATH%\snapshots\ow-snapshot.7z
 move %WWWPATH%\snapshots\ss.zip %WWWPATH%\snapshots\ow-snapshot.zip
 move %WWWPATH%\snapshots\ss.7z %WWWPATH%\snapshots\ow-snapshot.7z
+cd %WWWPATH%\snapshots
+"%MD5%" ow-snapshot.zip >ow-snapshot.zip.md5
+"%MD5%" ow-snapshot.7z >ow-snapshot.7z.md5
 
-rem Move installers
-rem =============
+rem Move installers and calc md5
+rem ============================
+if exist %WWWPATH%\installers\open-watcom-*.* %RM% -f %WWWPATH%\installers\open-watcom-*.*
 move %OWROOT%\distrib\ow\open-watcom-*.* %WWWPATH%\installers\
+cd %WWWPATH%/installers
+if not exist md5 md md5
+"%RM%" -f open-watcom-*.md5
+"%RM%" -f md5\*.md5
+for %%f in (open-watcom-*) do %MD5% %%f >md5\%%f.md5
+move md5\*.*  .
+rd md5
 
 rem Final Cleanup
 rem =============
