@@ -876,6 +876,7 @@ void do_page_out( void )
     }
 
     ProcFlags.page_started = false;             // reset after output done
+    ProcFlags.tophead_done = false;             // reset after output done
     return;
 }
 

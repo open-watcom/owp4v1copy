@@ -432,6 +432,7 @@ void    do_layout_end_processing( void )
 
         set_banners();                  // prepare banners for selection
         set_pgnum_style();              // set the pgnum_style values
+        reset_t_page();                 // set up t_page
     }
 }
 

@@ -1227,15 +1227,6 @@ typedef enum page_pos {         // needed here to avoid gtypelay.h circularity
     pos_centre = pos_center
 } page_pos;
  
-typedef struct {
-    char        *   h_num;      // heading number
-    char        *   h_text;     // heading text
-    char        *   id;         // heading id
-    int             hn_lvl;     // heading level
-    hdsrc           src;        // source
-    bool            ejected;    // true if page was ejected
-} hd_data;
-
 /***************************************************************************/
 /*  definitions for number style                                           */
 /*  moved from gtypelay.h to avoid inclusion circularity                   */

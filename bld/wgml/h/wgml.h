@@ -194,7 +194,7 @@ extern  condcode    getnum( getnum_block * gn );
 
 /* ghx.c                                */
 
-extern  void    gen_heading( void );
+extern  void    gen_heading( char * h_text, char * id, hdsrc hn_lvl, hdsrc hds_lvl );
 
 /* gindexut.c                           */
 extern ix_e_blk *   fill_ix_e_blk( ix_e_blk * * anchor, ix_h_blk * ref, ereftyp ptyp, char * text, int text_len );

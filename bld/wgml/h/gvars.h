@@ -166,7 +166,8 @@ global struct ProcFlags {
     unsigned        researchfile   : 1;// research for one file ( -r filename )
 
     unsigned        fb_document_done : 1;// true if fb_document() called
-    unsigned        fb_position_done : 1;// 1. pos on new page done
+    unsigned        fb_position_done : 1;// first positioning on new page done
+    unsigned        page_ejected    : 1;// a page was deliberately ejected (headings)
     unsigned        page_started    : 1;// we have something for the curr page
     unsigned        line_started    : 1;// we have something for current line
     unsigned        just_override   : 1;// current line is to be justified
@@ -219,6 +220,7 @@ global struct ProcFlags {
     unsigned        keep_left_margin: 1;// for indent NOTE tag paragraph
     unsigned        need_li_lp      : 1;// just list tag (:SL,...) seen
     unsigned        no_var_impl_err : 1;// suppress err_var_not_impl msg
+    unsigned        tophead_done    : 1;// tophead symbol set
 
     unsigned        has_aa_block    : 1;// true if device defined :ABSOLUTEADDRESS
     unsigned        ps_device       : 1;// true if device is PostScript
@@ -285,7 +287,6 @@ global  ffh_entry   *   hd_entry;       // current hd_list entry
 global  fwd_ref     *   hd_fwd_refs;    // forward reference/undefined id/page change
 global  ref_entry   *   hd_ref_dict;    // reference dictionary :Hx tags
 global  ffh_entry   *   hd_list;        // list of headings in order encountered
-global  hd_data         hd_info;        // information for heading output         
 global  hd_num_data     hd_nums[hds_appendix];  // heading hierarchy numbering
 
 // index support

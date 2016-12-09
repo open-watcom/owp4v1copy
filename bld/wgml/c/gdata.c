@@ -160,12 +160,6 @@ void init_global_vars( void )
     line_pool               = NULL;
     doc_el_pool             = NULL;
     line_position           = pos_left;
-    hd_info.h_num           = NULL;
-    hd_info.h_text          = NULL;
-    hd_info.id              = NULL;
-    hd_info.hn_lvl          = 0;
-    hd_info.src             = hds_max;
-    hd_info.ejected         = false;
 
     lay_files           = NULL;         // filename(s) from ( LAYout option
 

@@ -152,35 +152,6 @@ void set_section_banners( doc_section ds )
 }
 
 /***************************************************************************/
-/*  set some values for new section                                        */
-/***************************************************************************/
-
-static void new_section( doc_section ds )
-{
-    ProcFlags.doc_sect = ds;
-    set_section_banners( ds );
-
-    spacing = layout_work.defaults.spacing;
-    g_curr_font = layout_work.defaults.font;
-    return;
-}
-
-/***************************************************************************/
-/*  finish page processing  and section change                             */
-/***************************************************************************/
-
-static void finish_page_section( doc_section ds, bool eject )
-{
-    if( eject ) {
-        g_skip = 0;                     // ignore remaining skip value
-    }
-    new_section( ds );
-    do_page_out();
-    hd_info.ejected = true;
-    return;
-}
-
-/***************************************************************************/
 /*  this function sets up tabbing for the fill-string and page number in   */
 /*  the PAGELIST or TOC.                                                   */
 /*  Since TB only supports fill chars, only the first character of fill    */
@@ -609,8 +580,8 @@ static void set_cols( void )
 
 /***************************************************************************/
 /*  start_doc_sect true section start                                      */
-/*  Note: only used with TITLEP, ABSTRACT, PREFACE, BODY, APPENDIX, BACKM, */
-/*        INDEX, TOC, FIGLIST                                              */
+/*  Note: not used with FIGLIST or TOC, as these are not sections but      */
+/*        rather are inserted into sections                                */
 /***************************************************************************/
 
 void start_doc_sect( void )
@@ -618,9 +589,14 @@ void start_doc_sect( void )
     bool                first_section;
     bool                header;
     bool                page_r;
+    char            *   h_text;
     doc_section         ds;
+    hdsrc               hds_lvl;
     int                 k;
     page_ej             page_e;
+    uint32_t            page_c;
+    uint32_t            page_s;
+
 
     if( ProcFlags.start_section ) {
         return;                         // once is enough
@@ -633,13 +609,10 @@ void start_doc_sect( void )
 
     first_section = (ProcFlags.doc_sect == doc_sect_none);
 
-    header = false;                 // no header string (ABSTRACT, ... )  output
-    page_r = false;                 // no page number reset
-    page_e = ej_no;                 // no page eject
     ProcFlags.start_section = true;
     ProcFlags.keep_left_margin = false;
-    t_page.col_count = layout_work.defaults.columns;
-    set_cols();
+
+    page_c = layout_work.defaults.columns;
     ds = ProcFlags.doc_sect_nxt;    // new section
 
     if( ds == doc_sect_none ) {
@@ -651,55 +624,55 @@ void start_doc_sect( void )
     /***********************************************************************/
 
     switch( ds ) {
-    case   doc_sect_body:
-        t_page.col_count = layout_work.body.columns;
-        set_cols();
-        page_r = layout_work.body.page_reset;
-        page_e = layout_work.body.page_eject;
-        if( layout_work.hx.hx_sect[hds_body].header ) {
-            header = true;
-            hd_info.h_text = &layout_work.body.string;
-            hd_info.src = hds_body;
-        }
-        break;
-    case   doc_sect_titlep:             // for preceding :BINCLUDE/:GRAPHIC
-        t_page.col_count = layout_work.titlep.columns;
-        set_cols();
-        if( t_page.last_col_main != NULL ) {
-            page_e = ej_yes;
-        }
+    case   doc_sect_titlep :
+        page_c = layout_work.titlep.columns;
+        page_e = ej_yes;
+        page_r = false;                 // no page number reset
+        header = false;                 // no header string (ABSTRACT, ... )  output
         init_nest_cb();
         nest_cb->p_stack = copy_to_nest_stack();
         nest_cb->c_tag = t_TITLEP;
         nest_cb->p_stack->lineno = titlep_lineno; // correct line number
         break;
-    case   doc_sect_abstract:
-        t_page.col_count = layout_work.abstract.columns;
-        set_cols();
-        page_r = layout_work.abstract.page_reset;
+    case   doc_sect_abstract :
+        page_c = layout_work.abstract.columns;
         page_e = layout_work.abstract.page_eject;
-        if( layout_work.hx.hx_sect[hds_abstract].header ) {
-            header = true;
-            hd_info.h_text = &layout_work.abstract.string;
-            hd_info.src = hds_abstract;
+        page_r = layout_work.abstract.page_reset;
+        page_s = layout_work.hx.hx_sect[hds_abstract].spacing;
+        header = layout_work.hx.hx_sect[hds_abstract].header;
+        if( header ) {
+            h_text = &layout_work.abstract.string;
+            hds_lvl = hds_abstract;
         }
         break;
-    case   doc_sect_preface:
-        t_page.col_count = layout_work.preface.columns;
-        set_cols();
-        page_r = layout_work.preface.page_reset;
+    case   doc_sect_preface :
+        page_c = layout_work.preface.columns;
         page_e = layout_work.preface.page_eject;
-        if( layout_work.hx.hx_sect[hds_preface].header ) {
-            header = true;
-            hd_info.h_text = &layout_work.preface.string;
-            hd_info.src = hds_preface;
+        page_r = layout_work.preface.page_reset;
+        page_s = layout_work.hx.hx_sect[hds_preface].spacing;
+        header = layout_work.hx.hx_sect[hds_preface].header;
+        if( header ) {
+            h_text = &layout_work.preface.string;
+            hds_lvl = hds_preface;
         }
         break;
-    case   doc_sect_appendix:
-        t_page.col_count = layout_work.appendix.columns;
-        set_cols();
-        page_r = layout_work.appendix.page_reset;
+    case   doc_sect_body :
+        page_c = layout_work.body.columns;
+        page_e = layout_work.body.page_eject;
+        page_r = layout_work.body.page_reset;
+        page_s = layout_work.hx.hx_sect[hds_body].spacing;
+        header = layout_work.hx.hx_sect[hds_body].header;
+        if( header ) {
+            h_text = &layout_work.body.string;
+            hds_lvl = hds_body;
+        }
+        break;
+    case   doc_sect_appendix :
+        page_c = layout_work.appendix.columns;
         page_e = layout_work.appendix.section_eject;
+        page_r = layout_work.appendix.page_reset;
+        page_s = layout_work.hx.hx_sect[hds_appendix].spacing;
+        header = false;                 // no section header string output, as such
         if( page_e != ej_no ) {
             page_e = ej_yes;                        // "even" and "odd" act like "yes"
         }
@@ -710,29 +683,43 @@ void start_doc_sect( void )
             }
         }
         break;
-    case   doc_sect_backm:
-        t_page.col_count = layout_work.backm.columns;
-        set_cols();
-        page_r = layout_work.backm.page_reset;
+    case   doc_sect_backm :
+        page_c = layout_work.backm.columns;
         page_e = layout_work.backm.page_eject;
-        if( layout_work.hx.hx_sect[hds_backm].header ) {
-            header = true;
-            hd_info.h_text = &layout_work.backm.string;
-            hd_info.src = hds_backm;
+        page_r = layout_work.backm.page_reset;
+        page_s = layout_work.hx.hx_sect[hds_backm].spacing;
+        header = layout_work.hx.hx_sect[hds_backm].header;
+        if( header ) {
+            h_text = &layout_work.backm.string;
+            hds_lvl = hds_backm;
         }
         break;
-    case   doc_sect_index:
-        t_page.col_count = layout_work.index.columns;
-        set_cols();
-        page_r = layout_work.index.page_reset;
+    case   doc_sect_index :
+        page_c = layout_work.index.columns;
         page_e = layout_work.index.page_eject;
-        if( layout_work.hx.hx_sect[hds_index].header ) {
-            header = true;
-            hd_info.h_text = &layout_work.index.index_string;
-            hd_info.src = hds_index;
+        page_r = layout_work.index.page_reset;
+        page_s = layout_work.hx.hx_sect[hds_index].spacing;
+        header = layout_work.hx.hx_sect[hds_index].header;
+        if( header ) {
+            h_text = &layout_work.index.index_string;
+            hds_lvl = hds_index;
         }
         break;
-    case   doc_sect_egdoc:
+    case   doc_sect_gdoc :
+    case   doc_sect_etitlep :
+    case   doc_sect_frontm :
+        page_c = layout_work.defaults.columns;
+        page_e = ej_no;                         // no page eject
+        page_r = false;                         // no page number reset
+        page_s = layout_work.defaults.spacing;  // default spacing
+        header = false;                         // no section header
+        break;
+    case   doc_sect_egdoc :
+        page_c = layout_work.defaults.columns;
+        page_e = ej_yes;
+        page_r = false;                         // no page number reset
+        page_s = layout_work.defaults.spacing;  // default spacing
+        header = false;                         // no section header
         break;
     default:
         internal_err( __FILE__, __LINE__ );
@@ -743,49 +730,44 @@ void start_doc_sect( void )
         if( page_e == ej_even ) {
             do_page_out();              // apage of first page is odd
             page = 0;                   // restart page for first text page
-            hd_info.ejected = true;
+            ProcFlags.page_ejected = true;
         }
-        new_section( ds );
+        set_section_banners( ds );
         reset_t_page();
         document_new_position();        // first text page ready for content
-    } else {
+    } else if( page_e == ej_no ) {
         full_page_out();                // ensure are on last page
-        switch( page_e ) {              // page eject requested
-        case ej_yes :
-            finish_page_section( ds, true );// emit last page in old section
-            reset_t_page();
-            if( page_r ) {
-                page = 0;
-            }
-            break;
-        case ej_odd :
-            finish_page_section( ds, true );// emit last page in old section
+        ProcFlags.page_ejected = false;
+        set_section_banners( ds );
+        reset_bot_ban();
+    } else {
+        last_page_out();                // ensure last page output
+        ProcFlags.page_ejected = true;  // only first section has nothing to output
+
+        if( page_e == ej_odd ) {
             if( (page & 1) ) {          // first page will be odd
                 do_page_out();          // emit blank page
             }
-            set_section_banners( ds );
-            reset_t_page();
-            if( page_r ) {
-                page = 0;
-            }
-            break;
-        case ej_even :
-            finish_page_section( ds, true );// emit last page in old section
+        } else if( page_e == ej_even ) {
             if( !(page & 1) ) {         // first page will be even
                 do_page_out();          // emit blank page
             }
-            set_section_banners( ds );
-            reset_t_page();
-            if( page_r ) {
-                page = 0;
-            }
-            break;
-        default:                        //  ej_no
-            new_section( ds );
-            reset_bot_ban();
-            break;
+        } else if( page_e != ej_yes ) {
+            internal_err( __FILE__, __LINE__ );
         }
+        g_skip = 0;                     // ignore remaining skip value
+        set_section_banners( ds );
+        reset_t_page();
     }
+
+    ProcFlags.doc_sect = ds;
+    t_page.col_count = page_c;
+    set_cols();
+    if( page_r ) {
+        page = 0;
+    }
+    spacing = page_s;
+
     g_cur_left = g_page_left_org;
     if( header ) {
         line_position = pos_center;
@@ -793,11 +775,12 @@ void start_doc_sect( void )
         ProcFlags.concat = true;
         justify_save = ProcFlags.justify;
         ProcFlags.justify = ju_off;
-        gen_heading();
+        gen_heading( h_text, NULL, 0, hds_lvl );
         g_indent = 0;                           // reset for section body
         ProcFlags.concat = concat_save;
         ProcFlags.justify = justify_save;
     }
+    g_curr_font = layout_work.defaults.font;
     g_cur_h_start = g_page_left_org + g_indent;
     ProcFlags.doc_sect = ds;
 }
@@ -852,7 +835,6 @@ extern void gml_abstract( const gmltag * entry )
     }
     scr_process_break();
     gml_doc_xxx( doc_sect_abstract );
-    spacing = layout_work.hx.hx_sect[hds_abstract].spacing;
     g_cur_left = g_page_left;
     g_cur_h_start = g_page_left;
 
@@ -871,7 +853,6 @@ extern void gml_appendix( const gmltag * entry )
     }
     scr_process_break();
     gml_doc_xxx( doc_sect_appendix );
-    spacing = layout_work.hx.hx_sect[hds_appendix].spacing;
     ProcFlags.frontm_seen = false;  // no longer in FRONTM section
     if( !ProcFlags.fb_document_done ) { // the very first section/page
         do_layout_end_processing();
@@ -893,7 +874,6 @@ extern void gml_backm( const gmltag * entry )
     scr_process_break();
     gml_doc_xxx( doc_sect_backm );
     ProcFlags.frontm_seen = false;  // no longer in FRONTM section
-    spacing = layout_work.hx.hx_sect[hds_abstract].spacing;
     g_cur_left = g_page_left;
     g_cur_h_start = g_page_left;
 
@@ -942,7 +922,6 @@ extern void gml_frontm( const gmltag * entry )
 {
     scr_process_break();
     gml_doc_xxx( doc_sect_frontm );
-    spacing = layout_work.defaults.spacing;
     if( !ProcFlags.fb_document_done ) { // the very first section/page
         do_layout_end_processing();
     }
@@ -983,6 +962,8 @@ extern void gml_index( const gmltag * entry )
     g_indentr = 0;
     set_h_start();
 
+/// I suspect start_doc_sect() will be needed here!
+
     gen_index();                        // output the formatted index
 }
 
@@ -1001,7 +982,6 @@ extern void gml_preface( const gmltag * entry )
     }
     scr_process_break();
     gml_doc_xxx( doc_sect_preface );
-    spacing = layout_work.hx.hx_sect[hds_preface].spacing;
     if( layout_work.hx.hx_sect[hds_preface].header ) {
         start_doc_sect();                           // a header is enough
     }
@@ -1022,7 +1002,6 @@ extern void gml_titlep( const gmltag * entry )
     }
     scr_process_break();
     gml_doc_xxx( doc_sect_titlep );
-    spacing = layout_work.titlep.spacing;
 
     add_symvar( &global_dict, "$stitle", "", no_subscript, 0 );// set nullstring
     add_symvar( &global_dict, "$title", "", no_subscript, 0 );// set nullstring

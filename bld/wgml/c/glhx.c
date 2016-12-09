@@ -196,7 +196,7 @@ void    lay_hx( const gmltag * entry )
     att_args        l_args;
     int             cvterr;
     int             hx_l;
-    int8_t          l_group;
+    int8_t          l_group = 0;
 
     p = scan_start;
 
