@@ -125,13 +125,14 @@ void    gml_docnum( const gmltag * entry )
  
     start_doc_sect();                   // if not already done
 
+    font_save = g_curr_font;
+    g_curr_font = layout_work.docnum.font;
+
     p_line = alloc_text_line();
     p_line->line_height = wgml_fonts[layout_work.docnum.font].line_height;
     prep_docnum_line( p_line, docnumval->value );
- 
+
     d_spacing = layout_work.titlep.spacing;
-    font_save = g_curr_font;
-    g_curr_font = layout_work.docnum.font;
 
     /************************************************************/
     /*  pre_skip is treated as pre_top_skip because it is       */
