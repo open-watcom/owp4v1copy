@@ -11,6 +11,12 @@ NEW: The script is changed and tested for a eCS (OS/2) System.
      - PERL:      http://download.smedley.info/perl-5.10.0-os2-20071227.zip
      - 7z:
      http://hobbes.nmsu.edu/download/pub/os2/util/archiver/p7zip-9.20.1-os2.zip
+     - Ghostscript necessary for PDF document build (link added 2016-12-21)
+       For GHOSTSCRIPTPATH environment variable see config.txt
+     https://dl.dropboxusercontent.com/u/76425158/ghostscript-9.15-os2-20141011.zip
+     The next are required for eCS (OS/2) GS9.15
+     ftp://ftp.netlabs.org/pub/gcc/gcc4core-1_3_1.wpi
+     ftp://ftp.netlabs.org/pub/gcc/libc-0_6_6-csd6.wpi
 
 0. First install the necessary tools.
    - The latest version of Open Watcom to use as the compiler for building.
@@ -28,7 +34,7 @@ NEW: The script is changed and tested for a eCS (OS/2) System.
 this folder to that folder. Do not attempt to use the system from a folder
 inside the Open Watcom source tree. In this document the working copy of the
 build system is assumed to be in a folder named C:\OWBUILD. However, any folder
-can be used (avoid folders with spaces in their names) provided is is on the
+can be used (avoid folders with spaces in their names) provided it is on the
 same drive as the OW source tree.
 
 2. Review the file config.txt and make any changes as necessary. See the

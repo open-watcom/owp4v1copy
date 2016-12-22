@@ -15,7 +15,7 @@ OW=C:\OW
 WATCOM=C:\WATCOM
 
 # PATH required by GhostScript for PDF creation on used host OS
-GHOSTSCRIPTPATH=c:\gs\gs7.04\bin;c:\gs\gs7.04\lib
+GHOSTSCRIPTPATH=c:\gs\gs9.15\bin;c:\gs\gs9.15\lib
 
 # Programs for creation Windows help on used host OS
 WIN95HC=hcrtf
