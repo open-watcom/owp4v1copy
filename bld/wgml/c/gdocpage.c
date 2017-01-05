@@ -448,9 +448,11 @@ static void update_t_page( void )
     bool                splittable;
     doc_element     *   cur_el;
     doc_el_group    *   cur_group;
+    uint32_t            old_max_depth;
     uint32_t            depth;
 
     reset_t_page();
+    old_max_depth = t_page.max_depth;   // save original value for testing
 
     /***********************************************************************/
     /*  The first block in n_page.page_width is processed                  */
@@ -510,7 +512,7 @@ static void update_t_page( void )
     /***********************************************************************/
 
     if( n_page.col_bot != NULL ) {              // at most one item can be placed
-        if( t_page.cols == NULL ) {         // allocate t_page.cols
+        if( t_page.cols == NULL ) {             // allocate t_page.cols
             t_page.cols = alloc_doc_col();
         }
         cur_group = n_page.col_bot;
@@ -597,10 +599,12 @@ static void update_t_page( void )
     /*  As many blocks from n_page.col_main as will fit are processed      */
     /*  A page is not full unless there is at least one element left in    */
     /*    at least one of the sections of n_page                           */
+    /*  The original value of max_depth is used to prevent looping if the  */
+    /*    current element is too large to fit on any page                  */
     /*  Note: a page which is not full will only be emitted if it is the   */
     /*    last page in a section (or the document)                         */
     /*  Note: t_page.cols will only be NULL at this point if neither       */
-    /*          footnotes nor a buttom FIG has been placed on the page     */
+    /*    footnotes nor a buttom FIG has been placed on the page           */
     /***********************************************************************/
 
     while( n_page.col_main != NULL ) {
@@ -680,9 +684,9 @@ static void update_t_page( void )
                 t_page.last_col_main->next = NULL;
                 t_page.cur_depth += cur_el->depth;
             } else {
-                if( (t_page.cols == NULL) || (t_page.cols->main == NULL) ) { // adapt when FIG/FN done
+                if( cur_el->depth > old_max_depth ) {   // cur_el will not fit on any page
                     xx_err( err_text_line_too_deep );
-                    g_suicide();    // no line will fit on any page
+                    g_suicide();                        // prevents looping
                 }
                 n_page.col_main = cur_el->next;
                 if( n_page.last_col_main == NULL ) {
@@ -909,7 +913,7 @@ void insert_col_bot( doc_el_group * a_group )
     uint32_t    depth;
 
     /****************************************************************/
-    /*  if t_main-bot_fig is empty and if it fits, place            */
+    /*  if t_page.cols->bot_fig is empty and if it fits, place      */
     /*  cur_doc_el_group in t_page.cols->bot_fig                    */
     /*  otherwise, append cur_doc_el_groupto n_page.last_col_bot    */
     /*  NOTE: FIG/eFIG blocks must fit on an empty page or, rather, */
@@ -1162,18 +1166,8 @@ void insert_col_main( doc_element * a_element )
                 t_page.cur_depth += depth;
                 a_element = a_element->next;
                 t_page.last_col_main->next = NULL;
-                page_full = true;
-            } else {                        // a_element could not be split
-                if( t_page.cols == NULL ) { // adapt when FIG/FN done
-                    xx_err( err_text_line_too_deep );
-                    g_suicide();    // no line will fit on any page
-                }
-                if( t_page.cols->main == NULL ) { // adapt when FIG/FN done
-                    xx_err( err_text_line_too_deep );
-                    g_suicide();    // no line will fit on any page
-                }
-                page_full = true;
             }
+            page_full = true;
         } else {    // the entire element fits on the current page
             if( t_page.cols == NULL ) {
                     t_page.cols = alloc_doc_col();

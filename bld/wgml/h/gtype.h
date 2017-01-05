@@ -1127,6 +1127,8 @@ typedef struct {
             doc_element     *   last_col_fn;
     struct  banner_lay_tag  *   top_banner;
     struct  banner_lay_tag  *   bottom_banner;
+            symsub          *   topheadsub;     // ptr to $TOPHEAD symvar entry
+            symsub          *   botheadsub;     // ptr to $BOTHEAD symvar entry
             ban_column      *   top_ban;
             doc_element     *   page_width;
             doc_column      *   cols;
@@ -1216,8 +1218,11 @@ typedef enum {
 /***************************************************************************/
 
 typedef struct {
-    int32_t         headn;              // holds current number if numbered
-    symsub      *   headnsub;           // ptr to $HEADNUMx symvar entry
+    int32_t         headn;              // current heading number (numeric)
+    char            hnumstr[64];        // current heading number (text)
+    symsub      *   headsub;            // ptr to $HEADx symvar entry
+    symsub      *   hnumsub;            // ptr to $HNUMx symvar entry
+    symsub      *   htextsub;           // ptr to $HTEXTx symvar entry
 } hd_num_data;
 
 typedef enum page_pos {         // needed here to avoid gtypelay.h circularity
@@ -1266,6 +1271,7 @@ typedef struct ffh_entry {
     char                *   text;   // figcap/heading text line
     num_style               style;  // figcap/heading number format (based on section)
     ffhflags                flags;
+    bool                    abs_pre;// first heading in ABSTRACT or PREFACE
 } ffh_entry;
 
 /***************************************************************************/

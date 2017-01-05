@@ -1171,6 +1171,7 @@ ffh_entry * init_ffh_entry( ffh_entry * ffh_list )
     curr->prefix = NULL;
     curr->text = NULL;
     curr->flags = 0;
+    curr->abs_pre = false;
 
     /****************************************************/
     /* set the page style for the entry                 */
@@ -1197,8 +1198,12 @@ ffh_entry * init_ffh_entry( ffh_entry * ffh_list )
         } else if( ProcFlags.doc_sect == doc_sect_preface ) {
             curr->style = pgnum_style[pns_preface];
         }
-//        default :
+        break;
+    default :
+
         /* retain the current value for all other sections */
+
+        break;
     }
 
     return( curr );

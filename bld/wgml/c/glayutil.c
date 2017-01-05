@@ -116,9 +116,10 @@ static  const   content_names   content_text[max_content] =  {
     { "sec",       3, sec_content       },
     { "stitle",    6, stitle_content    },
     { "title",     5, title_content     },
-    { "",          0, string_content    },  // special
     { "time",      4, time_content      },
-    { "tophead",   7, tophead_content   }
+    { "tophead",   7, tophead_content   },
+    /* Must be last: will match any following entries */
+    { "",          0, string_content    },  // special
 };
 
 
@@ -377,7 +378,7 @@ bool    i_content( char * p, lay_att curr, content * tm )
     tm->content_type = no_content;
     for( k = no_content; k < max_content; ++k ) {
         if( !strnicmp( content_text[k].name, p, content_text[k].len ) ) {
-            tm->content_type = k;
+            tm->content_type = content_text[k].type;
             strcpy( tm->string, content_text[k].name );
             break;
         }

@@ -425,6 +425,7 @@ static void gen_toc( void )
         levels[i] = false;
         indent[i] = 0;
     }
+    levels[0] = true;       // H0 is active at start
 
     /* Get converted indent values, which are cumulative */
 
@@ -451,7 +452,7 @@ static void gen_toc( void )
         }
         if( cur_level < layout_work.toc.toc_levels ) {
             g_curr_font = layout_work.tochx[cur_level].font;
-            if( levels[cur_level] ) {
+            if( levels[cur_level] && !curr->abs_pre ) {
                 spacing = layout_work.toc.spacing;
                 set_skip_vars( &layout_work.tochx[cur_level].skip, NULL, NULL,
                                spacing, g_curr_font );
@@ -588,14 +589,15 @@ void start_doc_sect( void )
 {
     bool                first_section;
     bool                header;
-    bool                page_r;
+    bool                lvl_reset;
+    bool                page_r;         // page reset
     char            *   h_text;
     doc_section         ds;
     hdsrc               hds_lvl;
     int                 k;
-    page_ej             page_e;
-    uint32_t            page_c;
-    uint32_t            page_s;
+    page_ej             page_e;         // page eject tag
+    uint32_t            page_c;         // page columns
+    uint32_t            page_s;         // page spacing
 
 
     if( ProcFlags.start_section ) {
@@ -628,7 +630,8 @@ void start_doc_sect( void )
         page_c = layout_work.titlep.columns;
         page_e = ej_yes;
         page_r = false;                 // no page number reset
-        header = false;                 // no header string (ABSTRACT, ... )  output
+        header = false;                 // no header string output
+        lvl_reset = false;
         init_nest_cb();
         nest_cb->p_stack = copy_to_nest_stack();
         nest_cb->c_tag = t_TITLEP;
@@ -644,6 +647,7 @@ void start_doc_sect( void )
             h_text = &layout_work.abstract.string;
             hds_lvl = hds_abstract;
         }
+        lvl_reset = false;
         break;
     case   doc_sect_preface :
         page_c = layout_work.preface.columns;
@@ -655,6 +659,7 @@ void start_doc_sect( void )
             h_text = &layout_work.preface.string;
             hds_lvl = hds_preface;
         }
+        lvl_reset = false;
         break;
     case   doc_sect_body :
         page_c = layout_work.body.columns;
@@ -666,6 +671,7 @@ void start_doc_sect( void )
             h_text = &layout_work.body.string;
             hds_lvl = hds_body;
         }
+        lvl_reset = true;
         break;
     case   doc_sect_appendix :
         page_c = layout_work.appendix.columns;
@@ -676,12 +682,7 @@ void start_doc_sect( void )
         if( page_e != ej_no ) {
             page_e = ej_yes;                        // "even" and "odd" act like "yes"
         }
-        for( k = 1; k < hds_appendix; k++ ) {       // reset heading levels
-            hd_nums[k].headn = 0;
-            if( hd_nums[k].headnsub != NULL ) {
-                *(hd_nums[k].headnsub->value) = '\0';
-            }
-        }
+        lvl_reset = true;
         break;
     case   doc_sect_backm :
         page_c = layout_work.backm.columns;
@@ -693,6 +694,7 @@ void start_doc_sect( void )
             h_text = &layout_work.backm.string;
             hds_lvl = hds_backm;
         }
+        lvl_reset = true;
         break;
     case   doc_sect_index :
         page_c = layout_work.index.columns;
@@ -704,6 +706,7 @@ void start_doc_sect( void )
             h_text = &layout_work.index.index_string;
             hds_lvl = hds_index;
         }
+        lvl_reset = false;
         break;
     case   doc_sect_gdoc :
     case   doc_sect_etitlep :
@@ -713,6 +716,7 @@ void start_doc_sect( void )
         page_r = false;                         // no page number reset
         page_s = layout_work.defaults.spacing;  // default spacing
         header = false;                         // no section header
+        lvl_reset = false;
         break;
     case   doc_sect_egdoc :
         page_c = layout_work.defaults.columns;
@@ -720,6 +724,7 @@ void start_doc_sect( void )
         page_r = false;                         // no page number reset
         page_s = layout_work.defaults.spacing;  // default spacing
         header = false;                         // no section header
+        lvl_reset = false;
         break;
     default:
         internal_err( __FILE__, __LINE__ );
@@ -761,6 +766,7 @@ void start_doc_sect( void )
     }
 
     ProcFlags.doc_sect = ds;
+    ProcFlags.first_hdr = false;
     t_page.col_count = page_c;
     set_cols();
     if( page_r ) {
@@ -768,9 +774,22 @@ void start_doc_sect( void )
     }
     spacing = page_s;
 
+    /* Reset all heading numbers for ABSTRACT, BODY, APPENDIX and BACKM */
+
+    if( lvl_reset ) {
+        for( k = 0; k < hds_appendix; k++ ) {
+            hd_nums[k].headn = 0;// reset all levels
+            hd_nums[k].hnumstr[0] = '\0';
+            if( hd_nums[k].hnumsub != NULL ) {
+                *(hd_nums[k].hnumsub->value) = '\0';
+            }
+        }
+    }
+
+
+
     g_cur_left = g_page_left_org;
     if( header ) {
-        line_position = pos_center;
         concat_save = ProcFlags.concat;
         ProcFlags.concat = true;
         justify_save = ProcFlags.justify;

@@ -207,7 +207,7 @@ global struct ProcFlags {
     unsigned        tag_end_found   : 1;// '.' ending tag found
     unsigned        skips_valid     : 1;// controls set_skip_vars() useage
     unsigned        new_pagenr      : 1;// FIG/heading page number changed
-
+    unsigned        first_hdr       : 1;// first header done
     unsigned        box_cols_cur    : 1;// current BX line had column list
     unsigned        bx_set_done     : 1;// BX SET was done last before current BX line
     unsigned        draw_v_line     : 1;// vertical lines are to be drawn for this BX line
