@@ -118,7 +118,7 @@ void    gml_date( const gmltag * entry )
     g_curr_font = layout_work.date.font;
 
     p_line = alloc_text_line();
-    p_line->line_height = wgml_fonts[layout_work.docnum.font].line_height;
+    p_line->line_height = wgml_fonts[layout_work.date.font].line_height;
 
     prep_date_line( p_line, p );
 
