@@ -932,7 +932,7 @@ extern void gml_figlist( const gmltag * entry )
 {
     scr_process_break();
     figlist_toc |= gs_figlist;
-    if( GlobalFlags.lastpass && (pass > 1) ) { 
+    if( pass > 1 ) { 
         gen_figlist();
     }
 }
@@ -1063,7 +1063,7 @@ extern void gml_toc( const gmltag * entry )
 {
     scr_process_break();
     figlist_toc |= gs_toc;
-    if( GlobalFlags.lastpass && (pass > 1) ) { 
+    if( pass > 1 ) { 
         gen_toc();
     }
 }

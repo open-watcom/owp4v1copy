@@ -60,7 +60,7 @@ static void update_headnumx( hdsrc hn_lvl, hdsrc hds_lvl )
     if( hn_lvl > 0 ) {              // reuse formatted number from previous lvl
         if( (layout_work.hx.hx_head[hds_lvl].number_form == num_prop) &&
                 (hd_nums[hn_lvl - 1].hnumsub != NULL) ) {
-            strcpy( hd_nums[hn_lvl].hnumstr, hd_nums[hn_lvl - 1].hnumsub->value );
+            strcpy( hd_nums[hn_lvl].hnumstr, hd_nums[hn_lvl - 1].hnumstr );
             pos = strlen( hd_nums[hn_lvl].hnumstr );
         }
     }
@@ -95,7 +95,7 @@ static void hx_header( char * h_num, char * h_text, hdsrc hn_lvl, hdsrc hds_lvl 
 
     /* text_font is used for setting the skips */
 
-    if( hds_lvl < hds_appendix ) {              // from an Hn tag
+    if( hds_lvl < hds_abstract ) {              // from an Hn tag
         line_position = layout_work.hx.hx_head[hds_lvl].line_position;
         if( layout_work.hx.hx_head[hds_lvl].line_break ) {
             set_skip_vars( &layout_work.hx.hx_head[hds_lvl].pre_skip,
@@ -103,24 +103,6 @@ static void hx_header( char * h_num, char * h_text, hdsrc hn_lvl, hdsrc hds_lvl 
                            &layout_work.hx.hx_sect[hds_lvl].post_skip,
                            layout_work.hx.hx_sect[hds_lvl].spacing,
                            layout_work.hx.hx_sect[hds_lvl].text_font );
-            if( g_post_skip == 0 ) {            // to match wgml 4.0
-                if( spacing == 1 ) {
-                    if( nest_cb->prev == NULL ) {
-                        g_post_skip = wgml_fonts[nest_cb->font].line_height;
-                    } else {
-                        g_post_skip = wgml_fonts[nest_cb->prev->font].line_height;
-                    }
-
-                } else {
-                    if( layout_work.hx.hx_sect[hds_lvl].text_font >=
-                            layout_work.hx.hx_head[hds_lvl].number_font ) {
-                        g_post_skip = wgml_fonts[layout_work.hx.hx_sect[hds_lvl].text_font].line_height;
-                    } else {
-                        g_post_skip = wgml_fonts[layout_work.hx.hx_head[hds_lvl].number_font].line_height;
-                    }
-                    g_post_skip *= (spacing - 1);
-                }
-            }
         } else {
             set_skip_vars( &layout_work.hx.hx_head[hds_lvl].pre_skip,
                            &layout_work.hx.hx_sect[hds_lvl].pre_top_skip,
@@ -129,9 +111,6 @@ static void hx_header( char * h_num, char * h_text, hdsrc hn_lvl, hdsrc hds_lvl 
                            layout_work.hx.hx_sect[hds_lvl].text_font );
         }
     } else {                                    // from a section heading
-        if( hds_lvl == hds_appendix ) {
-            g_post_skip = 0;
-        }
         line_position = pos_center;
         set_skip_vars( &layout_work.hx.hx_head[hds_lvl].pre_skip,
                        &layout_work.hx.hx_sect[hds_lvl].pre_top_skip,
@@ -173,7 +152,12 @@ void gen_heading( char * h_text, char * id, hdsrc hn_lvl, hdsrc hds_lvl )
     size_t          txtlen;
     page_pos        old_line_pos;
     ref_entry   *   cur_ref;
+    uint32_t        bot_depth;
     uint32_t        hx_depth;
+    uint32_t        old_bot_depth;
+    uint32_t        old_top_depth;
+    uint32_t        page_diff;
+    uint32_t        top_depth;
 
     static char     headx[7]    = "$headX";
     static char     htextx[8]   = "$htextX";
@@ -335,37 +319,111 @@ void gen_heading( char * h_text, char * id, hdsrc hn_lvl, hdsrc hds_lvl )
         t_doc_el_group = t_doc_el_group->next;  // processed doc_elements go to next group, if any
         cur_doc_el_group->next = NULL;
 
-        hx_depth = cur_doc_el_group->depth +
-                wgml_fonts[layout_work.hx.hx_sect[hds_lvl].text_font].line_height +
-                g_post_skip;
-
-        if( (hx_depth + t_page.cur_depth) > t_page.max_depth ) {
-            do_page_out();                      // the block won't fit on this page
-            reset_t_page();
-            ProcFlags.page_ejected = true;
-        }
-
         if( hds_lvl < hds_appendix ) {      // Hx only, but not APPENDIX H1
+
             set_headx_banners( hn_lvl );    // set possible banners
-            reset_t_page();                 // and adjust page margins
-            if( t_page.cols != NULL ) {     // reset "last" pointers as needed
-                if( t_page.cols->main != NULL ) {
-                    cur_el = t_page.cols->main;
-                    while( cur_el->next != NULL ) {
-                        cur_el = cur_el->next;
-                    }
-                    t_page.last_col_main = cur_el;
+
+            if( !ProcFlags.page_ejected ) { // no adjustment if on new page
+
+                /* Get old and new banner depths */
+
+                if( t_page.top_banner != NULL ) {
+                    old_top_depth = t_page.top_banner->ban_depth;
+                } else {
+                    old_top_depth = 0;
                 }
-                if( t_page.cols->footnote != NULL ) {
-                    cur_el = t_page.cols->footnote;
-                    while( cur_el->next != NULL ) {
-                        cur_el = cur_el->next;
+
+                if( t_page.bottom_banner != NULL ) {
+                    old_bot_depth = t_page.bottom_banner->ban_depth;
+                } else {
+                    old_bot_depth = 0;
+                }
+
+                if( sect_ban_top[!(page & 1)] != NULL ) {
+                    top_depth = sect_ban_top[!(page & 1)]->ban_depth;
+                } else {
+                    top_depth = 0;
+                }
+
+                if( sect_ban_bot[!(page & 1)] != NULL ) {
+                    bot_depth = sect_ban_bot[!(page & 1)]->ban_depth;
+                } else {
+                    bot_depth = 0;
+                }
+
+                /***************************************************************/
+                /* If the new page will be shorter than the old page and the   */
+                /* text already present and/or the current heading would not   */
+                /* fit then eject the page and place the heading and the new   */
+                /* banners on the the next page. Otherwise, place them on the  */
+                /* current page and update g_page_top and t_page.max_depth     */
+                /***************************************************************/
+
+                if( (top_depth + bot_depth) > (old_top_depth + old_bot_depth) ) {
+                    page_diff = (top_depth + bot_depth) -
+                                (old_top_depth + old_bot_depth);
+                } else {
+                    page_diff = 0;
+                }
+                hx_depth = cur_doc_el_group->depth +
+                    wgml_fonts[layout_work.hx.hx_sect[hds_lvl].text_font].line_height +
+                    g_post_skip;
+                if( ((page_diff + t_page.cur_depth) > t_page.max_depth) ||
+                        ((hx_depth + t_page.cur_depth) > t_page.max_depth) ) {
+                    do_page_out();              // the block won't fit on this page
+                    reset_t_page();
+                    ProcFlags.page_ejected = true;
+                } else {                        // this page will do just fine
+
+                    /* Adjust page vertical metrics */
+
+                    if( top_depth > 0 ) {
+                        if( bin_driver->y_positive == 0x00 ) {
+                            g_page_top = g_page_top_org - top_depth;
+                        } else {
+                            g_page_top = g_page_top_org + top_depth;
+                        }
+                    } else {
+                        g_page_top = g_page_top_org;
                     }
-                    t_page.last_col_fn = cur_el;
+                    t_page.cols_top = g_page_top;
+
+                    if( old_top_depth < top_depth ) {
+                        t_page.max_depth -= (top_depth - old_top_depth);
+                    } else if( top_depth < old_top_depth ) {
+                        t_page.max_depth += (old_top_depth - top_depth);
+                    }
+
+                    if( bot_depth > 0 ) {
+                        if( bin_driver->y_positive == 0x00 ) {
+                            g_page_bottom = g_page_bottom_org + bot_depth;
+                        } else {
+                            g_page_bottom = g_page_bottom_org - bot_depth;
+                        }
+                    } else {
+                        g_page_bottom = g_page_bottom_org;
+                    }
+
+                    if( old_bot_depth < bot_depth  ) {
+                        max_depth -= (bot_depth  - old_bot_depth);
+                    } else if( bot_depth  < old_bot_depth ) {
+                        max_depth += (old_bot_depth - bot_depth );
+                    }
+                }
+            }
+
+            if( !ProcFlags.page_ejected ) {
+                hx_depth = cur_doc_el_group->depth +
+                    wgml_fonts[layout_work.hx.hx_sect[hds_lvl].text_font].line_height +
+                    g_post_skip;
+
+                if( (hx_depth + t_page.cur_depth) > t_page.max_depth ) {
+                    do_page_out();              // the block won't fit on this page
+                    reset_t_page();
+                    ProcFlags.page_ejected = true;
                 }
             }
         }
-
         if( !ProcFlags.page_ejected ) {
             while( cur_doc_el_group->first != NULL ) {
                 cur_el = cur_doc_el_group->first;
@@ -375,8 +433,10 @@ void gen_heading( char * h_text, char * id, hdsrc hn_lvl, hdsrc hds_lvl )
             }
             add_doc_el_group_to_pool( cur_doc_el_group );
             cur_doc_el_group = NULL;
-        } else {                                    // page was ejected
-            cur_doc_el_group->depth -= cur_doc_el_group->first->subs_skip;    // top of page: no subs_skip
+        } else {                                        // page was ejected
+            reset_t_page();                             // update metrics for new banners, if any
+            cur_doc_el_group->depth -= cur_doc_el_group->first->subs_skip;  // top of page: no subs_skip
+            cur_doc_el_group->depth += cur_doc_el_group->first->top_skip;   // top of page: top_skip
             cur_doc_el_group->first->subs_skip = 0;
             if( cur_doc_el_group->depth > t_page.max_depth ) {
                 xx_err( err_heading_too_deep );     // the block won't fit on any page

@@ -140,16 +140,18 @@ static void do_el_list_out( doc_element * array, unsigned char count )
 static void set_v_positions( doc_element * list, uint32_t v_start )
 {
     bool            use_spacing;
+    bool            at_top;
     doc_element *   cur_el;
     text_line   *   cur_line;
     uint32_t        cur_spacing;
     uint32_t        old_v_start;
 
+    at_top = !ProcFlags.page_started;
     g_cur_v_start = v_start;
 
     for( cur_el = list; cur_el != NULL; cur_el = cur_el->next ) {
         use_spacing = false;
-        if( !ProcFlags.page_started ) {
+        if( at_top ) {
             if( cur_el->blank_lines > 0 ) {
                 cur_spacing = cur_el->blank_lines + cur_el->subs_skip;
             } else {
@@ -162,8 +164,7 @@ static void set_v_positions( doc_element * list, uint32_t v_start )
 
         switch( cur_el->type ) {
         case el_binc :
-            cur_el->element.binc.at_top = !ProcFlags.page_started &&
-                                          (t_page.top_banner == NULL);
+            cur_el->element.binc.at_top = at_top && (t_page.top_banner == NULL);
             if( bin_driver->y_positive == 0x00 ) {
                 g_cur_v_start -= cur_spacing;
             } else {
@@ -190,8 +191,7 @@ static void set_v_positions( doc_element * list, uint32_t v_start )
             }
             break;
         case el_graph :
-            cur_el->element.graph.at_top = !ProcFlags.page_started &&
-                                          (t_page.top_banner == NULL);
+            cur_el->element.graph.at_top = at_top && (t_page.top_banner == NULL);
             if( bin_driver->y_positive == 0x00 ) {
                 g_cur_v_start -= cur_spacing;
             } else {
@@ -226,7 +226,7 @@ static void set_v_positions( doc_element * list, uint32_t v_start )
                     cur_spacing += cur_line->line_height;
                     use_spacing = true;         // use between lines
                 }
-                if( ProcFlags.page_started ) {              // not first element
+                if( !at_top ) {                 // not first element
                     if( cur_el->element.text.overprint ) {  // overprint
                         if( use_spacing ) {
                             cur_spacing -= cur_line->spacing + cur_line->line_height;
@@ -260,7 +260,7 @@ static void set_v_positions( doc_element * list, uint32_t v_start )
                             cur_spacing = wgml_fonts[g_curr_font].line_height;
                         }
                     }
-                    ProcFlags.page_started = true;
+                    at_top = false;
                 }
 
                 /****************************************************/
@@ -370,7 +370,6 @@ static void do_doc_column_out( doc_column * a_column, uint32_t v_start )
     for( i = 0; i < col_count; i++ ) {
         last_el = NULL;
         cur_el[i] = NULL;
-        ProcFlags.page_started = false;
         if( cur_col->col_width != NULL ) {
             set_v_positions( cur_col->col_width, t_page.cols_top );
             cur_el[i] = cur_col->col_width;
@@ -383,6 +382,7 @@ static void do_doc_column_out( doc_column * a_column, uint32_t v_start )
                 cur_col->main->top_skip = cur_col->post_skip;
                 cur_col->post_skip = 0;
             }
+            ProcFlags.page_started = true;
         }
         if( cur_col->main != NULL ) {
             set_v_positions( cur_col->main, t_page.cols->main_top );
@@ -727,13 +727,8 @@ void do_page_out( void )
     font_number         save_prev;
     uint32_t            curr_height;
     uint32_t            prev_height;
-
-/// items in document_top_banner() were moved here when that function was
-/// merged with this one; it is not known if they are actually needed in this
-/// context
-// these were in document_top_banner() and were renamed when hs was needed elsewhere
-    uint32_t    sav_hs;
-    uint32_t    sav_hl;
+    uint32_t            sav_hs;
+    uint32_t            sav_hl;
 
     /* Set up for the new page */
 
@@ -745,7 +740,6 @@ void do_page_out( void )
 
     /* Get the banner text into the proper sections */
 
-// this was document_top_banner()
     if( ProcFlags.keep_left_margin ) {
         sav_hs = g_cur_h_start;
         sav_hl = g_cur_left;
@@ -820,7 +814,6 @@ void do_page_out( void )
         g_cur_h_start = sav_hs;
         g_cur_left = sav_hl;
     }
-// end of former document_top_banner()
 
     if( (t_page.bottom_banner != NULL) && (t_page.bottom_banner->region != NULL) ) {
         out_ban_bot();
@@ -854,6 +847,7 @@ void do_page_out( void )
             t_page.cols->main->top_skip = t_page.post_skip;
             t_page.post_skip = 0;
         }
+        ProcFlags.page_started = true;
     }
 
     if( t_page.cols != NULL ) {
@@ -1216,7 +1210,7 @@ void insert_col_width( doc_el_group * a_group )
     /****************************************************************/
     /*  if t_page.cols->col_width is empty and if it fits, place    */
     /*    cur_doc_el_group in t_page.cols->col_width                */
-    /*  otherwise, append cur_doc_el_groupto n_page.last_col_width  */
+    /*  otherwise, append cur_doc_el_group to n_page.last_col_width */
     /*  only FIG/eFIG blocks with place set to top and width no     */
     /*    greater than "column" come here                           */
     /*  NOTE: FIG/eFIG blocks must fit on an empty page or, rather, */
@@ -1271,9 +1265,10 @@ void insert_page_width( doc_el_group * a_group )
     uint32_t    depth;
 
     /****************************************************************/
-    /*  only headings with page_eject set to any value except ej_no */
-    /*  and FIG/eFIG blocks with place set to top and width greater */
-    /*  than "column" come here                                     */
+    /*  headings with page_eject set to any value except ej_no or   */
+    /*  which will not fit on the current page and FIG/eFIG blocks  */
+    /*  with place set to top and width greater than "column" come  */
+    /*  here                                                        */
     /*  headings must be sized before submission as they cannot be  */
     /*  split or delayed                                            */
     /*  NOTE: FIG/eFIG blocks must fit on an empty page or, rather, */
@@ -1331,6 +1326,7 @@ void last_page_out( void )
 
     if( (t_page.page_width != NULL) || (t_page.cols != NULL) ) {
         do_page_out();
+        reset_t_page();
     }
 
     return;

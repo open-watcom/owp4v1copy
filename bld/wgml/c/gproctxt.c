@@ -1722,10 +1722,14 @@ void process_text( const char *text, font_number font )
     /********************************************************************/
     /*  no text between :GDOC and the first of :ABSTRACT, :PREFACE,     */
     /*  :BODY, :APPENDIX, or :BACKM except between :TITLEP and :eTITLEP */
+    /*  NOTE: if TOC/FIGLIST are the only contents of FRONTM, then they */
+    /*  will reset the section to FRONTM so that must be allowed here   */
+    /*  as well                                                         */
     /********************************************************************/
 
     if( ProcFlags.doc_sect < doc_sect_abstract ) {
-        if( ProcFlags.doc_sect != doc_sect_titlep ) {
+        if( (ProcFlags.doc_sect != doc_sect_titlep) &&
+                (ProcFlags.doc_sect != doc_sect_frontm) ) {
             xx_line_err( err_doc_sec_expected_2, text );
             return;
         }
