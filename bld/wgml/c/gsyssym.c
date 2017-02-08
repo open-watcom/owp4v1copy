@@ -553,9 +553,9 @@ static void sysixjfun( symvar * e )
     return;
 };
 
-static void sysixreffun( symvar * e )
+static void sysixreffun( symvar * e )   // $ixref
 {
-    var_wng( e->name, e );
+    sysixref0.value = sysixrefstr;
     return;
 };
 

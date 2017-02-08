@@ -1187,6 +1187,7 @@ ffh_entry * init_ffh_entry( ffh_entry * ffh_list )
     case doc_sect_body :
     case doc_sect_appendix :
     case doc_sect_backm :
+    case doc_sect_index :
         if( ProcFlags.doc_sect == doc_sect_abstract ) {
             curr->style = pgnum_style[pns_abstract];
         } else if( ProcFlags.doc_sect == doc_sect_appendix ) {
@@ -1195,14 +1196,14 @@ ffh_entry * init_ffh_entry( ffh_entry * ffh_list )
             curr->style = pgnum_style[pns_backm];
         } else if( ProcFlags.doc_sect == doc_sect_body ) {
             curr->style = pgnum_style[pns_body];
+        } else if( ProcFlags.doc_sect == doc_sect_index ) {
+            curr->style = pgnum_style[pns_index];
         } else if( ProcFlags.doc_sect == doc_sect_preface ) {
             curr->style = pgnum_style[pns_preface];
         }
         break;
     default :
-
-        /* retain the current value for all other sections */
-
+        internal_err( __FILE__, __LINE__ );
         break;
     }
 

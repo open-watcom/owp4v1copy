@@ -28,15 +28,15 @@
 *                        only used options are implemented
 *                        i.e.   index structure 1 only
 *                               s1 s2 s3
-*                               . dump   (experimental)
-*         extension found during testing:
 *                               s1 s2 s3 xxx
 *           xxx is treated like gml :I3 pg="XXX"  attribute
 *
-*         not implemented are   s1 s2 . ref
+*         not implemented are   . ''
+*                               . ref
 *                               . purge
+*                               . dump
 *
-*  comments are from script-tso.txt
+*  Note: the "." is the control word indicator, normally "." but changeable
 ****************************************************************************/
 
 #define __STDC_WANT_LIB_EXT1__  1      /* use safer C library              */
@@ -194,22 +194,13 @@ void    scr_ix( void )
             if( *tok_start == '.' && arg_flen == 1  ) {
                 if( lvl > 0 ) {
                     xx_opt_err( cwcurr, tok_start );
-                    break;             // .ix s1 s2 . ref format not supprted
+                    break;             // .ix s1 s2 s3 . ref format not supported
                 }
                 cc = getarg();
                 if( cc == pos || cc == quotes ) {   // .ix . dump ???
-                    if( arg_flen == 4 ) {
-                        if( !strnicmp( tok_start, "DUMP", 4 ) ) {
-
-                            ixdump( index_dict );
-
-                            break;
-                        }
-                    }
                     xx_opt_err( cwcurr, tok_start );// unknown option
                 } else {
                     parm_miss_err( cwcurr );
-                    return;
                 }
                 break;                  // no index entry text
             }
@@ -220,10 +211,15 @@ void    scr_ix( void )
         }
     }
     cc = getarg();
+
 /***************************************************************************/
-/*  The docu says .ix "I1" "I2" "I3" "extra" is invalid, but WGML4 accepts */
-/*  it without error and processes it like the :I3 pg="extra" attribute    */
+/*  There was some confusion here. The TSO was read as making four         */
+/*  arguments invalid, but in fact it states that, if all four arguments   */ 
+/*  are present, then the use of "." is optional. This means that the      */
+/*  fourth argument is a reference, hence its behavior when a number is    */
+/*  used                                                                   */
 /***************************************************************************/
+
 //  if( cc != omit ) {
 //      parm_extra_err( cwcurr, tok_start - (cc == quotes) );
 //      return;

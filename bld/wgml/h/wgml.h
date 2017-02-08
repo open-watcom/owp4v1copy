@@ -192,15 +192,15 @@ extern  void    g_keep_nest( const char * cw_tag );
 /* getnum.c                             */
 extern  condcode    getnum( getnum_block * gn );
 
-/* ghx.c                                */
 
+/* ghx.c                                */
 extern  void    gen_heading( char * h_text, char * id, hdsrc hn_lvl, hdsrc hds_lvl );
+
 
 /* gindexut.c                           */
 extern ix_e_blk *   fill_ix_e_blk( ix_e_blk * * anchor, ix_h_blk * ref, ereftyp ptyp, char * text, int text_len );
 extern  void        free_index_dict( ix_h_blk ** dict );
 extern  void        free_ix_e_index_dict( ix_h_blk ** dict );
-extern  void        ixdump( ix_h_blk * dict );
 
 
 /* glayutil.c                           */
@@ -217,7 +217,7 @@ extern void         lay_banner_end_prepare( void );
 extern void         banner_defaults( void );
 
 
-/* gmacdict.c                           */
+
 extern  void        add_macro_entry( mac_entry * * dict, mac_entry * me );
 extern  void        init_macro_dict( mac_entry * * dict );
 extern  void        free_macro_dict( mac_entry * * dict );

@@ -632,12 +632,13 @@ typedef enum {
 /***************************************************************************/
 
 typedef enum {
-    pns_abstract = 0,
-    pns_preface  = 1,
-    pns_body     = 2,
-    pns_appendix = 3,
-    pns_backm    = 4,
-    pns_max      = 5    // for the pgnum_style array
+    pns_abstract,
+    pns_preface,
+    pns_body,
+    pns_appendix,
+    pns_backm,
+    pns_index,
+    pns_max             // for pgnum_style array sizing
 } pgnum_sect;
 
 /***************************************************************************/

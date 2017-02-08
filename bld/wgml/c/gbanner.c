@@ -247,9 +247,6 @@ void set_pgnum_style( void )
         case pns_body :
             ban_offset = body_ban;
             break;
-        case pns_preface :
-            ban_offset = preface_ban;
-            break;
         }
         if( do_set_pgnum_style( ban_top[ban_offset][0], i ) ) {
         } else if( do_set_pgnum_style( ban_top[ban_offset][1], i ) ) {
