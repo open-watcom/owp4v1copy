@@ -54,7 +54,7 @@ static ix_h_blk *find_create_ix_h_entry( ix_h_blk **ixhwork,
     bool        do_nothing;
 
     do_nothing = false;
-    while( (*ixhwork != NULL) ) {       // find alfabetic point to insert
+    while( (*ixhwork != NULL) ) {       // find alphabetic point to insert
         comp_len = (*ixhwork)->ix_term_len;
         if( comp_len > txtlen )
             comp_len = txtlen;

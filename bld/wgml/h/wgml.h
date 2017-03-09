@@ -161,7 +161,7 @@ extern  void    list_level_err( const char * xl_tag, uint8_t xl_level );
 extern  void    nottag_err( void );
 extern  void    numb_err( void );
 extern  void    parm_extra_err( const char * cw, const char * pa );
-extern  void    parm_miss_err( const char * cw );
+extern  void    parm_miss_err( const char * cw, const char * pa );
 extern  void    val_parse_err( const char * pa, bool tag );
 extern  void    tag_name_missing_err( void );
 extern  void    tag_text_err( const char * tagname );
@@ -198,9 +198,10 @@ extern  void    gen_heading( char * h_text, char * id, hdsrc hn_lvl, hdsrc hds_l
 
 
 /* gindexut.c                           */
-extern ix_e_blk *   fill_ix_e_blk( ix_e_blk * * anchor, ix_h_blk * ref, ereftyp ptyp, char * text, int text_len );
-extern  void        free_index_dict( ix_h_blk ** dict );
-extern  void        free_ix_e_index_dict( ix_h_blk ** dict );
+extern  ix_e_blk    *   fill_ix_e_blk( ix_e_blk * * anchor, ix_h_blk * ref, ereftyp ptyp, char * text, int text_len );
+extern  bool            find_index_item( char * item, uint32_t len, ix_h_blk ** entry );
+extern  void            free_index_dict( ix_h_blk ** dict );
+extern  void            free_ix_e_index_dict( ix_h_blk ** dict );
 
 
 /* glayutil.c                           */

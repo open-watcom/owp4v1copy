@@ -1156,35 +1156,35 @@ typedef struct {
 
 typedef enum ereftyp {                  // definition order is important
     pgnone,                             // nothing
-    pgpageno,                           // this is the only value for .ix
+    pgpageno,                           // numeric page number (page_no)
 
     pgmajor,                            // these are
     pgstart,                            // .. from
     pgend,                              // .. :I1 - :I3
                                         // the following values use page_text
-    pgstring,                           // .. pg= attribute
+    pgstring,                           // .. pg= attribute (tags) or reference (ix)
     pgsee                               // .. see/seeid
 } ereftyp;
 
+/* page_no is required whether it or page_text is ultimately output */
+
 typedef struct ix_e_blk {               // index entry for pagenos / text
-    struct ix_e_blk * next;             // next entry
-    struct ix_h_blk * corr;             // corresponding index header entry
-    union {
-        char      * page_text;          // pageno is text
-        uint32_t    page_no;            // pageno is number
-    };
-    ereftyp     entry_typ;
+    struct  ix_e_blk    *   next;       // next entry
+    struct  ix_h_blk    *   corr;       // corresponding index header entry
+            char        *   page_text;  // pageno is text
+            uint32_t        page_no;    // pageno is number
+            ereftyp         entry_typ;
 } ix_e_blk;
 
-typedef struct ix_h_blk {               // index header with index term text
-    struct ix_h_blk * next;             // next ix header block same level
-    struct ix_h_blk * lower;            // first ix hdr block next lower level
-           ix_e_blk * entry;            // first ix entry block
-    uint32_t        ix_lvl;             // index level 1 - 3
-    size_t            ix_term_len;      // index term length
-    char            * ix_term;          // index term
-    size_t            prt_term_len;     // display text length
-    char            * prt_term;         // display text (NULL -> use index term)
+typedef struct ix_h_blk {                   // index header with index term text
+    struct  ix_h_blk    *   next;           // next ix header block same level
+    struct  ix_h_blk    *   lower;          // first ix hdr block next lower level
+            ix_e_blk    *   entry;          // first ix entry block
+            uint32_t        ix_lvl;         // index level 1 - 3
+            size_t          ix_term_len;    // index term length
+            char        *   ix_term;        // index term
+            size_t          prt_term_len;   // display text length
+            char        *   prt_term;       // display text (NULL -> use index term)
 } ix_h_blk;
 
 /***************************************************************************/

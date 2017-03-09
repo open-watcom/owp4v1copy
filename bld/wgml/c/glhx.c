@@ -329,7 +329,7 @@ void    lay_hx( const gmltag * entry )
         cc = get_lay_sub_and_value( &l_args );  // get one with value
     }
     if( l_group > 0 ) {         // only group 0 is supported
-        xx_warn_att( wng_unsupp_att, "group" );
+        xx_warn_att( wng_unsupp_lay_att, "group" );
     }
     scan_start = scan_stop + 1;
     return;

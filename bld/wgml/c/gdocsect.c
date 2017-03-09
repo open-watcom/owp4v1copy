@@ -295,6 +295,7 @@ static void gen_index( void )
     ix_h_blk    *   ixh1;
     ix_h_blk    *   ixh2;
     ix_h_blk    *   ixh3;
+    ix_e_blk    *   ref;
     symsub      *   ixrefval;       // &sysixref value
 
     if( index_dict == NULL ) return;    // no index_dict, no INDEX
@@ -308,23 +309,43 @@ static void gen_index( void )
     find_symvar( &sys_dict, "$ixref", no_subscript, &ixrefval);
 
     while( ixh1 != NULL ) {             // level 1
+
+
         if( letter[0] != toupper( *(ixh1->ix_term) ) ) {
+
+            /* Set g_subs_skip for next IXHEAD */
+
+            set_skip_vars( NULL, &layout_work.ixhead.pre_skip,
+                           NULL, spacing, 
+                           layout_work.ixhead.font );
+
+            /* Generate IXHEAD heading */
+
             letter[0] = toupper( *(ixh1->ix_term) );
-            process_text( letter, g_curr_font );
-            scr_process_break();        // flush letter heading
+            if( layout_work.ixhead.header == true ) {
+                process_text( letter, layout_work.ixhead.font );
+                scr_process_break();        // flush letter heading
+            }
         }
+
         if( ixh1->prt_term == NULL ) {
             process_text( ixh1->ix_term, g_curr_font );
         } else {
             process_text( ixh1->prt_term, g_curr_font );
         }
 
-        if( ixh1->entry->entry_typ >= pgstring ) {  // 'pageno' is text
-            process_text( ixh1->entry->page_text, g_curr_font );
-        } else {                                    // 'pageno' is numeric
-            ultoa( ixh1->entry->page_no, &buffer, 10 );
-            process_text( buffer, g_curr_font );
+        ref = ixh1->entry;
+        while( ref != NULL ) {                      // something more to print
+            if( ref->entry_typ >= pgstring ) {      // 'pageno' is text
+                process_text( ref->page_text, g_curr_font );
+            } else {                                // 'pageno' is numeric
+                ultoa( ref->page_no, &buffer, 10 );
+                process_text( buffer, g_curr_font );
+            }
+            ref = ref->next;
         }
+        scr_process_break();
+
         ixh2 = ixh1->lower;
         while( ixh2 != NULL ) {     // level 2
             if( ixh2->prt_term == NULL ) {
@@ -332,12 +353,18 @@ static void gen_index( void )
             } else {
                 process_text( ixh2->prt_term, g_curr_font );
             }
-            if( ixh2->entry->entry_typ >= pgstring ) {  // 'pageno' is text
-                process_text( ixh2->entry->page_text, g_curr_font );
-            } else {                                    // 'pageno' is numeric
-                ultoa( ixh2->entry->page_no, &buffer, 10 );
-                process_text( buffer, g_curr_font );
+
+            ref = ixh2->entry;
+            while( ref != NULL ) {                      // something more to print
+                if( ref->entry_typ >= pgstring ) {      // 'pageno' is text
+                    process_text( ref->page_text, g_curr_font );
+                } else {                                // 'pageno' is numeric
+                    ultoa( ref->page_no, &buffer, 10 );
+                    process_text( buffer, g_curr_font );
+                }
+                ref = ref->next;
             }
+            scr_process_break();
 
             ixh3 = ixh2->lower;
             while( ixh3 != NULL ) {     // level 3
@@ -346,37 +373,33 @@ static void gen_index( void )
                 } else {
                     process_text( ixh3->prt_term, g_curr_font );
                 }
-                if( ixh3->entry->entry_typ >= pgstring ) {  // 'pageno' is text
-                    process_text( ixh3->entry->page_text, g_curr_font );
-                } else {                                    // 'pageno' is numeric
-                    ultoa( ixh3->entry->page_no, &buffer, 10 );
-                    process_text( buffer, g_curr_font );
-                }
 
-                 if( ixh3->lower != NULL ) {// this is error TBD
-                    ix_h_blk * ixhp = ixh3->lower;
-
-                    process_text( "lower 3 nn\n", g_curr_font );
-                    while( ixhp != NULL ) { // level 4
-                        if( ixhp->prt_term == NULL ) {
-                            process_text( ixhp->ix_term, g_curr_font );
-                        } else {
-                            process_text( ixhp->prt_term, g_curr_font );
-                        }
-                        if( ixhp->entry->entry_typ >= pgstring ) {  // 'pageno' is text
-                            process_text( ixhp->entry->page_text, g_curr_font );
-                        } else {                                    // 'pageno' is numeric
-                            ultoa( ixhp->entry->page_no, &buffer, 10 );
-                            process_text( buffer, g_curr_font );
-                        }
-                        ixhp = ixhp->next;
+                ref = ixh3->entry;
+                while( ref != NULL ) {                      // something more to print
+                    if( ref->entry_typ >= pgstring ) {      // 'pageno' is text
+                        process_text( ref->page_text, g_curr_font );
+                    } else {                                // 'pageno' is numeric
+                        ultoa( ref->page_no, &buffer, 10 );
+                        process_text( buffer, g_curr_font );
                     }
+                    ref = ref->next;
                 }
+                scr_process_break();
                 ixh3 = ixh3->next;
             }
             ixh2 = ixh2->next;
         }
         ixh1 = ixh1->next;
+
+        if( ixh1 != NULL ) {
+            if( letter[0] != toupper( *(ixh1->ix_term) ) ) {
+
+                /* Set g_post_skip for next IXHEAD */
+
+                set_skip_vars( NULL, NULL, &layout_work.ixhead.post_skip, spacing, 
+                               layout_work.ixhead.font );
+            }
+        }
     }
 }
 
@@ -981,7 +1004,7 @@ extern void gml_index( const gmltag * entry )
     g_indentr = 0;
     set_h_start();
 
-/// I suspect start_doc_sect() will be needed here!
+    /* Must be called each pass */
 
     gen_index();                        // output the formatted index
 }

@@ -391,9 +391,6 @@ pick( ERR_ATT_TEXT_REQ,         "Tag text must be specified with the '%s' tag",
 pick( WNG_ATT_NAME,             "'%s' is not a valid attribute name",
                                 "'%s' is not a valid attribute name" )
 
-pick( WNG_INDEX_OPT,            "Index option must be specified to process index tags",
-                                "Index option must be specified to process index tags")
-
 pick( ERR_ATT_REQ,              "For the tag '%s', the required attribute(s) %s have not been specified",
                                 "For the tag '%s', the required attribute(s) %s have not been specified" )
 
@@ -421,11 +418,11 @@ pick( ERR_EXTRA_IGNORED,        "Extra operand(s) for '%s' ignored: '%s'",
 pick( WNG_UNSUPP_CW,            "Unsupported SCRIPT control word: '%s'",
                                 "Unsupported SCRIPT control word: '%s'" )
 
-pick( WNG_UNSUPP_CW_OPT,        "Unsupported SCRIPT control word option: '%s %s'",
-                                "Unsupported SCRIPT control word option: '%s %s'" )
+pick( WNG_UNSUPP_CW_OPT,        "Unsupported SCRIPT control word option: '%s'",
+                                "Unsupported SCRIPT control word option: '%s'" )
 
-pick( WNG_UNSUPP_TAG,           "Unsupported GML tag: ':%s'",
-                                "Unsupported GML tag: ':%s'" )
+pick( WNG_UNSUPP_TAG,           "Unsupported GML tag: '%s'",
+                                "Unsupported GML tag: '%s'" )
 
 pick( WNG_UNSUPP_ATT,           "Unsupported GML attribute: '%s'",
                                 "Unsupported GML attribute: '%s'" )
@@ -433,11 +430,11 @@ pick( WNG_UNSUPP_ATT,           "Unsupported GML attribute: '%s'",
 pick( WNG_NOT_YET_SUPP_ATT,     "Not yet supported GML attribute: '%s'",
                                 "Not yet supported GML attribute: '%s'" )
 
-pick( WNG_UNSUPP_LAY,           "Unsupported GML layout tag: ':%s'",
-                                "Unsupported GML layout tag: ':%s'" )
+pick( WNG_UNSUPP_LAY,           "Unsupported GML layout tag: '%s'",
+                                "Unsupported GML layout tag: '%s'" )
 
-pick( WNG_UNSUPP_LAY_ATT,       "Unsupported GML layout tag attribute: ':%s %s'",
-                                "Unsupported GML layout tag attribute: ':%s %s'" )
+pick( WNG_UNSUPP_LAY_ATT,       "Unsupported GML layout tag attribute: '%s'",
+                                "Unsupported GML layout tag attribute: '%s'" )
 
 pick( ERR_NESTED_TAG,           "Nested %s not supported",
                                 "Nested %s not supported" )
@@ -489,9 +486,6 @@ pick( ERR_TAG_BEFORE_GDOC,      "%s tag must appear after the GDOC tag",
 
 pick( ERR_TAG_STARTING,         "\tStarting %s tag on",
                                 "\tStarting %s tag on" )
-
-pick( ERR_PARENT_UNDEF,         "Parent index entry not defined",
-                                "Parent index entry not defined" )
 
 pick( ERR_REF_NOT_ALLOWED,      "Referencing not allowed for %s tag",
                                 "Referencing not allowed for %s tag" )
@@ -598,7 +592,7 @@ pick( ERR_RIGHT_MARGIN_TOO_BIG, "The layout right margin is greater than the dev
 pick( ERR_RIGHT_MARGIN_2_SMALL, "The right margin is too small when adjusted for the unprintable area of the device page",
                                 "The right margin is too small when adjusted for the unprintable area of the device page" )
 
-/* banner error messages (simplified) */
+/* element can't be split and won't fit on any page */
 
 pick( ERR_BANREG_TOO_DEEP,      "Banner region exceeds banner depth",
                                 "Banner region exceeds banner depth" )
@@ -735,3 +729,19 @@ pick( ERR_SPC_NOT_VALID,        "Space value is not valid",
 pick( ERR_TOO_MANY_OPS,         "Too many operands in .BX command",
                                 "Too many operands in .BX command")
 
+/* Indexing error messages */
+
+pick( WNG_INDEX_OPT,            "Index option must be specified to process index tags",
+                                "Index option must be specified to process index tags")
+
+pick( ERR_PARENT_UNDEF,         "Parent index entry not defined",
+                                "Parent index entry not defined" )
+
+pick( ERR_STRUCT_RANGE,         "The ix attribute has a range of 1 through 9",
+                                "The ix attribute has a range of 1 through 9" )
+
+pick( ERR_BAD_DP_VALUE,         "Invalid operand, expecting dump|purge",
+                                "Invalid operand, expecting dump|purge" )
+
+pick( ERR_EXTRA_DATA,           "Not expecting more operand data",
+                                "Not expecting more operand data" )

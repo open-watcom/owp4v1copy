@@ -56,19 +56,68 @@ ix_e_blk *  fill_ix_e_blk( ix_e_blk * * anchor, ix_h_blk * ref, ereftyp ptyp,
     ixewk->entry_typ = ptyp;
     if( ptyp >= pgstring ) {
         ixewk->page_text = mem_alloc( text_len + 1);
-        strcpy_s( ixewk->page_text, text_len + 1, text );
+        memcpy_s( ixewk->page_text, text_len + 1, text, text_len );
+        ixewk->page_text[text_len] = '\0';
     } else {
         ixewk->page_text = NULL;
-//      if( ProcFlags.page_started ) {
-//          ixewk->page_no = page;
-//      } else {
-            ixewk->page_no = page + 1;  // + 1 ??  TBD
-//      }
     }
+    ixewk->page_no = page + 1;  // predicted page number, needed regardless of type
     *anchor = ixewk;
     return( ixewk );
 }
 
+
+/***************************************************************************/
+/*  find an index item in index_dict                                       */
+/*  if 'true' is returned, then *entry points to the index item            */
+/*  if 'false' is returned, then *entry points to the index item after     */
+/*      the new index item is to be inserted; if this is NULL, then the    */
+/*      new index item goes at the start before the value on entry         */
+/***************************************************************************/
+
+bool find_index_item( char * item, uint32_t len, ix_h_blk ** entry )
+{
+    bool            retval  = false;
+    int             comp_len;           // compare length for searching existing entries
+    int             comp_res;           // compare result
+    ix_h_blk    *   cur_ixh;
+    ix_h_blk    *   old_ixh = NULL;     // will hold entry to insert after 
+
+    cur_ixh = *entry;                   // starting point is value passed
+    while( cur_ixh != NULL ) {
+        comp_len = len;
+        if( comp_len > cur_ixh->ix_term_len ) {
+            comp_len = cur_ixh->ix_term_len;
+        }
+        comp_res = strnicmp( item, cur_ixh->ix_term, len );
+        if( comp_res > 0 ) {    // new is later in alphabet
+            old_ixh = cur_ixh;
+            cur_ixh = cur_ixh->next;
+            continue;
+        } else if( comp_res < 0 ) {     // new is earlier in alphabet
+            *entry = old_ixh;           // use old_ixh as insert point
+            break;                      // entry found, and is in *entry
+        } else {                        // must be equal
+            if( len == cur_ixh->ix_term_len ) {
+                *entry = cur_ixh;       // use cur_ixh as insert point
+                retval = true;
+                break;                  // entry found, and is in *entry
+            } else if( len > cur_ixh->ix_term_len ) {   // new is later in alphabet
+                old_ixh = cur_ixh;
+                cur_ixh = cur_ixh->next;
+                continue;
+            } else {                    // shouldn't be possible
+                internal_err( __FILE__, __LINE__ );
+            }
+        }
+    }
+
+    if( cur_ixh == NULL ) {         // insert at end of list
+        *entry = old_ixh;           // use old_ixh as insert point
+    }
+
+    return( retval );
+}
 
 /***************************************************************************/
 /*  free ix_e_blk chain                                                    */

@@ -214,11 +214,12 @@ void dc_opt_warn_len( const char * pa, size_t len )
     return;
 }
 
-void parm_miss_err( const char * pa )
+void parm_miss_err( const char * cw, const char * pa )
 {
     err_count++;
-    g_err( err_parm_missing, pa );
+    g_err( err_parm_missing, cw );
     file_mac_info();
+    show_line_error( pa );
     return;
 }
 
