@@ -373,6 +373,9 @@ pick( INF_ID_DUPLICATE,         "Duplicate %s id",
 pick( INF_ID_FORWARD,           "More passes required for %s processing",
                                 "More passes required for %s processing" )
 
+pick( ERR_ID_UNDEFINED,         "Id not defined",
+                                "Id not defined" )
+
 pick( INF_ID_UNKNOWN,           "%s id not defined",
                                 "%s id not defined" )
 

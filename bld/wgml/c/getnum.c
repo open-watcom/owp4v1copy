@@ -338,7 +338,12 @@ static  int evaluate( char **line, long *val )
         case 1:                         // look for operator
             op = get_op( ptr );
             if( NULL == op ) {
-                return( not_ok );
+                if( !coper ) {
+                    *line = ptr;                    // next scan position
+                    return( pop_val( val ) );       // no operations left return result
+                } else {
+                    return( not_ok );
+                }
             }
             if( ')' == *ptr ) {
                 ercode = do_paren();

@@ -161,10 +161,10 @@ void scr_ix( void )
     char        *   ix[3] = { NULL, NULL, NULL };   // index string start pointers
     char        *   ref = NULL;         // ref string start pointer
     getnum_block    gn;
+    ix_h_blk    *   ixbase[3] = { NULL, NULL, NULL };   // current list base
     ix_h_blk    *   ixhwork;            // insertion point/found match item
     ix_h_blk    *   ixhwk;              // index block
     ix_e_blk    *   ixewk;              // index entry block
-    ix_h_blk    *   old_ixhwork[3] = {NULL, NULL, NULL};// root of current list
     uint32_t        ixlen[3] = {0, 0, 0};   // index string lengths
     uint32_t        reflen = 0;         // ref string length
     uint32_t        wkpage;             // predicted page number
@@ -302,7 +302,7 @@ void scr_ix( void )
         /* Create an ix_h_blk in ixhcurr[] for each non-null entry in ix[] */
 
         ixhwork = index_dict;
-        old_ixhwork[0] = index_dict;        // preserve starting point
+        ixbase[0] = index_dict;             // preserve starting point
         for( k = 0; k < lvl; ++k ) {
             if( ix[k] == NULL ) {           // we are done
                 break;
@@ -323,9 +323,10 @@ void scr_ix( void )
 
                 ixhwk = mem_alloc( sizeof( ix_h_blk ) );
                 ixhwk->next  = NULL;
-                ixhwk->ix_lvl= k + 1;
                 ixhwk->lower = NULL;
+                ixhwk->upper = ixbase[k];
                 ixhwk->entry = NULL;
+                ixhwk->ix_lvl= k + 1;
                 ixhwk->prt_term = NULL;
                 ixhwk->prt_term_len = 0;
                 ixhwk->ix_term_len   = ixlen[k];
@@ -333,21 +334,21 @@ void scr_ix( void )
                 memcpy_s( ixhwk->ix_term, ixlen[k] + 1, ix[k], ixlen[k] );
                 ixhwk->ix_term[ixlen[k]] = '\0';
                 if( ixhwork == NULL ) {             // insert in first position
-                    if( k == 0 ) {                // topmost list
-                        if( old_ixhwork[k] != NULL ) {  // displace prior index_dict head
-                            ixhwk->next  = old_ixhwork[k];
+                    if( k == 0 ) {                  // topmost list
+                        if( ixbase[k] != NULL ) {   // displace prior index_dict head
+                            ixhwk->next = ixbase[k];
                             ixhwork = ixhwk;
                             index_dict = ixhwk;
-                        } else {                        // new head of index_dict
+                        } else {                    // new head of index_dict
                             ixhwk->next  = index_dict;
                             ixhwork = ixhwk;
                             index_dict = ixhwk;
                         }
                     } else {                        // sub-list
-                        if( old_ixhwork[k] != NULL ) {  // new head of sub-list
+                        if( ixbase[k] != NULL ) {   // new head of sub-list
                             ixhwk->next  = ixhwork;
-                            old_ixhwork[k]->lower = ixhwk;
-                        } else {                        // cannot be NULL for sub-list
+                            ixbase[k]->lower = ixhwk;
+                        } else {                    // cannot be NULL for sub-list
                             internal_err( __FILE__, __LINE__ );
                         }
                     }
@@ -357,7 +358,7 @@ void scr_ix( void )
                 }
             }
             if( k + 1 < lvl ) {
-                old_ixhwork[k + 1] = ixhwk;             // preserve attach point for lower level
+                ixbase[k + 1] = ixhwk;              // preserve attach point for lower level
                 ixhwork = ixhwk->lower;             // next lower level
             }
         }

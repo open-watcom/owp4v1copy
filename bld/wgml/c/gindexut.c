@@ -49,7 +49,6 @@ ix_e_blk *  fill_ix_e_blk( ix_e_blk * * anchor, ix_h_blk * ref, ereftyp ptyp,
 
     ixewk = mem_alloc( sizeof( ix_e_blk ) );
     ixewk->next      = NULL;
-    ixewk->corr      = ref;
     if( ptyp == pgnone ) {
         ptyp = pgpageno;                // set default if necessary
     }

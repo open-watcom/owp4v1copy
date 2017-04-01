@@ -291,7 +291,7 @@ global  hd_num_data     hd_nums[hds_appendix];  // heading hierarchy numbering
 
 // index support
 global  ix_h_blk    *   index_dict;     // index structure dictionary
-global  ix_h_blk    *   ixhtag[4];      // last higher level :IH1 :IH2 tags in index
+global  ix_h_blk    *   ixhtag[3];      // current entry for each level in index
 global  ref_entry   *   ix_ref_dict;    // reference id dictionary :Ix :IHx :IREF
 
 // page number format

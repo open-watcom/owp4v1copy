@@ -40,83 +40,64 @@
 
 /***************************************************************************/
 /*  find or create index header block                                      */
-/*   returns created block                                                 */
-/*                                                                         */
+/*  returns created block                                                  */
 /***************************************************************************/
-static ix_h_blk *find_create_ix_h_entry( ix_h_blk **ixhwork,
-                                          char **printtxt, size_t printtxtlen,
-                                          char *txt, size_t txtlen,
-                                          uint32_t lvl )
+
+static ix_h_blk * find_create_ix_h_entry( ix_h_blk *ixhwork, char *printtxt,
+                                          size_t printtxtlen, char *txt,
+                                          size_t txtlen, uint32_t lvl )
 {
-    ix_h_blk    *ixhwk;
-    size_t      comp_len;               // compare length for searching existing entries
-    int         comp_res;               // compare result
-    bool        do_nothing;
+    ix_h_blk    *   ixhwk;
 
-    do_nothing = false;
-    while( (*ixhwork != NULL) ) {       // find alphabetic point to insert
-        comp_len = (*ixhwork)->ix_term_len;
-        if( comp_len > txtlen )
-            comp_len = txtlen;
-        comp_res = strnicmp( txt, (*ixhwork)->ix_term, comp_len + 1 );
-        if( comp_res > 0 ) {            // new is later in alfabet
-            ixhwork = &((*ixhwork)->next);
-            continue;
-        }
-        if( comp_res == 0 ) {           // compared text equal
-            if( txtlen > comp_len ) {   // new text longer than compared one
-                ixhwork = &((*ixhwork)->next);
-                continue;
-            }
-#if 0
-            if( printtxtlen + (*ixhwork)->prt_term_len  > 0 ) {
-                                // at least one printtxt specified
-                if( printtxtlen != (*ixhwork)->prt_term_len ) {
-                    ixhwork = &((*ixhwork)->next);  // different printtext
-                    continue;
-                } else {
-                    if( !strnicmp( *printtxt,
-                                   (*ixhwork)->prt_term, printtxtlen ) ) {
+    if( find_index_item( txt, txtlen, &ixhwork ) ) {
 
-                        ixhwork = &((*ixhwork)->next); // different printtext
-                        continue;
-                    }
-                }
-            }
-#endif
-            do_nothing = true;          // entry already there
-            break;
-        }
-        break;                          // insert point reached
-    }
-    if( do_nothing ) {
-        ixhwk = *ixhwork;
-        if( *printtxt != NULL ) {
-            mem_free( *printtxt );
-            *printtxt = NULL;
-        }
+        /* Item found and ixhwork points to it */
+
+        ixhwk = ixhwork;
+
     } else {                            // create block
+
+        /* Item not found and ixhwork points to insertion point */
+
         ixhwk = mem_alloc( sizeof( ix_h_blk ) );
+        ixhwk->next  = NULL;
+        ixhwk->ix_lvl = lvl;
         ixhwk->lower = NULL;
         ixhwk->entry = NULL;
-        ixhwk->ix_lvl = lvl;
         ixhwk->ix_term_len = txtlen;
         ixhwk->ix_term = mem_alloc( txtlen + 1);
-        strcpy_s( ixhwk->ix_term, txtlen + 1,txt );
-        if( *printtxt != NULL ) {
+        memcpy_s( ixhwk->ix_term, txtlen + 1, txt, txtlen );
+        ixhwk->ix_term[txtlen] = '\0';
+        if( printtxt != NULL ) {
             ixhwk->prt_term_len = printtxtlen;
-            ixhwk->prt_term = *printtxt;
-            *printtxt = NULL;
+            ixhwk->prt_term = printtxt;
+            printtxt = NULL;
         } else {
             ixhwk->prt_term_len = 0;
             ixhwk->prt_term = NULL;
         }
-        if( *ixhwork == NULL ) {
-            *ixhwork = ixhwk;
-            ixhwk->next = NULL;
-        } else {
-            ixhwk->next = *ixhwork;
-            *ixhwork = ixhwk;
+        if( ixhwork == NULL ) {
+            if( lvl == 0 ) {                    // topmost list
+                if( ixhtag[lvl] != NULL ) {     // displace prior index_dict head
+                    ixhwk->next  = ixhtag[lvl];
+                    ixhwork = ixhwk;
+                    index_dict = ixhwk;
+                } else {                        // new head of index_dict
+                    ixhwk->next = index_dict;
+                    ixhwork = ixhwk;
+                    index_dict = ixhwk;
+                }
+            } else {                            // sub-list
+                if( ixhtag[lvl] != NULL ) {     // new head of sub-list
+                    ixhwk->next  = ixhwork;
+                    ixhtag[lvl]->lower = ixhwk;
+                } else {                        // cannot be NULL for sub-list
+                    internal_err( __FILE__, __LINE__ );
+                }
+            }
+        } else {                                // insert in list at current point
+            ixhwk->next  = ixhwork->next;
+            ixhwork->next = ixhwk;
         }
     }
     return( ixhwk );
@@ -128,30 +109,33 @@ static ix_h_blk *find_create_ix_h_entry( ix_h_blk **ixhwork,
 /*   hx_lvl is 1 to 3 for :Ix and :IHx                                     */
 /*         and 0      for :IREF                                            */
 /***************************************************************************/
-static  void    gml_ixxx_common( const gmltag * entry, int hx_lvl )
+
+static void gml_ixxx_common( const gmltag * entry, int hx_lvl )
 {
-    bool            idseen;
-    bool            pgseen;
-    bool            printseen;
-    bool            refidseen;
-    bool            seeidseen;
-    bool            seeseen;
-    char            hxstring[TAG_NAME_LENGTH +1];
+    bool            idseen;         // create reference entry if true
+    bool            pgseen;         // set pgvalue to pgpageno if true
+    bool            printseen;      // needed to catch empty string values
+    bool            refidseen;      // required by IREF & used by I2 I3
+    bool            seeidseen;      // used in processing IHx
+    bool            seeseen;        // needed to catch empty string values
+    char            hxstring[TAG_NAME_LENGTH + 1];
     char            id[ID_LEN];
     char            lvlc;
     char        *   p;
     char        *   pa;
+    char        *   pb;
     char        *   pgtext;
     char        *   printtxt;
     char        *   seetext;
     char        *   txt;
+    condcode        cc;                 // result code
     ereftyp         pgvalue;
+    getnum_block    gn;
     int32_t         wkpage;
-    ix_h_blk    *   ihm1;
     ix_e_blk    *   ixewk;
     ix_e_blk    *   ixewksav;
     ix_h_blk    *   ixhwk;
-    ix_h_blk    * * ixhwork;
+    ix_h_blk    *   ixhwork;
     ref_entry   *   refwork;
     ref_entry       reid;
     ref_entry   *   rewk;
@@ -172,24 +156,9 @@ static  void    gml_ixxx_common( const gmltag * entry, int hx_lvl )
     *hxstring = GML_char;         // construct tagname for possible error msg
     strcpy_s( (hxstring + 1), TAG_NAME_LENGTH, entry->tagname );
 
-    if( (hxstring[2] == lvlc) &&        // :Ix tags not allowed before :GDOC
-        !((ProcFlags.doc_sect >= doc_sect_gdoc) ||
-        (ProcFlags.doc_sect_nxt >= doc_sect_gdoc)) ) {
-
-        g_err( err_tag_before_gdoc, hxstring );
-        err_count++;
-        file_mac_info();
-        scan_start = scan_stop + 1;
-        return;
-    }
-
     if( hx_lvl > 1 ) {          // test for missing previous parent index tag
         if( ixhtag[hx_lvl - 1] == NULL ) {
-            g_err( err_parent_undef );
-            err_count++;
-            file_mac_info();
-            scan_start = scan_stop + 1;
-            return;
+            xx_tag_err( err_parent_undef, hxstring );
         }
     }
 
@@ -197,30 +166,38 @@ static  void    gml_ixxx_common( const gmltag * entry, int hx_lvl )
     pgseen    = false;
     refidseen = false;
     printseen = false;
-    seeseen   = false;
     seeidseen = false;
+    seeseen   = false;
 
-    ixewk     = NULL;
-    pgvalue   = pgnone;
-    pgtext    = NULL;
+    ixewk = NULL;
+    pgvalue = pgnone;
+    pgtext = NULL;
     pgtextlen = 0;
-    printtxt  = NULL;
+    printtxt = NULL;
     printtxtlen = 0;
-    seetext   = NULL;
+    seetext = NULL;
+    seetextlen = 0;
 
-    wkpage    = page + 1;
-    p         = scan_start;
+    wkpage = page + 1;
+    p = scan_start;
     ProcFlags.tag_end_found = false;
 
     /***********************************************************************/
-    /*  Scan attributes  for :Ix  :IHx :IREF                               */
-    /*                                                                     */
-    /*  id=                                                                */
-    /*  refid=                                                             */
-    /*  pg=                                                                */
-    /*  print=                                                             */
-    /*  see=                                                               */
-    /*  seeid=                                                             */
+    /*  Scan attributes for Ix IHx IREF                                    */
+    /*  Note: this table reflects which attributes actually apply to the   */
+    /*  various tags, which is not always the same as given in the         */
+    /*  Reference Manual                                                   */
+    /*  id          Ix  IHx                                                */
+    /*  ix          Ix  IHx IREF                                           */
+    /*  pg          Ix  IREF                                               */
+    /*  print       IHx                                                    */
+    /*  refid       I2  I3 IREF                                            */
+    /*  see         IHx IREF                                               */
+    /*  seeid       IHx IREF                                               */
+    /*  NOTE: when Ix/IHx tags reach end-of-tag because of an attribute    */
+    /*        that they do not use, that attribute and value become part   */
+    /*        of the index term; when IREF does the same, it is treated    */
+    /*        as text and appear in the document text                      */
     /***********************************************************************/
 
     if( *p == '.' ) {
@@ -229,16 +206,12 @@ static  void    gml_ixxx_common( const gmltag * entry, int hx_lvl )
         for( ;; ) {
             pa = get_att_start( p );
             p = att_start;
+            pb = p;
             if( ProcFlags.reprocess_line ) {
                 break;
             }
 
             if( !strnicmp( "id", p, 2 ) ) {
-
-                /*******************************************************************/
-                /*  ID='xxxxxxxx'   for :Ix :IHx                                   */
-                /*******************************************************************/
-
                 p += 2;
                 p = get_refid_value( p, id );
                 if( val_start == NULL ) {
@@ -250,29 +223,17 @@ static  void    gml_ixxx_common( const gmltag * entry, int hx_lvl )
                     rewk = find_refid( ix_ref_dict, reid.id );
                     if( rewk != NULL ) {
                         if( rewk->lineno != reid.lineno ) {
-                            g_err( inf_id_duplicate );
-                            err_count++;
-                            file_mac_info();
-                            scan_start = scan_stop + 1;
-                            return;
+                            xx_val_line_err( inf_id_duplicate, &reid.id, val_start );
                         }
                     }
-                } else {                // not allowed for :IREF
-                    g_err( err_refid_not_allowed, hxstring );
-                    err_count++;
-                    file_mac_info();
-                    scan_start = scan_stop + 1;
-                    return;
+                } else {                // end-of-tag for :IREF
+                    p = pa;             // restore spaces before text
+                    break;
                 }
                 if( ProcFlags.tag_end_found ) {
                     break;
                 }
             } else if( !strnicmp( "refid", p, 5 ) ) {
-
-                /*******************************************************************/
-                /*  REFID='xxxxxxxx'  for :IREF :I2 :I3                            */
-                /*******************************************************************/
-
                 p += 5;
                 p = get_refid_value( p, id );
                 if( val_start == NULL ) {
@@ -284,29 +245,16 @@ static  void    gml_ixxx_common( const gmltag * entry, int hx_lvl )
                     refwk = find_refid( ix_ref_dict, refid.id );
                     if( refwk == NULL ) {   // refid not in dict
                         if( GlobalFlags.lastpass ) {// this is an error
-                            g_err( inf_id_unknown );// during lastpass
-                            err_count++;
-                            file_mac_info();
-                            scan_start = scan_stop + 1;
-                            return;
+                            xx_val_line_err( err_id_undefined, &refid.id, val_start );
                         }
                     }
                 } else {                // not allowed for :I1 and :IHx
-                    g_err( err_refid_not_allowed, hxstring );
-                    err_count++;
-                    file_mac_info();
-                    scan_start = scan_stop + 1;
-                    return;
+                    xx_val_line_err( err_ref_not_allowed, hxstring, val_start );
                 }
                 if( ProcFlags.tag_end_found ) {
                     break;
                 }
             } else if( !strnicmp( "pg", p, 2 ) ) {
-
-                /*******************************************************************/
-                /*  PG=          for :IREF :Ix                                     */
-                /*******************************************************************/
-
                 p += 2;
                 p = get_att_value( p );
 
@@ -314,33 +262,32 @@ static  void    gml_ixxx_common( const gmltag * entry, int hx_lvl )
                 if( val_start == NULL ) {
                     break;
                 }
-                if( quote_char == '\0' ) {  // value not quoted
-                    if( !strnicmp( "start", val_start, 5 ) ) {
-                        pgvalue = pgstart;
-                    } else if( !strnicmp( "end", val_start, 3 ) ) {
-                        pgvalue = pgend;
-                    } else if( !strnicmp( "major", val_start, 5 ) ) {
-                        pgvalue = pgmajor;
-                    } else {
-                        continue;           // ignore
+                if( (hx_lvl == 0) || (hxstring[2] == lvlc) ) {
+                    pgseen = true;
+                    if( quote_char == '\0' ) {  // value not quoted
+                        if( !strnicmp( "start", val_start, 5 ) ) {
+                            pgvalue = pgstart;
+                        } else if( !strnicmp( "end", val_start, 3 ) ) {
+                            pgvalue = pgend;
+                        } else if( !strnicmp( "major", val_start, 5 ) ) {
+                            pgvalue = pgmajor;
+                        }
                     }
-                } else {
-                    pgvalue = pgstring;
-                    pgtext = mem_alloc( val_len + 1 );
-                    strncpy( pgtext, val_start, val_len );// use text instead of pageno
-                    *(pgtext + val_len) = '\0';
-                    pgtextlen = val_len;
+                    if( pgvalue == pgnone ) {                // arbitrary string value
+                        pgvalue = pgstring;
+                        pgtext = mem_alloc( val_len + 1 );
+                        strncpy( pgtext, val_start, val_len );// use text instead of pageno
+                        *(pgtext + val_len) = '\0';
+                        pgtextlen = val_len;
+                    }
+                } else {                        // end-of-tag for IHx
+                    p = pa;                     // restore spaces before text
+                    break;
                 }
-                pgseen = true;
                 if( ProcFlags.tag_end_found ) {
                     break;
                 }
             } else if( !strnicmp( "print", p, 5 ) ) {
-
-                /*******************************************************************/
-                /*  PRINT=    for :IHx                                             */
-                /*******************************************************************/
-
                 p += 5;
                 p = get_att_value( p );
 
@@ -348,20 +295,42 @@ static  void    gml_ixxx_common( const gmltag * entry, int hx_lvl )
                 if( val_start == NULL ) {
                     break;
                 }
-                printtxt = mem_alloc( val_len + 1 );
-                printtxtlen = val_len;
-                strncpy( printtxt, val_start, val_len );
-                *(printtxt + val_len) = '\0';
-                printseen = true;
+                if( hxstring[3] == lvlc ) {     // IHx only
+                    printseen = true;
+                    printtxt = mem_alloc( val_len + 1 );
+                    printtxtlen = val_len;
+                    strncpy( printtxt, val_start, val_len );
+                    *(printtxt + val_len) = '\0';
+                } else {                        // end-of-tag for Ix, IREF
+                    p = pa;                     // restore spaces before text
+                    break;
+                }
+                if( ProcFlags.tag_end_found ) {
+                    break;
+                }
+            } else if( !strnicmp( "seeid", p, 5 ) ) {
+                p += 5;
+                p = get_refid_value( p, id );
+                if( val_start == NULL ) {
+                    break;
+                }
+                if( (hx_lvl == 0) || (hxstring[3] == lvlc) ) {  // IREF IHx
+                    seeidseen = true;
+                    strcpy_s( reseeid.id, ID_LEN, id ); // copy lower id
+                    rswk = find_refid( ix_ref_dict, reseeid.id );
+                    if( rswk == NULL ) {                // not in dict, this is an error
+                        if( GlobalFlags.lastpass ) {    // during lastpass
+                            xx_val_line_err( err_id_undefined, &refid.id, val_start );
+                        }
+                    }
+                } else {                        // end-of-tag for Ix
+                    p = pa;                     // restore spaces before text
+                    break;
+                }
                 if( ProcFlags.tag_end_found ) {
                     break;
                 }
             } else if( !strnicmp( "see", p, 3 ) ) {
-
-                /*******************************************************************/
-                /*  SEE='xxxxxxxx'  for :IREF :IH1 :IH2                            */
-                /*******************************************************************/
-
                 p += 3;
                 p = get_att_value( p );
 
@@ -369,84 +338,65 @@ static  void    gml_ixxx_common( const gmltag * entry, int hx_lvl )
                 if( val_start == NULL ) {
                     break;
                 }
-                if( hx_lvl == 0  ||
-                    ((hx_lvl < 3) && (hxstring[3] == lvlc)) ) {// :IREF :IH1 :IH2
+                if( hx_lvl == 0 || (hxstring[3] == lvlc) ) {// :IREF :IHx
+                    seeseen = true;
                     seetext = mem_alloc( val_len +1 );
                     strncpy( seetext, val_start, val_len );
                     *(seetext + val_len) = '\0';
                     seetextlen = val_len;
-                    seeseen = true;
-                } else {                // not allowed for :IH3, :Ix
-                    g_err( err_refid_not_allowed, hxstring );
-                    err_count++;
-                    file_mac_info();
-                    scan_start = scan_stop + 1;
-                    return;
+                } else {                        // end-of-tag for Ix
+                    p = pa;                     // restore spaces before text
+                    break;
                 }
                 if( ProcFlags.tag_end_found ) {
                     break;
                 }
-            } else if( !strnicmp( "seeid", p, 3 ) ) {
+            } else if( !strnicmp( "ix", p, 2 ) ) {
+                p += 2;
+                p = get_att_value( p );
+                gn.argstart = val_start;
+                gn.argstop = val_start + val_len;
+                gn.ignore_blanks = 0;
+                cc = getnum( &gn );
 
-                /*******************************************************************/
-                /*  SEEID='xxxxxxxx'  for :IREF :IH1 :IH2                          */
-                /*******************************************************************/
+                if( (cc == pos) || (cc == neg) ) {
 
-                p += 5;
-                p = get_refid_value( p, id );
-                if( val_start == NULL ) {
-                    break;
-                }
-                if( (hx_lvl <= 3) && (hxstring[3] == lvlc) ) {
-                    seeidseen = true;
-                    strcpy_s( reseeid.id, ID_LEN, id );   // copy lower id
-                    rswk = find_refid( ix_ref_dict, reseeid.id );
-                    if( rswk == NULL ) {// not in dict, this is an error
-                        if( GlobalFlags.lastpass ) {  // during lastpass
-                            g_err( inf_id_unknown );
-                            err_count++;
-                            file_mac_info();
-                            scan_start = scan_stop + 1;
-                            return;
-                        }
+                    /* Groups are ignored, issue warning */
+
+                    xx_warn_att( wng_unsupp_att, "ix" );
+
+                    if( (gn.result < 1) || (gn.result > 9) ) { // out of range
+                        xx_line_err( err_struct_range, val_start );
                     }
-                } else {                // not allowed for :IH3, :Ix :IREF
-                    g_err( err_refid_not_allowed, hxstring );
-                    err_count++;
-                    file_mac_info();
-                    scan_start = scan_stop + 1;
-                    return;
                 }
                 if( ProcFlags.tag_end_found ) {
                     break;
                 }
             } else {
-
-                /*******************************************************************/
-                /* no more valid attributes                                        */
-                /*******************************************************************/
                 p = pa; // restore spaces before text
                 break;
             }
         }
     }
 
-    if( ProcFlags.tag_end_found ) {     // tag end ?
-        p++;
-        if( hx_lvl > 0 ) {              // we need a text line for :Ix :IHx
-            if( !*p ) {
-                get_line( true );
-                p = buff2;
-            }
+    if( *p == '.' ) p++;        // possible tag end
+    if( hx_lvl > 0 ) {          // not for IREF, take existing text, if any, as-is
+        while( !*p ) {          // we need a text line for :Ix :IHx
+            get_line( true );
+            p = buff2;
         }
+        if( *p == ' ' ) p++;    // step over spaces
     }
-
 
     /***********************************************************************/
     /* process the found attributes and the text line                      */
     /***********************************************************************/
+
     txt = p;
-    txtlen = strlen( p );
+    txtlen = buff2_lg;                  // total remaining characters
+    while( txt[txtlen - 1] == ' ') {    // back off trailing spaces
+        txtlen--;
+    }
 
     if( !pgseen ) {
         pgvalue = pgpageno;             // set default
@@ -459,11 +409,7 @@ static  void    gml_ixxx_common( const gmltag * entry, int hx_lvl )
     /***********************************************************************/
 
         if( !refidseen ) {              // refid= missing
-            g_err( err_att_missing );
-            err_count++;
-            file_mac_info();
-            scan_start = scan_stop + 1;
-            return;
+            xx_err( err_att_missing );
         }
         if( GlobalFlags.lastpass ) {
             if( refidseen && (refwk != NULL) ) {
@@ -475,6 +421,7 @@ static  void    gml_ixxx_common( const gmltag * entry, int hx_lvl )
             /***************************************************************/
             /* create index entry with page no / text                      */
             /***************************************************************/
+
             if( ixhwk->entry == NULL ) {    // first entry
                 ixewk = fill_ix_e_blk( &(ixhwk->entry), ixhwk, pgvalue, pgtext,
                                        pgtextlen );
@@ -519,9 +466,14 @@ static  void    gml_ixxx_common( const gmltag * entry, int hx_lvl )
                 }
             }
         }
-    } else                              // :Ix :IHx tags
+        if( !ProcFlags.reprocess_line && *p ) {
+            if( *p == '.' ) p++;                // possible tag end
+            if( *p ) {
+                process_text( p, g_curr_font); // if text follows
+            }
+        }
 
-    if( ((hxstring[2] == lvlc) ) ) {    // test for :Ix
+    } else if( ((hxstring[2] == lvlc) ) ) {    // test for :Ix
 
     /***********************************************************************/
     /* processing for :Ix                                                  */
@@ -529,28 +481,27 @@ static  void    gml_ixxx_common( const gmltag * entry, int hx_lvl )
 
         switch( hx_lvl ) {              // processing for :I1 :I2 :I3
         case 1 :
-            ixhwork = &index_dict;
-            ixhwk = find_create_ix_h_entry( ixhwork, &printtxt, printtxtlen,
-                                            txt, txtlen, hx_lvl );
+            ixhwork = index_dict;
+            ixhwk = find_create_ix_h_entry( ixhwork, printtxt, printtxtlen,
+                                            txt, txtlen, hx_lvl - 1 );
             printtxt = NULL;
             ixhtag[hx_lvl] = ixhwk;
             break;
         case 2 :
         case 3 :
-            ihm1 = ixhtag[hx_lvl - 1];
             if( refidseen && (refwk != NULL) ) {
                 if( hx_lvl > refwk->hblk->ix_lvl ) {
-                    ixhwork = &(refwk->hblk->lower);
+                    ixhwork = refwk->hblk->lower;
                 } else {
-                    ixhwork = &(refwk->hblk);
+                    ixhwork = refwk->hblk;
                 }
             } else {
-                ixhwork = &(ixhtag[hx_lvl - 1]->lower);
+                ixhwork = ixhtag[hx_lvl - 1]->lower;
             }
-            ixhwk = find_create_ix_h_entry( ixhwork, &printtxt, printtxtlen,
-                                            txt, txtlen, hx_lvl );
+            ixhwk = find_create_ix_h_entry( ixhwork, printtxt, printtxtlen,
+                                            txt, txtlen, hx_lvl - 1 );
             printtxt = NULL;
-            if( !refidseen ) {
+            if( !refidseen && (hx_lvl == 2) ) {
                 ixhtag[hx_lvl] = ixhwk;
             }
             break;
@@ -604,9 +555,7 @@ static  void    gml_ixxx_common( const gmltag * entry, int hx_lvl )
                 }
             }
         }
-    } else                              // :IHx
-
-    if( ((hxstring[3] == lvlc) ) ) {    // test for :IHx
+    } else if( ((hxstring[3] == lvlc) ) ) {    // test for :IHx
 
     /***********************************************************************/
     /* processing for :IHx                                                 */
@@ -614,20 +563,21 @@ static  void    gml_ixxx_common( const gmltag * entry, int hx_lvl )
 
         switch( hx_lvl ) {              // processing for :IH1 :IH2 :IH3
         case 1 :
-            ixhwork = &index_dict;
-            ixhwk = find_create_ix_h_entry( ixhwork, &printtxt, printtxtlen,
-                                            txt, txtlen, hx_lvl );
+            ixhwork = index_dict;
+            ixhwk = find_create_ix_h_entry( ixhwork, printtxt, printtxtlen,
+                                            txt, txtlen, hx_lvl - 1 );
             printtxt = NULL;
             ixhtag[hx_lvl] = ixhwk;
             break;
         case 2 :
         case 3 :
-            ihm1 = ixhtag[hx_lvl - 1];
-            ixhwork = &(ixhtag[hx_lvl - 1]->lower);
-            ixhwk = find_create_ix_h_entry( ixhwork, &printtxt, printtxtlen,
-                                            txt, txtlen, hx_lvl );
+            ixhwork = ixhtag[hx_lvl - 1]->lower;
+            ixhwk = find_create_ix_h_entry( ixhwork, printtxt, printtxtlen,
+                                            txt, txtlen, hx_lvl - 1 );
             printtxt = NULL;
-            ixhtag[hx_lvl] = ixhwk;
+            if( hx_lvl == 2 ) {
+                ixhtag[hx_lvl] = ixhwk;
+            }
             break;
         default:
             break;
@@ -689,6 +639,7 @@ static  void    gml_ixxx_common( const gmltag * entry, int hx_lvl )
     if( seetext != NULL ) {
         mem_free( seetext );
     }
+
     scan_start = scan_stop + 1;
     return;
 }

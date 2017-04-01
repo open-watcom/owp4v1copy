@@ -302,6 +302,15 @@ void xx_tag_err( const msg_ids errid, char const * cw )
     return;
 }
 
+void xx_val_line_err( const msg_ids errid, char const * cw, const char * pa )
+{
+    err_count++;
+    g_err( errid, cw );
+    file_mac_info();
+    show_line_error( pa );
+    return;
+}
+
 void xx_nest_err( const msg_ids errid )
 {
     err_count++;

@@ -1150,35 +1150,36 @@ typedef struct {
 } doc_next_page;
 
 /***************************************************************************/
-/*  Structures for storing index information from .ix control word         */
-/*  and :Ix :IHx :IREF tags                                                */
+/*  Structures for storing index information from IX control word          */
+/*  and In IHn IREF tags                                                   */
 /***************************************************************************/
 
-typedef enum ereftyp {                  // definition order is important
-    pgnone,                             // nothing
-    pgpageno,                           // numeric page number (page_no)
-
-    pgmajor,                            // these are
-    pgstart,                            // .. from
-    pgend,                              // .. :I1 - :I3
-                                        // the following values use page_text
-    pgstring,                           // .. pg= attribute (tags) or reference (ix)
-    pgsee                               // .. see/seeid
+typedef enum {          // definition order is important
+    pgnone,             // nothing (In
+    pgpageno,           // numeric page number (IX default)(In)
+    pgmajor,            // major reference (IX) (In, IREF)
+    pgstart,            // start page (In, IREF)
+    pgend,              // end page (In, IREF)
+    pgstring,           // pg string (In, IREF) / reference (ix)
+    pgmajorstring,      // major string reference (IX)
+    pgsee,              // see string or seeid item (IHn, IREF)
 } ereftyp;
 
-/* page_no is required whether it or page_text is ultimately output */
-
-typedef struct ix_e_blk {               // index entry for pagenos / text
-    struct  ix_e_blk    *   next;       // next entry
-    struct  ix_h_blk    *   corr;       // corresponding index header entry
-            char        *   page_text;  // pageno is text
-            uint32_t        page_no;    // pageno is number
-            ereftyp         entry_typ;
+typedef struct ix_e_blk {                   // index entry for pagenos / text
+    struct  ix_e_blk    *   next;           // next entry
+            char        *   page_text;      // pageno is text (IX ref, pg string, see/seeid string)
+    union
+        {
+            size_t          page_text_len;  // pageno text length
+            uint32_t        page_no;        // pageno is number
+        };
+            ereftyp          entry_typ;     // selects page_no or page_text (IX, In), or no reference (IHn)
 } ix_e_blk;
 
 typedef struct ix_h_blk {                   // index header with index term text
     struct  ix_h_blk    *   next;           // next ix header block same level
     struct  ix_h_blk    *   lower;          // first ix hdr block next lower level
+    struct  ix_h_blk    *   upper;          // ix hdr block to which this is attached, if any
             ix_e_blk    *   entry;          // first ix entry block
             uint32_t        ix_lvl;         // index level 1 - 3
             size_t          ix_term_len;    // index term length
@@ -1189,7 +1190,7 @@ typedef struct ix_h_blk {                   // index header with index term text
 
 /***************************************************************************/
 /*  Enum for distinguishing the source of a heading.                       */
-/*  For use with gen_heading() in ghx.c ***subject to change***            */
+/*  For use with gen_heading() in ghx.c                                    */
 /*  Note: the order of the tags matters, please do not reorganize them     */
 /*  Note: "heading" here refers to something that appears in the TOC       */
 /*  Note: allows control of differences, such as which layout to use       */
