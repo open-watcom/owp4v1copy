@@ -39,72 +39,6 @@
 #include    "gvars.h"
 
 /***************************************************************************/
-/*  find or create index header block                                      */
-/*  returns created block                                                  */
-/***************************************************************************/
-
-static ix_h_blk * find_create_ix_h_entry( ix_h_blk *ixhwork, char *printtxt,
-                                          size_t printtxtlen, char *txt,
-                                          size_t txtlen, uint32_t lvl )
-{
-    ix_h_blk    *   ixhwk;
-
-    if( find_index_item( txt, txtlen, &ixhwork ) ) {
-
-        /* Item found and ixhwork points to it */
-
-        ixhwk = ixhwork;
-
-    } else {                            // create block
-
-        /* Item not found and ixhwork points to insertion point */
-
-        ixhwk = mem_alloc( sizeof( ix_h_blk ) );
-        ixhwk->next  = NULL;
-        ixhwk->ix_lvl = lvl;
-        ixhwk->lower = NULL;
-        ixhwk->entry = NULL;
-        ixhwk->ix_term_len = txtlen;
-        ixhwk->ix_term = mem_alloc( txtlen + 1);
-        memcpy_s( ixhwk->ix_term, txtlen + 1, txt, txtlen );
-        ixhwk->ix_term[txtlen] = '\0';
-        if( printtxt != NULL ) {
-            ixhwk->prt_term_len = printtxtlen;
-            ixhwk->prt_term = printtxt;
-            printtxt = NULL;
-        } else {
-            ixhwk->prt_term_len = 0;
-            ixhwk->prt_term = NULL;
-        }
-        if( ixhwork == NULL ) {
-            if( lvl == 0 ) {                    // topmost list
-                if( ixhtag[lvl] != NULL ) {     // displace prior index_dict head
-                    ixhwk->next  = ixhtag[lvl];
-                    ixhwork = ixhwk;
-                    index_dict = ixhwk;
-                } else {                        // new head of index_dict
-                    ixhwk->next = index_dict;
-                    ixhwork = ixhwk;
-                    index_dict = ixhwk;
-                }
-            } else {                            // sub-list
-                if( ixhtag[lvl] != NULL ) {     // new head of sub-list
-                    ixhwk->next  = ixhwork;
-                    ixhtag[lvl]->lower = ixhwk;
-                } else {                        // cannot be NULL for sub-list
-                    internal_err( __FILE__, __LINE__ );
-                }
-            }
-        } else {                                // insert in list at current point
-            ixhwk->next  = ixhwork->next;
-            ixhwork->next = ixhwk;
-        }
-    }
-    return( ixhwk );
-}
-
-
-/***************************************************************************/
 /*  :I1 - :I3  :IH1 - :IH3 :IREF common input processing                   */
 /*   hx_lvl is 1 to 3 for :Ix and :IHx                                     */
 /*         and 0      for :IREF                                            */
@@ -134,6 +68,7 @@ static void gml_ixxx_common( const gmltag * entry, int hx_lvl )
     int32_t         wkpage;
     ix_e_blk    *   ixewk;
     ix_e_blk    *   ixewksav;
+    ix_h_blk    *   ixhbase;
     ix_h_blk    *   ixhwk;
     ix_h_blk    *   ixhwork;
     ref_entry   *   refwork;
@@ -481,8 +416,9 @@ static void gml_ixxx_common( const gmltag * entry, int hx_lvl )
 
         switch( hx_lvl ) {              // processing for :I1 :I2 :I3
         case 1 :
+            ixhbase = ixhtag[hx_lvl - 1];
             ixhwork = index_dict;
-            ixhwk = find_create_ix_h_entry( ixhwork, printtxt, printtxtlen,
+            ixhwk = find_create_ix_h_entry( ixhwork, ixhbase, printtxt, printtxtlen,
                                             txt, txtlen, hx_lvl - 1 );
             printtxt = NULL;
             ixhtag[hx_lvl] = ixhwk;
@@ -491,14 +427,17 @@ static void gml_ixxx_common( const gmltag * entry, int hx_lvl )
         case 3 :
             if( refidseen && (refwk != NULL) ) {
                 if( hx_lvl > refwk->hblk->ix_lvl ) {
+                    ixhbase = refwk->hblk;
                     ixhwork = refwk->hblk->lower;
                 } else {
+                    ixhbase = refwk->hblk->upper;
                     ixhwork = refwk->hblk;
                 }
             } else {
+                ixhbase = ixhtag[hx_lvl - 1];
                 ixhwork = ixhtag[hx_lvl - 1]->lower;
             }
-            ixhwk = find_create_ix_h_entry( ixhwork, printtxt, printtxtlen,
+            ixhwk = find_create_ix_h_entry( ixhwork, ixhbase, printtxt, printtxtlen,
                                             txt, txtlen, hx_lvl - 1 );
             printtxt = NULL;
             if( !refidseen && (hx_lvl == 2) ) {
@@ -563,16 +502,18 @@ static void gml_ixxx_common( const gmltag * entry, int hx_lvl )
 
         switch( hx_lvl ) {              // processing for :IH1 :IH2 :IH3
         case 1 :
+            ixhbase = ixhtag[hx_lvl - 1];
             ixhwork = index_dict;
-            ixhwk = find_create_ix_h_entry( ixhwork, printtxt, printtxtlen,
+            ixhwk = find_create_ix_h_entry( ixhwork, ixhbase, printtxt, printtxtlen,
                                             txt, txtlen, hx_lvl - 1 );
             printtxt = NULL;
             ixhtag[hx_lvl] = ixhwk;
             break;
         case 2 :
         case 3 :
+            ixhbase = ixhtag[hx_lvl - 1];
             ixhwork = ixhtag[hx_lvl - 1]->lower;
-            ixhwk = find_create_ix_h_entry( ixhwork, printtxt, printtxtlen,
+            ixhwk = find_create_ix_h_entry( ixhwork, ixhbase, printtxt, printtxtlen,
                                             txt, txtlen, hx_lvl - 1 );
             printtxt = NULL;
             if( hx_lvl == 2 ) {

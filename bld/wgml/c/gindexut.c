@@ -118,6 +118,74 @@ bool find_index_item( char * item, uint32_t len, ix_h_blk ** entry )
     return( retval );
 }
 
+
+/***************************************************************************/
+/*  find or create index header block                                      */
+/*  returns created block                                                  */
+/***************************************************************************/
+
+ix_h_blk * find_create_ix_h_entry( ix_h_blk *ixhwork, ix_h_blk *ixhbase,
+                                   char *printtxt, size_t printtxtlen,
+                                   char *txt, size_t txtlen, uint32_t lvl )
+{
+    ix_h_blk    *   ixhwk;
+
+    if( find_index_item( txt, txtlen, &ixhwork ) ) {
+
+        /* Item found and ixhwork points to it */
+
+        ixhwk = ixhwork;
+
+    } else {                            // create block
+
+        /* Item not found and ixhwork points to insertion point */
+
+        ixhwk = mem_alloc( sizeof( ix_h_blk ) );
+        ixhwk->next  = NULL;
+        ixhwk->lower = NULL;
+        ixhwk->upper = ixhbase;
+        ixhwk->entry = NULL;
+        ixhwk->ix_lvl = lvl;
+        ixhwk->ix_term_len = txtlen;
+        ixhwk->ix_term = mem_alloc( txtlen + 1);
+        memcpy_s( ixhwk->ix_term, txtlen + 1, txt, txtlen );
+        ixhwk->ix_term[txtlen] = '\0';
+        if( printtxt != NULL ) {
+            ixhwk->prt_term_len = printtxtlen;
+            ixhwk->prt_term = printtxt;
+            printtxt = NULL;
+        } else {
+            ixhwk->prt_term_len = 0;
+            ixhwk->prt_term = NULL;
+        }
+        if( ixhwork == NULL ) {
+            if( lvl == 0 ) {                    // topmost list
+                if( ixhbase != NULL ) {     // displace prior index_dict head
+                    ixhwk->next  = ixhbase;
+                    ixhwork = ixhwk;
+                    index_dict = ixhwk;
+                } else {                        // new head of index_dict
+                    ixhwk->next = index_dict;
+                    ixhwork = ixhwk;
+                    index_dict = ixhwk;
+                }
+            } else {                            // sub-list
+                if( ixhbase != NULL ) {     // new head of sub-list
+                    ixhwk->next  = ixhwork;
+                    ixhbase->lower = ixhwk;
+                } else {                        // cannot be NULL for sub-list
+                    internal_err( __FILE__, __LINE__ );
+                }
+            }
+        } else {                                // insert in list at current point
+            ixhwk->next  = ixhwork->next;
+            ixhwork->next = ixhwk;
+        }
+    }
+    return( ixhwk );
+}
+
+
 /***************************************************************************/
 /*  free ix_e_blk chain                                                    */
 /***************************************************************************/

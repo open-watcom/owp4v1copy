@@ -200,6 +200,7 @@ extern  void    gen_heading( char * h_text, char * id, hdsrc hn_lvl, hdsrc hds_l
 
 /* gindexut.c                           */
 extern  ix_e_blk    *   fill_ix_e_blk( ix_e_blk * * anchor, ix_h_blk * ref, ereftyp ptyp, char * text, int text_len );
+extern  ix_h_blk    *   find_create_ix_h_entry( ix_h_blk *ixhwork, ix_h_blk *ixhbase, char *printtxt, size_t printtxtlen, char *txt, size_t txtlen, uint32_t lvl );
 extern  bool            find_index_item( char * item, uint32_t len, ix_h_blk ** entry );
 extern  void            free_index_dict( ix_h_blk ** dict );
 extern  void            free_ix_e_index_dict( ix_h_blk ** dict );
