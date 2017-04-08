@@ -1150,37 +1150,97 @@ typedef struct {
 } doc_next_page;
 
 /***************************************************************************/
+/*  moved from the :BANREGION attribute values in gtypelay.h for use here  */
+/***************************************************************************/
+ 
+typedef enum content_enum {
+    no_content          =  0,
+    author_content,
+    bothead_content,
+    date_content,
+    docnum_content,
+    head0_content,
+    head1_content,
+    head2_content,
+    head3_content,
+    head4_content,
+    head5_content,
+    head6_content,
+    headnum0_content,
+    headnum1_content,
+    headnum2_content,
+    headnum3_content,
+    headnum4_content,
+    headnum5_content,
+    headnum6_content,
+    headtext0_content,
+    headtext1_content,
+    headtext2_content,
+    headtext3_content,
+    headtext4_content,
+    headtext5_content,
+    headtext6_content,
+    pgnuma_content,
+    pgnumad_content,
+    pgnumr_content,
+    pgnumrd_content,
+    pgnumc_content,
+    pgnumcd_content,
+    rule_content,
+    sec_content,
+    stitle_content,
+    title_content,
+    string_content,
+    time_content,
+    tophead_content,
+    max_content                         // keep as last entry
+} content_enum;
+ 
+/***************************************************************************/
 /*  Structures for storing index information from IX control word          */
 /*  and In IHn IREF tags                                                   */
 /***************************************************************************/
 
 typedef enum {          // definition order is important
-    pgnone,             // nothing (In
+    pgnone,             // nothing (In, IHn, IREF)
     pgpageno,           // numeric page number (IX default)(In)
-    pgmajor,            // major reference (IX) (In, IREF)
+    pgmajor,            // major page reference (IX)(In, IREF)
+    pgstring,           // pg string (In, IREF) / reference (ix)
     pgstart,            // start page (In, IREF)
     pgend,              // end page (In, IREF)
-    pgstring,           // pg string (In, IREF) / reference (ix)
     pgmajorstring,      // major string reference (IX)
     pgsee,              // see string or seeid item (IHn, IREF)
 } ereftyp;
 
 typedef struct ix_e_blk {                   // index entry for pagenos / text
     struct  ix_e_blk    *   next;           // next entry
+    union {
+        struct {
             char        *   page_text;      // pageno is text (IX ref, pg string, see/seeid string)
-    union
-        {
             size_t          page_text_len;  // pageno text length
-            uint32_t        page_no;        // pageno is number
         };
+        struct {
+            uint32_t        page_no;        // pageno is number
+            content_enum    style;          // page number style defined by banner, if any
+        };
+    };
             ereftyp          entry_typ;     // selects page_no or page_text (IX, In), or no reference (IHn)
 } ix_e_blk;
+
+/* These are used in the order given, and each is kept in sorted order */
+
+typedef struct {
+    ix_e_blk    *   major_pgnum;    // first major page number ix entry block
+    ix_e_blk    *   major_string;   // first major string ix entry block
+    ix_e_blk    *   normal_pgnum;   // first normal page number ix entry block
+    ix_e_blk    *   normal_string;  // first normal string ix entry block
+    ix_e_blk    *   see_string;     // first see/seeid string ix entry block
+} entry_list;
 
 typedef struct ix_h_blk {                   // index header with index term text
     struct  ix_h_blk    *   next;           // next ix header block same level
     struct  ix_h_blk    *   lower;          // first ix hdr block next lower level
-    struct  ix_h_blk    *   upper;          // ix hdr block to which this is attached, if any
-            ix_e_blk    *   entry;          // first ix entry block
+            entry_list  *   entry;          // set of pointers to ix entry block 
             uint32_t        ix_lvl;         // index level 1 - 3
             size_t          ix_term_len;    // index term length
             char        *   ix_term;        // index term
@@ -1295,16 +1355,14 @@ typedef enum {
 typedef struct ref_entry {
     struct ref_entry    *   next;
     char                    id[ID_LEN+1];   // reference id
-
-    line_number             lineno;         // input lineno for checking duplicate ID
     refflags                flags;
     union {
         struct {
             ffh_entry   *   entry;          // detail for FIG, FN, or Hx entry
         };
         struct {
-            ix_h_blk    *   hblk;
-            ix_e_blk    *   eblk;
+            ix_h_blk    *   hblk;           // detail for IX, In, IHn, or IREF entry
+            ix_h_blk    *   base;           // attachment point for hblk, if any
         };
     };
 } ref_entry;

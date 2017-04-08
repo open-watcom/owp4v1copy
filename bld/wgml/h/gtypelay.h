@@ -711,49 +711,6 @@ typedef enum reg_pour {
     head6_pour
 } reg_pour;
  
-typedef enum content_enum {
-    no_content          =  0,
-    author_content,
-    bothead_content,
-    date_content,
-    docnum_content,
-    head0_content,
-    head1_content,
-    head2_content,
-    head3_content,
-    head4_content,
-    head5_content,
-    head6_content,
-    headnum0_content,
-    headnum1_content,
-    headnum2_content,
-    headnum3_content,
-    headnum4_content,
-    headnum5_content,
-    headnum6_content,
-    headtext0_content,
-    headtext1_content,
-    headtext2_content,
-    headtext3_content,
-    headtext4_content,
-    headtext5_content,
-    headtext6_content,
-    pgnuma_content,
-    pgnumad_content,
-    pgnumr_content,
-    pgnumrd_content,
-    pgnumc_content,
-    pgnumcd_content,
-    rule_content,
-    sec_content,
-    stitle_content,
-    title_content,
-    string_content,
-    time_content,
-    tophead_content,
-    max_content                         // keep as last entry
-} content_enum;
- 
 typedef struct content {
     content_enum    content_type;
     xx_str          string[str_size];

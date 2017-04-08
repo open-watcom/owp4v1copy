@@ -46,42 +46,37 @@
 
 static void gml_ixxx_common( const gmltag * entry, int hx_lvl )
 {
-    bool            idseen;         // create reference entry if true
-    bool            pgseen;         // set pgvalue to pgpageno if true
-    bool            printseen;      // needed to catch empty string values
-    bool            refidseen;      // required by IREF & used by I2 I3
-    bool            seeidseen;      // used in processing IHx
-    bool            seeseen;        // needed to catch empty string values
+    bool            idseen      = false;    // create reference entry if true
+    bool            pgseen      = false;    // set pgvalue to pgpageno if true
+    bool            printseen   = false;    // needed to catch empty string values
+    bool            refidseen   = false;    // required by IREF & used by I2 I3
+    bool            seeidseen   = false;    // used in processing IHx
+    bool            seeseen     = false;    // needed to catch empty string values
     char            hxstring[TAG_NAME_LENGTH + 1];
-    char            id[ID_LEN];
+    char            id[ID_LEN];             // holds attribute id value
+    char            refid[ID_LEN];          // holds attribute refid value
+    char            seeid[ID_LEN];          // holds attribute seeid value
     char            lvlc;
     char        *   p;
     char        *   pa;
     char        *   pb;
-    char        *   pgtext;
-    char        *   printtxt;
-    char        *   seetext;
-    char        *   txt;
-    condcode        cc;                 // result code
+    char        *   pgtext      = NULL;     // val_start for pg = <string> value
+    char        *   printtxt    = NULL;     // val_start for print = <string> value
+    char        *   seetext     = NULL;     // val_start for see = <string> value
+    char        *   txt;                    // val_start for entry value 
+    condcode        cc;                     // result code
     ereftyp         pgvalue;
     getnum_block    gn;
-    int32_t         wkpage;
-    ix_e_blk    *   ixewk;
-    ix_e_blk    *   ixewksav;
-    ix_h_blk    *   ixhbase;
-    ix_h_blk    *   ixhwk;
-    ix_h_blk    *   ixhwork;
-    ref_entry   *   refwork;
-    ref_entry       reid;
-    ref_entry   *   rewk;
-    ref_entry       refid;
-    ref_entry   *   refwk;
-    ref_entry       reseeid;
-    ref_entry   *   rswk;
-    size_t          pgtextlen;
-    size_t          printtxtlen;
-    size_t          seetextlen;
-    size_t          txtlen;
+    ix_h_blk    *   ixhbase;                // ix_h_blk->lower points to list to search
+    ix_h_blk    *   ixhwk;                  // new ix_h_blk to be inserted
+    ix_h_blk    *   ixhwork;                // current ix_h_blk/ix_h_blk to attach refs to
+    ref_entry   *   refwork;                // new ref_entry to be inserted
+    ref_entry   *   refwk;                  // ref_entry found for value of refid
+    ref_entry   *   seeidwk;                // ref_entry found for value of seeid
+    size_t          pgtextlen       = 0;    // val_len for pg = <string> value
+    size_t          printtxtlen     = 0;    // val_len for print = <string> value
+    size_t          seetextlen      = 0;    // val_len for see = <string> value
+    size_t          txtlen;                 // val_len for entry value 
 
     if( !GlobalFlags.index ) {          // index option not active
         scan_start = scan_stop + 1;     // ignore tag
@@ -97,23 +92,8 @@ static void gml_ixxx_common( const gmltag * entry, int hx_lvl )
         }
     }
 
-    idseen    = false;
-    pgseen    = false;
-    refidseen = false;
-    printseen = false;
-    seeidseen = false;
-    seeseen   = false;
-
-    ixewk = NULL;
     pgvalue = pgnone;
-    pgtext = NULL;
-    pgtextlen = 0;
-    printtxt = NULL;
-    printtxtlen = 0;
-    seetext = NULL;
-    seetextlen = 0;
 
-    wkpage = page + 1;
     p = scan_start;
     ProcFlags.tag_end_found = false;
 
@@ -154,13 +134,6 @@ static void gml_ixxx_common( const gmltag * entry, int hx_lvl )
                 }
                 if( hx_lvl > 0 ) {      // :Ix :IHx
                     idseen = true;      // id attribute found
-                    init_ref_entry( &reid, id );
-                    rewk = find_refid( ix_ref_dict, reid.id );
-                    if( rewk != NULL ) {
-                        if( rewk->lineno != reid.lineno ) {
-                            xx_val_line_err( inf_id_duplicate, &reid.id, val_start );
-                        }
-                    }
                 } else {                // end-of-tag for :IREF
                     p = pa;             // restore spaces before text
                     break;
@@ -170,17 +143,16 @@ static void gml_ixxx_common( const gmltag * entry, int hx_lvl )
                 }
             } else if( !strnicmp( "refid", p, 5 ) ) {
                 p += 5;
-                p = get_refid_value( p, id );
+                p = get_refid_value( p, refid );
                 if( val_start == NULL ) {
                     break;
                 }
                 if( (hx_lvl == 0) || ((hx_lvl > 1) && (hxstring[2] == lvlc)) ) {
-                    init_ref_entry( &refid, id );
                     refidseen = true;   // refid attribute found
-                    refwk = find_refid( ix_ref_dict, refid.id );
+                    refwk = find_refid( ix_ref_dict, refid );
                     if( refwk == NULL ) {   // refid not in dict
                         if( GlobalFlags.lastpass ) {// this is an error
-                            xx_val_line_err( err_id_undefined, &refid.id, val_start );
+                            xx_val_line_err( err_id_undefined, refid, val_start );
                         }
                     }
                 } else {                // not allowed for :I1 and :IHx
@@ -245,17 +217,16 @@ static void gml_ixxx_common( const gmltag * entry, int hx_lvl )
                 }
             } else if( !strnicmp( "seeid", p, 5 ) ) {
                 p += 5;
-                p = get_refid_value( p, id );
+                p = get_refid_value( p, seeid );
                 if( val_start == NULL ) {
                     break;
                 }
                 if( (hx_lvl == 0) || (hxstring[3] == lvlc) ) {  // IREF IHx
                     seeidseen = true;
-                    strcpy_s( reseeid.id, ID_LEN, id ); // copy lower id
-                    rswk = find_refid( ix_ref_dict, reseeid.id );
-                    if( rswk == NULL ) {                // not in dict, this is an error
+                    seeidwk = find_refid( ix_ref_dict, seeid );
+                    if( seeidwk == NULL ) {             // not in dict, this is an error
                         if( GlobalFlags.lastpass ) {    // during lastpass
-                            xx_val_line_err( err_id_undefined, &refid.id, val_start );
+                            xx_val_line_err( err_id_undefined, seeid, val_start );
                         }
                     }
                 } else {                        // end-of-tag for Ix
@@ -275,7 +246,7 @@ static void gml_ixxx_common( const gmltag * entry, int hx_lvl )
                 }
                 if( hx_lvl == 0 || (hxstring[3] == lvlc) ) {// :IREF :IHx
                     seeseen = true;
-                    seetext = mem_alloc( val_len +1 );
+                    seetext = mem_alloc( val_len + 1 );
                     strncpy( seetext, val_start, val_len );
                     *(seetext + val_len) = '\0';
                     seetextlen = val_len;
@@ -328,7 +299,7 @@ static void gml_ixxx_common( const gmltag * entry, int hx_lvl )
     /***********************************************************************/
 
     txt = p;
-    txtlen = buff2_lg;                  // total remaining characters
+    txtlen = strlen(txt);               // total remaining characters
     while( txt[txtlen - 1] == ' ') {    // back off trailing spaces
         txtlen--;
     }
@@ -351,54 +322,6 @@ static void gml_ixxx_common( const gmltag * entry, int hx_lvl )
                 ixhwk = refwk->hblk;
             } else {
                 ixhwk = ixhtag[hx_lvl];
-            }
-
-            /***************************************************************/
-            /* create index entry with page no / text                      */
-            /***************************************************************/
-
-            if( ixhwk->entry == NULL ) {    // first entry
-                ixewk = fill_ix_e_blk( &(ixhwk->entry), ixhwk, pgvalue, pgtext,
-                                       pgtextlen );
-            } else {
-                if( pgvalue == pgmajor ) {  // major becomes first in chain
-                    ixewksav = ixhwk->entry;
-                    ixhwk->entry = NULL;
-                    ixewk = fill_ix_e_blk( &(ixhwk->entry), ixhwk, pgvalue,
-                                           pgtext, pgtextlen );
-                    ixewk->next = ixewksav;
-                } else {
-                    ixewk = ixhwk->entry;
-                    if( pgvalue < pgstring ) {  // pageno variants
-                        if( ixewk->entry_typ < pgstring ) {
-                            while( ixewk->next != NULL ) {// insert before pgstring
-                                if( ixewk->next->entry_typ >= pgstring ) {
-                                    break;
-                                }
-                                ixewk = ixewk->next;
-                            }
-                        } else {
-                            ixewksav = ixhwk->entry;
-                            ixhwk->entry = NULL;
-                            ixewk = fill_ix_e_blk( &(ixhwk->entry), ixhwk,
-                                                   pgvalue, pgtext, pgtextlen );
-                            ixewk->next = ixewksav;
-                        }
-                        if( ixewk->page_no != wkpage ) {
-                            ixewksav = ixewk->next;
-                            ixewk->next = NULL;
-                            ixewk = fill_ix_e_blk( &(ixewk->next), ixhwk, pgvalue,
-                                                   pgtext, pgtextlen );
-                            ixewk->next = ixewksav;
-                        }
-                    } else {
-                        while( ixewk->next != NULL ) {  // find last entry
-                            ixewk = ixewk->next;
-                        }
-                        ixewk = fill_ix_e_blk( &(ixewk->next), ixhwk, pgvalue,
-                                               pgtext, pgtextlen );
-                    }
-                }
             }
         }
         if( !ProcFlags.reprocess_line && *p ) {
@@ -430,7 +353,7 @@ static void gml_ixxx_common( const gmltag * entry, int hx_lvl )
                     ixhbase = refwk->hblk;
                     ixhwork = refwk->hblk->lower;
                 } else {
-                    ixhbase = refwk->hblk->upper;
+                    ixhbase = refwk->base;
                     ixhwork = refwk->hblk;
                 }
             } else {
@@ -448,52 +371,6 @@ static void gml_ixxx_common( const gmltag * entry, int hx_lvl )
             break;
         }
 
-        /*******************************************************************/
-        /* create index entry with page no / text                          */
-        /*******************************************************************/
-        if( ixhwk->entry == NULL ) {    // first entry
-            ixewk = fill_ix_e_blk( &(ixhwk->entry), ixhwk, pgvalue, pgtext,
-                                   pgtextlen );
-        } else {
-            if( pgvalue == pgmajor ) {  // major becomes first in chain
-                ixewksav = ixhwk->entry;
-                ixhwk->entry = NULL;
-                ixewk = fill_ix_e_blk( &(ixhwk->entry), ixhwk, pgvalue, pgtext,
-                                       pgtextlen );
-                ixewk->next = ixewksav;
-            } else {
-                ixewk = ixhwk->entry;
-                if( pgvalue < pgstring ) {  // pageno variants
-                    if( ixewk->entry_typ < pgstring ) {
-                        while( ixewk->next != NULL ) {// insert before pgstring
-                            if( ixewk->next->entry_typ >= pgstring ) {
-                                break;
-                            }
-                            ixewk = ixewk->next;
-                        }
-                    } else {
-                        ixewksav = ixhwk->entry;
-                        ixhwk->entry = NULL;
-                        ixewk = fill_ix_e_blk( &(ixhwk->entry), ixhwk,
-                                               pgvalue, pgtext, pgtextlen );
-                        ixewk->next = ixewksav;
-                    }
-                    if( ixewk->page_no != wkpage ) {
-                        ixewksav = ixewk->next;
-                        ixewk->next = NULL;
-                        ixewk = fill_ix_e_blk( &(ixewk->next), ixhwk, pgvalue,
-                                               pgtext, pgtextlen );
-                        ixewk->next = ixewksav;
-                    }
-                } else {
-                    while( ixewk->next != NULL ) {  // find last entry
-                        ixewk = ixewk->next;
-                    }
-                    ixewk = fill_ix_e_blk( &(ixewk->next), ixhwk, pgvalue, pgtext,
-                                           pgtextlen );
-                }
-            }
-        }
     } else if( ((hxstring[3] == lvlc) ) ) {    // test for :IHx
 
     /***********************************************************************/
@@ -523,52 +400,55 @@ static void gml_ixxx_common( const gmltag * entry, int hx_lvl )
         default:
             break;
         }
-        if( seeseen ) {
-            pgvalue = pgsee;
-            if( ixhwk->entry == NULL ) {
-                ixewk = fill_ix_e_blk( &(ixhwk->entry), ixhwk, pgvalue,
-                                       seetext, seetextlen );
-            } else {
-                ixewk = ixhwk->entry;
-                while( ixewk->next != NULL ) {  // find last entry
-                    ixewk = ixewk->next;
-                }
-                ixewk = fill_ix_e_blk( &(ixewk->next), ixhwk, pgvalue,
-                                       seetext, seetextlen );
-            }
-        } else {
-            if( seeidseen ) {
-                ix_e_blk  * * anchor;
+    }
 
-                pgvalue = pgsee;
-                if( ixhwk->entry == NULL ) {
-                    anchor = &(ixhwk->entry);
-                } else {
-                    ixewk = ixhwk->entry;
-                    while( ixewk->next != NULL ) {  // find last entry
-                        ixewk = ixewk->next;
-                    }
-                    anchor = &(ixewk->next);
-                }
-                if( rswk->hblk->prt_term != NULL ) {
-                    ixewk = fill_ix_e_blk( anchor, ixhwk,
-                                           pgvalue, rswk->hblk->prt_term,
-                                           rswk->hblk->prt_term_len );
-                } else {
-                    ixewk = fill_ix_e_blk( anchor, ixhwk,
-                                           pgvalue, rswk->hblk->ix_term,
-                                           rswk->hblk->ix_term_len );
-                }
-            }
+    /***********************************************************************/
+    /* at this point, ixhwk has been set to the ix_h_block to which the    */
+    /* references are to be attached                                       */
+    /***********************************************************************/
+
+    if( pgvalue < pgstring ) {      // insert page number
+        if( ixhwk->entry == NULL ) {
+            init_entry_list( ixhwk);
+        }
+        find_create_ix_e_entry( ixhwk->entry, page + 1, pgtext,
+                                pgtextlen, pgvalue );
+    }
+    if( seeidseen ) {   // get reference value from the ix_h_blk record found for seeid
+        if( ixhwk->entry == NULL ) {
+            init_entry_list( ixhwk);
+        }
+        if( seeidwk->hblk->prt_term != NULL ) {    // use print term
+            find_create_ix_e_entry( ixhwk->entry, page + 1,
+                                            seeidwk->hblk->prt_term,
+                                            seeidwk->hblk->prt_term_len, pgvalue );
+        } else {                                // use index term
+            find_create_ix_e_entry( ixhwk->entry, page + 1,
+                                            seeidwk->hblk->ix_term,
+                                            seeidwk->hblk->ix_term_len, pgvalue );
         }
     }
+    if( seeseen ) {
+        if( ixhwk->entry == NULL ) {
+            init_entry_list( ixhwk);
+        }
+        pgvalue = pgsee;
+        find_create_ix_e_entry( ixhwk->entry, page + 1, seetext,
+                                        seetextlen, pgvalue );
+    }
+
     if( idseen ) {                 // ID specified create reference entry
-        reid.hblk = ixhwk;
-        reid.eblk = ixewk;
-        reid.flags = rf_ix;
-        refwork = mem_alloc( sizeof( reid ) );
-        memcpy( refwork, &reid, sizeof( reid ) );
-        add_ref_entry( &ix_ref_dict, refwork );
+        refwork = find_refid( ix_ref_dict, id );
+        if( refwork == NULL ) {             // new entry
+            refwork = (ref_entry *) mem_alloc( sizeof( ref_entry ) ) ;
+            init_ref_entry( refwork, id );
+            refwork->flags = rf_ix;
+            refwork->hblk = ixhwk;
+            refwork->base = ixhtag[hx_lvl - 1];
+            add_ref_entry( &ix_ref_dict, refwork );
+        } else {                // duplicate id
+            dup_id_err( refwork->id, "figure" );
+        }
     }
 
     if( pgtext != NULL ) {
@@ -584,8 +464,6 @@ static void gml_ixxx_common( const gmltag * entry, int hx_lvl )
     scan_start = scan_stop + 1;
     return;
 }
-
-
 
 /***************************************************************************/
 /*   I1, I2, I3                                                            */

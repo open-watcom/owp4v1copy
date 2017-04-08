@@ -894,6 +894,11 @@ char * get_att_start( char * p )
         while( *p == ' ' ) {            // over WS to attribute
             p++;
         }
+        if( *p == '.' ) {   // end-of-tag
+            p++;
+            pa = p;         // return next char after end-of-tag
+            break;
+        }        
         if( *p == '\0' ) {              // end of line: get new line
             if( !(input_cbs->fmflags & II_eof) ) {
                 if( get_line( true ) ) {// next line for missing attribute
@@ -915,7 +920,7 @@ char * get_att_start( char * p )
             break;      // potential next attribute found
         }
     }
-    att_start = p;      // only valid if !ProcFlags.reprocess_line
+    att_start = p;      // only valid if !ProcFlags.reprocess_line && !ProcFlags.tag_end_found
     return( pa );       // return initial location for current att_start
 }
 
@@ -1143,6 +1148,53 @@ void start_line_with_string( const char *text, font_number font, bool leave_1spa
     post_space = post_space * wgml_fonts[layout_work.defaults.font].spc_width;
 }
 
+
+/****************************************************************************/
+/* return the page style for the current section                            */
+/* used with both ff_entry and ix_e_blk                                     */
+/****************************************************************************/
+
+content_enum find_pgnum_style( void )
+{
+    content_enum    retval;
+    
+    /****************************************************/
+    /* first restrict processing to those document      */
+    /* sections that can have a page number style       */
+    /* then use conditionals to set identify the entry  */
+    /* in pgnum_style to copy to curr->style            */
+    /****************************************************/
+
+    switch( ProcFlags.doc_sect ) {
+    case doc_sect_abstract :
+    case doc_sect_preface :
+    case doc_sect_body :
+    case doc_sect_appendix :
+    case doc_sect_backm :
+    case doc_sect_index :
+        if( ProcFlags.doc_sect == doc_sect_abstract ) {
+            retval = pgnum_style[pns_abstract];
+        } else if( ProcFlags.doc_sect == doc_sect_appendix ) {
+            retval = pgnum_style[pns_appendix];
+        } else if( ProcFlags.doc_sect == doc_sect_backm ) {
+            retval = pgnum_style[pns_backm];
+        } else if( ProcFlags.doc_sect == doc_sect_body ) {
+            retval = pgnum_style[pns_body];
+        } else if( ProcFlags.doc_sect == doc_sect_index ) {
+            retval = pgnum_style[pns_index];
+        } else if( ProcFlags.doc_sect == doc_sect_preface ) {
+            retval = pgnum_style[pns_preface];
+        }
+        break;
+    default :
+        internal_err( __FILE__, __LINE__ );
+        break;
+    }
+
+    return( retval );
+}
+
+
 /***************************************************************************/
 /*  initalize an ffh_entry instance and append insert to the ffh_list      */
 /*  Note: calling function must initialize ffh_list if it is NULL when the */
@@ -1172,40 +1224,7 @@ ffh_entry * init_ffh_entry( ffh_entry * ffh_list )
     curr->text = NULL;
     curr->flags = 0;
     curr->abs_pre = false;
-
-    /****************************************************/
-    /* set the page style for the entry                 */
-    /* first restrict processing to those document      */
-    /* sections that can have a page number style       */
-    /* then use conditionals to set identify the entry  */
-    /* in pgnum_style to copy to curr->style            */
-    /****************************************************/
-
-    switch( ProcFlags.doc_sect ) {
-    case doc_sect_abstract :
-    case doc_sect_preface :
-    case doc_sect_body :
-    case doc_sect_appendix :
-    case doc_sect_backm :
-    case doc_sect_index :
-        if( ProcFlags.doc_sect == doc_sect_abstract ) {
-            curr->style = pgnum_style[pns_abstract];
-        } else if( ProcFlags.doc_sect == doc_sect_appendix ) {
-            curr->style = pgnum_style[pns_appendix];
-        } else if( ProcFlags.doc_sect == doc_sect_backm ) {
-            curr->style = pgnum_style[pns_backm];
-        } else if( ProcFlags.doc_sect == doc_sect_body ) {
-            curr->style = pgnum_style[pns_body];
-        } else if( ProcFlags.doc_sect == doc_sect_index ) {
-            curr->style = pgnum_style[pns_index];
-        } else if( ProcFlags.doc_sect == doc_sect_preface ) {
-            curr->style = pgnum_style[pns_preface];
-        }
-        break;
-    default :
-        internal_err( __FILE__, __LINE__ );
-        break;
-    }
+    curr->style = find_pgnum_style();
 
     return( curr );
 }

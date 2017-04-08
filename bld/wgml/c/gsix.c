@@ -33,10 +33,9 @@
 *                               s1 s2 s3
 *                               s1 s2 s3 . ref
 *                               s1 s2 s3 ref
+*                               *       (primary reference designator)
 *
 *         not implemented are   <1|n>   (structure number)
-*                               *       (primary reference designator)
-*                               . ref   (no preceding items except structure number)
 *                               . purge (no preceding items except structure number)
 *                               . dump  (no preceding items except structure number)
 *         these items are identified and appropriate messages issued,
@@ -154,17 +153,20 @@
 
 void scr_ix( void )
 {
+    bool            do_major;           // true if reference is a major reference
     bool            do_nothing;         // true if index string/ref is duplicate
     condcode        cc;                 // result code
+    entry_list  *   entry;
     int             lvl;                // max index level in control word data
     int             k;
     char        *   ix[3] = { NULL, NULL, NULL };   // index string start pointers
+    char            pix_char;           // major reference prefix char ($pix)
     char        *   ref = NULL;         // ref string start pointer
     getnum_block    gn;
     ix_h_blk    *   ixbase[3] = { NULL, NULL, NULL };   // current list base
     ix_h_blk    *   ixhwork;            // insertion point/found match item
     ix_h_blk    *   ixhwk;              // index block
-    ix_e_blk    *   ixewk;              // index entry block
+    symsub      *   dictval;
     uint32_t        ixlen[3] = {0, 0, 0};   // index string lengths
     uint32_t        reflen = 0;         // ref string length
     uint32_t        wkpage;             // predicted page number
@@ -179,6 +181,9 @@ void scr_ix( void )
 
     cwcurr[0] = SCR_char;
     lvl = 0;                            // index level
+
+    find_symvar( &sys_dict, "$pix", no_subscript, &dictval);
+    pix_char = *(dictval->value);
     wkpage = page + 1;                  // predicted number of current page
 
     garginit();                         // over control word
@@ -308,55 +313,8 @@ void scr_ix( void )
                 break;
             }
             do_nothing = false;
-
-            /* This function changes the value of ixhwork */
-
-            if( find_index_item( ix[k], ixlen[k], &ixhwork ) ) {
-
-                /* Item found and ixhwork points to it */
-
-                ixhwk = ixhwork;
-
-            } else {
-
-                /* Item not found and ixhwork points to insertion point */
-
-                ixhwk = mem_alloc( sizeof( ix_h_blk ) );
-                ixhwk->next  = NULL;
-                ixhwk->lower = NULL;
-                ixhwk->upper = ixbase[k];
-                ixhwk->entry = NULL;
-                ixhwk->ix_lvl= k + 1;
-                ixhwk->prt_term = NULL;
-                ixhwk->prt_term_len = 0;
-                ixhwk->ix_term_len   = ixlen[k];
-                ixhwk->ix_term = mem_alloc( ixlen[k] + 1 );
-                memcpy_s( ixhwk->ix_term, ixlen[k] + 1, ix[k], ixlen[k] );
-                ixhwk->ix_term[ixlen[k]] = '\0';
-                if( ixhwork == NULL ) {             // insert in first position
-                    if( k == 0 ) {                  // topmost list
-                        if( ixbase[k] != NULL ) {   // displace prior index_dict head
-                            ixhwk->next = ixbase[k];
-                            ixhwork = ixhwk;
-                            index_dict = ixhwk;
-                        } else {                    // new head of index_dict
-                            ixhwk->next  = index_dict;
-                            ixhwork = ixhwk;
-                            index_dict = ixhwk;
-                        }
-                    } else {                        // sub-list
-                        if( ixbase[k] != NULL ) {   // new head of sub-list
-                            ixhwk->next  = ixhwork;
-                            ixbase[k]->lower = ixhwk;
-                        } else {                    // cannot be NULL for sub-list
-                            internal_err( __FILE__, __LINE__ );
-                        }
-                    }
-                } else {                            // insert in list at current point
-                    ixhwk->next  = ixhwork->next;
-                    ixhwork->next = ixhwk;
-                }
-            }
+            ixhwk = find_create_ix_h_entry( ixhwork, ixbase[k], NULL, 0, ix[k],
+                                            ixlen[k], k );
             if( k + 1 < lvl ) {
                 ixbase[k + 1] = ixhwk;              // preserve attach point for lower level
                 ixhwork = ixhwk->lower;             // next lower level
@@ -365,34 +323,51 @@ void scr_ix( void )
 
         /* Add the ix_e_blk, with reference/page number information */
 
-        if( ixhwk->entry == NULL ) {    // first pageno for entry
+        do_major = false;
+        if( (ref != NULL) && (ref[0] == pix_char) ) {      // identify major reference
+            do_major = true;
+            reflen--;
+            if( reflen == 0 ) {         // major numeric reference
+                ref = NULL;
+            } else {                    // major string reference: drop the first char
+                ref++;
+            }
+        }
+
+        if( ixhwk->entry == NULL ) {    // first ref/pageno for entry
+            init_entry_list( ixhwk);
             if( ref != NULL ) {
-                fill_ix_e_blk( &(ixhwk->entry), ixhwk, pgstring, ref, reflen );
+                if( do_major ) {
+                    find_create_ix_e_entry( ixhwk->entry, 0, ref, reflen,
+                                            pgmajorstring );
+                } else {
+                    find_create_ix_e_entry( ixhwk->entry, 0, ref, reflen, pgstring );
+                }
             } else {
-                fill_ix_e_blk( &(ixhwk->entry), ixhwk, pgpageno, NULL, 0 );
+                if( do_major ) {
+                    find_create_ix_e_entry( ixhwk->entry, page + 1, NULL, 0, pgmajor );
+                } else {
+                    find_create_ix_e_entry( ixhwk->entry, page + 1, NULL, 0,
+                                            pgpageno );
+                }
             }
         } else {
-            ixewk = ixhwk->entry;
-
-            /* reject ref it it matches an existing ref */
-
-            do_nothing = false;
-            while( ixewk->next != NULL ) {  // search to last entry
-                if( (ixewk->entry_typ < pgstring) && (ixewk->page_no == wkpage) ) {
-                    do_nothing = true;      // page_no differs
-                    break;
-                } else if( (reflen != strlen( ixewk->page_text )) ||
-                        !memicmp( ixewk->page_text, ref, reflen ) ) {
-                    do_nothing = true;      // duplicate reference
-                    break;
-                }
-                ixewk = ixewk->next;
-            }
-            if( !do_nothing ) {             // true if duplicate, skip reference
-                if( ref != NULL ) {
-                    fill_ix_e_blk( &(ixewk->next), ixhwk, pgstring, ref, reflen );
+            entry = ixhwk->entry;
+            if( ref != NULL ) {
+                if( do_major ) {
+                    find_create_ix_e_entry( ixhwk->entry, 0, ref, reflen,
+                                            pgmajorstring );
                 } else {
-                    fill_ix_e_blk( &(ixewk->next), ixhwk, pgpageno, NULL, 0 );
+                    find_create_ix_e_entry( ixhwk->entry, 0, ref, reflen,
+                                            pgstring );
+                }
+            } else {
+                if( do_major ) {
+                    find_create_ix_e_entry( ixhwk->entry, page + 1, NULL, 0,
+                                            pgmajor );
+                } else {
+                    find_create_ix_e_entry( ixhwk->entry, page + 1, NULL, 0,
+                                            pgpageno );
                 }
             }
         }

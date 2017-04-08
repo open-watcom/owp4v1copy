@@ -36,45 +36,93 @@
 #include "gvars.h"
 
 /***************************************************************************/
-/*  allocate and fill a new index entry                                    */
-/*  with pageno reference or supplied text                                 */
-/*                                                                         */
-/*  return ptr to entry                                                    */
+/*  find an index item number reference in index_dict                      */
 /***************************************************************************/
 
-ix_e_blk *  fill_ix_e_blk( ix_e_blk * * anchor, ix_h_blk * ref, ereftyp ptyp,
-                    char * text, int text_len )
+static bool find_num_ref( uint32_t ref, ix_e_blk * * base )
 {
-    ix_e_blk    * ixewk;
+    bool            retval  = false;
+    ix_e_blk    *   cur_ieh;
+    ix_e_blk    *   old_ieh = NULL;     // will hold entry to insert after 
 
-    ixewk = mem_alloc( sizeof( ix_e_blk ) );
-    ixewk->next      = NULL;
-    if( ptyp == pgnone ) {
-        ptyp = pgpageno;                // set default if necessary
+    cur_ieh = *base;                    // starting point is value passed
+    while( cur_ieh != NULL ) {
+        if( ref > cur_ieh->page_no ) {  // new is later in alphabet
+            old_ieh = cur_ieh;
+            cur_ieh = cur_ieh->next;
+            continue;
+        } else if( ref < cur_ieh->page_no ) {     // new is earlier in alphabet
+            *base = old_ieh;           // use old_ixh as insert point
+            break;                     // entry found, and is in *entry
+        } else {                       // must be equal
+            *base = cur_ieh;           // use cur_ixh as insert point
+            retval = true;
+            break;                      // entry found, and is in *entry
+        }
     }
-    ixewk->entry_typ = ptyp;
-    if( ptyp >= pgstring ) {
-        ixewk->page_text = mem_alloc( text_len + 1);
-        memcpy_s( ixewk->page_text, text_len + 1, text, text_len );
-        ixewk->page_text[text_len] = '\0';
-    } else {
-        ixewk->page_text = NULL;
+
+    if( cur_ieh == NULL ) {            // insert at end of list
+        *base = old_ieh;               // use old_ixh as insert point
     }
-    ixewk->page_no = page + 1;  // predicted page number, needed regardless of type
-    *anchor = ixewk;
-    return( ixewk );
+
+    return( retval );
+}
+
+
+/***************************************************************************/
+/*  find an index item string reference in index_dict                      */
+/***************************************************************************/
+
+static bool find_string_ref( char * ref, uint32_t len, ix_e_blk * * base )
+{
+    bool            retval  = false;
+    int             comp_len;           // compare length for searching existing entries
+    int             comp_res;           // compare result
+    ix_e_blk    *   cur_ieh;
+    ix_e_blk    *   old_ieh = NULL;     // will hold entry to insert after 
+
+    cur_ieh = *base;                   // starting point is value passed
+    while( cur_ieh != NULL ) {
+        comp_len = len;
+        if( comp_len > cur_ieh->page_text_len ) {
+            comp_len = cur_ieh->page_text_len;
+        }
+        comp_res = strnicmp( ref, cur_ieh->page_text, len );
+        if( comp_res > 0 ) {    // new is later in alphabet
+            old_ieh = cur_ieh;
+            cur_ieh = cur_ieh->next;
+            continue;
+        } else if( comp_res < 0 ) {     // new is earlier in alphabet
+            *base = old_ieh;            // use old_ixh as insert point
+            break;                      // entry found, and is in *entry
+        } else {                        // must be equal
+            if( len == cur_ieh->page_text_len ) {
+                *base = cur_ieh;        // use cur_ixh as insert point
+                retval = true;
+                break;                  // entry found, and is in *entry
+            } else if( len > cur_ieh->page_text_len ) { // new is later in alphabet
+                old_ieh = cur_ieh;
+                cur_ieh = cur_ieh->next;
+                continue;
+            } else {                    // shouldn't be possible
+                internal_err( __FILE__, __LINE__ );
+            }
+        }
+    }
+
+    if( cur_ieh == NULL ) {         // insert at end of list
+        *base = old_ieh;            // use old_ixh as insert point
+    }
+
+    return( retval );
 }
 
 
 /***************************************************************************/
 /*  find an index item in index_dict                                       */
-/*  if 'true' is returned, then *entry points to the index item            */
-/*  if 'false' is returned, then *entry points to the index item after     */
-/*      the new index item is to be inserted; if this is NULL, then the    */
-/*      new index item goes at the start before the value on entry         */
 /***************************************************************************/
 
-bool find_index_item( char * item, uint32_t len, ix_h_blk ** entry )
+static bool find_index_item( char * item, uint32_t len, ix_h_blk ** entry )
 {
     bool            retval  = false;
     int             comp_len;           // compare length for searching existing entries
@@ -120,13 +168,98 @@ bool find_index_item( char * item, uint32_t len, ix_h_blk ** entry )
 
 
 /***************************************************************************/
-/*  find or create index header block                                      */
+/*  find or create/insert new index reference entry                        */
+/***************************************************************************/
+
+void find_create_ix_e_entry( entry_list * entry, uint32_t num, char * ref,
+                                   size_t len, ereftyp type )
+{
+    bool                found;
+    ix_e_blk    *   *   base;
+    ix_e_blk    *       ixework;
+    ix_e_blk    *       ixewk;
+
+    switch( type ) {
+        case pgmajor :
+            base = &entry->major_pgnum;
+            ixework = entry->major_pgnum;
+            found = find_num_ref( num, &ixework );
+            break;
+        case pgmajorstring :
+            base = &entry->major_string;
+            ixework = entry->major_string;
+            found = find_string_ref( ref, len, &ixework );
+            break;
+        case pgpageno :
+        case pgstring :
+        case pgstart :
+        case pgend :
+            base = &entry->normal_pgnum;
+            ixework = entry->normal_pgnum;
+            found = find_num_ref( num, &ixework );
+            break;
+        case pgsee :
+            base = &entry->see_string;
+            ixework = entry->see_string;
+            found = find_string_ref( ref, len, &ixework );
+            break;
+        case pgnone :       // should never appear used here, nothing to do
+        default :           // out-of-range enum value
+            internal_err( __FILE__, __LINE__ );
+    }
+
+    if( found ) {
+
+        /* Item found and ixework points to it */
+
+        ixewk = ixework;
+
+    } else {                            // create block
+
+        /* Item not found and ixework points to insertion point */
+
+        ixewk = mem_alloc( sizeof( ix_e_blk ) );
+        ixewk->next = NULL;
+        ixewk->entry_typ = type;
+        if( type >= pgstring ) {
+            ixewk->page_text = mem_alloc( len + 1);
+            memcpy_s( ixewk->page_text, len + 1, ref, len );
+            ixewk->page_text[len] = '\0';
+            ixewk->page_text_len = len;
+        } else {
+            ixewk->page_no = num;
+            ixewk->style = find_pgnum_style();
+        }
+
+        if( *base == NULL ) {
+            if( ixework != NULL ) {         // displace prior reference list head
+                ixewk->next = ixework;
+                ixework = ixewk;
+            } else {                        // new reference list head
+                ixework = ixewk;
+            }
+        } else {                            // insert in list at current point
+            if( ixework != NULL ) {         // displace prior reference list head
+                ixewk->next  = ixework->next;
+                ixework->next = ixewk;
+            } else {                        // new reference list head
+                ixework = ixewk;
+            }
+        }
+    }
+    *base = ixework;
+    return;
+}
+
+
+/***************************************************************************/
+/*  find or create/insert new index header block                           */
 /*  returns created block                                                  */
 /***************************************************************************/
 
-ix_h_blk * find_create_ix_h_entry( ix_h_blk *ixhwork, ix_h_blk *ixhbase,
-                                   char *printtxt, size_t printtxtlen,
-                                   char *txt, size_t txtlen, uint32_t lvl )
+ix_h_blk * find_create_ix_h_entry( ix_h_blk * ixhwork, ix_h_blk * ixhbase,
+                                   char * printtxt, size_t printtxtlen,
+                                   char * txt, size_t txtlen, uint32_t lvl )
 {
     ix_h_blk    *   ixhwk;
 
@@ -143,7 +276,6 @@ ix_h_blk * find_create_ix_h_entry( ix_h_blk *ixhwork, ix_h_blk *ixhbase,
         ixhwk = mem_alloc( sizeof( ix_h_blk ) );
         ixhwk->next  = NULL;
         ixhwk->lower = NULL;
-        ixhwk->upper = ixhbase;
         ixhwk->entry = NULL;
         ixhwk->ix_lvl = lvl;
         ixhwk->ix_term_len = txtlen;
@@ -190,7 +322,7 @@ ix_h_blk * find_create_ix_h_entry( ix_h_blk *ixhwork, ix_h_blk *ixhbase,
 /*  free ix_e_blk chain                                                    */
 /***************************************************************************/
 
-static  void    free_ix_e_entries( ix_e_blk * e )
+static void free_ix_e_entries( ix_e_blk * e )
 {
     ix_e_blk    *   ewk;
     ix_e_blk    *   ew  = e;
@@ -203,6 +335,20 @@ static  void    free_ix_e_entries( ix_e_blk * e )
         mem_free( ew );
         ew = ewk;
     }
+}
+
+
+/***************************************************************************/
+/*  free entry block                                                       */
+/***************************************************************************/
+
+static  void    free_entry_block( entry_list * e )
+{
+    free_ix_e_entries( e->major_pgnum );
+    free_ix_e_entries( e->major_string );
+    free_ix_e_entries( e->normal_pgnum );
+    free_ix_e_entries( e->normal_string );
+    free_ix_e_entries( e->see_string );
 }
 
 
@@ -234,15 +380,21 @@ void    free_index_dict( ix_h_blk * * dict )
     ixh1 = *dict;
     while( ixh1 != NULL ) {             // level 1 entries
 
-        free_ix_e_entries( ixh1->entry );
+        if( ixh1->entry != NULL ) {
+            free_entry_block( ixh1->entry );
+        }
 
         ixh2 = ixh1->lower;
         while( ixh2 != NULL ) {         // level 2 entries
-            free_ix_e_entries( ixh2->entry );
+            if( ixh2->entry != NULL ) {
+                free_entry_block( ixh2->entry );
+            }
 
             ixh3 = ixh2->lower;
             while( ixh3 != NULL ) {     // level 3 entries
-                free_ix_e_entries( ixh3->entry );
+                if( ixh3->entry != NULL ) {
+                    free_entry_block( ixh3->entry );
+                }
 
                 ixhw = ixh3->next;
                 free_ix_h_entry( ixh3 );
@@ -273,15 +425,15 @@ void    free_ix_e_index_dict( ix_h_blk * * dict )
     ixh1 = *dict;
     while( ixh1 != NULL ) {             // level 1 entries
 
-        free_ix_e_entries( ixh1->entry );
+        free_entry_block( ixh1->entry );
 
         ixh2 = ixh1->lower;
         while( ixh2 != NULL ) {         // level 2 entries
-            free_ix_e_entries( ixh2->entry );
+            free_entry_block( ixh2->entry );
 
             ixh3 = ixh2->lower;
             while( ixh3 != NULL ) {     // level 3 entries
-                free_ix_e_entries( ixh3->entry );
+                free_entry_block( ixh3->entry );
 
 //                ixh3->lower = NULL;
                 ixh3->entry = NULL;
@@ -298,3 +450,19 @@ void    free_ix_e_index_dict( ix_h_blk * * dict )
 //    *dict = NULL;                       // dict is now empty
 }
 
+
+/***************************************************************************/
+/*  allocate and initialize the entry list                                 */
+/***************************************************************************/
+
+void init_entry_list( ix_h_blk * term )
+
+{
+    term->entry = mem_alloc( sizeof( entry_list ) );
+    term->entry->major_pgnum = NULL;
+    term->entry->major_string = NULL;
+    term->entry->normal_pgnum = NULL;
+    term->entry->normal_string = NULL;
+    term->entry->see_string = NULL;
+    return;
+}

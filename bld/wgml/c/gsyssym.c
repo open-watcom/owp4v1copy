@@ -755,7 +755,7 @@ static void syspifun( symvar * e )
 
 static void syspixfun( symvar * e )
 {
-    var_wng( e->name, e );
+    e->sub_0->value = syspixstr;
     return;
 };
 

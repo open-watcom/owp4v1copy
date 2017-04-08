@@ -153,18 +153,11 @@ void    free_ref_dict( ref_entry * * dict )
 /***************************************************************************/
 /* init ref entry with some values    assumes :hx :fig variant             */
 /***************************************************************************/
+
 void init_ref_entry( ref_entry * re, char * id )
 {
-
     re->next = NULL;
-
     strcpy_s( re->id, ID_LEN, id );
-
-    if( input_cbs->fmflags & II_tag_mac ) {
-        re->lineno = input_cbs->s.m->lineno;
-    } else {
-        re->lineno = input_cbs->s.f->lineno;
-    }
 }
 
 

@@ -81,20 +81,21 @@ extern void         fb_position( uint32_t h_start, uint32_t v_start );
 
 
 /* gargutil.c                           */
-extern  void        garginit( void );
-extern  void        garginitdot( void );
-extern  condcode    getarg( void );
-extern  condcode    getqst( void );
-extern  bool        is_quote_char( char c );
-extern  bool        is_function_char( char c );
-extern  bool        is_lay_att_char( char c );
-extern  bool        is_id_char( char c );
-extern  bool        is_macro_char( char c );
-extern  bool        is_space_tab_char( char c );
-extern  bool        is_stop_char( char c );
-extern  bool        is_symbol_char( char c );
-extern  char        parse_char( const char *pa, size_t len );
-extern  void        unquote_if_quoted( char **a, char **z );
+extern  content_enum    find_pgnum_style( void );
+extern  void            garginit( void );
+extern  void            garginitdot( void );
+extern  condcode        getarg( void );
+extern  condcode        getqst( void );
+extern  bool            is_quote_char( char c );
+extern  bool            is_function_char( char c );
+extern  bool            is_lay_att_char( char c );
+extern  bool            is_id_char( char c );
+extern  bool            is_macro_char( char c );
+extern  bool            is_space_tab_char( char c );
+extern  bool            is_stop_char( char c );
+extern  bool            is_symbol_char( char c );
+extern  char            parse_char( const char *pa, size_t len );
+extern  void            unquote_if_quoted( char **a, char **z );
 
 
 /* gbanner.c                            */
@@ -199,11 +200,11 @@ extern  void    gen_heading( char * h_text, char * id, hdsrc hn_lvl, hdsrc hds_l
 
 
 /* gindexut.c                           */
-extern  ix_e_blk    *   fill_ix_e_blk( ix_e_blk * * anchor, ix_h_blk * ref, ereftyp ptyp, char * text, int text_len );
-extern  ix_h_blk    *   find_create_ix_h_entry( ix_h_blk *ixhwork, ix_h_blk *ixhbase, char *printtxt, size_t printtxtlen, char *txt, size_t txtlen, uint32_t lvl );
-extern  bool            find_index_item( char * item, uint32_t len, ix_h_blk ** entry );
+extern  void            find_create_ix_e_entry( entry_list * entry, uint32_t num, char * ref, size_t len, ereftyp type );
+extern  ix_h_blk    *   find_create_ix_h_entry( ix_h_blk * ixhwork, ix_h_blk * ixhbase, char * printtxt, size_t printtxtlen, char * txt, size_t txtlen, uint32_t lvl );
 extern  void            free_index_dict( ix_h_blk ** dict );
 extern  void            free_ix_e_index_dict( ix_h_blk ** dict );
+extern  void            init_entry_list( ix_h_blk * term );
 
 
 /* glayutil.c                           */

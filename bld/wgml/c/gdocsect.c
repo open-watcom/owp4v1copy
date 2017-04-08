@@ -186,6 +186,57 @@ static void figlist_toc_tabs( char * fill, uint32_t size )
 }
 
 /***************************************************************************/
+/*  output list of references (TBD)                                        */
+/***************************************************************************/
+
+static void gen_ref_list( ix_e_blk * refs )
+{
+    char            buffer[11];
+    ix_e_blk    *   cur_ref;
+
+    cur_ref = refs;
+    while( cur_ref != NULL ) {                      // something more to print
+        if( cur_ref->entry_typ >= pgstring ) {      // 'pageno' is text
+            process_text( cur_ref->page_text, g_curr_font );
+        } else {                                    // 'pageno' is numeric
+            ultoa( cur_ref->page_no, &buffer, 10 );
+            process_text( buffer, g_curr_font );
+        }
+        cur_ref = cur_ref->next;
+    }
+
+    return;
+}
+
+/***************************************************************************/
+/*  output entire set of references (TBD)                                  */
+/***************************************************************************/
+
+static void gen_all_refs( entry_list * entry )
+{
+    if( entry->major_pgnum != NULL ) {  // first the numeric major references
+        gen_ref_list( entry->major_pgnum );
+    }
+    
+    if( entry->major_string != NULL ) { // then the string major references
+        gen_ref_list( entry->major_string );
+    }
+
+    if( entry->normal_pgnum != NULL ) { // then the numeric normal references
+        gen_ref_list( entry->normal_pgnum );
+    }
+
+    if( entry->normal_string != NULL ) {// and finally the string normal references
+        gen_ref_list( entry->normal_string );
+    }
+
+    if( entry->see_string != NULL ) {   // see/seeid strings go each on its own line
+        gen_ref_list( entry->see_string );
+    }
+    return;
+}
+
+/***************************************************************************/
 /*  output FIGLIST                                                         */
 /***************************************************************************/
 
@@ -290,13 +341,11 @@ static void gen_figlist( void )
 
 static void gen_index( void )
 {
-    char            buffer[11];
     char            letter[2];
     ix_h_blk    *   ixh1;
     ix_h_blk    *   ixh2;
     ix_h_blk    *   ixh3;
-    ix_e_blk    *   ref;
-    symsub      *   ixrefval;       // &sysixref value
+    symsub      *   ixrefval;           // &sysixref value
 
     if( index_dict == NULL ) return;    // no index_dict, no INDEX
 
@@ -334,15 +383,8 @@ static void gen_index( void )
             process_text( ixh1->prt_term, g_curr_font );
         }
 
-        ref = ixh1->entry;
-        while( ref != NULL ) {                      // something more to print
-            if( ref->entry_typ >= pgstring ) {      // 'pageno' is text
-                process_text( ref->page_text, g_curr_font );
-            } else {                                // 'pageno' is numeric
-                ultoa( ref->page_no, &buffer, 10 );
-                process_text( buffer, g_curr_font );
-            }
-            ref = ref->next;
+        if( ixh1->entry != NULL ) {
+            gen_all_refs( ixh1->entry );
         }
         scr_process_break();
 
@@ -354,15 +396,8 @@ static void gen_index( void )
                 process_text( ixh2->prt_term, g_curr_font );
             }
 
-            ref = ixh2->entry;
-            while( ref != NULL ) {                      // something more to print
-                if( ref->entry_typ >= pgstring ) {      // 'pageno' is text
-                    process_text( ref->page_text, g_curr_font );
-                } else {                                // 'pageno' is numeric
-                    ultoa( ref->page_no, &buffer, 10 );
-                    process_text( buffer, g_curr_font );
-                }
-                ref = ref->next;
+            if( ixh2->entry != NULL ) {
+                gen_all_refs( ixh2->entry );
             }
             scr_process_break();
 
@@ -374,17 +409,11 @@ static void gen_index( void )
                     process_text( ixh3->prt_term, g_curr_font );
                 }
 
-                ref = ixh3->entry;
-                while( ref != NULL ) {                      // something more to print
-                    if( ref->entry_typ >= pgstring ) {      // 'pageno' is text
-                        process_text( ref->page_text, g_curr_font );
-                    } else {                                // 'pageno' is numeric
-                        ultoa( ref->page_no, &buffer, 10 );
-                        process_text( buffer, g_curr_font );
-                    }
-                    ref = ref->next;
+                if( ixh3->entry != NULL ) {
+                    gen_all_refs( ixh3->entry );
                 }
                 scr_process_break();
+
                 ixh3 = ixh3->next;
             }
             ixh2 = ixh2->next;
