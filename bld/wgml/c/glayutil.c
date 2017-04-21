@@ -426,7 +426,6 @@ void    o_content( FILE * f, lay_att curr, content * tm )
 bool    i_default_frame( char * p, lay_att curr, def_frame * tm )
 {
     bool        cvterr;
-//    int         len;
 
     cvterr = false;
     if( !strnicmp( "none", p, 4 ) ) {
@@ -438,9 +437,13 @@ bool    i_default_frame( char * p, lay_att curr, def_frame * tm )
     } else if( !is_quote_char( *p ) ) {
         cvterr = true;
     } else {
-        cvterr = i_xx_string( p, curr, tm->string );
-        if( !cvterr ) {
-            tm->type = char_frame;
+        if( val_len == 0 ) {        // empty string entered
+            tm->type = none;        // should work for both FIG and IXHEAD
+        } else {                    // string value entered
+            cvterr = i_xx_string( p, curr, tm->string );
+            if( !cvterr ) {
+                tm->type = char_frame;
+            }
         }
     }
     if( cvterr ) {

@@ -31,11 +31,20 @@
 #include    "wgml.h"
 #include    "gvars.h"
 
-static  bool        concat_save;                // for ProcFlags.concat
-static  int32_t     save_indent     =0;         // used with TITLEP/eTITLEP
-static  int32_t     save_indentr    =0;         // used with TITLEP/eTITLEP
-static  ju_enum     justify_save;               // for ProcFlags.justify
-static  line_number titlep_lineno   =0;         // TITLEP tag line number
+static  bool            concat_save;                // for ProcFlags.concat
+static  char            frame_line_1[]  = "     ";  // box top line/rule line/'character string' line
+static  char            frame_line_2[]  = "     ";  // box middle line
+static  char            frame_line_3[]  = "     ";  // box bottom line
+static  int32_t         save_indent     = 0;        // used with TITLEP/eTITLEP
+static  int32_t         save_indentr    = 0;        // used with TITLEP/eTITLEP
+static  ju_enum         justify_save;               // for ProcFlags.justify
+static  line_number     titlep_lineno   = 0;        // TITLEP tag line number
+static  size_t          cur_count       = 0;        // current number of characters copied
+static  size_t          frame_line_len  = 0;        // length of frame lines
+static  size_t          str_count       = 0;        // IXHEAD 'character string' strlen()
+static  uint32_t        cur_width       = 0;        // current IXHEAD line width
+static  uint32_t        indent          = 0;        // IXHEAD indent
+static  uint32_t        str_width       = 0;        // IXHEAD 'character string' width
 
 /***************************************************************************/
 /*  error routine for wrong sequence of doc section tags                   */
@@ -186,7 +195,163 @@ static void figlist_toc_tabs( char * fill, uint32_t size )
 }
 
 /***************************************************************************/
-/*  output list of references (TBD)                                        */
+/*  output IXHEAD with box                                                 */
+/***************************************************************************/
+
+static void gen_box_head( char * letter )
+{
+    doc_element *   h_box_el;       // PS only
+    uint32_t        full_line;      // PS only: original frame_line_len
+
+    if( bin_driver->hline.text == NULL ) {                      // character device
+        process_text( frame_line_1, layout_work.ixhead.font );  // top line
+        scr_process_break();
+        g_cur_h_start += indent;
+        frame_line_2[2] = letter[0];
+        process_text( frame_line_2, layout_work.ixhead.font );  // middle line
+        scr_process_break();
+        g_cur_h_start += indent;
+        process_text( frame_line_3, layout_work.ixhead.font );  // bottom line
+        scr_process_break();
+    } else {                                            // page-oriented device
+
+        /*******************************************************************/
+        /* This uses code written originally for use with control word BX  */
+        /* That control word uses depth to indicate the amount by which at */
+        /* the vertical position is to be adjusted after the hline is      */
+        /* emitted, as it appears in the middle of the normal line depth   */
+        /* Here, the line appears at the bottom of the line depth, but the */
+        /* depth used must be 0 to prevent the next element from being     */
+        /* placed one line too far down on the page                        */
+        /*******************************************************************/
+
+        g_subs_skip += wgml_fonts[layout_work.ixhead.font].line_height;
+        full_line = frame_line_len;
+        full_line +=
+            wgml_fonts[layout_work.ixhead.font].width_table[(unsigned char) letter[0]];
+        g_cur_h_start += frame_line_len / 2;
+        process_text( letter, layout_work.ixhead.font );    // middle line
+        scr_process_break();
+        g_cur_h_start += indent;
+        g_subs_skip += wgml_fonts[layout_work.ixhead.font].line_height;
+        h_box_el = init_doc_el( el_dbox, 0 );               // DBOX
+        h_box_el->element.dbox.h_start = g_cur_h_start;
+        h_box_el->element.dbox.h_len = full_line;
+        h_box_el->element.dbox.v_len = 2 * wgml_fonts[layout_work.ixhead.font].line_height;
+        insert_col_main( h_box_el );
+    }
+    return;
+}
+
+
+/***************************************************************************/
+/*  output IXHEAD with rule                                                */
+/***************************************************************************/
+
+static void gen_rule_head( char * letter )
+{
+    doc_element *   h_line_el;      // PS only
+    int             i;
+    size_t          sav_count;      // line_buff.current on entry, to reset state at end
+    uint32_t        cur_limit;
+    uint32_t        full_line;      // PS only: original frame_line_len
+    uint32_t        half_line;      // one half of frame_line_len
+    uint32_t        sav_width;      // cur_width on entry, to reset state at end
+
+    half_line = frame_line_len / 2;
+    if( bin_driver->hline.text == NULL ) {                      // character device
+        process_text( frame_line_1, layout_work.ixhead.font );  // top line
+        scr_process_break();
+        g_cur_h_start += indent;
+        g_cur_h_start += half_line;
+        process_text( letter, layout_work.ixhead.font );        // middle line
+        scr_process_break();
+        g_cur_h_start += indent;
+        process_text( frame_line_1, layout_work.ixhead.font );  // bottom line
+        scr_process_break();
+    } else {                                            // page-oriented device
+        full_line = frame_line_len;
+        full_line +=
+                wgml_fonts[layout_work.ixhead.font].width_table[(unsigned char) letter[0]];
+        if( layout_work.ixhead.frame.type == rule_frame ) {
+
+        /*******************************************************************/
+        /* This uses code written originally for use with control word BX  */
+        /* That control word uses depth to indicate the amount by which at */
+        /* the vertical position is to be adjusted after the hline is      */
+        /* emitted, as it appears in the middle of the normal line depth   */
+        /* Here, the line appears at the bottom of the line depth, but the */
+        /* depth used must be 0 to prevent the next element from being     */
+        /* placed one line too far down on the page                        */
+        /*******************************************************************/
+
+            g_subs_skip += wgml_fonts[layout_work.ixhead.font].line_height;
+            h_line_el = init_doc_el( el_hline, 0 );             // top line
+            h_line_el->element.hline.ban_adjust = false;
+            h_line_el->element.hline.h_start = g_cur_h_start;
+            h_line_el->element.hline.h_len = full_line;
+            insert_col_main( h_line_el );
+            g_cur_h_start += half_line;
+            process_text( letter, layout_work.ixhead.font );    // middle line
+            scr_process_break();
+            g_cur_h_start += indent;
+            g_subs_skip += wgml_fonts[layout_work.ixhead.font].line_height;
+            h_line_el = init_doc_el( el_hline, 0 );             // bottom line
+            h_line_el->element.hline.ban_adjust = false;
+            h_line_el->element.hline.h_start = g_cur_h_start;
+            h_line_el->element.hline.h_len = full_line;
+            insert_col_main( h_line_el );
+        } else {                        // char_frame
+            sav_count = line_buff.current;
+            sav_width = cur_width;
+            cur_limit = full_line / str_width;
+            line_buff.current = cur_limit;
+            if( full_line % str_width > 0 ) {       // partial copy will be needed
+                line_buff.current++;
+            }
+            line_buff.current *= str_count;                 // length in characters
+            while( line_buff.current > line_buff.length ) {
+                line_buff.length *= 2;
+                line_buff.text = mem_realloc( line_buff.text, line_buff.length + 1 );
+            }
+            for( i = cur_count; i < cur_limit; i++ ) {   // fill text with copies of full string
+                strcat_s( line_buff.text, line_buff.current + 1, layout_work.ixhead.frame.string );
+                cur_width += str_width;
+                cur_count += str_count;
+            }
+            if( cur_width < frame_line_len ) {                  // text not full yet
+                for( i = 0; i < strlen( layout_work.ixhead.frame.string ); i++ ) {
+                    cur_width += wgml_fonts[layout_work.ixhead.font].width_table[(unsigned char)layout_work.ixhead.frame.string[i]];
+                    if( cur_width >= full_line ) {  // check what width would be if character were copied
+                        break;
+                    }
+                    line_buff.text[cur_count] = layout_work.ixhead.frame.string[i];
+                    cur_count++;
+                }
+            }
+            line_buff.current = cur_count;
+            line_buff.text[line_buff.current] = '\0';
+            process_text( line_buff.text, layout_work.ixhead.font );    // top line
+            scr_process_break();
+            g_cur_h_start += indent;
+            g_cur_h_start += half_line;
+            process_text( letter, layout_work.ixhead.font );            // middle line
+            scr_process_break();
+            g_cur_h_start += indent;
+            process_text( line_buff.text, layout_work.ixhead.font );    // bottom line
+            scr_process_break();
+            cur_count = sav_count;
+            cur_width = sav_width;
+            line_buff.current = cur_count;
+            line_buff.text[line_buff.current] = '\0';
+        }
+    }
+    return;
+}
+
+
+/***************************************************************************/
+/*  output list of references                                              */
 /***************************************************************************/
 
 static void gen_ref_list( ix_e_blk * refs )
@@ -209,7 +374,7 @@ static void gen_ref_list( ix_e_blk * refs )
 }
 
 /***************************************************************************/
-/*  output entire set of references (TBD)                                  */
+/*  output entire set of references                                        */
 /***************************************************************************/
 
 static void gen_all_refs( entry_list * entry )
@@ -342,10 +507,13 @@ static void gen_figlist( void )
 static void gen_index( void )
 {
     char            letter[2];
+    int             i;
     ix_h_blk    *   ixh1;
     ix_h_blk    *   ixh2;
     ix_h_blk    *   ixh3;
     symsub      *   ixrefval;           // &sysixref value
+    uint32_t        cur_limit;
+    uint32_t        frame_height;
 
     if( index_dict == NULL ) return;    // no index_dict, no INDEX
 
@@ -354,27 +522,140 @@ static void gen_index( void )
 
     letter[0]  = 0;
     letter[1]  = 0;
+    indent = conv_hor_unit( &layout_work.ixhead.indent, layout_work.ixhead.font );
     ixh1 = index_dict;
     find_symvar( &sys_dict, "$ixref", no_subscript, &ixrefval);
 
-    while( ixh1 != NULL ) {             // level 1
+    /* Set up for character device with visible frame */
 
+    if( layout_work.ixhead.frame.type != none ) {
+        if( layout_work.ixhead.frame.type == box_frame ) {  // frame is box
+            if( bin_driver->dbox.text == NULL ) {           // character device
+                frame_line_len = sizeof( frame_line_1 );    // each line has same length
+                frame_line_len--;                           // exclude terminal char
+                memset( &frame_line_1[1], bin_device->box.horizontal_line,
+                        frame_line_len - 2 );
+                frame_line_1[0] = bin_device->box.top_left;
+                frame_line_1[frame_line_len - 1 ] = bin_device->box.top_right;
+                frame_line_2[0] = bin_device->box.vertical_line;
+                frame_line_2[frame_line_len - 1 ] = bin_device->box.vertical_line;               
+                memset( &frame_line_3[1], bin_device->box.horizontal_line,
+                        frame_line_len - 2 );
+                frame_line_3[0] = bin_device->box.bottom_left;
+                frame_line_3[frame_line_len - 1 ] = bin_device->box.bottom_right;
+            } else {                // use drawing commands
+                frame_height = 5;
+                frame_line_len = 8 * wgml_fonts[layout_work.ixhead.font].spc_width; // base length, full length varies
+            }
+        } else if( layout_work.ixhead.frame.type == rule_frame  ) { // rul frame
+            if( bin_driver->hline.text == NULL ) {          // character device
+                frame_line_len = sizeof( frame_line_1 );    // each line has same length
+                frame_line_len--;                           // exclude terminal char
+                memset( frame_line_1, bin_device->box.horizontal_line,
+                        frame_line_len );
+            } else {                // use drawing commands
+                frame_height = 5;
+                frame_line_len = 8 * wgml_fonts[layout_work.ixhead.font].spc_width; // base length, full length varies
+            }
+        } else if( layout_work.ixhead.frame.type == char_frame ) {   // frame is 'character string'
+            if( bin_driver->hline.text == NULL ) {          // character device
+                frame_line_len = sizeof( frame_line_1 );    // each line has same length
+                frame_line_len --;                          // ignore terminator
+                frame_line_1[0] = '\0';
+                str_count = strlen( layout_work.ixhead.frame.string );
+                cur_limit = frame_line_len / str_count;     // number of complete strings that will fit
+                cur_width = 0;
+                for( i = 0; i < cur_limit; i++  ) {         // fill text with full string
+                    strcat_s( frame_line_1, frame_line_len + 1,
+                              layout_work.ixhead.frame.string );
+                    cur_width += str_count;
+                }
+                if( cur_width < frame_line_len ) {          // text not full yet
+                    memcpy_s( &frame_line_1[cur_width], frame_line_len - cur_width,
+                              layout_work.ixhead.frame.string,
+                              frame_line_len - cur_width );
+                }
+                frame_line_1[frame_line_len] = '\0';
+            } else {                // configure for use with PS
+                frame_height = 4;
+                frame_line_len = 8 * wgml_fonts[layout_work.ixhead.font].spc_width; // base length, full length varies
+                str_count = strlen( layout_work.ixhead.frame.string );
+                str_width = 0;
+                for( i = 0; i < strlen( layout_work.ixhead.frame.string ); i++ ) {
+                    str_width += wgml_fonts[layout_work.ixhead.font].width_table[(unsigned char)layout_work.ixhead.frame.string[i]];
+                }
+                cur_limit = frame_line_len / str_width;
+                cur_count = 0;
+                cur_width = 0;
+                line_buff.current = cur_limit;
+                line_buff.current *= str_count;                 // length in characters
+                while( line_buff.current > line_buff.length ) {
+                    line_buff.length *= 2;
+                    line_buff.text = mem_realloc( line_buff.text, line_buff.length + 1 );
+                }
+                line_buff.text[0] = '\0';
+                for( i = 0; i < cur_limit; i++ ) {              // fill text with copies of full string
+                    strcat_s( line_buff.text, line_buff.current + 1, layout_work.ixhead.frame.string );
+                    cur_width += str_width;
+                    cur_count += str_count;
+                }
+            }
+        } else {                                        // shouldn't be here
+            internal_err( __FILE__, __LINE__ );
+        }
+    } else {
+        frame_height = 3;
+    }
+
+    concat_save = ProcFlags.concat;
+    ProcFlags.concat = true;
+    justify_save = ProcFlags.justify;
+    ProcFlags.justify = ju_off;
+    while( ixh1 != NULL ) {             // level 1
 
         if( letter[0] != toupper( *(ixh1->ix_term) ) ) {
 
-            /* Set g_subs_skip for next IXHEAD */
+            /* Set g_subs_skip for IXHEAD */
 
-            set_skip_vars( NULL, &layout_work.ixhead.pre_skip,
-                           NULL, spacing, 
+            set_skip_vars( NULL, &layout_work.ixhead.pre_skip, NULL, spacing, 
                            layout_work.ixhead.font );
 
             /* Generate IXHEAD heading */
 
             letter[0] = toupper( *(ixh1->ix_term) );
+
+            if( frame_height * wgml_fonts[layout_work.ixhead.font].line_height
+                   + t_page.cur_depth > t_page.max_depth ) {
+                do_page_out();
+            }
+
             if( layout_work.ixhead.header == true ) {
-                process_text( letter, layout_work.ixhead.font );
+                g_cur_h_start += indent;
+
+                switch( layout_work.ixhead.frame.type ) {
+                case none :
+                    process_text( letter, layout_work.ixhead.font );
+                    break;
+                case box_frame :
+                    gen_box_head( letter );
+                    break;
+                case rule_frame :
+                case char_frame :
+                    gen_rule_head( letter );
+                    break;
+                default:
+                    internal_err( __FILE__, __LINE__ );
+                    break;
+                }
                 scr_process_break();        // flush letter heading
             }
+
+            /* Set g_post_skip for IXHEAD */
+
+            set_skip_vars( NULL, NULL, &layout_work.ixhead.post_skip, spacing, 
+                           layout_work.ixhead.font );
+            g_subs_skip += g_post_skip;     // added, not combined
+            g_post_skip = 0;
         }
 
         if( ixh1->prt_term == NULL ) {
@@ -419,17 +700,9 @@ static void gen_index( void )
             ixh2 = ixh2->next;
         }
         ixh1 = ixh1->next;
-
-        if( ixh1 != NULL ) {
-            if( letter[0] != toupper( *(ixh1->ix_term) ) ) {
-
-                /* Set g_post_skip for next IXHEAD */
-
-                set_skip_vars( NULL, NULL, &layout_work.ixhead.post_skip, spacing, 
-                               layout_work.ixhead.font );
-            }
-        }
     }
+    ProcFlags.concat = concat_save;
+    ProcFlags.justify = justify_save;
 }
 
 /***************************************************************************/
