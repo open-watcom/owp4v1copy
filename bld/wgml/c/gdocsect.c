@@ -43,7 +43,7 @@ static  size_t          cur_count       = 0;        // current number of charact
 static  size_t          frame_line_len  = 0;        // length of frame lines
 static  size_t          str_count       = 0;        // IXHEAD 'character string' strlen()
 static  uint32_t        cur_width       = 0;        // current IXHEAD line width
-static  uint32_t        indent          = 0;        // IXHEAD indent
+static  uint32_t        ixh_indent      = 0;        // IXHEAD indent
 static  uint32_t        str_width       = 0;        // IXHEAD 'character string' width
 
 /***************************************************************************/
@@ -206,11 +206,11 @@ static void gen_box_head( char * letter )
     if( bin_driver->hline.text == NULL ) {                      // character device
         process_text( frame_line_1, layout_work.ixhead.font );  // top line
         scr_process_break();
-        g_cur_h_start += indent;
+        g_cur_h_start += ixh_indent;
         frame_line_2[2] = letter[0];
         process_text( frame_line_2, layout_work.ixhead.font );  // middle line
         scr_process_break();
-        g_cur_h_start += indent;
+        g_cur_h_start += ixh_indent;
         process_text( frame_line_3, layout_work.ixhead.font );  // bottom line
         scr_process_break();
     } else {                                            // page-oriented device
@@ -232,7 +232,7 @@ static void gen_box_head( char * letter )
         g_cur_h_start += frame_line_len / 2;
         process_text( letter, layout_work.ixhead.font );    // middle line
         scr_process_break();
-        g_cur_h_start += indent;
+        g_cur_h_start += ixh_indent;
         g_subs_skip += wgml_fonts[layout_work.ixhead.font].line_height;
         h_box_el = init_doc_el( el_dbox, 0 );               // DBOX
         h_box_el->element.dbox.h_start = g_cur_h_start;
@@ -262,11 +262,11 @@ static void gen_rule_head( char * letter )
     if( bin_driver->hline.text == NULL ) {                      // character device
         process_text( frame_line_1, layout_work.ixhead.font );  // top line
         scr_process_break();
-        g_cur_h_start += indent;
+        g_cur_h_start += ixh_indent;
         g_cur_h_start += half_line;
         process_text( letter, layout_work.ixhead.font );        // middle line
         scr_process_break();
-        g_cur_h_start += indent;
+        g_cur_h_start += ixh_indent;
         process_text( frame_line_1, layout_work.ixhead.font );  // bottom line
         scr_process_break();
     } else {                                            // page-oriented device
@@ -294,7 +294,7 @@ static void gen_rule_head( char * letter )
             g_cur_h_start += half_line;
             process_text( letter, layout_work.ixhead.font );    // middle line
             scr_process_break();
-            g_cur_h_start += indent;
+            g_cur_h_start += ixh_indent;
             g_subs_skip += wgml_fonts[layout_work.ixhead.font].line_height;
             h_line_el = init_doc_el( el_hline, 0 );             // bottom line
             h_line_el->element.hline.ban_adjust = false;
@@ -333,11 +333,11 @@ static void gen_rule_head( char * letter )
             line_buff.text[line_buff.current] = '\0';
             process_text( line_buff.text, layout_work.ixhead.font );    // top line
             scr_process_break();
-            g_cur_h_start += indent;
+            g_cur_h_start += ixh_indent;
             g_cur_h_start += half_line;
             process_text( letter, layout_work.ixhead.font );            // middle line
             scr_process_break();
-            g_cur_h_start += indent;
+            g_cur_h_start += ixh_indent;
             process_text( line_buff.text, layout_work.ixhead.font );    // bottom line
             scr_process_break();
             cur_count = sav_count;
@@ -506,6 +506,7 @@ static void gen_figlist( void )
 
 static void gen_index( void )
 {
+    bool            first[3];           // tag first index entry in group
     char            letter[2];
     int             i;
     ix_h_blk    *   ixh1;
@@ -514,23 +515,20 @@ static void gen_index( void )
     symsub      *   ixrefval;           // &sysixref value
     uint32_t        cur_limit;
     uint32_t        frame_height;
+    uint32_t        indent[3];          // I1/I2/I3 cumulative indents
+    uint32_t        wrap[3];            // I1/I2/I3 wrap_indent values
 
     if( index_dict == NULL ) return;    // no index_dict, no INDEX
 
     scr_process_break();                // flush any pending text
     start_doc_sect();
 
-    letter[0]  = 0;
-    letter[1]  = 0;
-    indent = conv_hor_unit( &layout_work.ixhead.indent, layout_work.ixhead.font );
-    ixh1 = index_dict;
-    find_symvar( &sys_dict, "$ixref", no_subscript, &ixrefval);
-
     /* Set up for character device with visible frame */
 
     if( layout_work.ixhead.frame.type != none ) {
         if( layout_work.ixhead.frame.type == box_frame ) {  // frame is box
             if( bin_driver->dbox.text == NULL ) {           // character device
+                frame_height = 5;
                 frame_line_len = sizeof( frame_line_1 );    // each line has same length
                 frame_line_len--;                           // exclude terminal char
                 memset( &frame_line_1[1], bin_device->box.horizontal_line,
@@ -549,6 +547,7 @@ static void gen_index( void )
             }
         } else if( layout_work.ixhead.frame.type == rule_frame  ) { // rul frame
             if( bin_driver->hline.text == NULL ) {          // character device
+                frame_height = 5;
                 frame_line_len = sizeof( frame_line_1 );    // each line has same length
                 frame_line_len--;                           // exclude terminal char
                 memset( frame_line_1, bin_device->box.horizontal_line,
@@ -559,6 +558,7 @@ static void gen_index( void )
             }
         } else if( layout_work.ixhead.frame.type == char_frame ) {   // frame is 'character string'
             if( bin_driver->hline.text == NULL ) {          // character device
+                frame_height = 4;
                 frame_line_len = sizeof( frame_line_1 );    // each line has same length
                 frame_line_len --;                          // ignore terminator
                 frame_line_1[0] = '\0';
@@ -607,10 +607,45 @@ static void gen_index( void )
         frame_height = 3;
     }
 
+    /* Initialize values used in outputting the index */
+
+    letter[0]  = 0;
+    letter[1]  = 0;
+
+    indent[0] = conv_hor_unit( &layout_work.ix[0].indent, layout_work.ix[0].font );
+    indent[1] = indent[0] + conv_hor_unit( &layout_work.ix[1].indent, layout_work.ix[1].font );
+    if( ProcFlags.has_aa_block ) {
+        indent[1]++;    // to match wgml 4.0 with PS
+    }
+    indent[2] = indent[1] + conv_hor_unit( &layout_work.ix[2].indent, layout_work.ix[2].font );
+    if( ProcFlags.has_aa_block ) {
+        indent[2]++;    // to match wgml 4.0 with PS
+    }
+
+    ixh_indent = indent[0] + conv_hor_unit( &layout_work.ixhead.indent, layout_work.ixhead.font );
+    ixh1 = index_dict;
+    find_symvar( &sys_dict, "$ixref", no_subscript, &ixrefval);
+
+    g_page_left += conv_hor_unit( &layout_work.index.left_adjust, layout_work.ixhead.font );
+    g_cur_h_start = g_page_left;
+
+    g_page_right -= (conv_hor_unit( &layout_work.index.right_adjust, layout_work.ixhead.font ) * 9) / 10;
+    
+    wrap[0] = indent[0] +
+            conv_hor_unit( &layout_work.ix[0].wrap_indent, layout_work.ix[0].font );
+    wrap[1] = indent[1] +
+            conv_hor_unit( &layout_work.ix[1].wrap_indent, layout_work.ix[1].font );
+    wrap[2] = indent[2] +
+            conv_hor_unit( &layout_work.ix[2].wrap_indent, layout_work.ix[2].font );
+
     concat_save = ProcFlags.concat;
-    ProcFlags.concat = true;
+    ProcFlags.concat = false;
     justify_save = ProcFlags.justify;
     ProcFlags.justify = ju_off;
+
+    /* Output the index */
+
+    first[0] = true;
     while( ixh1 != NULL ) {             // level 1
 
         if( letter[0] != toupper( *(ixh1->ix_term) ) ) {
@@ -627,10 +662,11 @@ static void gen_index( void )
             if( frame_height * wgml_fonts[layout_work.ixhead.font].line_height
                    + t_page.cur_depth > t_page.max_depth ) {
                 do_page_out();
+                reset_t_page;
             }
 
             if( layout_work.ixhead.header == true ) {
-                g_cur_h_start += indent;
+                g_cur_h_start += ixh_indent;
 
                 switch( layout_work.ixhead.frame.type ) {
                 case none :
@@ -658,10 +694,24 @@ static void gen_index( void )
             g_post_skip = 0;
         }
 
-        if( ixh1->prt_term == NULL ) {
-            process_text( ixh1->ix_term, g_curr_font );
+        if( first[0] ) {                    // first entry in group
+            spacing = layout_work.hx.hx_sect[hds_index].spacing;
+            set_skip_vars( &layout_work.ix[0].skip, NULL, NULL,
+                           spacing, layout_work.ix[0].font );
+            first[0] = false;
         } else {
-            process_text( ixh1->prt_term, g_curr_font );
+            spacing = 1;
+            set_skip_vars( &layout_work.ix[0].pre_skip, NULL,
+                           &layout_work.ix[0].post_skip,
+                           spacing, layout_work.ix[0].font );
+        }
+        g_cur_h_start += indent[0];
+        ProcFlags.wrap_indent = true;
+        wrap_indent = wrap[0];
+        if( ixh1->prt_term == NULL ) {
+            process_text( ixh1->ix_term, layout_work.ix[0].font );
+        } else {
+            process_text( ixh1->prt_term, layout_work.ix[0].font );
         }
 
         if( ixh1->entry != NULL ) {
@@ -670,11 +720,26 @@ static void gen_index( void )
         scr_process_break();
 
         ixh2 = ixh1->lower;
+        first[1] = true;
         while( ixh2 != NULL ) {     // level 2
-            if( ixh2->prt_term == NULL ) {
-                process_text( ixh2->ix_term, g_curr_font );
+            if( first[1] ) {                    // first entry in group
+                spacing = layout_work.hx.hx_sect[hds_index].spacing;
+                set_skip_vars( &layout_work.ix[1].skip, NULL, NULL,
+                               spacing, layout_work.ix[1].font );
+                first[1] = false;
             } else {
-                process_text( ixh2->prt_term, g_curr_font );
+                spacing = 1;
+                set_skip_vars( &layout_work.ix[1].pre_skip, NULL,
+                               &layout_work.ix[1].post_skip,
+                               spacing, layout_work.ix[1].font );
+            }
+            g_cur_h_start += indent[1];
+            ProcFlags.wrap_indent = true;
+            wrap_indent = wrap[1];
+            if( ixh2->prt_term == NULL ) {
+                process_text( ixh2->ix_term, layout_work.ix[1].font );
+            } else {
+                process_text( ixh2->prt_term, layout_work.ix[1].font );
             }
 
             if( ixh2->entry != NULL ) {
@@ -683,11 +748,26 @@ static void gen_index( void )
             scr_process_break();
 
             ixh3 = ixh2->lower;
+            first[2] = true;
             while( ixh3 != NULL ) {     // level 3
-                if( ixh3->prt_term == NULL ) {
-                    process_text( ixh3->ix_term, g_curr_font );
+                if( first[2] ) {                    // first entry in group
+                    spacing = layout_work.hx.hx_sect[hds_index].spacing;
+                    set_skip_vars( &layout_work.ix[2].skip, NULL, NULL,
+                                   spacing, layout_work.ix[2].font );
+                    first[2] = false;
                 } else {
-                    process_text( ixh3->prt_term, g_curr_font );
+                    spacing = 1;
+                    set_skip_vars( &layout_work.ix[2].pre_skip, NULL,
+                                   &layout_work.ix[2].post_skip,
+                                   spacing, layout_work.ix[2].font );
+                }
+                g_cur_h_start += indent[2];
+                ProcFlags.wrap_indent = true;
+                wrap_indent = wrap[2];
+                if( ixh3->prt_term == NULL ) {
+                    process_text( ixh3->ix_term, layout_work.ix[2].font );
+                } else {
+                    process_text( ixh3->prt_term, layout_work.ix[2].font );
                 }
 
                 if( ixh3->entry != NULL ) {
@@ -698,8 +778,14 @@ static void gen_index( void )
                 ixh3 = ixh3->next;
             }
             ixh2 = ixh2->next;
+            if( !first[2] ) {   // at least one I3 entry existed
+                first[1] = true;
+            }
         }
         ixh1 = ixh1->next;
+        if( !first[1] ) {   // at least one I2 entry existed
+        first[0] = true;
+        }
     }
     ProcFlags.concat = concat_save;
     ProcFlags.justify = justify_save;

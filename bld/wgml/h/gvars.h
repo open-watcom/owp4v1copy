@@ -221,6 +221,7 @@ global struct ProcFlags {
     unsigned        need_li_lp      : 1;// just list tag (:SL,...) seen
     unsigned        no_var_impl_err : 1;// suppress err_var_not_impl msg
     unsigned        tophead_done    : 1;// tophead symbol set
+    unsigned        wrap_indent     : 1;// for index item/reference indent when line breaks
 
     unsigned        has_aa_block    : 1;// true if device defined :ABSOLUTEADDRESS
     unsigned        ps_device       : 1;// true if device is PostScript
@@ -377,6 +378,7 @@ global  uint32_t    ju_x_start;         // .. formatting
 global  int32_t     g_indent;           // .in 1st value (left) default 0
 global  int32_t     g_indentr;          // .in 2nd value (right) default 0
 global  int32_t     g_line_indent;      // :LP, :P, :PC line indent
+global  int32_t     wrap_indent;        // :I1/:I2/:I3 wrap_indent value
 
 global  int32_t     g_cur_threshold;    // current widow threshold value
                                         // from layout (widow or heading)

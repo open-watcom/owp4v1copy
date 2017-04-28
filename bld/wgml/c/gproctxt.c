@@ -1702,6 +1702,8 @@ void process_text( const char *text, font_number font )
     text_chars          *   s_chars;                    // save text_chars
     uint32_t                o_count         = 0;
     uint32_t                offset          = 0;
+    uint32_t                t_count_1       = 0;
+    uint32_t                t_count_2       = 0;
     // when hyph can be set, it will need to be used here & below
     uint32_t                hy_width        = wgml_fonts[FONT0].width_table['-'];
 
@@ -2153,6 +2155,22 @@ void process_text( const char *text, font_number font )
             count = split_text( n_chars, g_page_right );
             // the text is split over as many lines as necessary
             while( count > 0 ) {
+                if( ProcFlags.wrap_indent ) {       // INDEX item
+                    t_count_1 = n_chars->count;
+                    t_count_2 = count;
+                    /* text should neither end nor begin with a space */
+                    while( n_chars->text[t_count_1] != ' ' ) {
+                        t_count_1--;                // back off to last internal space, if any
+                        t_count_2++;
+                        if( t_count_1 == 0 ) {      // no chars left
+                            break;
+                        }
+                    }
+                    if( t_count_1 > 0 ) {          // internal space found
+                        n_chars->count = t_count_1 + 1;
+                        count = t_count_2 - 1;
+                    }
+                }
                 if( t_line == NULL ) {
                     t_line = alloc_text_line();
                 }
@@ -2173,7 +2191,7 @@ void process_text( const char *text, font_number font )
                 }
                 // reset n_chars to contain the rest of the split text
                 n_chars = alloc_text_chars( &t_line->last->text[t_line->last->count],
-                                            count, t_line->last->font );
+                          count, t_line->last->font );
                 if( t_line->first == t_line->last ) {
                     fm_chars = NULL;
                 } else {
@@ -2204,6 +2222,9 @@ void process_text( const char *text, font_number font )
                 t_line = NULL;
 
                 // reset n_chars and count
+                if( ProcFlags.wrap_indent ) {       // INDEX item
+                    g_cur_h_start = g_cur_left + wrap_indent;
+                }
                 n_chars->x_address = g_cur_h_start;
                 n_chars->width = text_chars_width( n_chars->text, n_chars->count,
                                                    n_chars->font );
@@ -2360,11 +2381,13 @@ void process_text( const char *text, font_number font )
     }
     g_prev_font = font; // save font number for potential use with BX - TBD
 
-    /* Clear various control flags */
+    /* Clear various control flags/variables */
 
     ProcFlags.ct = false;
     ProcFlags.fsp = false;
     ProcFlags.stop_xspc = false;
     ProcFlags.utc = false;
+    ProcFlags.wrap_indent = false;
+    wrap_indent = 0;
 }
 
