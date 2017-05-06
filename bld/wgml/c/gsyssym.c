@@ -549,7 +549,7 @@ static void sysirfun( symvar * e )
 
 static void sysixjfun( symvar * e )
 {
-    var_wng( e->name, e );
+    sysixj0.value = sysixjstr;
     return;
 };
 

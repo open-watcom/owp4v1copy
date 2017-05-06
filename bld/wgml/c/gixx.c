@@ -331,7 +331,7 @@ static void gml_ixxx_common( const gmltag * entry, int hx_lvl )
             }
         }
 
-    } else if( ((hxstring[2] == lvlc) ) ) {    // test for :Ix
+    } else if( hxstring[2] == lvlc ) {    // test for :Ix
 
     /***********************************************************************/
     /* processing for :Ix                                                  */
@@ -371,7 +371,7 @@ static void gml_ixxx_common( const gmltag * entry, int hx_lvl )
             break;
         }
 
-    } else if( ((hxstring[3] == lvlc) ) ) {    // test for :IHx
+    } else if( hxstring[3] == lvlc ) {    // test for :IHx
 
     /***********************************************************************/
     /* processing for :IHx                                                 */
@@ -407,13 +407,13 @@ static void gml_ixxx_common( const gmltag * entry, int hx_lvl )
     /* references are to be attached                                       */
     /***********************************************************************/
 
-    if( pgvalue < pgstring ) {      // insert page number
-        if( ixhwk->entry == NULL ) {
-            init_entry_list( ixhwk);
-        }
-        find_create_ix_e_entry( ixhwk->entry, page + 1, pgtext,
-                                pgtextlen, pgvalue );
+    if( ixhwk->entry == NULL ) {
+        init_entry_list( ixhwk);
     }
+    if( hxstring[3] != lvlc ) {                             // not IH1/IH2/IH3
+        find_create_ix_e_entry( ixhwk->entry, page + 1, pgtext, pgtextlen, pgvalue );
+    }
+
     if( seeidseen ) {   // get reference value from the ix_h_blk record found for seeid
         if( ixhwk->entry == NULL ) {
             init_entry_list( ixhwk);
@@ -421,20 +421,18 @@ static void gml_ixxx_common( const gmltag * entry, int hx_lvl )
         if( seeidwk->hblk->prt_term != NULL ) {    // use print term
             find_create_ix_e_entry( ixhwk->entry, page + 1,
                                             seeidwk->hblk->prt_term,
-                                            seeidwk->hblk->prt_term_len, pgvalue );
+                                            seeidwk->hblk->prt_term_len, pgsee );
         } else {                                // use index term
             find_create_ix_e_entry( ixhwk->entry, page + 1,
                                             seeidwk->hblk->ix_term,
-                                            seeidwk->hblk->ix_term_len, pgvalue );
+                                            seeidwk->hblk->ix_term_len, pgsee );
         }
     }
     if( seeseen ) {
         if( ixhwk->entry == NULL ) {
             init_entry_list( ixhwk);
         }
-        pgvalue = pgsee;
-        find_create_ix_e_entry( ixhwk->entry, page + 1, seetext,
-                                        seetextlen, pgvalue );
+        find_create_ix_e_entry( ixhwk->entry, page + 1, seetext, seetextlen, pgsee );
     }
 
     if( idseen ) {                 // ID specified create reference entry

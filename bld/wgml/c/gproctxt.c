@@ -1692,6 +1692,7 @@ void process_text( const char *text, font_number font )
     const char          *   pword;
     const char          *   p;
 
+    bool                    wrap_done       = false;
     bool                    stop_fnd;
     font_number             temp_font       = 0;
     i_flags                 flags_x_eol;                // fmflags with II_eol removed
@@ -2004,7 +2005,10 @@ void process_text( const char *text, font_number font )
             /***********************************************************/
 
             while( !tabbing && 
-            (n_chars->x_address + n_chars->width) > g_page_right ) {
+                    (n_chars->x_address + n_chars->width) > g_page_right ) {
+                if( t_line == NULL ) {  // added when INDEX implemented
+                    t_line = alloc_text_line();
+                }
                 s_chars = t_line->last; // find multipart words
                 if( s_chars != NULL ) {
                     while( g_cur_h_start == (s_chars->x_address + s_chars->width) ) {
@@ -2118,6 +2122,10 @@ void process_text( const char *text, font_number font )
                     t_line = NULL;
                 }
                 // s_chars processing
+                if( ProcFlags.wrap_indent && !wrap_done ) {       // INDEX item
+                    g_cur_left += wrap_indent;
+                    wrap_done = true;
+                }
                 if( s_chars == NULL ) {
                     n_chars->x_address = g_cur_left;
                 } else {
@@ -2222,10 +2230,11 @@ void process_text( const char *text, font_number font )
                 t_line = NULL;
 
                 // reset n_chars and count
-                if( ProcFlags.wrap_indent ) {       // INDEX item
-                    g_cur_h_start = g_cur_left + wrap_indent;
+                if( ProcFlags.wrap_indent && !wrap_done ) {       // INDEX item
+                    g_cur_left += wrap_indent;
+                    wrap_done = true;
                 }
-                n_chars->x_address = g_cur_h_start;
+                n_chars->x_address = g_cur_left;
                 n_chars->width = text_chars_width( n_chars->text, n_chars->count,
                                                    n_chars->font );
                 count = split_text( n_chars, g_page_right );
@@ -2340,7 +2349,7 @@ void process_text( const char *text, font_number font )
             xx_err( err_tag_not_text );
         }
 
-        if( !ProcFlags.concat ) {
+        if( !ProcFlags.concat && !ProcFlags.wrap_indent ) { // CO OFF and not INDEX item
 
             /* End of input line: end of output line with CO OFF */
             /* But not for a prefix string                       */
@@ -2387,7 +2396,5 @@ void process_text( const char *text, font_number font )
     ProcFlags.fsp = false;
     ProcFlags.stop_xspc = false;
     ProcFlags.utc = false;
-    ProcFlags.wrap_indent = false;
-    wrap_indent = 0;
 }
 

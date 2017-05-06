@@ -727,15 +727,24 @@ pick( ERR_INV_MARGINS_2,        "Cannot fit the figure with a frame in the adjus
                                 "Cannot fit the figure with a frame in the adjusted left and right margins" )
 
 pick( ERR_SPC_NOT_VALID,        "Space value is not valid",
-                                "Space value is not valid")
+                                "Space value is not valid" )
 
 pick( ERR_TOO_MANY_OPS,         "Too many operands in .BX command",
-                                "Too many operands in .BX command")
+                                "Too many operands in .BX command" )
 
 /* Indexing error messages */
 
-pick( WNG_INDEX_OPT,            "Index option must be specified to process index tags",
-                                "Index option must be specified to process index tags")
+pick( ERR_BAD_DP_VALUE,         "Invalid operand, expecting dump|purge",
+                                "Invalid operand, expecting dump|purge" )
+
+pick( ERR_EXTRA_DATA,           "Not expecting more operand data",
+                                "Not expecting more operand data" )
+
+pick( ERR_NO_RANGE_START,       "No page range starting entry specified",
+                                "No page range starting entry specified" )
+
+pick( ERR_OPEN_PAGE_RANGE,      "Page range incomplete",
+                                "Page range incomplete" )
 
 pick( ERR_PARENT_UNDEF,         "Parent index entry not defined",
                                 "Parent index entry not defined" )
@@ -743,8 +752,7 @@ pick( ERR_PARENT_UNDEF,         "Parent index entry not defined",
 pick( ERR_STRUCT_RANGE,         "The ix attribute has a range of 1 through 9",
                                 "The ix attribute has a range of 1 through 9" )
 
-pick( ERR_BAD_DP_VALUE,         "Invalid operand, expecting dump|purge",
-                                "Invalid operand, expecting dump|purge" )
+pick( WNG_INDEX_OPT,            "Index option must be specified to process index tags",
+                                "Index option must be specified to process index tags" )
 
-pick( ERR_EXTRA_DATA,           "Not expecting more operand data",
-                                "Not expecting more operand data" )
+

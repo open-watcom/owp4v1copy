@@ -32,6 +32,7 @@
 #include    "gvars.h"
 
 static  bool            concat_save;                // for ProcFlags.concat
+static  bool            ref_done;                   // true if a reference has been done
 static  char            frame_line_1[]  = "     ";  // box top line/rule line/'character string' line
 static  char            frame_line_2[]  = "     ";  // box middle line
 static  char            frame_line_3[]  = "     ";  // box bottom line
@@ -42,7 +43,10 @@ static  line_number     titlep_lineno   = 0;        // TITLEP tag line number
 static  size_t          cur_count       = 0;        // current number of characters copied
 static  size_t          frame_line_len  = 0;        // length of frame lines
 static  size_t          str_count       = 0;        // IXHEAD 'character string' strlen()
+static  symsub      *   ixjval;                     // &sysixj value
+static  symsub      *   ixrefval;                   // &sysixref value
 static  uint32_t        cur_width       = 0;        // current IXHEAD line width
+static  uint32_t        wrap[3]         = { 0, 0, 0};// I1/I2/I3 wrap_indent values
 static  uint32_t        ixh_indent      = 0;        // IXHEAD indent
 static  uint32_t        str_width       = 0;        // IXHEAD 'character string' width
 
@@ -138,7 +142,6 @@ void set_section_banners( doc_section ds )
                     sect_ban_bot[0] = ban;
                     sect_ban_bot[1] = ban;
                     break;
-
                 case   topodd_place :
                     sect_ban_top[1] = ban;
                     break;
@@ -354,19 +357,53 @@ static void gen_rule_head( char * letter )
 /*  output list of references                                              */
 /***************************************************************************/
 
-static void gen_ref_list( ix_e_blk * refs )
+static void gen_ref_list( ix_e_blk * refs, font_number font )
 {
     char            buffer[11];
     ix_e_blk    *   cur_ref;
 
     cur_ref = refs;
     while( cur_ref != NULL ) {                      // something more to print
-        if( cur_ref->entry_typ >= pgstring ) {      // 'pageno' is text
-            process_text( cur_ref->page_text, g_curr_font );
-        } else {                                    // 'pageno' is numeric
-            ultoa( cur_ref->page_no, &buffer, 10 );
-            process_text( buffer, g_curr_font );
+        ProcFlags.ct = true;
+        post_space = 0;
+        if( ref_done ) {
+            process_text( ixrefval->value, font );
         }
+        switch( cur_ref->entry_typ ) {
+        case pgmajorstring :
+        case pgstring :
+            if( cur_ref->page_text[0] != '\0' ) {     // if not null string
+                process_text( cur_ref->page_text, font );
+            }
+            break;
+        case pgstart :
+            format_num( cur_ref->page_no, &buffer, sizeof( buffer ), cur_ref->style );
+            process_text( buffer, font );
+            ProcFlags.ct = true;
+            post_space = 0;
+            process_text( ixjval->value, font );
+            while( cur_ref->entry_typ != pgend ) cur_ref = cur_ref->next;
+            if( cur_ref == NULL ) {
+                xx_simple_err( err_open_page_range );
+            } else {
+                ProcFlags.ct = true;
+                post_space = 0;
+                format_num( cur_ref->page_no, &buffer, sizeof( buffer ), cur_ref->style );
+                process_text( buffer, font );
+            }
+            break;
+        case pgend :
+            xx_simple_err( err_open_page_range );
+        case pgmajor :
+        case pgpageno :
+            format_num( cur_ref->page_no, &buffer, sizeof( buffer ), cur_ref->style );
+            process_text( buffer, font );
+            break;
+        default:
+            internal_err( __FILE__, __LINE__ );
+            break;
+        }
+        ref_done = true;
         cur_ref = cur_ref->next;
     }
 
@@ -374,30 +411,64 @@ static void gen_ref_list( ix_e_blk * refs )
 }
 
 /***************************************************************************/
+/*  output list of 'see'/'see also' references                             */
+/***************************************************************************/
+
+static void gen_see_list( ix_e_blk * refs, font_number font, uint32_t level, bool has_sub )
+{
+    ix_e_blk    *   cur_ref;
+
+    cur_ref = refs;
+    while( cur_ref != NULL ) {                      // something more to print
+        scr_process_break();
+        g_cur_h_start += wrap[level];
+        ProcFlags.ct = true;
+        post_space = 0;
+        if( ref_done || has_sub) {
+            process_text( layout_work.index.see_also_string, font );
+        } else {
+            process_text( layout_work.index.see_string, font );
+        }
+        if( cur_ref->page_text[0] != '\0' ) {  // if not null string
+            process_text( cur_ref->page_text, g_curr_font );
+        }
+        ref_done = true;
+        cur_ref = cur_ref->next;
+    }
+
+    return;
+}
+
+
+/***************************************************************************/
 /*  output entire set of references                                        */
 /***************************************************************************/
 
-static void gen_all_refs( entry_list * entry )
+static void gen_all_refs( entry_list * entry, uint32_t level, bool has_sub )
 {
+    ProcFlags.concat = true;
+    ref_done = false;
     if( entry->major_pgnum != NULL ) {  // first the numeric major references
-        gen_ref_list( entry->major_pgnum );
+        gen_ref_list( entry->major_pgnum, layout_work.ixmajor.font );
     }
     
     if( entry->major_string != NULL ) { // then the string major references
-        gen_ref_list( entry->major_string );
+        gen_ref_list( entry->major_string, layout_work.ixmajor.font );
     }
 
     if( entry->normal_pgnum != NULL ) { // then the numeric normal references
-        gen_ref_list( entry->normal_pgnum );
+        gen_ref_list( entry->normal_pgnum, layout_work.ixpgnum.font );
     }
 
     if( entry->normal_string != NULL ) {// and finally the string normal references
-        gen_ref_list( entry->normal_string );
+        gen_ref_list( entry->normal_string, layout_work.ixpgnum.font  );
     }
 
     if( entry->see_string != NULL ) {   // see/seeid strings go each on its own line
-        gen_ref_list( entry->see_string );
+        gen_see_list( entry->see_string, layout_work.ix[level].string_font, level,
+                      has_sub );
     }
+    ProcFlags.concat = false;
     return;
 }
 
@@ -512,18 +583,16 @@ static void gen_index( void )
     ix_h_blk    *   ixh1;
     ix_h_blk    *   ixh2;
     ix_h_blk    *   ixh3;
-    symsub      *   ixrefval;           // &sysixref value
     uint32_t        cur_limit;
     uint32_t        frame_height;
     uint32_t        indent[3];          // I1/I2/I3 cumulative indents
-    uint32_t        wrap[3];            // I1/I2/I3 wrap_indent values
 
     if( index_dict == NULL ) return;    // no index_dict, no INDEX
 
     scr_process_break();                // flush any pending text
     start_doc_sect();
 
-    /* Set up for character device with visible frame */
+    /* Set up for device/frame selected by the LAYOUT tag IXHEAD*/
 
     if( layout_work.ixhead.frame.type != none ) {
         if( layout_work.ixhead.frame.type == box_frame ) {  // frame is box
@@ -624,6 +693,7 @@ static void gen_index( void )
 
     ixh_indent = indent[0] + conv_hor_unit( &layout_work.ixhead.indent, layout_work.ixhead.font );
     ixh1 = index_dict;
+    find_symvar( &sys_dict, "$ixj", no_subscript, &ixjval);
     find_symvar( &sys_dict, "$ixref", no_subscript, &ixrefval);
 
     g_page_left += conv_hor_unit( &layout_work.index.left_adjust, layout_work.ixhead.font );
@@ -662,7 +732,7 @@ static void gen_index( void )
             if( frame_height * wgml_fonts[layout_work.ixhead.font].line_height
                    + t_page.cur_depth > t_page.max_depth ) {
                 do_page_out();
-                reset_t_page;
+                reset_t_page();
             }
 
             if( layout_work.ixhead.header == true ) {
@@ -711,11 +781,15 @@ static void gen_index( void )
         if( ixh1->prt_term == NULL ) {
             process_text( ixh1->ix_term, layout_work.ix[0].font );
         } else {
-            process_text( ixh1->prt_term, layout_work.ix[0].font );
+            if( ixh1->prt_term[0] != '\0' ) { // if not null string
+                process_text( ixh1->prt_term, layout_work.ix[0].font );
+            }
         }
 
         if( ixh1->entry != NULL ) {
-            gen_all_refs( ixh1->entry );
+            post_space = 0;
+            process_text( layout_work.ix[0].index_delim, layout_work.ix[0].font );
+            gen_all_refs( ixh1->entry, 0, ixh1->lower != NULL );
         }
         scr_process_break();
 
@@ -739,11 +813,15 @@ static void gen_index( void )
             if( ixh2->prt_term == NULL ) {
                 process_text( ixh2->ix_term, layout_work.ix[1].font );
             } else {
-                process_text( ixh2->prt_term, layout_work.ix[1].font );
+                if( ixh2->prt_term[0] != '\0' ) { // if not null string
+                    process_text( ixh2->prt_term, layout_work.ix[1].font );
+                }
             }
 
             if( ixh2->entry != NULL ) {
-                gen_all_refs( ixh2->entry );
+                post_space = 0;
+                process_text( layout_work.ix[1].index_delim, layout_work.ix[1].font );
+                gen_all_refs( ixh2->entry, 1, ixh2->lower != NULL );
             }
             scr_process_break();
 
@@ -767,11 +845,15 @@ static void gen_index( void )
                 if( ixh3->prt_term == NULL ) {
                     process_text( ixh3->ix_term, layout_work.ix[2].font );
                 } else {
-                    process_text( ixh3->prt_term, layout_work.ix[2].font );
+                    if( ixh3->prt_term[0] != '\0' ) { // if not null string
+                        process_text( ixh3->prt_term, layout_work.ix[2].font );
+                    }
                 }
 
                 if( ixh3->entry != NULL ) {
-                    gen_all_refs( ixh3->entry );
+                    post_space = 0;
+                    process_text( layout_work.ix[2].index_delim, layout_work.ix[2].font );
+                    gen_all_refs( ixh3->entry, 2, ixh3->lower != NULL  );
                 }
                 scr_process_break();
 

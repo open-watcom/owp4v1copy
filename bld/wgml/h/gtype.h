@@ -1205,9 +1205,9 @@ typedef enum {          // definition order is important
     pgnone,             // nothing (In, IHn, IREF)
     pgpageno,           // numeric page number (IX default)(In)
     pgmajor,            // major page reference (IX)(In, IREF)
-    pgstring,           // pg string (In, IREF) / reference (ix)
     pgstart,            // start page (In, IREF)
     pgend,              // end page (In, IREF)
+    pgstring,           // pg string (In, IREF) / reference (ix)
     pgmajorstring,      // major string reference (IX)
     pgsee,              // see string or seeid item (IHn, IREF)
 } ereftyp;

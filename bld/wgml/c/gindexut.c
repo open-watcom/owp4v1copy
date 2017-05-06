@@ -191,11 +191,15 @@ void find_create_ix_e_entry( entry_list * entry, uint32_t num, char * ref,
             found = find_string_ref( ref, len, &ixework );
             break;
         case pgpageno :
-        case pgstring :
         case pgstart :
         case pgend :
             base = &entry->normal_pgnum;
             ixework = entry->normal_pgnum;
+            found = find_num_ref( num, &ixework );
+            break;
+        case pgstring :
+            base = &entry->normal_string;
+            ixework = entry->normal_string;
             found = find_num_ref( num, &ixework );
             break;
         case pgsee :
@@ -292,7 +296,7 @@ ix_h_blk * find_create_ix_h_entry( ix_h_blk * ixhwork, ix_h_blk * ixhbase,
         }
         if( ixhwork == NULL ) {
             if( lvl == 0 ) {                    // topmost list
-                if( ixhbase != NULL ) {     // displace prior index_dict head
+                if( ixhbase != NULL ) {         // displace prior index_dict head
                     ixhwk->next  = ixhbase;
                     ixhwork = ixhwk;
                     index_dict = ixhwk;
@@ -302,8 +306,8 @@ ix_h_blk * find_create_ix_h_entry( ix_h_blk * ixhwork, ix_h_blk * ixhbase,
                     index_dict = ixhwk;
                 }
             } else {                            // sub-list
-                if( ixhbase != NULL ) {     // new head of sub-list
-                    ixhwk->next  = ixhwork;
+                if( ixhbase != NULL ) {         // new head of sub-list
+                    ixhwk->next  = ixhbase->lower;
                     ixhbase->lower = ixhwk;
                 } else {                        // cannot be NULL for sub-list
                     internal_err( __FILE__, __LINE__ );
