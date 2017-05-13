@@ -286,9 +286,7 @@ void    scr_cw( void )
     int             len;
 
     p = scan_start;
-    while( *p && *p != ' ' ) {          // over cw
-        p++;
-    }
+
     while( *p && *p == ' ' ) {          // next word start
         p++;
     }
@@ -331,9 +329,7 @@ void    scr_dc( void )
     int const   max_opt = sizeof( options) / sizeof( options[0] );
 
     p = scan_start;
-    while( *p && *p != ' ' ) {          // over dc
-        p++;
-    }
+
     while( *p && *p == ' ' ) {          // next word start = option
         p++;
     }

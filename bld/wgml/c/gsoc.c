@@ -72,7 +72,9 @@ void    scr_oc( void )
     if( GlobalFlags.lastpass ) {
         p = scan_start;                 // next char after .oc
         if( *p ) {                      // line operand specified
-            p++;                        // over space
+            while( *p == ' ' ) {
+                p++;
+            }
             if( *p ) {
                 ob_oc( p );
                 if( input_cbs->fmflags & II_research ) {

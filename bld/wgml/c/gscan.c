@@ -459,10 +459,8 @@ static void     scan_script( void )
 
         toklen = pt - token_buf;
 
-        if( *p && (*p != ' ') || toklen == 0 ) {// no valid script controlword / macro
-//          if( !ProcFlags.literal ) {   // TBD
-//             cw_err();
-//          }
+        if( !ProcFlags.CW_sep_ignore &&
+                (*p && (*p != ' ') || toklen == 0) ) {// no valid script controlword / macro
             scan_start = scan_restart;  // treat as text
             return;
         }

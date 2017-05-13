@@ -144,9 +144,7 @@ static void process_co_ju( bool both , char *cwcurr )
     int             len;
 
     p = scan_start;
-    while( *p && *p != ' ' ) {          // over cw
-        p++;
-    }
+
     while( *p && *p == ' ' ) {          // next word start
         p++;
     }
@@ -278,10 +276,8 @@ void    scr_co( void )
     cwcurr[1] = 'c';
     cwcurr[2] = 'o';
     cwcurr[3] = '\0';
+
     p = scan_start;
-    while( *p && *p != ' ' ) {          // over cw
-        p++;
-    }
     while( *p && *p == ' ' ) {          // next word start
         p++;
     }
@@ -340,6 +336,7 @@ void    scr_fo( void )
     cwcurr[1] = 'f';
     cwcurr[2] = 'o';
     cwcurr[3] = '\0';
+
     process_co_ju( true, cwcurr );      // .ju and .co processing
 }
 
@@ -356,6 +353,7 @@ void    scr_ju( void )
     cwcurr[1] = 'j';
     cwcurr[2] = 'u';
     cwcurr[3] = '\0';
+
     process_co_ju( false, cwcurr );     // only .ju processing
 
 }

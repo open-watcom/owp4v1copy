@@ -127,11 +127,11 @@ void    scr_sk( void )
     spc =  spacing;
 
     p = scan_start;
-    while( *p && *p != ' ' ) {          // over cw
-        p++;
-    }
+
     if( *p ) {
-        p++;                            // over space
+        while( *p == ' ' ) {
+            p++;
+        }
         if( *p == '-' ) {
             sign = -1;
             p++;

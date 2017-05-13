@@ -137,9 +137,7 @@ void    scr_pe( void )
     cwcurr[3] = '\0';
  
     p = scan_start;
-    while( *p && *p != ' ' ) {          // over cw
-        p++;
-    }
+
     while( *p && *p == ' ' ) {          // next word start
         p++;
     }

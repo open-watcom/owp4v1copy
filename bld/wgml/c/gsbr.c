@@ -78,11 +78,11 @@ void    scr_br( void )
     char        *   p;
 
     p = scan_start;
-    while( *p && *p != ' ' ) {          // over cw
-        p++;
-    }
+
     if( *p ) {
-        p++;                            // over space
+        while( *p == ' ' ) {
+            p++;
+        }
         if( *p ) {
             split_input( scan_start, p, false );// line operand
         }

@@ -77,7 +77,9 @@ void    scr_ct( void )
 
     p = scan_start;                     // next char after .ct
     if( *p ) {                          // line operand specified
-        p++;                            // over space
+        while( *p == ' ' ) {
+            p++;
+        }
         if( *p ) {
             if( !ProcFlags.fsp ) {      // preserved forced space
                 post_space = 0;

@@ -104,9 +104,7 @@ void scr_pa( void )
     cwcurr[3] = '\0';
 
     p = scan_start;
-    while( *p && *p != ' ' ) {          // over cw
-        p++;
-    }
+
     while( *p && *p == ' ' ) {          // next word start
         p++;
     }
@@ -254,9 +252,7 @@ void scr_cp( void )
     cwcurr[3] = '\0';
 
     p = scan_start;
-    while( *p && *p != ' ' ) {          // over cw
-        p++;
-    }
+
     while( *p && *p == ' ' ) {          // next word start
         p++;
     }

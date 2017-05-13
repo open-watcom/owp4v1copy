@@ -149,9 +149,7 @@ void    scr_ti( void )
     char        *   p;
 
     p = scan_start;
-    while( *p && *p != ' ' ) {          // over cw
-        p++;
-    }
+
     while( *p && *p == ' ' ) {          // next word start
         p++;
     }
@@ -169,9 +167,7 @@ void    scr_tr( void )
     char        *   p;
 
     p = scan_start;
-    while( *p && *p != ' ' ) {          // over cw
-        p++;
-    }
+
     while( *p && *p == ' ' ) {          // next word start
         p++;
     }

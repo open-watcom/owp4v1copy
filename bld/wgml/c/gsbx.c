@@ -2279,9 +2279,6 @@ void scr_bx( void )
     }
 
     p = scan_start;
-    while( *p && *p != ' ' ) {          // over cw
-        p++;
-    }
 
     while( *p && (*p == ' ') ) {
         p++;
