@@ -3677,7 +3677,8 @@ and
 .mono LDBL_&SYSRB.
 refer to type
 .kw long double
-..ct ..li .
+..ct ..li
+:cmt. was " ." after "..li", apparently needed to make begbull recognizable
 .begbull
 :cmt..keep begin
 .bull
