@@ -799,6 +799,7 @@ void gml_efig( const gmltag * entry )
 
                     last_page_out();
                     reset_t_page();
+                    fig_entry->pageno++;    // update to page FIG ends on
 
                     if( (cur_doc_el_group->depth + bias) <= t_page.max_depth ) {
 
@@ -1162,6 +1163,7 @@ void gml_figdesc( const gmltag * entry )
     p = scan_start;
 
     if( figcap_done ) {                         // FIGCAP was present
+        post_space = 0;
         ProcFlags.ct = true;                    // emulate CT
         input_cbs->fmflags &= ~II_eol;          // ":" is never EOL
         process_text( ":", g_curr_font);        // uses FIGCAP font

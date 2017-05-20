@@ -39,7 +39,7 @@
 /*  find an index item number reference in index_dict                      */
 /***************************************************************************/
 
-static bool find_num_ref( uint32_t ref, ix_e_blk * * base )
+static bool find_num_ref( ix_e_blk * * base )
 {
     bool            retval  = false;
     ix_e_blk    *   cur_ieh;
@@ -47,11 +47,11 @@ static bool find_num_ref( uint32_t ref, ix_e_blk * * base )
 
     cur_ieh = *base;                    // starting point is value passed
     while( cur_ieh != NULL ) {
-        if( ref > cur_ieh->page_no ) {  // new is later in alphabet
+        if( (page + 1) > cur_ieh->page_no ) {       // new is later in list
             old_ieh = cur_ieh;
             cur_ieh = cur_ieh->next;
             continue;
-        } else if( ref < cur_ieh->page_no ) {     // new is earlier in alphabet
+        } else if( (page + 1) < cur_ieh->page_no ) {// new is earlier in list
             *base = old_ieh;           // use old_ixh as insert point
             break;                     // entry found, and is in *entry
         } else {                       // must be equal
@@ -153,8 +153,9 @@ static bool find_index_item( char * item, uint32_t len, ix_h_blk ** entry )
                 old_ixh = cur_ixh;
                 cur_ixh = cur_ixh->next;
                 continue;
-            } else {                    // shouldn't be possible
-                internal_err( __FILE__, __LINE__ );
+            } else {                    // new matches start and so is earlier
+                *entry = old_ixh;       // use old_ixh as insert point
+                break;                  // entry found, and is in *entry
             }
         }
     }
@@ -171,8 +172,8 @@ static bool find_index_item( char * item, uint32_t len, ix_h_blk ** entry )
 /*  find or create/insert new index reference entry                        */
 /***************************************************************************/
 
-void find_create_ix_e_entry( entry_list * entry, uint32_t num, char * ref,
-                                   size_t len, ereftyp type )
+void find_create_ix_e_entry( ix_h_blk * ixhwork, char * ref, size_t len,
+                             ix_h_blk * seeidwork, ereftyp type )
 {
     bool                found;
     ix_e_blk    *   *   base;
@@ -181,31 +182,42 @@ void find_create_ix_e_entry( entry_list * entry, uint32_t num, char * ref,
 
     switch( type ) {
         case pgmajor :
-            base = &entry->major_pgnum;
-            ixework = entry->major_pgnum;
-            found = find_num_ref( num, &ixework );
+            base = &ixhwork->entry->major_pgnum;
+            ixework = ixhwork->entry->major_pgnum;
+            found = find_num_ref( &ixework );
             break;
         case pgmajorstring :
-            base = &entry->major_string;
-            ixework = entry->major_string;
+            base = &ixhwork->entry->major_string;
+            ixework = ixhwork->entry->major_string;
             found = find_string_ref( ref, len, &ixework );
             break;
         case pgpageno :
+            base = &ixhwork->entry->normal_pgnum;
+            ixework = ixhwork->entry->normal_pgnum;
+            found = find_num_ref( &ixework );
+            break;
         case pgstart :
         case pgend :
-            base = &entry->normal_pgnum;
-            ixework = entry->normal_pgnum;
-            found = find_num_ref( num, &ixework );
+            base = &ixhwork->entry->normal_pgnum;
+            ixework = ixhwork->entry->normal_pgnum;
+            found = find_num_ref( &ixework );
+            if( found ) {           // ensure correct type
+                ixework->entry_typ = type;
+            }
             break;
         case pgstring :
-            base = &entry->normal_string;
-            ixework = entry->normal_string;
-            found = find_num_ref( num, &ixework );
+            base = &ixhwork->entry->normal_string;
+            ixework = ixhwork->entry->normal_string;
+            found = find_string_ref( ref, len, &ixework );
             break;
         case pgsee :
-            base = &entry->see_string;
-            ixework = entry->see_string;
-            found = find_string_ref( ref, len, &ixework );
+            base = &ixhwork->entry->see_string;
+            ixework = ixhwork->entry->see_string;
+            if( (seeidwork != 0) && ixhwork->prt_term_len > 0 ) {   // insert per seeid->ix_term, display prt_term
+                found = find_string_ref( seeidwork->ix_term, seeidwork->ix_term_len, &ixework );
+            } else {
+                found = find_string_ref( ref, len, &ixework );
+            }
             break;
         case pgnone :       // should never appear used here, nothing to do
         default :           // out-of-range enum value
@@ -225,13 +237,19 @@ void find_create_ix_e_entry( entry_list * entry, uint32_t num, char * ref,
         ixewk = mem_alloc( sizeof( ix_e_blk ) );
         ixewk->next = NULL;
         ixewk->entry_typ = type;
+        ixewk->prt_text = NULL;
+        if( (seeidwork != NULL) && (seeidwork->prt_term_len > 0 ) ) {
+            ixewk->prt_text = mem_alloc( seeidwork->prt_term_len + 1);
+            ixewk->prt_text[0] = '\0';
+            strcpy_s( ixewk->prt_text, seeidwork->prt_term_len + 1, seeidwork->prt_term );
+        }
         if( type >= pgstring ) {
             ixewk->page_text = mem_alloc( len + 1);
             memcpy_s( ixewk->page_text, len + 1, ref, len );
             ixewk->page_text[len] = '\0';
             ixewk->page_text_len = len;
         } else {
-            ixewk->page_no = num;
+            ixewk->page_no = page + 1;
             ixewk->style = find_pgnum_style();
         }
 
@@ -247,11 +265,12 @@ void find_create_ix_e_entry( entry_list * entry, uint32_t num, char * ref,
                 ixewk->next  = ixework->next;
                 ixework->next = ixewk;
             } else {                        // new reference list head
+                ixewk->next = *base;
                 ixework = ixewk;
             }
         }
+        *base = ixework;
     }
-    *base = ixework;
     return;
 }
 

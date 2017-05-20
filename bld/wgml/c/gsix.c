@@ -160,6 +160,7 @@ void scr_ix( void )
     int             lvl;                // max index level in control word data
     int             k;
     char        *   ix[3] = { NULL, NULL, NULL };   // index string start pointers
+    char        *   p;
     char            pix_char;           // major reference prefix char ($pix)
     char        *   ref = NULL;         // ref string start pointer
     getnum_block    gn;
@@ -217,18 +218,27 @@ void scr_ix( void )
 
         if( (cc == pos) || (cc == neg) ) {
 
-            /* Structures are ignored, issue warning */
-
-            xx_warn_att( wng_unsupp_cw_opt, "structure" );
-
-            if( (gn.result < 1) || (gn.result > 9) ) { // out of range
-                xx_line_err( err_struct_range, tok_start );
+            p = tok_start;
+            for( k = 0; k < arg_flen; k++ ) {
+                if( (*p == ' ') || (*p < '0') || (*p > '9') ) {
+                    break;
+                }
+                p++;
             }
-            cc = getarg();                  // get next operand
-            if( cc == omit || cc == quotes0 ) { // no operands
-                parm_miss_err( cwcurr, tok_start );
-            }
+            if( *p == ' ' ) {   // if space found first, then numeric is structure number
 
+                /* Structures are ignored, issue warning */
+
+                xx_warn_att( wng_unsupp_cw_opt, "structure" );
+
+                if( (gn.result < 1) || (gn.result > 9) ) { // out of range
+                    xx_line_err( err_struct_range, tok_start );
+                }
+                cc = getarg();                  // get next operand
+                if( cc == omit || cc == quotes0 ) { // no operands
+                    parm_miss_err( cwcurr, tok_start );
+                }
+            }
         } else {
             
             /* Check for '.' (the control word indicator) */
@@ -338,36 +348,30 @@ void scr_ix( void )
             init_entry_list( ixhwk);
             if( ref != NULL ) {
                 if( do_major ) {
-                    find_create_ix_e_entry( ixhwk->entry, 0, ref, reflen,
-                                            pgmajorstring );
+                    find_create_ix_e_entry( ixhwk, ref, reflen, NULL, pgmajorstring );
                 } else {
-                    find_create_ix_e_entry( ixhwk->entry, 0, ref, reflen, pgstring );
+                    find_create_ix_e_entry( ixhwk, ref, reflen, NULL, pgstring );
                 }
             } else {
                 if( do_major ) {
-                    find_create_ix_e_entry( ixhwk->entry, page + 1, NULL, 0, pgmajor );
+                    find_create_ix_e_entry( ixhwk, NULL, 0, NULL, pgmajor );
                 } else {
-                    find_create_ix_e_entry( ixhwk->entry, page + 1, NULL, 0,
-                                            pgpageno );
+                    find_create_ix_e_entry( ixhwk, NULL, 0, NULL, pgpageno );
                 }
             }
         } else {
             entry = ixhwk->entry;
             if( ref != NULL ) {
                 if( do_major ) {
-                    find_create_ix_e_entry( ixhwk->entry, 0, ref, reflen,
-                                            pgmajorstring );
+                    find_create_ix_e_entry( ixhwk, ref, reflen, NULL, pgmajorstring );
                 } else {
-                    find_create_ix_e_entry( ixhwk->entry, 0, ref, reflen,
-                                            pgstring );
+                    find_create_ix_e_entry( ixhwk, ref, reflen, NULL, pgstring );
                 }
             } else {
                 if( do_major ) {
-                    find_create_ix_e_entry( ixhwk->entry, page + 1, NULL, 0,
-                                            pgmajor );
+                    find_create_ix_e_entry( ixhwk, NULL, 0, NULL, pgmajor );
                 } else {
-                    find_create_ix_e_entry( ixhwk->entry, page + 1, NULL, 0,
-                                            pgpageno );
+                    find_create_ix_e_entry( ixhwk, NULL, 0, NULL, pgpageno );
                 }
             }
         }

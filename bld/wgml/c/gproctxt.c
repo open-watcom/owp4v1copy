@@ -1385,7 +1385,7 @@ size_t intrans( char *data, size_t len, font_number font )
     char    *pt;    // target ptr
     size_t  k;
 
-    if( ProcFlags.in_trans ) {
+    if( ProcFlags.in_trans ) {                          // input translation active
         ps = data;
         pt = data;
         for( k = 0; k <= len; k++ ) {
@@ -1893,7 +1893,21 @@ void process_text( const char *text, font_number font )
                         }
                     }
                 }
+            } else if( ProcFlags.wrap_indent && (font != g_prev_font) ) { // font changed (INDEX see output)
+                n_chars = process_word( NULL, 0, g_prev_font );
+                n_chars->type = norm;
+                g_cur_h_start += post_space;
+                post_space = 0;
+                n_chars->x_address = g_cur_h_start;
+                t_line->last->next = n_chars;
+                n_chars->prev = t_line->last;
+                if( t_line->line_height < wgml_fonts[g_prev_font].line_height ) {
+                    t_line->line_height = wgml_fonts[g_prev_font].line_height;
+                }
+                t_line->last = n_chars;
+                n_chars = NULL;
             }
+
             while( *p == ' ' ) {    // skip initial spaces
                 p++;
             }
@@ -2127,7 +2141,7 @@ void process_text( const char *text, font_number font )
                     wrap_done = true;
                 }
                 if( s_chars == NULL ) {
-                    n_chars->x_address = g_cur_left;
+                    n_chars->x_address = g_cur_h_start;
                 } else {
                     if( t_line == NULL ) {
                         t_line = alloc_text_line();
@@ -2318,7 +2332,8 @@ void process_text( const char *text, font_number font )
             }
             pword = p + 1;          // new word start or end of input record
         } else if( !*p && (input_cbs->fmflags & II_eol)
-                && (input_cbs->fmflags & II_file)) { // insert spaces at actual end-of-line
+                && (input_cbs->fmflags & II_file)
+                && !ProcFlags.wrap_indent) { // insert spaces at actual end-of-line, except in INDEX
             pword = p;
             post_space = wgml_fonts[font].spc_width;
             if( !ProcFlags.stop_xspc && stop_fnd

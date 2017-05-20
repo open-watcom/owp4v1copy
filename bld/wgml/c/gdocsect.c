@@ -31,17 +31,19 @@
 #include    "wgml.h"
 #include    "gvars.h"
 
+#define CHAR_FRAME_LEN 5    // works for monospaced fonts with char width 1
+
 static  bool            concat_save;                // for ProcFlags.concat
 static  bool            ref_done;                   // true if a reference has been done
-static  char            frame_line_1[]  = "     ";  // box top line/rule line/'character string' line
-static  char            frame_line_2[]  = "     ";  // box middle line
-static  char            frame_line_3[]  = "     ";  // box bottom line
+static  char            frame_line_1[CHAR_FRAME_LEN + 1]; // box top line/rule line/'character string' line
+static  char            frame_line_2[CHAR_FRAME_LEN + 1]; // box blank/middle line
+static  char            frame_line_3[CHAR_FRAME_LEN + 1]; // box bottom line
 static  int32_t         save_indent     = 0;        // used with TITLEP/eTITLEP
 static  int32_t         save_indentr    = 0;        // used with TITLEP/eTITLEP
 static  ju_enum         justify_save;               // for ProcFlags.justify
 static  line_number     titlep_lineno   = 0;        // TITLEP tag line number
 static  size_t          cur_count       = 0;        // current number of characters copied
-static  size_t          frame_line_len  = 0;        // length of frame lines
+static  size_t          frame_line_len  = CHAR_FRAME_LEN;   // length of frame lines
 static  size_t          str_count       = 0;        // IXHEAD 'character string' strlen()
 static  symsub      *   ixjval;                     // &sysixj value
 static  symsub      *   ixrefval;                   // &sysixref value
@@ -255,11 +257,9 @@ static void gen_rule_head( char * letter )
 {
     doc_element *   h_line_el;      // PS only
     int             i;
-    size_t          sav_count;      // line_buff.current on entry, to reset state at end
     uint32_t        cur_limit;
     uint32_t        full_line;      // PS only: original frame_line_len
     uint32_t        half_line;      // one half of frame_line_len
-    uint32_t        sav_width;      // cur_width on entry, to reset state at end
 
     half_line = frame_line_len / 2;
     if( bin_driver->hline.text == NULL ) {                      // character device
@@ -305,24 +305,22 @@ static void gen_rule_head( char * letter )
             h_line_el->element.hline.h_len = full_line;
             insert_col_main( h_line_el );
         } else {                        // char_frame
-            sav_count = line_buff.current;
-            sav_width = cur_width;
             cur_limit = full_line / str_width;
+            cur_count = 0;
+            cur_width = 0;
             line_buff.current = cur_limit;
-            if( full_line % str_width > 0 ) {       // partial copy will be needed
-                line_buff.current++;
-            }
             line_buff.current *= str_count;                 // length in characters
             while( line_buff.current > line_buff.length ) {
                 line_buff.length *= 2;
                 line_buff.text = mem_realloc( line_buff.text, line_buff.length + 1 );
             }
-            for( i = cur_count; i < cur_limit; i++ ) {   // fill text with copies of full string
+            line_buff.text[0] = '\0';
+            for( i = 0; i < cur_limit; i++ ) {              // fill text with copies of full string
                 strcat_s( line_buff.text, line_buff.current + 1, layout_work.ixhead.frame.string );
                 cur_width += str_width;
                 cur_count += str_count;
             }
-            if( cur_width < frame_line_len ) {                  // text not full yet
+            if( cur_width < full_line ) {                  // text not full yet
                 for( i = 0; i < strlen( layout_work.ixhead.frame.string ); i++ ) {
                     cur_width += wgml_fonts[layout_work.ixhead.font].width_table[(unsigned char)layout_work.ixhead.frame.string[i]];
                     if( cur_width >= full_line ) {  // check what width would be if character were copied
@@ -343,8 +341,6 @@ static void gen_rule_head( char * letter )
             g_cur_h_start += ixh_indent;
             process_text( line_buff.text, layout_work.ixhead.font );    // bottom line
             scr_process_break();
-            cur_count = sav_count;
-            cur_width = sav_width;
             line_buff.current = cur_count;
             line_buff.text[line_buff.current] = '\0';
         }
@@ -363,14 +359,17 @@ static void gen_ref_list( ix_e_blk * refs, font_number font )
     ix_e_blk    *   cur_ref;
 
     cur_ref = refs;
-    while( cur_ref != NULL ) {                      // something more to print
+    while( cur_ref != NULL ) {
         ProcFlags.ct = true;
         post_space = 0;
         if( ref_done ) {
-            process_text( ixrefval->value, font );
+            process_text( ixrefval->value, layout_work.ixpgnum.font );
         }
+
         switch( cur_ref->entry_typ ) {
         case pgmajorstring :
+            ProcFlags.ct = true;
+            post_space = wgml_fonts[font].spc_width;
         case pgstring :
             if( cur_ref->page_text[0] != '\0' ) {     // if not null string
                 process_text( cur_ref->page_text, font );
@@ -395,9 +394,18 @@ static void gen_ref_list( ix_e_blk * refs, font_number font )
         case pgend :
             xx_simple_err( err_open_page_range );
         case pgmajor :
+            ProcFlags.ct = true;
+            post_space = 0;
         case pgpageno :
             format_num( cur_ref->page_no, &buffer, sizeof( buffer ), cur_ref->style );
             process_text( buffer, font );
+            break;
+        case pgsee :
+            if( cur_ref->prt_text != NULL ) {
+                process_text( cur_ref->prt_text, g_curr_font );           
+            } else if( cur_ref->page_text_len > 0 ) {  // if not null string
+                process_text( cur_ref->page_text, g_curr_font );
+            }
             break;
         default:
             internal_err( __FILE__, __LINE__ );
@@ -414,25 +422,27 @@ static void gen_ref_list( ix_e_blk * refs, font_number font )
 /*  output list of 'see'/'see also' references                             */
 /***************************************************************************/
 
-static void gen_see_list( ix_e_blk * refs, font_number font, uint32_t level, bool has_sub )
+static void gen_see_list( ix_e_blk * refs, font_number font, uint32_t level,
+                          bool has_sub )
 {
     ix_e_blk    *   cur_ref;
 
     cur_ref = refs;
-    while( cur_ref != NULL ) {                      // something more to print
+    while( cur_ref != NULL ) {
         scr_process_break();
         g_cur_h_start += wrap[level];
         ProcFlags.ct = true;
         post_space = 0;
-        if( ref_done || has_sub) {
+        if( ref_done || has_sub ) {
             process_text( layout_work.index.see_also_string, font );
         } else {
             process_text( layout_work.index.see_string, font );
         }
-        if( cur_ref->page_text[0] != '\0' ) {  // if not null string
+        if( cur_ref->prt_text != NULL ) {
+            process_text( cur_ref->prt_text, g_curr_font );           
+        } else if( cur_ref->page_text_len > 0 ) {  // if not null string
             process_text( cur_ref->page_text, g_curr_font );
         }
-        ref_done = true;
         cur_ref = cur_ref->next;
     }
 
@@ -578,60 +588,54 @@ static void gen_figlist( void )
 static void gen_index( void )
 {
     bool            first[3];           // tag first index entry in group
+    bool            in_trans_sav;
     char            letter[2];
     int             i;
     ix_h_blk    *   ixh1;
     ix_h_blk    *   ixh2;
     ix_h_blk    *   ixh3;
     uint32_t        cur_limit;
-    uint32_t        frame_height;
     uint32_t        indent[3];          // I1/I2/I3 cumulative indents
+    uint32_t        spc_count;
 
     if( index_dict == NULL ) return;    // no index_dict, no INDEX
 
     scr_process_break();                // flush any pending text
     start_doc_sect();
 
+    in_trans_sav = ProcFlags.in_trans;
+    ProcFlags.in_trans = false;         // turn off input translation
+
     /* Set up for device/frame selected by the LAYOUT tag IXHEAD*/
 
     if( layout_work.ixhead.frame.type != none ) {
         if( layout_work.ixhead.frame.type == box_frame ) {  // frame is box
             if( bin_driver->dbox.text == NULL ) {           // character device
-                frame_height = 5;
-                frame_line_len = sizeof( frame_line_1 );    // each line has same length
-                frame_line_len--;                           // exclude terminal char
                 memset( &frame_line_1[1], bin_device->box.horizontal_line,
                         frame_line_len - 2 );
                 frame_line_1[0] = bin_device->box.top_left;
                 frame_line_1[frame_line_len - 1 ] = bin_device->box.top_right;
                 frame_line_2[0] = bin_device->box.vertical_line;
+                memset( &frame_line_2[1], ' ', frame_line_len - 2 );
                 frame_line_2[frame_line_len - 1 ] = bin_device->box.vertical_line;               
                 memset( &frame_line_3[1], bin_device->box.horizontal_line,
                         frame_line_len - 2 );
                 frame_line_3[0] = bin_device->box.bottom_left;
                 frame_line_3[frame_line_len - 1 ] = bin_device->box.bottom_right;
-            } else {                // use drawing commands
-                frame_height = 5;
-                frame_line_len = 8 * wgml_fonts[layout_work.ixhead.font].spc_width; // base length, full length varies
             }
-        } else if( layout_work.ixhead.frame.type == rule_frame  ) { // rul frame
+        } else if( layout_work.ixhead.frame.type == rule_frame  ) { // rule frame
             if( bin_driver->hline.text == NULL ) {          // character device
-                frame_height = 5;
-                frame_line_len = sizeof( frame_line_1 );    // each line has same length
-                frame_line_len--;                           // exclude terminal char
                 memset( frame_line_1, bin_device->box.horizontal_line,
                         frame_line_len );
-            } else {                // use drawing commands
-                frame_height = 5;
-                frame_line_len = 8 * wgml_fonts[layout_work.ixhead.font].spc_width; // base length, full length varies
             }
         } else if( layout_work.ixhead.frame.type == char_frame ) {   // frame is 'character string'
+            str_count = strlen( layout_work.ixhead.frame.string );
+            str_width = 0;
+            for( i = 0; i < strlen( layout_work.ixhead.frame.string ); i++ ) {
+                str_width += wgml_fonts[layout_work.ixhead.font].width_table[(unsigned char)layout_work.ixhead.frame.string[i]];
+            }
             if( bin_driver->hline.text == NULL ) {          // character device
-                frame_height = 4;
-                frame_line_len = sizeof( frame_line_1 );    // each line has same length
-                frame_line_len --;                          // ignore terminator
                 frame_line_1[0] = '\0';
-                str_count = strlen( layout_work.ixhead.frame.string );
                 cur_limit = frame_line_len / str_count;     // number of complete strings that will fit
                 cur_width = 0;
                 for( i = 0; i < cur_limit; i++  ) {         // fill text with full string
@@ -645,35 +649,10 @@ static void gen_index( void )
                               frame_line_len - cur_width );
                 }
                 frame_line_1[frame_line_len] = '\0';
-            } else {                // configure for use with PS
-                frame_height = 4;
-                frame_line_len = 8 * wgml_fonts[layout_work.ixhead.font].spc_width; // base length, full length varies
-                str_count = strlen( layout_work.ixhead.frame.string );
-                str_width = 0;
-                for( i = 0; i < strlen( layout_work.ixhead.frame.string ); i++ ) {
-                    str_width += wgml_fonts[layout_work.ixhead.font].width_table[(unsigned char)layout_work.ixhead.frame.string[i]];
-                }
-                cur_limit = frame_line_len / str_width;
-                cur_count = 0;
-                cur_width = 0;
-                line_buff.current = cur_limit;
-                line_buff.current *= str_count;                 // length in characters
-                while( line_buff.current > line_buff.length ) {
-                    line_buff.length *= 2;
-                    line_buff.text = mem_realloc( line_buff.text, line_buff.length + 1 );
-                }
-                line_buff.text[0] = '\0';
-                for( i = 0; i < cur_limit; i++ ) {              // fill text with copies of full string
-                    strcat_s( line_buff.text, line_buff.current + 1, layout_work.ixhead.frame.string );
-                    cur_width += str_width;
-                    cur_count += str_count;
-                }
             }
         } else {                                        // shouldn't be here
             internal_err( __FILE__, __LINE__ );
         }
-    } else {
-        frame_height = 3;
     }
 
     /* Initialize values used in outputting the index */
@@ -729,13 +708,21 @@ static void gen_index( void )
 
             letter[0] = toupper( *(ixh1->ix_term) );
 
-            if( frame_height * wgml_fonts[layout_work.ixhead.font].line_height
+            if( 4 * wgml_fonts[layout_work.ixhead.font].line_height
                    + t_page.cur_depth > t_page.max_depth ) {
                 do_page_out();
                 reset_t_page();
             }
 
             if( layout_work.ixhead.header == true ) {
+                spc_count = wgml_fonts[layout_work.ixhead.font].width_table[(unsigned char) *letter] /
+                            wgml_fonts[layout_work.ixhead.font].spc_width;  // integer ratio
+                if( (wgml_fonts[layout_work.ixhead.font].width_table[(unsigned char) *letter] %
+                            wgml_fonts[layout_work.ixhead.font].spc_width) > 0 ) {
+                    spc_count++;                            // increment unless exact ratio
+                }
+                frame_line_len = (2 + (2 * spc_count)) *
+                    wgml_fonts[layout_work.ixhead.font].spc_width;  // length without letter width
                 g_cur_h_start += ixh_indent;
 
                 switch( layout_work.ixhead.frame.type ) {
@@ -743,10 +730,16 @@ static void gen_index( void )
                     process_text( letter, layout_work.ixhead.font );
                     break;
                 case box_frame :
+                    if( !ProcFlags.page_started ) {  // at top of page
+                        g_top_skip = wgml_fonts[layout_work.ixhead.font].line_height;
+                    }
                     gen_box_head( letter );
                     break;
                 case rule_frame :
-                case char_frame :
+                    if( !ProcFlags.page_started ) {  // at top of page
+                        g_top_skip = wgml_fonts[layout_work.ixhead.font].line_height;
+                    }
+                case char_frame :                   // no top-of-page correction in wgml 4.0
                     gen_rule_head( letter );
                     break;
                 default:
@@ -788,7 +781,12 @@ static void gen_index( void )
 
         if( ixh1->entry != NULL ) {
             post_space = 0;
-            process_text( layout_work.ix[0].index_delim, layout_work.ix[0].font );
+            if( (ixh1->entry->major_pgnum != NULL) ||
+                    (ixh1->entry->major_string != NULL) || 
+                    (ixh1->entry->normal_pgnum != NULL) || 
+                    (ixh1->entry->normal_string != NULL) ) {    // see_string alone doesn't need the index_delim
+                process_text( layout_work.ix[0].index_delim, layout_work.ix[0].font );
+            }
             gen_all_refs( ixh1->entry, 0, ixh1->lower != NULL );
         }
         scr_process_break();
@@ -820,7 +818,12 @@ static void gen_index( void )
 
             if( ixh2->entry != NULL ) {
                 post_space = 0;
-                process_text( layout_work.ix[1].index_delim, layout_work.ix[1].font );
+                if( (ixh2->entry->major_pgnum != NULL) ||
+                        (ixh2->entry->major_string != NULL) || 
+                        (ixh2->entry->normal_pgnum != NULL) || 
+                        (ixh2->entry->normal_string != NULL) ) {    // see_string alone doesn't need the index_delim
+                    process_text( layout_work.ix[1].index_delim, layout_work.ix[1].font );
+                }
                 gen_all_refs( ixh2->entry, 1, ixh2->lower != NULL );
             }
             scr_process_break();
@@ -852,7 +855,12 @@ static void gen_index( void )
 
                 if( ixh3->entry != NULL ) {
                     post_space = 0;
-                    process_text( layout_work.ix[2].index_delim, layout_work.ix[2].font );
+                    if( (ixh3->entry->major_pgnum != NULL) ||
+                            (ixh3->entry->major_string != NULL) || 
+                            (ixh3->entry->normal_pgnum != NULL) || 
+                            (ixh3->entry->normal_string != NULL) ) {    // see_string alone doesn't need the index_delim
+                        process_text( layout_work.ix[2].index_delim, layout_work.ix[2].font );
+                    }
                     gen_all_refs( ixh3->entry, 2, ixh3->lower != NULL  );
                 }
                 scr_process_break();
@@ -870,6 +878,7 @@ static void gen_index( void )
         }
     }
     ProcFlags.concat = concat_save;
+    ProcFlags.in_trans = in_trans_sav;
     ProcFlags.justify = justify_save;
 }
 
@@ -989,6 +998,7 @@ static void gen_toc( void )
                 g_page_right += size;
             }
             ProcFlags.ct = true;                    // emulate CT
+            g_cur_h_start += wgml_fonts[layout_work.tocpgnum.font].spc_width;
             g_curr_font = FONT0;
             process_text( "$", g_curr_font );
             format_num( curr->pageno, &buffer, sizeof( buffer ), curr->style );

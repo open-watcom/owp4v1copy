@@ -1214,10 +1214,11 @@ typedef enum {          // definition order is important
 
 typedef struct ix_e_blk {                   // index entry for pagenos / text
     struct  ix_e_blk    *   next;           // next entry
+            char        *   prt_text;       // used with seeid when ref has prt_text
     union {
         struct {
-            char        *   page_text;      // pageno is text (IX ref, pg string, see/seeid string)
-            size_t          page_text_len;  // pageno text length
+            char        *   page_text;      // reference is text (IX ref, pg string, see/seeid string)
+            size_t          page_text_len;  // reference text length
         };
         struct {
             uint32_t        page_no;        // pageno is number
