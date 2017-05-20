@@ -291,6 +291,7 @@ global  ffh_entry   *   hd_list;        // list of headings in order encountered
 global  hd_num_data     hd_nums[hds_appendix];  // heading hierarchy numbering
 
 // index support
+global  bool            ixhlvl[2];      // true for levels that exist 
 global  ix_h_blk    *   index_dict;     // index structure dictionary
 global  ix_h_blk    *   ixhtag[3];      // current entry for each level in index
 global  ref_entry   *   ix_ref_dict;    // reference id dictionary :Ix :IHx :IREF

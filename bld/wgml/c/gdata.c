@@ -341,21 +341,24 @@ void init_pass_data( void )
     hm = bin_device->vertical_base_units / LPI;         // heading margin &syshm
     fm = hm;                                            // footing margin &sysfm
 
-    g_indent            = 0;
-    g_indentr           = 0;
+    g_indent    = 0;
+    g_indentr   = 0;
 
-    figlist_toc         = gs_none;
+    figlist_toc = gs_none;
 
-    fig_count           = 0;
-    fig_entry           = fig_list;     // start each pass at start of FIG list
+    fig_count   = 0;
+    fig_entry   = fig_list;     // start each pass at start of FIG list
 
-    fn_count            =0;
-    fn_entry            = fn_list;      // start each pass at start of FN list
+    fn_count    = 0;
+    fn_entry    = fn_list;      // start each pass at start of FN list
 
-    hd_entry            = hd_list;      // start each pass at start of Hx list
+    hd_entry    = hd_list;      // start each pass at start of Hx list
 
-    ixhtag[0] = NULL;                   // current level 1 entry in index
-    ixhtag[1] = NULL;                   // current level 2 entry in index
-    ixhtag[2] = NULL;                   // current level 3 entry in index
+    ixhlvl[0]   = false;        // index starts with no level 1 entry
+    ixhlvl[1]   = false;        // index starts with no level 2 entry
+
+    ixhtag[0]   = NULL;         // current level 1 entry in index
+    ixhtag[1]   = NULL;         // current level 2 entry in index
+    ixhtag[2]   = NULL;         // current level 3 entry in index
     free_ix_e_index_dict( &index_dict );// clear some index entries
 }

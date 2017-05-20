@@ -83,12 +83,23 @@ static void gml_ixxx_common( const gmltag * entry, int hx_lvl )
         return;
     }
     lvlc = '0' + hx_lvl;
-    *hxstring = GML_char;         // construct tagname for possible error msg
+    *hxstring = GML_char;           // construct tagname for possible error msg
     strcpy_s( (hxstring + 1), TAG_NAME_LENGTH, entry->tagname );
 
-    if( hx_lvl > 1 ) {          // test for missing previous parent index tag
-        if( ixhtag[hx_lvl - 1] == NULL ) {
-            xx_tag_err( err_parent_undef, hxstring );
+    if( hx_lvl > 0 ) {              // exclude IREF
+        if( hx_lvl == 1 ) {         // first level tag
+            ixhlvl[0] = true;       // record first level found
+            ixhlvl[1] = false;      // second level not found
+        } else if( hx_lvl == 2 ) {  // second level tag
+            if( !ixhlvl[0] ) {      // first level must exist
+                xx_tag_err( err_parent_undef, hxstring );
+            } else {
+                ixhlvl[1] = true;   // record first level found
+            }
+        } else if( hx_lvl == 3 ) {  // third level tag
+            if( !ixhlvl[1] ) {      // second level must exist
+                xx_tag_err( err_parent_undef, hxstring );
+            }
         }
     }
 
@@ -309,139 +320,155 @@ static void gml_ixxx_common( const gmltag * entry, int hx_lvl )
     }
 
     if( hx_lvl == 0 ) {                 // :IREF tag
-
-    /***********************************************************************/
-    /* processing for :IREF                                                */
-    /***********************************************************************/
-
         if( !refidseen ) {              // refid= missing
             xx_err( err_att_missing );
         }
-        if( GlobalFlags.lastpass ) {
+    }
+
+    if( GlobalFlags.lastpass ) {
+        if( hx_lvl == 0 ) {                 // :IREF tag
+
+        /***********************************************************************/
+        /* processing for :IREF                                                */
+        /***********************************************************************/
+
             if( refidseen && (refwk != NULL) ) {
                 ixhwk = refwk->hblk;
             } else {
                 ixhwk = ixhtag[hx_lvl];
             }
-        }
-        if( !ProcFlags.reprocess_line && *p ) {
-            if( *p == '.' ) p++;                // possible tag end
-            if( *p ) {
-                process_text( p, g_curr_font); // if text follows
-            }
-        }
 
-    } else if( hxstring[2] == lvlc ) {    // test for :Ix
-
-    /***********************************************************************/
-    /* processing for :Ix                                                  */
-    /***********************************************************************/
-
-        switch( hx_lvl ) {              // processing for :I1 :I2 :I3
-        case 1 :
-            ixhbase = ixhtag[hx_lvl - 1];
-            ixhwork = index_dict;
-            ixhwk = find_create_ix_h_entry( ixhwork, ixhbase, printtxt, printtxtlen,
-                                            txt, txtlen, hx_lvl - 1 );
-            printtxt = NULL;
-            ixhtag[hx_lvl] = ixhwk;
-            break;
-        case 2 :
-        case 3 :
-            if( refidseen && (refwk != NULL) ) {
-                if( hx_lvl > refwk->hblk->ix_lvl ) {
-                    ixhbase = refwk->hblk;
-                    ixhwork = refwk->hblk->lower;
-                } else {
-                    ixhbase = refwk->base;
-                    ixhwork = refwk->hblk;
+            if( !ProcFlags.reprocess_line && *p ) {
+                if( *p == '.' ) p++;                // possible tag end
+                if( *p ) {
+                    process_text( p, g_curr_font); // if text follows
                 }
-            } else {
+            }
+
+        } else if( hxstring[2] == lvlc ) {    // test for :Ix
+
+        /***********************************************************************/
+        /* processing for :Ix                                                  */
+        /***********************************************************************/
+
+            switch( hx_lvl ) {              // processing for :I1 :I2 :I3
+            case 1 :
+                ixhbase = ixhtag[hx_lvl - 1];
+                ixhwork = index_dict;
+                ixhwk = find_create_ix_h_entry( ixhwork, ixhbase, printtxt, printtxtlen,
+                                                txt, txtlen, hx_lvl - 1 );
+                printtxt = NULL;
+                ixhtag[hx_lvl] = ixhwk;
+                break;
+            case 2 :
+            case 3 :
+                if( refidseen && (refwk != NULL) ) {
+                    if( hx_lvl > refwk->hblk->ix_lvl ) {
+                        ixhbase = refwk->hblk;
+                        ixhwork = refwk->hblk->lower;
+                    } else {
+                        ixhbase = refwk->base;
+                        ixhwork = refwk->hblk;
+                    }
+                } else {
+                    ixhbase = ixhtag[hx_lvl - 1];
+                    ixhwork = ixhtag[hx_lvl - 1]->lower;
+                }
+                ixhwk = find_create_ix_h_entry( ixhwork, ixhbase, printtxt, printtxtlen,
+                                                txt, txtlen, hx_lvl - 1 );
+                printtxt = NULL;
+                if( !refidseen && (hx_lvl == 2) ) {
+                    ixhtag[hx_lvl] = ixhwk;
+                }
+                break;
+            default:
+                break;
+            }
+
+        } else if( hxstring[3] == lvlc ) {    // test for :IHx
+
+        /***********************************************************************/
+        /* processing for :IHx                                                 */
+        /***********************************************************************/
+
+            switch( hx_lvl ) {              // processing for :IH1 :IH2 :IH3
+            case 1 :
+                ixhbase = ixhtag[hx_lvl - 1];
+                ixhwork = index_dict;
+                ixhwk = find_create_ix_h_entry( ixhwork, ixhbase, printtxt, printtxtlen,
+                                                txt, txtlen, hx_lvl - 1 );
+                printtxt = NULL;
+                ixhtag[hx_lvl] = ixhwk;
+                break;
+            case 2 :
+            case 3 :
                 ixhbase = ixhtag[hx_lvl - 1];
                 ixhwork = ixhtag[hx_lvl - 1]->lower;
+                ixhwk = find_create_ix_h_entry( ixhwork, ixhbase, printtxt, printtxtlen,
+                                                txt, txtlen, hx_lvl - 1 );
+                printtxt = NULL;
+                if( hx_lvl == 2 ) {
+                    ixhtag[hx_lvl] = ixhwk;
+                }
+                break;
+            default:
+                break;
             }
-            ixhwk = find_create_ix_h_entry( ixhwork, ixhbase, printtxt, printtxtlen,
-                                            txt, txtlen, hx_lvl - 1 );
-            printtxt = NULL;
-            if( !refidseen && (hx_lvl == 2) ) {
-                ixhtag[hx_lvl] = ixhwk;
+        }
+
+        /***********************************************************************/
+        /* at this point, ixhwk has been set to the ix_h_block to which the    */
+        /* references are to be attached                                       */
+        /***********************************************************************/
+
+        if( hxstring[3] != lvlc ) {                             // not IH1/IH2/IH3
+            if( ixhwk->entry == NULL ) {
+                init_entry_list( ixhwk );
             }
-            break;
-        default:
-            break;
+            find_create_ix_e_entry( ixhwk, pgtext, pgtextlen, NULL, pgvalue );
         }
 
-    } else if( hxstring[3] == lvlc ) {    // test for :IHx
-
-    /***********************************************************************/
-    /* processing for :IHx                                                 */
-    /***********************************************************************/
-
-        switch( hx_lvl ) {              // processing for :IH1 :IH2 :IH3
-        case 1 :
-            ixhbase = ixhtag[hx_lvl - 1];
-            ixhwork = index_dict;
-            ixhwk = find_create_ix_h_entry( ixhwork, ixhbase, printtxt, printtxtlen,
-                                            txt, txtlen, hx_lvl - 1 );
-            printtxt = NULL;
-            ixhtag[hx_lvl] = ixhwk;
-            break;
-        case 2 :
-        case 3 :
-            ixhbase = ixhtag[hx_lvl - 1];
-            ixhwork = ixhtag[hx_lvl - 1]->lower;
-            ixhwk = find_create_ix_h_entry( ixhwork, ixhbase, printtxt, printtxtlen,
-                                            txt, txtlen, hx_lvl - 1 );
-            printtxt = NULL;
-            if( hx_lvl == 2 ) {
-                ixhtag[hx_lvl] = ixhwk;
+        if( seeidseen ) {   // get reference value from the ix_h_blk record found for seeid
+            if( ixhwk->entry == NULL ) {
+                init_entry_list( ixhwk );
             }
-            break;
-        default:
-            break;
+            find_create_ix_e_entry( ixhwk, seeidwk->hblk->ix_term,
+                                    seeidwk->hblk->ix_term_len, seeidwk->hblk, pgsee );
         }
-    }
 
-    /***********************************************************************/
-    /* at this point, ixhwk has been set to the ix_h_block to which the    */
-    /* references are to be attached                                       */
-    /***********************************************************************/
-
-    if( hxstring[3] != lvlc ) {                             // not IH1/IH2/IH3
-        if( ixhwk->entry == NULL ) {
-            init_entry_list( ixhwk );
+        if( seeseen ) {
+            if( ixhwk->entry == NULL ) {
+                init_entry_list( ixhwk );
+            }
+            find_create_ix_e_entry( ixhwk, seetext, seetextlen, NULL, pgsee );
         }
-        find_create_ix_e_entry( ixhwk, pgtext, pgtextlen, NULL, pgvalue );
-    }
-
-    if( seeidseen ) {   // get reference value from the ix_h_blk record found for seeid
-        if( ixhwk->entry == NULL ) {
-            init_entry_list( ixhwk );
-        }
-        find_create_ix_e_entry( ixhwk, seeidwk->hblk->ix_term,
-                                seeidwk->hblk->ix_term_len, seeidwk->hblk, pgsee );
-    }
-    if( seeseen ) {
-        if( ixhwk->entry == NULL ) {
-            init_entry_list( ixhwk );
-        }
-        find_create_ix_e_entry( ixhwk, seetext, seetextlen, NULL, pgsee );
     }
 
     if( idseen ) {                 // ID specified create reference entry
-        refwork = find_refid( ix_ref_dict, id );
-        if( refwork == NULL ) {             // new entry
-            refwork = (ref_entry *) mem_alloc( sizeof( ref_entry ) ) ;
-            init_ref_entry( refwork, id );
-            refwork->flags = rf_ix;
-            refwork->hblk = ixhwk;
-            refwork->base = ixhtag[hx_lvl - 1];
-            add_ref_entry( &ix_ref_dict, refwork );
-        } else {                // duplicate id
-            dup_id_err( refwork->id, "figure" );
+        if( GlobalFlags.firstpass || GlobalFlags.lastpass ) {
+            refwork = find_refid( ix_ref_dict, id );
+            if( GlobalFlags.firstpass ) {           // first pass: build dict
+                if( refwork == NULL ) {             // new entry
+                    refwork = (ref_entry *) mem_alloc( sizeof( ref_entry ) ) ;
+                    init_ref_entry( refwork, id );
+                    refwork->flags = rf_ix;
+                    refwork->hblk = NULL;
+                    refwork->base = NULL;
+                    add_ref_entry( &ix_ref_dict, refwork );
+                } else {                            // duplicate id
+                    dup_id_err( refwork->id, "figure" );
+                }
+            }
+            if( GlobalFlags.lastpass ){         // last pass: add data
+                if( refwork == NULL ) {         // shouldn't happen
+                    xx_tag_err( err_id_undefined, id );
+                } else {
+                    refwork->hblk = ixhwk;
+                    refwork->base = ixhtag[hx_lvl - 1];
+                }
+            }
         }
     }
-
     if( pgtext != NULL ) {
         mem_free( pgtext );
     }

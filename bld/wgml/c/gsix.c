@@ -310,7 +310,11 @@ void scr_ix( void )
         xx_line_err( err_extra_data, tok_start );
     }
 
-    /* Now fill the index structures */
+    if( !GlobalFlags.lastpass ) {
+        return;
+    }
+
+    /* Now fill the index structures -- but only on the last pass */
 
     if( lvl > 0 ) {                             // we have at least one index string
 

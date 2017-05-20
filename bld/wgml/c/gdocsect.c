@@ -598,10 +598,12 @@ static void gen_index( void )
     uint32_t        indent[3];          // I1/I2/I3 cumulative indents
     uint32_t        spc_count;
 
-    if( index_dict == NULL ) return;    // no index_dict, no INDEX
-
     scr_process_break();                // flush any pending text
-    start_doc_sect();
+    start_doc_sect();                   // emit heading regardless of pass
+
+    /* No index is output without an index_dict or before the last pass */
+
+    if( !GlobalFlags.lastpass || (index_dict == NULL) ) return; 
 
     in_trans_sav = ProcFlags.in_trans;
     ProcFlags.in_trans = false;         // turn off input translation
@@ -998,7 +1000,6 @@ static void gen_toc( void )
                 g_page_right += size;
             }
             ProcFlags.ct = true;                    // emulate CT
-            g_cur_h_start += wgml_fonts[layout_work.tocpgnum.font].spc_width;
             g_curr_font = FONT0;
             process_text( "$", g_curr_font );
             format_num( curr->pageno, &buffer, sizeof( buffer ), curr->style );
