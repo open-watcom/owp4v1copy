@@ -415,8 +415,6 @@ extern  void                add_box_col_set_to_pool( box_col_set * a_set );
 extern  box_col_set     *   alloc_box_col_set( void );
 extern  void                add_box_col_stack_to_pool( box_col_stack * a_stack );
 extern  box_col_stack   *   alloc_box_col_stack( void );
-extern  void                add_doc_col_to_pool( doc_column * a_column );
-extern  doc_column      *   alloc_doc_col( void );
 extern  void                add_doc_el_to_pool( doc_element * a_element );
 extern  doc_element     *   alloc_doc_el( element_type type );
 extern  void                add_doc_el_group_to_pool( doc_el_group * a_group );

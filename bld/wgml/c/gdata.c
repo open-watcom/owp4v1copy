@@ -44,6 +44,7 @@
 
 void init_global_vars( void )
 {
+    int     i;
 
     memset( &GlobalFlags, 0, sizeof( GlobalFlags ) );
     GlobalFlags.wscript = 1;            // (w)script support + warnings
@@ -131,20 +132,47 @@ void init_global_vars( void )
 
     t_element               = NULL;
     t_el_last               = NULL;
-    t_page.cols_top         = 0;
+    t_line                  = NULL;
+
+    t_page.page_top         = 0;
+    t_page.panes_top        = 0;
+    t_page.bot_ban_top      = 0;
     t_page.max_depth        = 0;
     t_page.cur_depth        = 0;
-    t_page.col_count        = 0;
-    t_page.max_width        = 0;
     t_page.post_skip        = 0;
+    t_page.last_pane        = mem_alloc( sizeof(doc_pane) );
+    t_page.cur_col          = &t_page.last_pane->cols[0];
     t_page.last_col_main    = NULL;
     t_page.last_col_fn      = NULL;
     t_page.top_banner       = NULL;
     t_page.bottom_banner    = NULL;
+    t_page.topheadsub       = NULL;
+    t_page.botheadsub       = NULL;
     t_page.top_ban          = NULL;
-    t_page.page_width       = NULL;
-    t_page.cols             = NULL;
+    t_page.panes            = t_page.last_pane;
     t_page.bot_ban          = NULL;
+
+    t_page.panes->next              = NULL;
+    t_page.panes->page_width_top    = 0;
+    t_page.panes->col_width_top     = 0;
+    t_page.panes->col_count         = 0;
+    t_page.panes->col_width         = 0;
+    t_page.panes->cur_col           = 0;
+    t_page.panes->page_width        = 0;
+
+    for( i = 0; i < MAX_COL; i++ ) {
+        t_page.panes->cols[i].main_top  = 0;
+        t_page.panes->cols[i].fig_top   = 0;
+        t_page.panes->cols[i].fn_top    = 0;
+        t_page.panes->cols[i].col_left  = 0;
+        t_page.panes->cols[i].col_right = 0;
+        t_page.panes->cols[i].post_skip = 0;
+        t_page.panes->cols[i].col_width = NULL;
+        t_page.panes->cols[i].main      = NULL;
+        t_page.panes->cols[i].bot_fig   = NULL;
+        t_page.panes->cols[i].footnote  = NULL;
+    }
+
     n_page.last_page_width  = NULL;
     n_page.last_col_width   = NULL;
     n_page.last_col_main    = NULL;
@@ -155,10 +183,11 @@ void init_global_vars( void )
     n_page.col_main         = NULL;
     n_page.col_bot          = NULL;
     n_page.col_fn           = NULL;
-    t_line                  = NULL;
+
     text_pool               = NULL;
     line_pool               = NULL;
     doc_el_pool             = NULL;
+
     line_position           = pos_left;
 
     lay_files           = NULL;         // filename(s) from ( LAYout option
@@ -244,7 +273,7 @@ void init_pass_data( void )
                                         // i.e. .se var  =    7
                                         // .se var=7  without
     ProcFlags.concat    = true;         // .co on default
-    ProcFlags.justify   = ju_on;        // .ju on default
+    ProcFlags.justify   = layout_work.defaults.justify; // match LAYOUT value
     ProcFlags.doc_sect  = doc_sect_none;// no document section yet
     ProcFlags.doc_sect_nxt  = doc_sect_none;// no document section yet
     ProcFlags.frontm_seen  = false;     // FRONTM not yet seen

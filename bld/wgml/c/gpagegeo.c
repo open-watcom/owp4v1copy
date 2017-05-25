@@ -46,7 +46,7 @@
 /***************************************************************************/
 void    init_page_geometry( void )
 {
-    int         k;
+    int         i;
     uint32_t    page_depth_org;
     uint32_t    net_top_margin;
     uint32_t    net_y_start;
@@ -67,11 +67,11 @@ void    init_page_geometry( void )
 
     g_max_char_width = 0;
     g_max_line_height = 0;
-    for( k = 0; k < wgml_font_cnt; k++ ) {
-        if( g_max_char_width < wgml_fonts[k].default_width )
-            g_max_char_width = wgml_fonts[k].default_width;
-        if( g_max_line_height < wgml_fonts[k].line_height ) {
-            g_max_line_height = wgml_fonts[k].line_height;
+    for( i = 0; i < wgml_font_cnt; i++ ) {
+        if( g_max_char_width < wgml_fonts[i].default_width )
+            g_max_char_width = wgml_fonts[i].default_width;
+        if( g_max_line_height < wgml_fonts[i].line_height ) {
+            g_max_line_height = wgml_fonts[i].line_height;
         }
     }
     g_curr_font = layout_work.defaults.font;
@@ -145,15 +145,15 @@ void    init_page_geometry( void )
         net_top_margin = 0;
     }
     if( bin_driver->y_positive == 0 ) {
-        g_page_top = bin_device->y_start - net_top_margin;
+        t_page.panes_top = bin_device->y_start - net_top_margin;
         if( g_page_depth > bin_device->y_start ) {
             /* see Wiki for discussion, wgml 4.0 differs here */
             xx_err( err_page_depth_too_big );   // candidate Severe Error
             g_suicide();                        // no recovery possible
         } else {
-            g_page_bottom = g_page_top - g_page_depth;// end of text area
+            t_page.bot_ban_top = t_page.panes_top - g_page_depth;// end of text area
         }
-        g_net_page_depth = g_page_top - g_page_bottom;
+        g_net_page_depth = t_page.panes_top - t_page.bot_ban_top;
 
         lcmax = 1 + (g_net_page_depth + bin_device->y_offset)
                  / wgml_fonts[g_curr_font].line_height;   // usable no of lines
@@ -169,15 +169,21 @@ void    init_page_geometry( void )
         } else {
             y_start_correction = 0;
         }
-        g_page_top = net_y_start - y_start_correction;
-        g_page_bottom = g_page_top + g_page_depth;
+        t_page.panes_top = net_y_start - y_start_correction;
+        t_page.bot_ban_top = t_page.panes_top + g_page_depth;
 
-        g_net_page_depth = g_page_bottom - g_page_top;
+        g_net_page_depth = t_page.bot_ban_top - t_page.panes_top;
         lcmax = g_net_page_depth;
     }
+    t_page.panes->col_width_top = t_page.panes_top;
+    for( i = 0; i < MAX_COL; i++ ) {
+        t_page.panes->cols[i].main_top = t_page.panes_top;
+        t_page.panes->cols[i].fig_top = t_page.bot_ban_top;
+        t_page.panes->cols[i].fn_top = t_page.bot_ban_top;
+    }
 
-    g_page_bottom_org = g_page_bottom;// save for possible bot banner calculation
-    g_page_top_org = g_page_top;// save top for possible bot banner calculation
+    g_page_bottom_org = t_page.bot_ban_top; // save for possible bot banner calculation
+    t_page.page_top = t_page.panes_top;     // save top for possible bot banner calculation
 
     if( GlobalFlags.firstpass && GlobalFlags.research ) {  // show values TBD
         out_msg( "\ntm:%d lm:%d rm:%d top margin:%d depth:%d\n\n", tm, lm, rm,
@@ -197,21 +203,21 @@ void    init_page_geometry( void )
                );
         out_msg( "default font number:%d font_count:%d\n", g_curr_font,
                  wgml_font_cnt );
-        for( k = 0; k < wgml_font_cnt; ++k ) {
+        for( i = 0; i < wgml_font_cnt; ++i ) {
             out_msg( "font:%d def_width:%d em:%d font_h:%d font_s:%d"
                      " line_h:%d line_s:%d spc_w:%d\n",
-                     k,
-                     wgml_fonts[k].default_width,
-                     wgml_fonts[k].em_base,
-                     wgml_fonts[k].font_height,
-                     wgml_fonts[k].font_space,
-                     wgml_fonts[k].line_height,
-                     wgml_fonts[k].line_space,
-                     wgml_fonts[k].spc_width
+                     i,
+                     wgml_fonts[i].default_width,
+                     wgml_fonts[i].em_base,
+                     wgml_fonts[i].font_height,
+                     wgml_fonts[i].font_space,
+                     wgml_fonts[i].line_height,
+                     wgml_fonts[i].line_space,
+                     wgml_fonts[i].spc_width
                    );
         }
         out_msg( "\npage top:%d bottom:%d left:%d right:%d lines:%d\n",
-                 g_page_top, g_page_bottom, g_page_left, g_page_right, lcmax );
+                 t_page.panes_top, t_page.bot_ban_top, g_page_left, g_page_right, lcmax );
         out_msg(
            "page net depth:%d width:%d line height:%d char width:%d\n\n",
                   g_net_page_depth, g_net_page_width, g_max_line_height,
@@ -406,6 +412,8 @@ void    do_layout_end_processing( void )
 
         finish_lists();
         finish_banners();
+
+        ProcFlags.justify = layout_work.defaults.justify;
 
         /*******************************************************************/
         /*  Since we have given BODY a columns value, this ensures that it */

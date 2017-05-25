@@ -49,7 +49,7 @@
   picks( bt, scr_dummy, 0                  )// bottom title
   picks( bx, scr_bx,    cw_break+cw_o_t    )// box
   picks( cb, scr_dummy, cw_break+cw_o_t    )// column begin
-  picks( cc, scr_dummy, cw_break+cw_o_t    )// conditional column
+  picks( cc, scr_cp,    cw_break+cw_o_t    )// conditional column
   picks( cd, scr_dummy, cw_break+cw_o_t    )// column definition
   picks( ce, scr_dummy, cw_break+cw_o_t    )// center
   picks( ch, scr_dummy, 0                  )// change

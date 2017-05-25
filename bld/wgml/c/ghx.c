@@ -356,7 +356,8 @@ void gen_heading( char * h_text, char * id, hdsrc hn_lvl, hdsrc hds_lvl )
                 /* text already present and/or the current heading would not   */
                 /* fit then eject the page and place the heading and the new   */
                 /* banners on the the next page. Otherwise, place them on the  */
-                /* current page and update g_page_top and t_page.max_depth     */
+                /* current page and update t_page.panes_top and                */
+                /* t_page.max_depth                                            */
                 /***************************************************************/
 
                 if( (top_depth + bot_depth) > (old_top_depth + old_bot_depth) ) {
@@ -379,14 +380,14 @@ void gen_heading( char * h_text, char * id, hdsrc hn_lvl, hdsrc hds_lvl )
 
                     if( top_depth > 0 ) {
                         if( bin_driver->y_positive == 0x00 ) {
-                            g_page_top = g_page_top_org - top_depth;
+                            t_page.panes_top = t_page.page_top - top_depth;
                         } else {
-                            g_page_top = g_page_top_org + top_depth;
+                            t_page.panes_top = t_page.page_top + top_depth;
                         }
                     } else {
-                        g_page_top = g_page_top_org;
+                        t_page.panes_top = t_page.page_top;
                     }
-                    t_page.cols_top = g_page_top;
+                    t_page.panes->page_width_top = t_page.panes_top;
 
                     if( old_top_depth < top_depth ) {
                         t_page.max_depth -= (top_depth - old_top_depth);
@@ -396,12 +397,12 @@ void gen_heading( char * h_text, char * id, hdsrc hn_lvl, hdsrc hds_lvl )
 
                     if( bot_depth > 0 ) {
                         if( bin_driver->y_positive == 0x00 ) {
-                            g_page_bottom = g_page_bottom_org + bot_depth;
+                            t_page.bot_ban_top = g_page_bottom_org + bot_depth;
                         } else {
-                            g_page_bottom = g_page_bottom_org - bot_depth;
+                            t_page.bot_ban_top = g_page_bottom_org - bot_depth;
                         }
                     } else {
-                        g_page_bottom = g_page_bottom_org;
+                        t_page.bot_ban_top = g_page_bottom_org;
                     }
 
                     if( old_bot_depth < bot_depth  ) {

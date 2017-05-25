@@ -49,7 +49,7 @@ void    gml_graphic( const gmltag * entry )
     su              cur_su;
     uint32_t        depth;
     uint32_t        scale                   = 100;
-    uint32_t        width                   = t_page.max_width;
+    uint32_t        width                   = t_page.last_pane->col_width;
     int32_t         xoff                    = 0;
     int32_t         yoff                    = 0;
 
@@ -132,7 +132,7 @@ void    gml_graphic( const gmltag * entry )
                     if( width == 0 ) {
                         xx_line_err( err_inv_width_graphic_1, val_start );
                     }
-                    if( width > t_page.max_width ) {
+                    if( width > t_page.last_pane->col_width ) {
                         xx_line_err( err_inv_width_graphic_2, val_start );
                     }
                 }

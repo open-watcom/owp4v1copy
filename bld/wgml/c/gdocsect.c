@@ -1042,17 +1042,17 @@ static void document_new_position( void )
     if( sect_ban_top[page & 1] != NULL ) {
         top_reg = sect_ban_top[page & 1]->top_line;
         if( bin_driver->y_positive == 0x00 ) {
-            top_pos = g_page_top_org - top_reg->reg_depth;
+            top_pos = t_page.page_top - top_reg->reg_depth;
         } else {
-            top_pos = g_page_top_org + top_reg->reg_depth;
+            top_pos = t_page.page_top + top_reg->reg_depth;
         }
         g_cur_v_start = top_pos;
     } else {
-        top_pos = g_page_top;
+        top_pos = t_page.panes_top;
         if( bin_driver->y_positive == 0x00 ) {
-            g_cur_v_start = g_page_top - wgml_fonts[FONT0].line_height;
+            g_cur_v_start = t_page.panes_top - wgml_fonts[FONT0].line_height;
         } else {
-            g_cur_v_start = g_page_top + wgml_fonts[FONT0].line_height;
+            g_cur_v_start = t_page.panes_top + wgml_fonts[FONT0].line_height;
         }
     }
     g_cur_h_start = g_page_left_org;
@@ -1079,7 +1079,7 @@ static void set_cols( void )
 //  <<set up new-form columns when multicolumn is being implemented>>
 //    t_page.max_width = g_net_page_width/t_page.col_count;
 //    t_page.max_width -= conv_hor_unit(&layout_work.defaults.gutter);
-    t_page.max_width = g_cl * box_col_width;
+    t_page.panes->col_width = g_cl * box_col_width;
     return;
 }
 
@@ -1271,7 +1271,7 @@ void start_doc_sect( void )
 
     ProcFlags.doc_sect = ds;
     ProcFlags.first_hdr = false;
-    t_page.col_count = page_c;
+    t_page.last_pane->col_count = page_c;
     set_cols();
     if( page_r ) {
         page = 0;

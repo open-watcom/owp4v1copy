@@ -320,60 +320,6 @@ void add_box_col_stack_to_pool( box_col_stack * a_stack )
 
 
 /***************************************************************************/
-/*  allocate / reuse a doc_column instance                                 */
-/***************************************************************************/
-
-doc_column * alloc_doc_col( void )
-{
-    doc_column  *   curr;
-    int             k;
-
-    curr = doc_col_pool;
-    if( curr != NULL ) {                // there is one to use
-        doc_col_pool = curr->next;
-    } else {                            // pool is empty
-        curr = mem_alloc( sizeof( doc_column ) );
-        doc_col_pool = curr;
-
-        for( k = 0; k < 10; k++ ) {     // alloc 10 box_col_sets if pool empty
-            curr->next = mem_alloc( sizeof( *curr ) );
-            curr = curr->next;
-        }
-        curr->next = NULL;
-        curr = doc_col_pool;
-        doc_col_pool = curr->next;
-    }
-
-    curr->next = NULL;
-    curr->post_skip = 0;
-    curr->main_top = t_page.cols_top;
-    curr->fig_top = g_page_bottom;
-    curr->fn_top = g_page_bottom;
-    curr->col_width = NULL;
-    curr->main = NULL;
-    curr->bot_fig = NULL;
-    curr->footnote = NULL;
-
-    return( curr );
-}
-
-
-/***************************************************************************/
-/*  add a doc_column instance to free pool for reuse                       */
-/***************************************************************************/
-
-void add_doc_col_to_pool( doc_column * a_column )
-{
-    if( a_column == NULL ) {
-        return;
-    }
-
-    a_column->next = doc_col_pool;
-    doc_col_pool = a_column;
-}
-
-
-/***************************************************************************/
 /*  allocate / reuse a doc_element instance                                */
 /*  Note: called directly in a few cases, but mostly from init_doc_el()    */
 /***************************************************************************/
@@ -620,12 +566,6 @@ void    free_pool_storage( void )
 
     for( v = box_col_stack_pool; v != NULL; ) {
         wv = ( (box_col_stack *) v)->next;
-        mem_free( v );
-        v = wv;
-    }
-
-    for( v = doc_col_pool; v != NULL; ) {
-        wv = ( (doc_column *) v)->next;
         mem_free( v );
         v = wv;
     }

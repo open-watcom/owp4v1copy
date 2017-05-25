@@ -1093,17 +1093,29 @@ typedef struct ban_column {
             doc_element *   first;
 } ban_column;
 
-typedef struct doc_column {
-    struct  doc_column  *   next;
-            uint32_t        fig_top;
-            uint32_t        fn_top;
-            uint32_t        main_top;
+typedef struct {
+            uint32_t        main_top;       // top of page for main
+            uint32_t        fig_top;        // top of page for bot_fig
+            uint32_t        fn_top;         // top of page for footnote
+            uint32_t        col_left;       // column left margin
+            uint32_t        col_right;      // column right margin
             uint32_t        post_skip;      // figure or heading at top of column
             doc_element *   col_width;
             doc_element *   main;
             doc_element *   bot_fig;
             doc_element *   footnote;
 } doc_column;
+
+typedef struct doc_pane {
+    struct  doc_pane        *   next;
+            uint32_t            page_width_top; // top of page for page_width
+            uint32_t            col_width_top;  // top of page for col_width
+            uint32_t            col_count;      // number of columns
+            uint32_t            col_width;      // width of each column
+            uint32_t            cur_col;        // column currently in use
+            doc_element     *   page_width;
+            doc_column          cols[MAX_COL];
+} doc_pane;
 
 struct banner_lay_tag;  // avoids include circularity with gtypelay.h
 
@@ -1118,12 +1130,14 @@ struct banner_lay_tag;  // avoids include circularity with gtypelay.h
 /***************************************************************************/
 
 typedef struct {
-            uint32_t            cols_top;       // top of cols->col_width
+            uint32_t            page_top;       // top of page for top banner
+            uint32_t            panes_top;      // top of page for first pane
+            uint32_t            bot_ban_top;    // top of page for bottom banner
             uint32_t            max_depth;
             uint32_t            cur_depth;
-            uint32_t            col_count;      // number of columns
-            uint32_t            max_width;      // width of current column (or page, if col_count == 1)
             uint32_t            post_skip;      // figure or heading at top of page
+            doc_pane        *   last_pane;
+            doc_column      *   cur_col;        // quick access to t_page.last_pane->cols[t_page.last_pane->cur_col]
             doc_element     *   last_col_main;
             doc_element     *   last_col_fn;
     struct  banner_lay_tag  *   top_banner;
@@ -1131,8 +1145,7 @@ typedef struct {
             symsub          *   topheadsub;     // ptr to $TOPHEAD symvar entry
             symsub          *   botheadsub;     // ptr to $BOTHEAD symvar entry
             ban_column      *   top_ban;
-            doc_element     *   page_width;
-            doc_column      *   cols;
+            doc_pane        *   panes;
             ban_column      *   bot_ban;
 } doc_page;
 

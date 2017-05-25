@@ -192,6 +192,8 @@ bool    free_resources( errno_t in_errno )
 
 void    free_some_mem( void )
 {
+    int i;
+
     if( token_buf != NULL ) {
         mem_free( token_buf );
     }
@@ -298,23 +300,27 @@ void    free_some_mem( void )
         }
         add_ban_col_to_pool( t_page.top_ban );
     }
-    if( t_page.page_width != NULL ) {
-        add_doc_el_to_pool( t_page.page_width );
-    }
-    if( t_page.cols != NULL ) {
-        if( t_page.cols->col_width != NULL ) {
-            add_doc_el_to_pool( t_page.cols->col_width );
+    while( t_page.panes != NULL ) {
+        if( t_page.panes->page_width != NULL ) {
+            add_doc_el_to_pool( t_page.panes->page_width );
         }
-        if( t_page.cols->main != NULL ) {
-            add_doc_el_to_pool( t_page.cols->main );
+        for( i = 0; i < MAX_COL; i++ ) {
+            if( t_page.panes->cols != NULL ) {
+                if( t_page.panes->cols[i].col_width != NULL ) {
+                    add_doc_el_to_pool( t_page.panes->cols[i].col_width );
+                }
+                if( t_page.panes->cols[i].main != NULL ) {
+                    add_doc_el_to_pool( t_page.panes->cols[i].main );
+                }
+                if( t_page.panes->cols[i].bot_fig != NULL ) {
+                    add_doc_el_to_pool( t_page.panes->cols[i].bot_fig );
+                }
+                if( t_page.panes->cols[i].footnote != NULL ) {
+                    add_doc_el_to_pool( t_page.panes->cols[i].footnote );
+                }
+            }
         }
-        if( t_page.cols->bot_fig != NULL ) {
-            add_doc_el_to_pool( t_page.cols->bot_fig );
-        }
-        if( t_page.cols->footnote != NULL ) {
-            add_doc_el_to_pool( t_page.cols->footnote );
-        }
-        add_doc_col_to_pool( t_page.cols );
+        t_page.panes = t_page.panes->next;
     }
     if( t_page.bot_ban != NULL ) {
         if( t_page.bot_ban->first != NULL ) {

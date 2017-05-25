@@ -309,7 +309,6 @@ global  tag_cb      *   tt_stack;       // font stack entry to modify for tab ta
 
 // the document page and related items
 global ban_column       *   ban_col_pool;       // for reuse of ban_column structs
-global doc_column       *   doc_col_pool;       // for reuse of doc_column structs
 global doc_element      *   doc_el_pool;        // for reuse of doc_element structs
 global group_type           cur_group_type;     // current tag/cw in effect (gt_bx is not allowed)
 global doc_el_group     *   cur_doc_el_group;   // current doc_el_group, if any
@@ -331,19 +330,17 @@ global gen_sect             figlist_toc;        // used with FIGLIST, TOC and eG
 /***************************************************************************/
 /*  some globals which are to be redesigned when the :LAYOUT tag is coded. */
 /*  Defined here so some script control words can be prototyped            */
+/*  These are very slowly being refactored.                                */
 /***************************************************************************/
 
 global  uint32_t    g_cur_h_start;
 global  uint32_t    g_cur_left;
 global  uint32_t    g_cur_v_start;
-global  uint32_t    g_page_bottom;
 global  uint32_t    g_page_bottom_org;
 global  uint32_t    g_page_left;
 global  uint32_t    g_page_left_org;
 global  uint32_t    g_page_right;
 global  uint32_t    g_page_right_org;
-global  uint32_t    g_page_top;
-global  uint32_t    g_page_top_org;
 global  uint32_t    g_page_depth;
 global  uint32_t    g_max_char_width;
 global  uint32_t    g_max_line_height;

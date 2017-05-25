@@ -112,7 +112,7 @@ void gml_fn( const gmltag * entry )
 
     spacing = layout_work.fn.spacing;
 
-    if( t_page.cols->footnote == NULL ) {   // pre_lines affects first FN on page only
+    if( t_page.last_pane->cols->footnote == NULL ) {   // pre_lines affects first FN on page only
         set_skip_vars( NULL, &layout_work.fn.pre_lines, NULL, spacing, g_curr_font );
     } else {
         set_skip_vars( NULL, NULL, NULL, spacing, g_curr_font );

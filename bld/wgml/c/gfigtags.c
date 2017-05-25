@@ -423,7 +423,7 @@ void gml_fig( const gmltag * entry )
     if( frame.type == char_frame ) {
         strcpy_s( frame.string, str_size, layout_work.fig.default_frame.string );
     }
-    width = t_page.max_width;           // default value regardless of number of columns
+    width = t_page.last_pane->col_width;// default value regardless of number of columns
     g_curr_font = layout_work.fig.font;
     spacing_save = spacing;
     spacing = layout_work.fig.spacing;
@@ -619,10 +619,10 @@ void gml_fig( const gmltag * entry )
     g_cur_left += nest_cb->left_indent;
     g_page_right = g_cur_left + width;
 
-    if( width > t_page.max_width ) {
-        if( (t_page.col_count > 1) && (place != top_place) ) {
+    if( width > t_page.last_pane->col_width ) {
+        if( (t_page.last_pane->col_count > 1) && (place != top_place) ) {
             xx_line_err( err_inv_width_fig_2, val_start );
-        } else if( t_page.col_count == 1 ) {
+        } else if( t_page.last_pane->col_count == 1 ) {
             xx_line_err( err_inv_width_fig_3, val_start );
         }
     }
@@ -975,7 +975,7 @@ void gml_efig( const gmltag * entry )
                 insert_col_bot( cur_doc_el_group );
                 cur_group = n_page.col_bot;
             } else {
-                if( page_width || (t_page.col_count == 1) ) {
+                if( page_width || (t_page.last_pane->col_count == 1) ) {
                     insert_page_width( cur_doc_el_group );
                     cur_group = n_page.page_width;
                 } else {          // width was "column" at most and page is multi-column
