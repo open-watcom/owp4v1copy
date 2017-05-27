@@ -41,8 +41,8 @@ static void prep_docnum_line( text_line * p_line, char * p )
     uint32_t        h_left;
     uint32_t        h_right;
  
-    h_left = g_page_left + conv_hor_unit( &layout_work.docnum.left_adjust, g_curr_font );
-    h_right = g_page_right - conv_hor_unit( &layout_work.docnum.right_adjust, g_curr_font );
+    h_left = conv_hor_unit( &layout_work.docnum.left_adjust, g_curr_font );
+    h_right = t_page.max_width - conv_hor_unit( &layout_work.docnum.right_adjust, g_curr_font );
  
     if( *p ) {
         curr_t = alloc_text_chars( layout_work.docnum.string, 1 + strlen( p ) +

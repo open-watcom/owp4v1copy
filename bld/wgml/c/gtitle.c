@@ -44,8 +44,8 @@ static void prep_title_line( text_line * p_line, const char * p )
     uint32_t        h_right;
     uint32_t        curr_x;
 
-    h_left = g_page_left + conv_hor_unit( &layout_work.title.left_adjust, g_curr_font );
-    h_right = g_page_right - conv_hor_unit( &layout_work.title.right_adjust, g_curr_font );
+    h_left = conv_hor_unit( &layout_work.title.left_adjust, g_curr_font );
+    h_right = t_page.max_width - conv_hor_unit( &layout_work.title.right_adjust, g_curr_font );
 
     curr_t = alloc_text_chars( p, strlen( p ), g_curr_font );
     curr_t->count = len_to_trail_space( curr_t->text, curr_t->count );

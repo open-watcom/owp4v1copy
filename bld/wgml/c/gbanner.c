@@ -748,8 +748,8 @@ static  void    out_ban_common( banner_lay_tag * ban, bool top )
     ban_line.first = NULL;
 
     /* calc banner horizontal margins */
-    ban_left  = g_page_left_org + ban->ban_left_adjust;
-    ban_right = g_page_right_org - ban->ban_right_adjust;
+    ban_left  = ban->ban_left_adjust;
+    ban_right = t_page.max_width - ban->ban_right_adjust;
 
     content_reg( ban );
     curr_x = 0;

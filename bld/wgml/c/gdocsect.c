@@ -181,18 +181,17 @@ static void figlist_toc_tabs( char * fill, uint32_t size )
     add_to_sysdir( "$tb", tab_char );
     add_to_sysdir( "$tab", tab_char );
 
-    /********************************************************/
-    /* Set the tab stops                                    */
-    /* the one-column shift is normal                       */
-    /* g_page_left is added back in when tabbing is done    */
-    /********************************************************/
+    /************************************************************/
+    /* Set the tab stops                                        */
+    /* the one-column shift is normal                           */
+    /************************************************************/
 
     user_tabs.current = 2;
-    user_tabs.tabs[0].column = g_page_right - tab_col - g_page_left - size;
+    user_tabs.tabs[0].column = t_page.max_width - tab_col - size;
     user_tabs.tabs[0].fill_char = fill[0];
     user_tabs.tabs[0].alignment = al_right;
 
-    user_tabs.tabs[1].column = g_page_right - tab_col - g_page_left;
+    user_tabs.tabs[1].column = t_page.max_width - tab_col;
     user_tabs.tabs[1].fill_char = ' ';
     user_tabs.tabs[1].alignment = al_right;
 
@@ -211,11 +210,11 @@ static void gen_box_head( char * letter )
     if( bin_driver->hline.text == NULL ) {                      // character device
         process_text( frame_line_1, layout_work.ixhead.font );  // top line
         scr_process_break();
-        g_cur_h_start += ixh_indent;
+        t_page.cur_width += ixh_indent;
         frame_line_2[2] = letter[0];
         process_text( frame_line_2, layout_work.ixhead.font );  // middle line
         scr_process_break();
-        g_cur_h_start += ixh_indent;
+        t_page.cur_width += ixh_indent;
         process_text( frame_line_3, layout_work.ixhead.font );  // bottom line
         scr_process_break();
     } else {                                            // page-oriented device
@@ -234,13 +233,13 @@ static void gen_box_head( char * letter )
         full_line = frame_line_len;
         full_line +=
             wgml_fonts[layout_work.ixhead.font].width_table[(unsigned char) letter[0]];
-        g_cur_h_start += frame_line_len / 2;
+        t_page.cur_width += frame_line_len / 2;
         process_text( letter, layout_work.ixhead.font );    // middle line
         scr_process_break();
-        g_cur_h_start += ixh_indent;
+        t_page.cur_width += ixh_indent;
         g_subs_skip += wgml_fonts[layout_work.ixhead.font].line_height;
         h_box_el = init_doc_el( el_dbox, 0 );               // DBOX
-        h_box_el->element.dbox.h_start = g_cur_h_start;
+        h_box_el->element.dbox.h_start = t_page.cur_width;
         h_box_el->element.dbox.h_len = full_line;
         h_box_el->element.dbox.v_len = 2 * wgml_fonts[layout_work.ixhead.font].line_height;
         insert_col_main( h_box_el );
@@ -265,11 +264,11 @@ static void gen_rule_head( char * letter )
     if( bin_driver->hline.text == NULL ) {                      // character device
         process_text( frame_line_1, layout_work.ixhead.font );  // top line
         scr_process_break();
-        g_cur_h_start += ixh_indent;
-        g_cur_h_start += half_line;
+        t_page.cur_width += ixh_indent;
+        t_page.cur_width += half_line;
         process_text( letter, layout_work.ixhead.font );        // middle line
         scr_process_break();
-        g_cur_h_start += ixh_indent;
+        t_page.cur_width += ixh_indent;
         process_text( frame_line_1, layout_work.ixhead.font );  // bottom line
         scr_process_break();
     } else {                                            // page-oriented device
@@ -291,17 +290,17 @@ static void gen_rule_head( char * letter )
             g_subs_skip += wgml_fonts[layout_work.ixhead.font].line_height;
             h_line_el = init_doc_el( el_hline, 0 );             // top line
             h_line_el->element.hline.ban_adjust = false;
-            h_line_el->element.hline.h_start = g_cur_h_start;
+            h_line_el->element.hline.h_start = t_page.cur_width;
             h_line_el->element.hline.h_len = full_line;
             insert_col_main( h_line_el );
-            g_cur_h_start += half_line;
+            t_page.cur_width += half_line;
             process_text( letter, layout_work.ixhead.font );    // middle line
             scr_process_break();
-            g_cur_h_start += ixh_indent;
+            t_page.cur_width += ixh_indent;
             g_subs_skip += wgml_fonts[layout_work.ixhead.font].line_height;
             h_line_el = init_doc_el( el_hline, 0 );             // bottom line
             h_line_el->element.hline.ban_adjust = false;
-            h_line_el->element.hline.h_start = g_cur_h_start;
+            h_line_el->element.hline.h_start = t_page.cur_width;
             h_line_el->element.hline.h_len = full_line;
             insert_col_main( h_line_el );
         } else {                        // char_frame
@@ -334,11 +333,11 @@ static void gen_rule_head( char * letter )
             line_buff.text[line_buff.current] = '\0';
             process_text( line_buff.text, layout_work.ixhead.font );    // top line
             scr_process_break();
-            g_cur_h_start += ixh_indent;
-            g_cur_h_start += half_line;
+            t_page.cur_width += ixh_indent;
+            t_page.cur_width += half_line;
             process_text( letter, layout_work.ixhead.font );            // middle line
             scr_process_break();
-            g_cur_h_start += ixh_indent;
+            t_page.cur_width += ixh_indent;
             process_text( line_buff.text, layout_work.ixhead.font );    // bottom line
             scr_process_break();
             line_buff.current = cur_count;
@@ -430,7 +429,7 @@ static void gen_see_list( ix_e_blk * refs, font_number font, uint32_t level,
     cur_ref = refs;
     while( cur_ref != NULL ) {
         scr_process_break();
-        g_cur_h_start += wrap[level];
+        t_page.cur_width += wrap[level];
         ProcFlags.ct = true;
         post_space = 0;
         if( ref_done || has_sub ) {
@@ -504,9 +503,9 @@ static void gen_figlist( void )
 
     /* Set FIGLIST margins and other values */
 
-    g_page_left = g_page_left_org + 2 *
-                  conv_hor_unit( &layout_work.figlist.left_adjust, g_curr_font );    // matches wgml 4.0
-    g_page_right = g_page_right_org -
+    t_page.cur_left = 2 * conv_hor_unit( &layout_work.figlist.left_adjust,
+                                         g_curr_font );    // matches wgml 4.0
+    t_page.max_width = g_page_right_org -
                    conv_hor_unit( &layout_work.figlist.right_adjust, g_curr_font );
     size = conv_hor_unit( &layout_work.flpgnum.size, g_curr_font );  // space from fill to right edge
     figlist_toc_tabs( layout_work.figlist.fill_string, size );
@@ -526,22 +525,22 @@ static void gen_figlist( void )
                 spacing = layout_work.figlist.spacing;
                 set_skip_vars( NULL, NULL, NULL, spacing, g_curr_font );
             }
-            g_cur_left = g_page_left;
-            g_cur_h_start = g_cur_left;
+            t_page.cur_left = 0;
+            t_page.cur_width = t_page.cur_left;
             process_text( curr->prefix, g_curr_font );  // caption prefix
 
             if( curr->text != NULL ) {
-                g_cur_left = t_line->last->x_address + t_line->last->width +
-                             wgml_fonts[g_curr_font].spc_width;
-                g_cur_h_start = g_cur_left;
+                t_page.cur_left = t_line->last->x_address + t_line->last->width +
+                                  wgml_fonts[g_curr_font].spc_width;
+                t_page.cur_width = t_page.cur_left;
                 ProcFlags.ct = true;                // emulate CT
                 ProcFlags.stop_xspc = true;         // suppress 2nd space after stops
                 post_space = 0;
-                g_page_right -= size;
+                t_page.max_width -= size;
                 if( ProcFlags.has_aa_block ) {      // matches wgml 4.0
-                    g_page_right -= tab_col;
+                    t_page.max_width -= tab_col;
                 } else {
-                    g_page_right -= 3 * tab_col;
+                    t_page.max_width -= 3 * tab_col;
                 }
                 if( !ProcFlags.page_started ) {     // first entry wrapping
                     spacing = layout_work.figlist.spacing;
@@ -550,11 +549,11 @@ static void gen_figlist( void )
                                spacing, g_curr_font );
                 process_text( curr->text, g_curr_font );// caption text
                 if( ProcFlags.has_aa_block ) {       // matches wgml 4.0
-                    g_page_right += tab_col;
+                    t_page.max_width += tab_col;
                 } else {
-                    g_page_right += 3 * tab_col;
+                    t_page.max_width += 3 * tab_col;
                 }
-                g_page_right += size;
+                t_page.max_width += size;
             }
             ProcFlags.ct = true;                    // emulate CT
             g_curr_font = FONT0;
@@ -677,10 +676,10 @@ static void gen_index( void )
     find_symvar( &sys_dict, "$ixj", no_subscript, &ixjval);
     find_symvar( &sys_dict, "$ixref", no_subscript, &ixrefval);
 
-    g_page_left += conv_hor_unit( &layout_work.index.left_adjust, layout_work.ixhead.font );
-    g_cur_h_start = g_page_left;
+    t_page.cur_left += conv_hor_unit( &layout_work.index.left_adjust, layout_work.ixhead.font );
+    t_page.cur_width = t_page.cur_left;
 
-    g_page_right -= (conv_hor_unit( &layout_work.index.right_adjust, layout_work.ixhead.font ) * 9) / 10;
+    t_page.max_width -= (conv_hor_unit( &layout_work.index.right_adjust, layout_work.ixhead.font ) * 9) / 10;
     
     wrap[0] = indent[0] +
             conv_hor_unit( &layout_work.ix[0].wrap_indent, layout_work.ix[0].font );
@@ -725,7 +724,7 @@ static void gen_index( void )
                 }
                 frame_line_len = (2 + (2 * spc_count)) *
                     wgml_fonts[layout_work.ixhead.font].spc_width;  // length without letter width
-                g_cur_h_start += ixh_indent;
+                t_page.cur_width += ixh_indent;
 
                 switch( layout_work.ixhead.frame.type ) {
                 case none :
@@ -770,7 +769,7 @@ static void gen_index( void )
                            &layout_work.ix[0].post_skip,
                            spacing, layout_work.ix[0].font );
         }
-        g_cur_h_start += indent[0];
+        t_page.cur_width += indent[0];
         ProcFlags.wrap_indent = true;
         wrap_indent = wrap[0];
         if( ixh1->prt_term == NULL ) {
@@ -807,7 +806,7 @@ static void gen_index( void )
                                &layout_work.ix[1].post_skip,
                                spacing, layout_work.ix[1].font );
             }
-            g_cur_h_start += indent[1];
+            t_page.cur_width += indent[1];
             ProcFlags.wrap_indent = true;
             wrap_indent = wrap[1];
             if( ixh2->prt_term == NULL ) {
@@ -844,7 +843,7 @@ static void gen_index( void )
                                    &layout_work.ix[2].post_skip,
                                    spacing, layout_work.ix[2].font );
                 }
-                g_cur_h_start += indent[2];
+                t_page.cur_width += indent[2];
                 ProcFlags.wrap_indent = true;
                 wrap_indent = wrap[2];
                 if( ixh3->prt_term == NULL ) {
@@ -916,9 +915,8 @@ static void gen_toc( void )
 
     /* Set TOC margins and other values */
     
-    g_page_left = g_page_left_org + 2 *
-                  conv_hor_unit( &layout_work.toc.left_adjust, g_curr_font );    // matches wgml 4.0
-    g_page_right = g_page_right_org -
+    t_page.cur_left = 2 * conv_hor_unit( &layout_work.toc.left_adjust, g_curr_font );    // matches wgml 4.0
+    t_page.max_width = g_page_right_org -
                    conv_hor_unit( &layout_work.toc.right_adjust, g_curr_font );
     size = conv_hor_unit( &layout_work.tocpgnum.size, g_curr_font );     // space from fill to right edge
     figlist_toc_tabs( layout_work.toc.fill_string, size );
@@ -966,14 +964,14 @@ static void gen_toc( void )
                                &layout_work.tochx[cur_level].post_skip,
                                spacing, g_curr_font );
             }
-            g_cur_left = g_page_left + indent[cur_level];
-            g_cur_h_start = g_cur_left;
+            t_page.cur_left = indent[cur_level];
+            t_page.cur_width = t_page.cur_left;
 
             if( curr->prefix != NULL ) {
                 process_text( curr->prefix, g_curr_font );
-                g_cur_left = t_line->last->x_address + t_line->last->width +
-                             wgml_fonts[g_curr_font].spc_width;
-                g_cur_h_start = g_cur_left;
+                t_page.cur_left = t_line->last->x_address + t_line->last->width +
+                                  wgml_fonts[g_curr_font].spc_width;
+                t_page.cur_width = t_page.cur_left;
                 ProcFlags.ct = true;                // emulate CT
                 post_space = 0;
             } else {
@@ -984,20 +982,20 @@ static void gen_toc( void )
                 set_skip_vars( NULL, NULL, NULL, spacing, g_curr_font );
             }
             if( curr->text != NULL ) {
-                g_page_right -= size;
+                t_page.max_width -= size;
                 if( ProcFlags.has_aa_block ) {      // matches wgml 4.0
-                    g_page_right -= tab_col;
+                    t_page.max_width -= tab_col;
                 } else {
-                    g_page_right -= 3 * tab_col;
+                    t_page.max_width -= 3 * tab_col;
                 }
                 ProcFlags.stop_xspc = true;         // suppress 2nd space after stop
                 process_text( curr->text, g_curr_font );
                 if( ProcFlags.has_aa_block ) {      // matches wgml 4.0
-                    g_page_right += tab_col;
+                    t_page.max_width += tab_col;
                 } else {
-                    g_page_right += 3 * tab_col;
+                    t_page.max_width += 3 * tab_col;
                 }
-                g_page_right += size;
+                t_page.max_width += size;
             }
             ProcFlags.ct = true;                    // emulate CT
             g_curr_font = FONT0;
@@ -1055,13 +1053,13 @@ static void document_new_position( void )
             g_cur_v_start = t_page.panes_top + wgml_fonts[FONT0].line_height;
         }
     }
-    g_cur_h_start = g_page_left_org;
+    t_page.cur_width = 0;
 
     if( GlobalFlags.lastpass ) {
         if( ProcFlags.fb_position_done ) {
             fb_new_section( g_cur_v_start );
         } else {
-            fb_position( g_cur_h_start, g_cur_v_start );
+            fb_position( t_page.cur_width, g_cur_v_start );
             ProcFlags.fb_position_done = true;
         }
     }
@@ -1076,10 +1074,15 @@ static void document_new_position( void )
 
 static void set_cols( void )
 {
+    int i;
 //  <<set up new-form columns when multicolumn is being implemented>>
-//    t_page.max_width = g_net_page_width/t_page.col_count;
-//    t_page.max_width -= conv_hor_unit(&layout_work.defaults.gutter);
-    t_page.panes->col_width = g_cl * box_col_width;
+//    t_page.panes->col_width = g_net_page_width/t_page.col_count;
+//    t_page.panes->col_width -= conv_hor_unit(&layout_work.defaults.gutter);
+    t_page.last_pane->col_width = g_cl * box_col_width;
+    t_page.max_width = t_page.last_pane->col_width;
+    for( i = 0; i < t_page.last_pane->col_count; i++ ) {
+        t_page.last_pane->cols[i].col_left = t_page.page_left;
+    }
     return;
 }
 
@@ -1290,9 +1293,7 @@ void start_doc_sect( void )
         }
     }
 
-
-
-    g_cur_left = g_page_left_org;
+    t_page.cur_left = 0;
     if( header ) {
         concat_save = ProcFlags.concat;
         ProcFlags.concat = true;
@@ -1304,7 +1305,7 @@ void start_doc_sect( void )
         ProcFlags.justify = justify_save;
     }
     g_curr_font = layout_work.defaults.font;
-    g_cur_h_start = g_page_left_org + g_indent;
+    t_page.cur_width = g_indent;
     ProcFlags.doc_sect = ds;
 }
 
@@ -1358,8 +1359,8 @@ extern void gml_abstract( const gmltag * entry )
     }
     scr_process_break();
     gml_doc_xxx( doc_sect_abstract );
-    g_cur_left = g_page_left;
-    g_cur_h_start = g_page_left;
+    t_page.cur_left = 0;
+    t_page.cur_width = 0;
 
     if( layout_work.hx.hx_sect[hds_abstract].header ) {
         start_doc_sect();                           // a header is enough
@@ -1397,8 +1398,8 @@ extern void gml_backm( const gmltag * entry )
     scr_process_break();
     gml_doc_xxx( doc_sect_backm );
     ProcFlags.frontm_seen = false;  // no longer in FRONTM section
-    g_cur_left = g_page_left;
-    g_cur_h_start = g_page_left;
+    t_page.cur_left = 0;
+    t_page.cur_width = 0;
 
     if( layout_work.hx.hx_sect[hds_backm].header ) {
         start_doc_sect();                           // a header is enough
@@ -1416,9 +1417,8 @@ extern void gml_body( const gmltag * entry )
     gml_doc_xxx( doc_sect_body );
 
     ProcFlags.just_override = true;     // justify for first line ?? TBD
-    g_cur_left = g_page_left;
-    g_cur_h_start = g_page_left
-                    + conv_hor_unit( &layout_work.p.line_indent, g_curr_font );
+    t_page.cur_left = 0;
+    t_page.cur_width = conv_hor_unit( &layout_work.p.line_indent, g_curr_font );
 
     ProcFlags.frontm_seen = false;      // no longer in FRONTM section
     if( !ProcFlags.fb_document_done ) { // the very first section/page

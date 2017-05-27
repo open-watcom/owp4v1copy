@@ -41,7 +41,7 @@
 *               reset_t_page            reset t_page and related externs
 *               reset_top_ban           reset t_page.top_banner and related externs
 *               set_skip_vars           merge the various skips into the externs
-*               set_v_positions         set vertical positions in an element list
+*               set_positions           set vertical/horizontal positions in an element list
 *               split_element           splits an element at given depth
 *               text_page_out           output all pages where main is full
 *               update_t_page           update t_page from n_page
@@ -130,11 +130,12 @@ static void do_el_list_out( doc_element * array, unsigned char count )
 /*  set the vertical positions in a linked list of elements                */
 /***************************************************************************/
 
-static void set_v_positions( doc_element * list, uint32_t v_start )
+static void set_positions( doc_element * list, uint32_t h_start, uint32_t v_start )
 {
     bool            use_spacing;
     bool            at_top;
     doc_element *   cur_el;
+    text_chars  *   cur_text;
     text_line   *   cur_line;
     uint32_t        cur_spacing;
     uint32_t        old_v_start;
@@ -157,6 +158,7 @@ static void set_v_positions( doc_element * list, uint32_t v_start )
 
         switch( cur_el->type ) {
         case el_binc :
+            cur_el->element.binc.cur_left += h_start;
             cur_el->element.binc.at_top = at_top && (t_page.top_banner == NULL);
             if( bin_driver->y_positive == 0x00 ) {
                 g_cur_v_start -= cur_spacing;
@@ -171,6 +173,7 @@ static void set_v_positions( doc_element * list, uint32_t v_start )
             }
             break;
         case el_dbox :
+            cur_el->element.dbox.h_start += h_start;
             if( bin_driver->y_positive == 0x00 ) {
                 g_cur_v_start -= cur_spacing;
             } else {
@@ -184,6 +187,7 @@ static void set_v_positions( doc_element * list, uint32_t v_start )
             }
             break;
         case el_graph :
+            cur_el->element.graph.cur_left += h_start;
             cur_el->element.graph.at_top = at_top && (t_page.top_banner == NULL);
             if( bin_driver->y_positive == 0x00 ) {
                 g_cur_v_start -= cur_spacing;
@@ -198,6 +202,7 @@ static void set_v_positions( doc_element * list, uint32_t v_start )
             }
             break;
         case el_hline :
+            cur_el->element.hline.h_start += h_start;
             if( bin_driver->y_positive == 0x00 ) {
                 g_cur_v_start -= cur_spacing;
             } else {
@@ -213,6 +218,11 @@ static void set_v_positions( doc_element * list, uint32_t v_start )
         case el_text :
             for( cur_line = cur_el->element.text.first; cur_line != NULL;
                                                 cur_line = cur_line->next ) {
+                cur_text = cur_line->first;
+                while( cur_text != NULL ) {
+                    cur_text->x_address += h_start;
+                    cur_text = cur_text->next;
+                }
                 if( use_spacing ) {
                     cur_spacing += cur_line->spacing + cur_line->line_height;
                 } else {
@@ -285,6 +295,7 @@ static void set_v_positions( doc_element * list, uint32_t v_start )
             }
             break;
         case el_vline :
+            cur_el->element.vline.h_start += h_start;
             if( bin_driver->y_positive == 0x00 ) {
                 g_cur_v_start -= cur_spacing;
             } else {
@@ -327,7 +338,7 @@ static void do_ban_column_out( ban_column * a_column, uint32_t v_start )
     for( i = 0; i < col_count; i++ ) {
         cur_el[i] = NULL;
         if( cur_col->first != NULL ) {
-            set_v_positions( cur_col->first, v_start );
+            set_positions( cur_col->first, t_page.page_left, v_start );
             cur_el[i] = cur_col->first;
             cur_col->first = NULL;
         }
@@ -371,7 +382,7 @@ static void do_doc_panes_out( void )
             col_count = cur_pane->col_count;
         }
         if( cur_pane->page_width != NULL ) {
-            set_v_positions( cur_pane->page_width, cur_pane->page_width_top );
+            set_positions( cur_pane->page_width, t_page.page_left, cur_pane->page_width_top );
             cur_el[0] = cur_pane->page_width;
             last_el[0] = cur_pane->page_width;
             if( (cur_pane == t_page.panes) && (t_page.post_skip > 0)
@@ -384,7 +395,8 @@ static void do_doc_panes_out( void )
         } 
         for( i = 0; i < MAX_COL; i++ ) {
             if( cur_pane->cols[i].col_width != NULL ) {
-                set_v_positions( cur_pane->cols[i].col_width, cur_pane->col_width_top );
+                set_positions( cur_pane->cols[i].col_width, cur_pane->cols[i].col_left,
+                               cur_pane->col_width_top );
                 cur_el[i] = cur_pane->cols[i].col_width;
                 last_el[i] = cur_pane->cols[i].col_width;
                 while( last_el[i]->next != NULL ) {    // find last element
@@ -399,7 +411,8 @@ static void do_doc_panes_out( void )
                 ProcFlags.page_started = true;
             }
             if( cur_pane->cols[i].main != NULL ) {
-                set_v_positions( cur_pane->cols[i].main, cur_pane->cols[i].main_top );
+                set_positions( cur_pane->cols[i].main, cur_pane->cols[i].col_left,
+                               cur_pane->cols[i].main_top );
                 if( cur_el[i] == NULL ) {
                     cur_el[i] = cur_pane->cols[i].main;
                     last_el[i] = cur_pane->cols[i].main;
@@ -413,7 +426,8 @@ static void do_doc_panes_out( void )
             }
             ProcFlags.page_started = true;
             if( cur_pane->cols[i].bot_fig != NULL ) {
-                set_v_positions( cur_pane->cols[i].bot_fig, cur_pane->cols[i].fig_top );
+                set_positions( cur_pane->cols[i].bot_fig, cur_pane->cols[i].col_left,
+                               cur_pane->cols[i].fig_top );
                 if( cur_el[i] == NULL ) {
                     cur_el[i] = cur_pane->cols[i].bot_fig;
                     last_el[i] = cur_pane->cols[i].bot_fig;
@@ -426,7 +440,8 @@ static void do_doc_panes_out( void )
                 cur_pane->cols[i].bot_fig = NULL;
             }
             if( cur_pane->cols[i].footnote != NULL ) {
-                set_v_positions( cur_pane->cols[i].footnote, cur_pane->cols[i].fn_top );
+                set_positions( cur_pane->cols[i].footnote, cur_pane->cols[i].col_left,
+                               cur_pane->cols[i].fn_top );
                 if( cur_el[i] == NULL ) {
                     cur_el[i] = cur_pane->cols[i].footnote;
                 } else {
@@ -733,7 +748,6 @@ void do_page_out( void )
     uint32_t        curr_height;
     uint32_t        prev_height;
     uint32_t        sav_hs;
-    uint32_t        sav_hl;
 
     /* Set up for the new page */
 
@@ -746,11 +760,9 @@ void do_page_out( void )
     /* Get the banner text into the proper sections */
 
     if( ProcFlags.keep_left_margin ) {
-        sav_hs = g_cur_h_start;
-        sav_hl = g_cur_left;
+        sav_hs = t_page.cur_width;
     }
-    g_cur_h_start = g_page_left_org;
-    g_cur_left    = g_page_left_org;
+    t_page.cur_width = 0;
 
     if( (t_page.top_banner != NULL) && (t_page.top_banner->region != NULL) ) {
         save_prev = g_prev_font;            // will be reset for top banner
@@ -816,8 +828,7 @@ void do_page_out( void )
     }
 
     if( ProcFlags.keep_left_margin ) {
-        g_cur_h_start = sav_hs;
-        g_cur_left = sav_hl;
+        t_page.cur_width = sav_hs;
     }
 
     if( (t_page.bottom_banner != NULL) && (t_page.bottom_banner->region != NULL) ) {

@@ -825,7 +825,7 @@ void    scan_line( void )
                 /*******************************************************************/
 
                 if( ProcFlags.in_bx_box && !ProcFlags.keep_left_margin) {
-                    g_cur_h_start = g_page_left_org + g_indent;
+                    t_page.cur_width = g_indent;
                 }
                 scr_process_break();
             }

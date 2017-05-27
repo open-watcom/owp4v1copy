@@ -275,9 +275,9 @@ static void box_blank_lines( uint32_t lines )
                         cur_chars->next->prev = cur_chars;
                         cur_chars = cur_chars->next;
                     }
-                    cur_chars->x_address = cur_hline->cols[i_b].col + g_page_left -
-                                                                       box_col_width;
-                    cur_chars->width = cop_text_width( cur_chars->text, cur_chars->count, g_curr_font );
+                    cur_chars->x_address = cur_hline->cols[i_b].col - box_col_width;
+                    cur_chars->width = cop_text_width( cur_chars->text,
+                                       cur_chars->count, g_curr_font );
                 }
                 cur_blank->last = cur_chars;
             }
@@ -332,12 +332,11 @@ static void box_char_element( doc_element * cur_el ) {
                                 || (cur_hline->cols[i_b].v_ind == bx_v_split)
                                 || (cur_hline->cols[i_b].v_ind == bx_v_up) ) {  // ascender needed
 
-                            cur_pos = cur_hline->cols[i_b].col + g_page_left
-                                                                   - box_col_width;
+                            cur_pos = cur_hline->cols[i_b].col - box_col_width;
                             if( cur_chars != NULL ) {   // insert ascender if cur_chars exists
                                 h_done = false;
                                 if( cur_chars == cur_text->first ) {    // first text_chars
-                                    last_pos = g_page_left;
+                                    last_pos = 0;
                                 } else {
                                     last_pos = cur_chars->prev->x_address +
                                                cur_chars->prev->width;
@@ -497,8 +496,7 @@ static void box_draw_vlines( box_col_set * hline, uint32_t subs_skip,
                 g_top_skip = top_skip;
             }
             v_line_el = init_doc_el( el_vline, 0 ); // only the last VLINE can (sometimes) have a depth > 0
-            v_line_el->element.vline.h_start = hline->cols[i_h].col
-                                               + g_page_left - h_vl_offset;
+            v_line_el->element.vline.h_start = hline->cols[i_h].col - h_vl_offset;
             if( (((stub == st_down) || (stub == st_ext))
                     && (hline->cols[i_h].v_ind == bx_v_down))
                     || ((stub == st_up) && ((cur_col_type == bx_v_up)
@@ -929,8 +927,7 @@ static void  do_char_device( void )
                     cur_chars = cur_chars->next;
                 } 
                 box_el->element.text.first->last = cur_chars;
-                cur_chars->x_address = cur_hline->cols[0].col + g_page_left -
-                                                                    box_col_width;
+                cur_chars->x_address = cur_hline->cols[0].col - box_col_width;
 
                 /* Create the horizontal box line from the BOX characters. */
 
@@ -1211,14 +1208,14 @@ static void do_line_device( void )
                 cur_el->blank_lines = 0;
             }
 
-            h_offset = cur_hline->cols[0].col + g_page_left - h_vl_offset;
+            h_offset = cur_hline->cols[0].col - h_vl_offset;
             if( (int32_t) h_offset < 0 ) {
                 h_offset = h_vl_offset;
             }
-            if( (g_page_left + h_vl_offset) < h_offset ) {
+            if( h_vl_offset < h_offset ) {
                 cur_el->element.hline.h_start = h_offset;
             } else {
-                cur_el->element.hline.h_start = g_page_left + h_vl_offset;
+                cur_el->element.hline.h_start = h_vl_offset;
             }        
             if( cur_hline->current > 1) {   // if only one column, default is correct
                 cur_el->element.hline.h_len =

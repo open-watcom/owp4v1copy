@@ -154,7 +154,7 @@ void    gml_binclude( const gmltag * entry )
         }
     }
     cur_el->element.binc.depth = depth;
-    cur_el->element.binc.cur_left = g_cur_h_start;
+    cur_el->element.binc.cur_left = t_page.cur_width;
     cur_el->element.binc.has_rec_type = has_rec_type;
     strncpy_s( cur_el->element.binc.file, FILENAME_MAX, file, FILENAME_MAX );
 

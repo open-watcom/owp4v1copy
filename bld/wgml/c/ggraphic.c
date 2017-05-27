@@ -213,7 +213,7 @@ void    gml_graphic( const gmltag * entry )
     }
     set_skip_vars( NULL, NULL, NULL, 1, g_curr_font );
     cur_el = init_doc_el( el_graph, depth );
-    cur_el->element.graph.cur_left = g_cur_h_start;
+    cur_el->element.graph.cur_left = t_page.cur_width;
     cur_el->element.graph.depth = depth;
     cur_el->element.graph.scale = scale;
     cur_el->element.graph.width = width;

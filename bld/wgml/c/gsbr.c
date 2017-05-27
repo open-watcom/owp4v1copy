@@ -112,9 +112,9 @@ void  scr_process_break( void )
             if( !ProcFlags.concat && (post_space > 0) ) {
                 marker = process_word( NULL, 0, g_curr_font );
                 marker->type = norm;
-                g_cur_h_start += post_space;
+                t_page.cur_width += post_space;
                 post_space = 0;
-                marker->x_address = g_cur_h_start;
+                marker->x_address = t_page.cur_width;
                 t_line->last->next = marker;
                 marker->prev = t_line->last;
                 if( t_line->line_height < wgml_fonts[g_curr_font].line_height ) {

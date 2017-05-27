@@ -61,7 +61,7 @@ static void add_risers( text_line * in_line )
 
     riser = alloc_text_chars( &bin_device->box.vertical_line, 1, bin_device->box.font );
     riser->width = 1;
-    riser->x_address = g_cur_left;
+    riser->x_address = t_page.cur_left;
     if( in_line->first != NULL ) {
         in_line->first->prev = riser;
         riser->next = in_line->first;
@@ -69,7 +69,7 @@ static void add_risers( text_line * in_line )
     in_line->first = riser;
 
     riser = alloc_text_chars( &bin_device->box.vertical_line, 1, bin_device->box.font );
-    riser->x_address = g_page_right - 1;
+    riser->x_address = t_page.max_width - 1;
     riser->width = 1;
     if( in_line->last == NULL ) {
         riser->prev = in_line->first;
@@ -101,7 +101,7 @@ static doc_element * get_box_line_el( void )
     /* This may need additional work */
 
     cur_doc_el->element.text.first->first->width = line_buff.current;
-    cur_doc_el->element.text.first->first->x_address = g_cur_left;
+    cur_doc_el->element.text.first->first->x_address = t_page.cur_left;
     cur_doc_el->element.text.first->line_height = wgml_fonts[bin_device->box.font].line_height;
     cur_doc_el->depth = wgml_fonts[bin_device->box.font].line_height;
 
@@ -235,7 +235,7 @@ static void draw_box( doc_el_group * in_group )
         } else {
             cur_doc_el->subs_skip = wgml_fonts[layout_work.fig.font].line_height;
         }
-        cur_doc_el->element.dbox.h_start = g_cur_left;
+        cur_doc_el->element.dbox.h_start = t_page.cur_left;
         cur_doc_el->element.dbox.h_len = width;
         cur_doc_el->element.dbox.v_len = in_group->depth;
         if( (place == inline_place) ) {
@@ -324,7 +324,7 @@ static void insert_frame_line( void )
 
             h_line_el = init_doc_el( el_hline, 0 );
             h_line_el->element.hline.ban_adjust = false;   // TBD, may not apply to FIG
-            h_line_el->element.hline.h_start = g_cur_h_start;
+            h_line_el->element.hline.h_start = t_page.cur_width;
             h_line_el->element.hline.h_len = width;
             insert_col_main( h_line_el );
         } else {                    // char_frame Note: wgml 4.0 uses font 0 regardless of the default font for the section
@@ -556,8 +556,8 @@ void gml_fig( const gmltag * entry )
     nest_cb->p_stack = copy_to_nest_stack();
     nest_cb->left_indent = conv_hor_unit( &layout_work.fig.left_adjust, g_curr_font );
     nest_cb->right_indent = conv_hor_unit( &layout_work.fig.right_adjust, g_curr_font );
-    nest_cb->lm = g_cur_left;
-    nest_cb->rm = g_page_right;
+    nest_cb->lm = t_page.cur_left;
+    nest_cb->rm = t_page.max_width;
     nest_cb->font = g_curr_font;
     nest_cb->c_tag = t_FIG;
 
@@ -616,8 +616,8 @@ void gml_fig( const gmltag * entry )
 
     /* This is for the overall figure, including any frame */
 
-    g_cur_left += nest_cb->left_indent;
-    g_page_right = g_cur_left + width;
+    t_page.cur_left += nest_cb->left_indent;
+    t_page.max_width = t_page.cur_left + width;
 
     if( width > t_page.last_pane->col_width ) {
         if( (t_page.last_pane->col_count > 1) && (place != top_place) ) {
@@ -627,7 +627,7 @@ void gml_fig( const gmltag * entry )
         }
     }
 
-    if( (g_cur_left >= g_page_right) || (g_cur_left >= g_page_right_org) ) {
+    if( (t_page.cur_left >= t_page.max_width) || (t_page.cur_left >= g_page_right_org) ) {
         if( frame.type == none ) {
             xx_line_err( err_inv_margins_1, val_start );
         } else {
@@ -635,7 +635,7 @@ void gml_fig( const gmltag * entry )
         }
     }
 
-    g_cur_h_start = g_cur_left;
+    t_page.cur_width = t_page.cur_left;
     ProcFlags.keep_left_margin = true;  // keep special indent
 
     if( (place != top_place) &&
@@ -661,20 +661,20 @@ void gml_fig( const gmltag * entry )
 
     /* Now set up margins for any text inside the figure */  
 
-    g_cur_left += left_inset;
+    t_page.cur_left += left_inset;
 
-    if( g_page_right < right_inset ) {
-        g_page_right = 0;               // negative right margin not allowed
+    if( t_page.max_width < right_inset ) {
+        t_page.max_width = 0;               // negative right margin not allowed
         if( frame.type == none ) {
             xx_line_err( err_inv_margins_1, val_start );
         } else {
             xx_line_err( err_inv_margins_2, val_start );
         }
     } else {
-        g_page_right -= right_inset;
+        t_page.max_width -= right_inset;
     }
 
-    g_cur_h_start = g_cur_left;
+    t_page.cur_width = t_page.cur_left;
     ProcFlags.keep_left_margin = true;  // keep special indent
 
     if( !ProcFlags.reprocess_line && *p ) {
@@ -721,9 +721,9 @@ void gml_efig( const gmltag * entry )
         g_err_tag_prec( "FIG" );
     }
 
-    g_cur_left = g_page_left + nest_cb->left_indent;    // reset various values
-    g_page_right = g_cur_left + width;
-    g_cur_h_start = g_cur_left;
+    t_page.cur_left = nest_cb->left_indent; // reset various values
+    t_page.max_width = width;
+    t_page.cur_width = 0;
     ProcFlags.concat = false;
 
     set_skip_vars( NULL, NULL, &layout_work.fig.post_skip, spacing, layout_work.fig.font );
@@ -1034,8 +1034,8 @@ void gml_efig( const gmltag * entry )
 
     ProcFlags.concat = concat_save;
     ProcFlags.justify = justify_save;
-    g_cur_left = nest_cb->lm;
-    g_page_right = nest_cb->rm;
+    t_page.cur_left = nest_cb->lm;
+    t_page.max_width = nest_cb->rm;
 
     wk = nest_cb;
     nest_cb = nest_cb->prev;
@@ -1043,7 +1043,7 @@ void gml_efig( const gmltag * entry )
 
     g_curr_font = nest_cb->font;
 
-    g_cur_h_start = g_cur_left;
+    t_page.cur_width = t_page.cur_left;
 
     scan_err = false;
     if( *p ) {
@@ -1116,11 +1116,11 @@ void gml_figcap( const gmltag * entry )
 
     /* Output the caption text, if any */
 
-    g_cur_left += (t_line->last->width + wgml_fonts[g_curr_font].spc_width );
+    t_page.cur_left += (t_line->last->width + wgml_fonts[g_curr_font].spc_width );
     if( ProcFlags.has_aa_block ) {          // matches wgml 4.0
-        g_page_right += tab_col;
+        t_page.max_width += tab_col;
     }
-    g_cur_h_start = g_cur_left;
+    t_page.cur_width = t_page.cur_left;
     g_curr_font = layout_work.figcap.font;
     if( *p ) {
         if( *p == '.' ) p++;                // possible tag end
@@ -1171,7 +1171,7 @@ void gml_figdesc( const gmltag * entry )
     } else {                                    // FIGCAP not present
         scr_process_break();                    
         if( ProcFlags.has_aa_block ) {          // matches wgml 4.0
-            g_page_right += tab_col;
+            t_page.max_width += tab_col;
         }
         g_curr_font = layout_work.figdesc.font;
         set_skip_vars( &layout_work.figdesc.pre_lines, NULL, NULL, spacing, g_curr_font );

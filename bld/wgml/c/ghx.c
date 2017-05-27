@@ -444,6 +444,7 @@ void gen_heading( char * h_text, char * id, hdsrc hn_lvl, hdsrc hds_lvl )
             } else {
                 cur_doc_el_group->post_skip = g_post_skip;
                 insert_page_width( cur_doc_el_group );
+                cur_doc_el_group = NULL;
             }
         }
 

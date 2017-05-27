@@ -1113,8 +1113,8 @@ void start_line_with_string( const char *text, font_number font, bool leave_1spa
 
     n_char = alloc_text_chars( text, count, font );
 
-    n_char->x_address = g_cur_h_start;
-    ju_x_start = g_cur_h_start;
+    n_char->x_address = t_page.cur_width;
+    ju_x_start = t_page.cur_width;
     input_cbs->fmflags &= ~II_sol;      // no longer start of line
 
     n_char->width = cop_text_width( n_char->text, n_char->count, font );
@@ -1123,10 +1123,10 @@ void start_line_with_string( const char *text, font_number font, bool leave_1spa
     /*  Test if word hits right margin                         */
     /***********************************************************/
 
-    if( n_char->x_address + n_char->width > g_page_right ) {
+    if( n_char->x_address + n_char->width > t_page.cur_width ) {
         process_line_full( t_line, ProcFlags.concat );
         t_line = alloc_text_line();
-        n_char->x_address = g_cur_h_start;
+        n_char->x_address = t_page.cur_width;
     }
 
     if( t_line == NULL ) {
@@ -1144,7 +1144,7 @@ void start_line_with_string( const char *text, font_number font, bool leave_1spa
     }
     t_line->last  = n_char;
 
-    g_cur_h_start = n_char->x_address + n_char->width;
+    t_page.cur_width = n_char->x_address + n_char->width;
     post_space = post_space * wgml_fonts[layout_work.defaults.font].spc_width;
 }
 

@@ -97,25 +97,22 @@ void    init_page_geometry( void )
     g_page_left_org = lm + bin_device->x_start;
     if( g_page_left_org < bin_device->x_start )
         g_page_left_org = bin_device->x_start;
-    g_page_left = g_page_left_org;
-    g_cur_left = g_page_left;               // set initial value
+    t_page.page_left = g_page_left_org;
+    t_page.cur_left = t_page.page_left;     // set initial value
 
     g_page_right_org = rm + bin_device->x_start;
-    if( g_page_right_org > bin_device->page_width )
-        g_page_right_org = bin_device->page_width;
-    g_page_right = g_page_right_org;
-
-    if( g_page_right > bin_device->page_width ) {// output must appear on page
-        xx_err( err_margins_inverted );     // candidate Severe Error
-        g_suicide();                        // no recovery possible
+    if( g_page_right_org > bin_device->page_width ) {   // output must appear on page
+        xx_err( err_margins_inverted );                 // candidate Severe Error
+        g_suicide();                                    // no recovery possible
     }
 
-    if( g_page_left >= g_page_right ) {     // margins cannot be inverted
-        xx_err( err_margins_inverted );     // candidate Severe Error
-        g_suicide();                        // no recovery possible
+    if( t_page.page_left >= g_page_right_org ) {    // margins cannot be inverted
+        xx_err( err_margins_inverted );             // candidate Severe Error
+        g_suicide();                                // no recovery possible
     }
 
     g_net_page_width = rm - lm;
+    t_page.page_width = g_net_page_width;
 
     /****************************************************************/
     /* wgml 4.0 does this without regard to the valus specified in  */
@@ -217,7 +214,8 @@ void    init_page_geometry( void )
                    );
         }
         out_msg( "\npage top:%d bottom:%d left:%d right:%d lines:%d\n",
-                 t_page.panes_top, t_page.bot_ban_top, g_page_left, g_page_right, lcmax );
+                 t_page.panes_top, t_page.bot_ban_top, t_page.page_left,
+                 g_page_right_org, lcmax );
         out_msg(
            "page net depth:%d width:%d line height:%d char width:%d\n\n",
                   g_net_page_depth, g_net_page_width, g_max_line_height,

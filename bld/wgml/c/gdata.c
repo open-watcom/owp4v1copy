@@ -139,6 +139,11 @@ void init_global_vars( void )
     t_page.bot_ban_top      = 0;
     t_page.max_depth        = 0;
     t_page.cur_depth        = 0;
+    t_page.page_left        = 0;
+    t_page.page_width       = 0;
+    t_page.max_width        = 0;
+    t_page.cur_left         = 0;
+    t_page.cur_width        = 0;
     t_page.post_skip        = 0;
     t_page.last_pane        = mem_alloc( sizeof(doc_pane) );
     t_page.cur_col          = &t_page.last_pane->cols[0];
@@ -165,7 +170,6 @@ void init_global_vars( void )
         t_page.panes->cols[i].fig_top   = 0;
         t_page.panes->cols[i].fn_top    = 0;
         t_page.panes->cols[i].col_left  = 0;
-        t_page.panes->cols[i].col_right = 0;
         t_page.panes->cols[i].post_skip = 0;
         t_page.panes->cols[i].col_width = NULL;
         t_page.panes->cols[i].main      = NULL;

@@ -180,9 +180,8 @@ void    scr_in( void )
 
     /* Reset margin(s) regardless of ProcFlags.keep_left_margin */
  
-    g_page_right = g_page_right_org + g_indentr + nest_cb->right_indent;
-    g_cur_left = g_page_left + g_indent + nest_cb->left_indent + nest_cb->align;
-    g_cur_h_start = g_cur_left;
+    t_page.max_width += g_indentr + nest_cb->right_indent;
+    t_page.cur_left = g_indent + nest_cb->left_indent + nest_cb->align;
 
     scan_restart = p;
     return;

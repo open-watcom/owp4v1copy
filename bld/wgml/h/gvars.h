@@ -333,13 +333,9 @@ global gen_sect             figlist_toc;        // used with FIGLIST, TOC and eG
 /*  These are very slowly being refactored.                                */
 /***************************************************************************/
 
-global  uint32_t    g_cur_h_start;
-global  uint32_t    g_cur_left;
 global  uint32_t    g_cur_v_start;
 global  uint32_t    g_page_bottom_org;
-global  uint32_t    g_page_left;
 global  uint32_t    g_page_left_org;
-global  uint32_t    g_page_right;
 global  uint32_t    g_page_right_org;
 global  uint32_t    g_page_depth;
 global  uint32_t    g_max_char_width;

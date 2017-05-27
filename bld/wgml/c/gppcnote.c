@@ -51,9 +51,9 @@ void    proc_p_pc( p_lay_tag * p_pc )
     }
     scr_process_break();
     g_line_indent = conv_hor_unit( &(p_pc->line_indent), g_curr_font );
-    g_cur_left = g_page_left + g_indent + nest_cb->left_indent + nest_cb->align;// left start    TBD
+    t_page.cur_left = g_indent + nest_cb->left_indent + nest_cb->align;// left start    TBD
                                         // possibly indent first line
-    g_cur_h_start = g_cur_left + g_line_indent;
+    t_page.cur_width = t_page.cur_left + g_line_indent;
 
     g_cur_threshold = layout_work.widow.threshold; // standard threshold
 
@@ -113,12 +113,8 @@ extern  void    gml_note( const gmltag * entry )
                     spacing, g_curr_font );
     post_space = 0;
 
-    if( nest_cb->c_tag == t_NONE ) {
-        g_cur_left = g_page_left + conv_hor_unit( &layout_work.note.left_indent, g_curr_font );
-    } else {
-        g_cur_left += conv_hor_unit( &layout_work.note.left_indent, g_curr_font );
-    }
-    g_cur_h_start = g_cur_left;
+    t_page.cur_left = conv_hor_unit( &layout_work.note.left_indent, g_curr_font );
+    t_page.cur_width = t_page.cur_left;
     ProcFlags.keep_left_margin = true;  // keep special Note indent
 
     start_line_with_string( layout_work.note.string, layout_work.note.font, false );
@@ -130,10 +126,10 @@ extern  void    gml_note( const gmltag * entry )
     spc_cnt = post_space / wgml_fonts[g_curr_font].spc_width;
     post_space = spc_cnt * wgml_fonts[font_save].spc_width;
     if( (t_line != NULL)  && (t_line->last != NULL) ) {
-        g_cur_left += t_line->last->width + post_space;
+        t_page.cur_left += t_line->last->width + post_space;
     }
-    g_cur_h_start = g_cur_left;
-    ju_x_start = g_cur_h_start;
+    t_page.cur_width = t_page.cur_left;
+    ju_x_start = t_page.cur_width;
 
     spacing = layout_work.note.spacing;
     g_curr_font = layout_work.defaults.font;
@@ -151,7 +147,7 @@ extern  void    gml_note( const gmltag * entry )
         /* :NOTE note_string is not nullstring and ends in at least 1 space */
 
         marker = alloc_text_chars( NULL, 0, font_save );
-        marker->x_address = g_cur_h_start;
+        marker->x_address = t_page.cur_width;
         if( t_line->first == NULL ) {
             t_line->first = marker;
             t_line->last = t_line->first;

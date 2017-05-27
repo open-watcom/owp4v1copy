@@ -101,13 +101,13 @@ void gml_fn( const gmltag * entry )
     nest_cb->p_stack = copy_to_nest_stack();
 
     nest_cb->left_indent = conv_hor_unit( &layout_work.fn.line_indent, g_curr_font );
-    nest_cb->lm = g_cur_left;
-    nest_cb->rm = g_page_right;
+    nest_cb->lm = t_page.cur_left;
+    nest_cb->rm = t_page.max_width;
     nest_cb->font = g_curr_font;
     nest_cb->c_tag = t_FN;
 
-    g_cur_left += nest_cb->left_indent;
-    g_cur_h_start = g_cur_left;
+    t_page.cur_left += nest_cb->left_indent;
+    t_page.cur_width = t_page.cur_left;
     ProcFlags.keep_left_margin = true;      // keep special indent
 
     spacing = layout_work.fn.spacing;
@@ -168,8 +168,8 @@ void gml_fn( const gmltag * entry )
                                                         layout_work.fn.number_style );
     input_cbs->fmflags &= ~II_eol;          // prefix is never EOL
     process_text( &buffer, layout_work.fn.number_font ); // FN prefix
-    g_cur_left = nest_cb->lm + conv_hor_unit( &layout_work.fn.align, g_curr_font );
-    g_cur_h_start = g_cur_left;
+    t_page.cur_left = nest_cb->lm + conv_hor_unit( &layout_work.fn.align, g_curr_font );
+    t_page.cur_width = t_page.cur_left;
     ProcFlags.keep_left_margin = true;  // keep special indent
 
     if( !ProcFlags.reprocess_line && *p ) {
@@ -208,8 +208,8 @@ void gml_efn( const gmltag * entry )
 
     ProcFlags.concat = concat_save;
     ProcFlags.justify = justify_save;
-    g_cur_left = nest_cb->lm;
-    g_page_right = nest_cb->rm;
+    t_page.cur_left = nest_cb->lm;
+    t_page.max_width = nest_cb->rm;
 
     wk = nest_cb;
     nest_cb = nest_cb->prev;
@@ -227,7 +227,7 @@ void gml_efn( const gmltag * entry )
         insert_col_fn( cur_doc_el_group );
     }
 
-    g_cur_h_start = g_cur_left;
+    t_page.cur_width = t_page.cur_left;
 
     scan_err = false;
     p = scan_start;
