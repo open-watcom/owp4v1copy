@@ -773,6 +773,7 @@ void gml_efig( const gmltag * entry )
 
     cur_group_type = sav_group_type;
     if( t_doc_el_group != NULL) {
+        page_pred = page + 1;                   // initialize to current page 
         cur_doc_el_group = t_doc_el_group;      // detach current element group
         t_doc_el_group = t_doc_el_group->next;  // processed doc_elements go to next group, if any
         cur_doc_el_group->next = NULL;
@@ -799,7 +800,7 @@ void gml_efig( const gmltag * entry )
 
                     last_page_out();
                     reset_t_page();
-                    fig_entry->pageno++;    // update to page FIG ends on
+                    page_pred++;        // update to page FIG ends on
 
                     if( (cur_doc_el_group->depth + bias) <= t_page.max_depth ) {
 
@@ -915,15 +916,6 @@ void gml_efig( const gmltag * entry )
             }
             add_doc_el_group_to_pool( cur_doc_el_group );
             cur_doc_el_group = NULL;
-            if( pass > 1 ) {                                // not on pass 1
-                if( (page + 1) != fig_entry->pageno ) {     // page number changed
-                    fig_entry->pageno = page + 1;
-                    if( (strlen( id ) > 0) ) {              // FIG id exists
-                        fig_fwd_refs = init_fwd_ref( fig_fwd_refs, id );
-                    }
-                    ProcFlags.new_pagenr = true;
-                }
-            }
         } else {
 
             /*************************************************************/
@@ -1001,7 +993,6 @@ void gml_efig( const gmltag * entry )
             /*    functions and update_t_page()).                       */
             /************************************************************/
 
-            page_pred = page + 1;       // initialize to current page 
             while( cur_group != NULL ) {
                 page_pred++;            // set to future page of top FIG
                 cur_group = cur_group->next;
@@ -1017,13 +1008,14 @@ void gml_efig( const gmltag * entry )
             if( (page_pred > (page + 1)) && (place == top_place) ) {
                 cur_doc_el_group->post_skip = raw_p_skip;
             }
-
-            if( pass == 1 ) {
+        }
+        if( pass == 1 ) {
+            fig_entry->pageno = page_pred;
+        } else {
+            if( page_pred != fig_entry->pageno ) {  // page number changed
                 fig_entry->pageno = page_pred;
-            } else {
-                if( page_pred != fig_entry->pageno ) {  // page number changed
-                    fig_entry->pageno = page_pred;
-                    if( (strlen( id ) > 0) ) {          // FIG id exists
+                if( GlobalFlags.lastpass ) {        // last pass only
+                    if( strlen( id ) > 0 ) {     // FIG id exists
                         fig_fwd_refs = init_fwd_ref( fig_fwd_refs, id );
                     }
                     ProcFlags.new_pagenr = true;

@@ -60,7 +60,7 @@ static  uint32_t        top_depth;      // used in setting banners
 /*  does the actual output to the device                                   */
 /***************************************************************************/
  
-static void do_el_list_out( doc_element * array, unsigned char count )
+static void do_el_list_out( doc_element * array[MAX_COL], unsigned char count )
 {
     doc_element *   cur_el;
     doc_element *   save;
@@ -72,7 +72,7 @@ static void do_el_list_out( doc_element * array, unsigned char count )
     /*  The columns should no longer point to these doc_element lists.      */
 
     for( i = 0; i < count; i++ ) {
-        cur_el = &array[i];
+        cur_el = array[i];
         while( cur_el != NULL ) {
             if( i == 0 ) {      // restrict output to first column, for now
                 switch( cur_el->type ) {
@@ -345,7 +345,7 @@ static void do_ban_column_out( ban_column * a_column, uint32_t v_start )
         cur_col = cur_col->next;
     }
 
-    do_el_list_out( *cur_el, col_count );
+    do_el_list_out( cur_el, col_count );
     mem_free( cur_el );
 
     return;
@@ -456,7 +456,7 @@ static void do_doc_panes_out( void )
         cur_pane = cur_pane->next;
     }
 
-    do_el_list_out( *cur_el, col_count );
+    do_el_list_out( cur_el, col_count );
 
     return;
 }

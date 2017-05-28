@@ -53,10 +53,6 @@ void    init_page_geometry( void )
     uint32_t    rm_test;
     uint32_t    top_margin;
     uint32_t    y_start_correction;
-#if 0       // probably not needed if new column structure is used -- TBD
-    uint32_t    offset;
-#endif
-
 
     g_resh = bin_device->horizontal_base_units; // hor resolution  &sysresh
     g_resv = bin_device->vertical_base_units;   // vert resolution &sysresv

@@ -505,7 +505,7 @@ static void gen_figlist( void )
 
     t_page.cur_left = 2 * conv_hor_unit( &layout_work.figlist.left_adjust,
                                          g_curr_font );    // matches wgml 4.0
-    t_page.max_width = g_page_right_org -
+    t_page.max_width = t_page.page_width -
                    conv_hor_unit( &layout_work.figlist.right_adjust, g_curr_font );
     size = conv_hor_unit( &layout_work.flpgnum.size, g_curr_font );  // space from fill to right edge
     figlist_toc_tabs( layout_work.figlist.fill_string, size );
@@ -916,7 +916,7 @@ static void gen_toc( void )
     /* Set TOC margins and other values */
     
     t_page.cur_left = 2 * conv_hor_unit( &layout_work.toc.left_adjust, g_curr_font );    // matches wgml 4.0
-    t_page.max_width = g_page_right_org -
+    t_page.max_width = t_page.page_width -
                    conv_hor_unit( &layout_work.toc.right_adjust, g_curr_font );
     size = conv_hor_unit( &layout_work.tocpgnum.size, g_curr_font );     // space from fill to right edge
     figlist_toc_tabs( layout_work.toc.fill_string, size );
