@@ -1041,6 +1041,8 @@ typedef struct doc_element {
             uint32_t            depth;
             uint32_t            subs_skip;
             uint32_t            top_skip;
+            uint32_t            h_pos;          // multicolumn support only
+            uint32_t            v_pos;          // multicolumn support only
     union {
             binclude_element    binc;
             dbox_element        dbox;

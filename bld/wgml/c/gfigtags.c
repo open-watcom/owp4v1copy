@@ -614,10 +614,16 @@ void gml_fig( const gmltag * entry )
         }
     }
 
+    /* This sets text processing up for page width text */
+
+    if( place == top_place ) {
+        t_page.max_width = t_page.page_width;
+    }
+
     /* This is for the overall figure, including any frame */
 
     t_page.cur_left += nest_cb->left_indent;
-    t_page.max_width = t_page.cur_left + width;
+    t_page.cur_width = t_page.cur_left;
 
     if( width > t_page.last_pane->col_width ) {
         if( (t_page.last_pane->col_count > 1) && (place != top_place) ) {

@@ -24,10 +24,22 @@
 *
 *  ========================================================================
 *
-* Description:  WGML utility functions for alloc / free / reuse of
-*                           different structs
-* Note: originally used for text_chars and text_line, hence the file name
-*
+* Description:  pool-handling functions for alloc / return to pool / reuse of
+*               these structs:
+*                   ban_column
+*                   box_col_set
+*                   box_col_stack
+*                   doc_el_group
+*                   doc_element
+*                   tag_cb
+*                   text_chars
+*                   text_line
+*               it also provides utility functions:
+*                   init_doc_el() and clear_doc_element() to help with doc_elements
+*                   free_pool_storage() to free all the allocated memory
+*                       
+* Note: this file was originally used for the text_chars and text_line structs, 
+*       hence the file name
 ****************************************************************************/
 
 #define __STDC_WANT_LIB_EXT1__  1      /* use safer C library              */
@@ -347,6 +359,8 @@ doc_element * alloc_doc_el( element_type type )
     curr->subs_skip = 0;
     curr->top_skip = 0;
     curr->type = type;
+    curr->h_pos = 0;
+    curr->v_pos = 0;
 
     switch( type ) {
     case el_binc :

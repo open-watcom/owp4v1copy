@@ -33,9 +33,9 @@
 *       do_char_device()        process current box_line for character devices
 *       do_line_device()        process current box_line for line-drawing devices
 *       draw_box_lines()        draw HLINEs and/or VLINEs
-*       eop_bx_box()            end-of-page for boxes drawn with BX
-*       eop_char_device()       end-of-page for character devices
-*       eop_line_device()       end-of-page for line devices
+*       eoc_bx_box()            end-of-column for boxes drawn with BX
+*       eoc_char_device()       end-of-column for character devices
+*       eoc_line_device()       end-of-column for line devices
 *       merge_lines()           merge cur_line and/or prev_line into box_line
 *       resize_box_cols()       resize a box_col_set.cols member
 *       scr_bx()                parse BX line and use other functions to perform
@@ -186,7 +186,7 @@
 
 typedef enum {
     bx_none,        // BX
-    bx_eop,         // end-of-page
+    bx_eoc,         // end-of-column
     bx_on,          // BX ON
     bx_off,         // BX OFF
     bx_new,         // BX NEW
@@ -253,7 +253,7 @@ static void box_blank_lines( uint32_t lines )
             cur_blank = cur_blank->next;
         }
         cur_blank->line_height = def_height;
-        if( cur_op == bx_eop ) {            // eop uses prev_line
+        if( cur_op == bx_eoc ) {            // eoc uses prev_line
             cur_hline = prev_line;
         } else {
             cur_hline = box_line->first;
@@ -319,7 +319,7 @@ static void box_char_element( doc_element * cur_el ) {
         if( cur_text != NULL ) {
             while( cur_text != NULL ) {
                 cur_chars = cur_text->first;
-                if( cur_op == bx_eop ) {            // eop uses prev_line
+                if( cur_op == bx_eoc ) {            // eoc uses prev_line
                     cur_hline = prev_line;
                 } else {
                     cur_hline = box_line->first;
@@ -473,11 +473,11 @@ static void box_draw_vlines( box_col_set * hline, uint32_t subs_skip,
              || ((cur_col_type == bx_v_new) && (cur_op == bx_on))
              || ((cur_col_type == bx_v_new) && (cur_op == bx_new))
              || ((cur_col_type == bx_v_new) && (cur_op == bx_set))
-             || ((cur_col_type == bx_v_both) && (cur_op == bx_eop))
-             || ((cur_col_type == bx_v_down) && (cur_op == bx_eop))
-             || ((cur_col_type == bx_v_new) && (cur_op == bx_eop))
-             || ((cur_col_type == bx_v_out) && (cur_op == bx_eop))
-             || ((cur_col_type == bx_v_split) && (cur_op == bx_eop))
+             || ((cur_col_type == bx_v_both) && (cur_op == bx_eoc))
+             || ((cur_col_type == bx_v_down) && (cur_op == bx_eoc))
+             || ((cur_col_type == bx_v_new) && (cur_op == bx_eoc))
+             || ((cur_col_type == bx_v_out) && (cur_op == bx_eoc))
+             || ((cur_col_type == bx_v_split) && (cur_op == bx_eoc))
              ) {  // ascender needed
 
             ProcFlags.vline_done = true;
@@ -883,8 +883,7 @@ static void  do_char_device( void )
                     cur_el = cur_doc_el_group->first;
                 }
             } else {                                    // finish off current page
-                do_page_out();
-                reset_t_page();
+                next_column();
             }
         }
         add_doc_el_group_to_pool( cur_doc_el_group );
@@ -1092,10 +1091,11 @@ static void do_line_device( void )
 
     do_v_adjust = ProcFlags.page_started;
     if( do_v_adjust ) {     // check for initial empty doc_element on page
-        if( (t_page.panes->cols[0].main->next == NULL)
-                && (t_page.panes->cols[0].main->type == el_text)
+        if( (t_page.panes->page_width == NULL) && (
+                (t_page.panes->cols[0].main == NULL) || (
+                (t_page.panes->cols[0].main->type == el_text)
                 && (t_page.panes->cols[0].main->element.text.first != NULL)
-                && (t_page.panes->cols[0].main->element.text.first->first == NULL) ) {
+                && (t_page.panes->cols[0].main->element.text.first->first == NULL))) ) {
             do_v_adjust = false;
         }
     }
@@ -1134,9 +1134,8 @@ static void do_line_device( void )
                     }
                 }
             }
-        } else {                            // finish off current page
-            do_page_out();
-            reset_t_page();
+        } else {                            // finish off current column
+            next_column();
         }
         add_doc_el_group_to_pool( cur_doc_el_group );
         cur_doc_el_group = NULL;
@@ -1262,8 +1261,8 @@ static void do_line_device( void )
     /****************************************************************/
     /* Perform the appropriate action:                              */
     /*   1. if there is not enough room on the page, move to the    */
-    /*      next page (draws VLINEs and resets el_skip/box_depth    */
-    /*   2. invoke draw_box_lines()                                */
+    /*      next column (draws VLINEs and resets el_skip/box_depth  */
+    /*   2. invoke draw_box_lines()                                 */
 
 /// this may or may not still be correct
     /*   4. if BX OFF or BX CAN (or BX DEL) is closing the last     */
@@ -1274,22 +1273,19 @@ static void do_line_device( void )
     max_depth = t_page.max_depth - t_page.cur_depth;    // reset value
     if( !ProcFlags.in_bx_box ) {                    // outermost box starts
         if( cur_op == bx_set ) {
-            if( max_depth < (box_skip + (v_offset - 1)) ) {        // to top of next page
-                do_page_out();
-                reset_t_page();
-                ProcFlags.top_line = !ProcFlags.page_started;     // reset for new page
+            if( max_depth < (box_skip + (v_offset - 1)) ) {        // to top of next column
+                next_column();
+                ProcFlags.top_line = !ProcFlags.page_started;     // reset for new column
             }
         } else if( cur_op == bx_off ) {
-            if( max_depth < (box_skip + (v_offset - 1) + def_height) ) {        // to top of next page
-                do_page_out();
-                reset_t_page();
-                ProcFlags.top_line = !ProcFlags.page_started;     // reset for new page
+            if( max_depth < (box_skip + (v_offset - 1) + def_height) ) {        // to top of next column
+                next_column();
+                ProcFlags.top_line = !ProcFlags.page_started;     // reset for new column
             }
         } else {
-            if( max_depth < (h_line_el->subs_skip + (v_offset - 1) + def_height) ) {        // to top of next page
-                do_page_out();
-                reset_t_page();
-                ProcFlags.top_line = !ProcFlags.page_started;     // reset for new page
+            if( max_depth < (h_line_el->subs_skip + (v_offset - 1) + def_height) ) {        // to top of next column
+                next_column();
+                ProcFlags.top_line = !ProcFlags.page_started;     // reset for new column
             }
         }
         box_depth = 0;                              // top line of box
@@ -1304,17 +1300,15 @@ static void do_line_device( void )
     } else {                                        // inside a box
         if( cur_op == bx_off ) {
 /// this may be correct inside an inner box
-//            if( max_depth < (box_skip + (v_offset - 1) + def_height) ) {        // to top of next page
+//            if( max_depth < (box_skip + (v_offset - 1) + def_height) ) {        // to top of next column
 /// this appears to be correct for the bx off that closes the outermost box
-            if( max_depth < (box_skip + def_height) ) {        // to top of next page
-                do_page_out();
-                reset_t_page();
-                ProcFlags.top_line = !ProcFlags.page_started;     // reset for new page
+            if( max_depth < (box_skip + def_height) ) {        // to top of next column
+                next_column();
+                ProcFlags.top_line = !ProcFlags.page_started;     // reset for new column
             }
-        } else if( max_depth < (el_skip + hl_depth + def_height) ) {    // HLINE to top of page
-            do_page_out();
-            reset_t_page();
-            ProcFlags.top_line = !ProcFlags.page_started;     // reset for new page
+        } else if( max_depth < (el_skip + hl_depth + def_height) ) {    // HLINE to top of column
+            next_column();
+            ProcFlags.top_line = !ProcFlags.page_started;     // reset for new column
         }
         if( (h_line_el != NULL) && ProcFlags.in_bx_box ) {     // adjust for HLINE skips
             if( ProcFlags.top_line ) {
@@ -1381,7 +1375,7 @@ static void do_line_device( void )
 /*  end-of-page processing for character devices                           */
 /***************************************************************************/
 
-static void eop_char_device( void ) {
+static void eoc_char_device( void ) {
     bool            splittable;
     doc_element *   cur_el;
     uint32_t        cur_skip;               // top_skip or subs_skip, as appropriate
@@ -1461,10 +1455,10 @@ static void eop_char_device( void ) {
 /*  handle the problem that the parameter to box_line_element() was meant  */
 /*  to solve: would ADDRESS and/or XMP (and perhaps FIG and FN) need to be */
 /*  modified also and perhaps called first to decide if the text is to be  */
-/*  broken or moved to the next page? This is all very murky.              */
+/*  broken or moved to the next columnpage? This is all very murky.        */
 /***************************************************************************/
 
-static void eop_line_device( void ) {
+static void eoc_line_device( void ) {
     bool            splittable;
     box_col_set *   cur_hline;
     uint32_t        cur_skip;               // top_skip or subs_skip, as appropriate
@@ -1548,20 +1542,20 @@ static void merge_lines( void )
     bool            on_gap      = false;    // true if operand ON actually caused a gap
     box_col_set *   box_temp;
     box_col_set *   cur_temp;
-    box_col_set *   eop_save;
+    box_col_set *   eoc_save;
     box_col_set *   prev_temp;
     int             box_col;
     int             cur_col;
     int             prev_col;
 
     if( prev_line == NULL ) {
-        eop_save = NULL;
+        eoc_save = NULL;
     } else {
 
         /* Save original prev_line for use if the box is split between pages */
 
         cur_temp = alloc_box_col_set();
-        eop_save = cur_temp;
+        eoc_save = cur_temp;
         prev_temp = prev_line;
         while( cur_temp->length < prev_temp->current) {
             resize_box_cols( cur_temp );
@@ -1576,7 +1570,7 @@ static void merge_lines( void )
             prev_temp = prev_temp->next;
             if( prev_temp != NULL ) {
   
-                /* set up next eop_line member in cur_temp */
+                /* set up next eoc_line member in cur_temp */
 
                 cur_temp->next = alloc_box_col_set();
                 cur_temp= cur_temp->next;
@@ -2189,7 +2183,7 @@ static void merge_lines( void )
         add_box_col_set_to_pool( prev_line  );
         prev_line = NULL;
     }
-    prev_line = eop_save;
+    prev_line = eoc_save;
 
     if( cur_line != NULL ) {
         add_box_col_set_to_pool( cur_line );
@@ -2205,12 +2199,12 @@ static void merge_lines( void )
 /*  the method used only works because box_line is not modified            */
 /***************************************************************************/
 
-void eop_bx_box( void ) {
+void eoc_bx_box( void ) {
 
     bx_op               sav_cur_op;
 
     sav_cur_op = cur_op;
-    cur_op = bx_eop;                        // do eop processing
+    cur_op = bx_eoc;                        // do eoc processing
     ProcFlags.page_started = (t_page.last_col_main != NULL);
 
     max_depth = t_page.max_depth - t_page.cur_depth;
@@ -2220,9 +2214,9 @@ void eop_bx_box( void ) {
     /************************************************************/
 
     if( bin_driver->hline.text == NULL ) {
-        eop_char_device();
+        eoc_char_device();
     } else {
-        eop_line_device();
+        eoc_line_device();
     }
 
     cur_op = sav_cur_op;                            // restore value on entry

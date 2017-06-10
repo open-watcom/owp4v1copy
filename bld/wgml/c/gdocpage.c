@@ -26,6 +26,7 @@
 *
 * Description:  Page-oriented output
 *
+*               consolidate_array       convert column array to element list
 *               do_ban_column_out       output text from one or more ban_columns
 *               do_doc_panes_out        output text from one or more doc_panes
 *               do_el_list_out          output text from an array of element lists
@@ -37,6 +38,7 @@
 *               insert_col_width        insert doc_element into t_page.col_width
 *               insert_page_width       insert doc_element into t_page.page_width
 *               last_page_out           force output of all remaining pages
+*               next_column             move to next column 
 *               reset_bot_ban           reset t_page.bottom_banner and related externs
 *               reset_t_page            reset t_page and related externs
 *               reset_top_ban           reset t_page.top_banner and related externs
@@ -44,6 +46,7 @@
 *               set_positions           set vertical/horizontal positions in an element list
 *               split_element           splits an element at given depth
 *               text_page_out           output all pages where main is full
+*               update_column           update a single column
 *               update_t_page           update t_page from n_page
 *
 ****************************************************************************/
@@ -60,74 +63,302 @@ static  uint32_t        top_depth;      // used in setting banners
 /*  does the actual output to the device                                   */
 /***************************************************************************/
  
-static void do_el_list_out( doc_element * array[MAX_COL], unsigned char count )
+static void do_el_list_out( doc_element * in_element )
 {
-    doc_element *   cur_el;
     doc_element *   save;
-    int             i;
     text_line   *   cur_line;
 
-    /*  The array should have the doc_elements in linked-list form in the   */
-    /*  same order as the columns they came from were linked together.      */
-    /*  The columns should no longer point to these doc_element lists.      */
-
-    for( i = 0; i < count; i++ ) {
-        cur_el = array[i];
-        while( cur_el != NULL ) {
-            if( i == 0 ) {      // restrict output to first column, for now
-                switch( cur_el->type ) {
-                case el_binc :
-                    if( GlobalFlags.lastpass ) {
-                        ob_binclude( &cur_el->element.binc );
-                    }
-                    break;
-                case el_dbox :  // should only be found if DBOX block exists
-                    if( GlobalFlags.lastpass ) {
-                        fb_dbox( &cur_el->element.dbox );
-                    }
-                    break;
-                case el_graph :
-                    if( GlobalFlags.lastpass ) {
-                        if( ProcFlags.ps_device ) {   // only available to PS device
-                            ob_graphic( &cur_el->element.graph );
-                        }
-                    }
-                    break;
-                case el_hline :  // should only be found if HLINE block exists
-                    if( GlobalFlags.lastpass ) {
-                        fb_hline( &cur_el->element.hline );
-                    }
-                    break;
-                case el_text :
-                    if( GlobalFlags.lastpass ) {
-                        ProcFlags.force_op = cur_el->element.text.force_op;
-                        for( cur_line = cur_el->element.text.first; cur_line != NULL; cur_line = cur_line ->next ) {
-                            fb_output_textline( cur_line );
-                        }
-                        ProcFlags.force_op = false;
-                    }
-                    break;
-                case el_vline :  // should only be found if VLINE block exists
-                    if( GlobalFlags.lastpass ) {
-                        fb_vline( &cur_el->element.vline );
-                    }
-                    break;
-                default :
-                    internal_err( __FILE__, __LINE__ );
+    while( in_element != NULL ) {
+        switch( in_element->type ) {
+            case el_binc :
+                if( GlobalFlags.lastpass ) {
+                    ob_binclude( &in_element->element.binc );
                 }
+                break;
+            case el_dbox :  // should only be found if DBOX block exists
+                if( GlobalFlags.lastpass ) {
+                    fb_dbox( &in_element->element.dbox );
+                }
+                break;
+            case el_graph :
+                if( GlobalFlags.lastpass ) {
+                    if( ProcFlags.ps_device ) {   // only available to PS device
+                        ob_graphic( &in_element->element.graph );
+                    }
+                }
+                break;
+            case el_hline :  // should only be found if HLINE block exists
+                if( GlobalFlags.lastpass ) {
+                    fb_hline( &in_element->element.hline );
+                }
+                break;
+            case el_text :
+                if( GlobalFlags.lastpass ) {
+                    ProcFlags.force_op = in_element->element.text.force_op;
+                    for( cur_line = in_element->element.text.first;
+                            cur_line != NULL; cur_line = cur_line ->next ) {
+                        fb_output_textline( cur_line );
+                    }
+                    ProcFlags.force_op = false;
+                }
+                break;
+            case el_vline :  // should only be found if VLINE block exists
+                if( GlobalFlags.lastpass ) {
+                    fb_vline( &in_element->element.vline );
+                }
+                break;
+            default :
+                internal_err( __FILE__, __LINE__ );
+                break;
             }
-            save = cur_el->next;
-            cur_el->next = NULL;            // clear only current element
-            add_doc_el_to_pool( cur_el ); 
-            cur_el = save;
-        }
+        save = in_element->next;
+        in_element->next = NULL;            // clear only current element
+        add_doc_el_to_pool( in_element ); 
+        in_element = save;
     }    
 
     return;
 }
 
 /***************************************************************************/
-/*  set the vertical positions in a linked list of elements                */
+/*  consolidate multiple columns as appropriate                            */
+/*  NOTE: count should be at least 2                                       */
+/*        only columns i < count are processed                             */
+/*        implemented as several relatively simple steps rather than as    */
+/*        fewer relatively complicated steps                               */
+/***************************************************************************/
+ 
+static void consolidate_array( doc_element * array[MAX_COL], uint8_t count )
+{
+    bool            done;
+    doc_element *   cur_el[MAX_COL];        // doc_elements in general/text doc_elemnts
+    doc_element *   cur_nt_el[MAX_COL];     // non-text doc_elements
+    doc_element *   cur_nt_list;            // non-text doc_elements
+    doc_element *   cur_out_el;             // text doc_elements
+    doc_element *   nt_el[MAX_COL];         // non-text doc_elements
+    doc_element *   nt_el_list;             // non-text doc_elements
+    doc_element *   out_el;                 // text doc_elements/doc_elements in general
+    doc_element *   sav_el;
+    int             i;
+    text_line   *   cur_tl_list;            // text_lines
+    text_line   *   cur_tl[MAX_COL];        // text_lines
+    text_line   *   tl[MAX_COL];            // text_lines
+    uint32_t        top_pos;
+
+    /* Initialize the local arrays */
+
+    for( i = 0; i < count; i++ ) {
+        cur_el[i] = array[i];
+        cur_nt_el[i] = NULL;
+        nt_el[i] = NULL;
+    }
+
+    /* Move the non-text elements to the non-text elements array    */
+
+    for( i = 0; i < count; i++ ) {
+        sav_el = NULL;
+        while( cur_el[i] != NULL ) {
+            if( cur_el[i]->type != el_text ) {
+                if( cur_nt_el[i] == NULL ) {
+                    cur_nt_el[i] = cur_el[i];
+                    nt_el[i] = cur_el[i];
+                } else {
+                    cur_nt_el[i]->next = cur_el[i];
+                    cur_nt_el[i] = cur_nt_el[i]->next;
+                }
+                if( sav_el == NULL ) {          // top of list needs to be replaced
+                    sav_el = cur_el[i];
+                    array[i] = array[i]->next;
+                    cur_el[i] = cur_el[i]->next;
+                } else {                        // cut moved element out of list
+                    sav_el->next = cur_el[i]->next;
+                    cur_el[i] = sav_el->next;
+                }
+                cur_nt_el[i]->next = NULL;
+            } else {
+                sav_el = cur_el[i];
+                cur_el[i] = cur_el[i]->next;
+            }
+        }
+    }
+
+    /* Merge the array into a single linked list */
+
+    nt_el_list = NULL;
+    for( i = 0; i < count; i++ ) {
+        cur_nt_el[i] = nt_el[i];
+    }
+
+    done = false;
+    while( !done ) {
+        top_pos = t_page.page_top;
+        for( i = 0; i < count; i++ ) {
+            if( cur_nt_el[i] == NULL ) continue;    // some columns may be empty
+            if( bin_driver->y_positive == 0x00 ) {
+                if( top_pos > cur_nt_el[i]->v_pos ) {
+                    top_pos = cur_nt_el[i]->v_pos;
+                }
+            } else {
+                if( top_pos < cur_nt_el[i]->v_pos ) {
+                    top_pos = cur_nt_el[i]->v_pos;
+                }
+            }
+        }
+
+        cur_nt_list = nt_el_list;
+        for( i = 0; i < count; i++ ) {
+            cur_nt_el[i] = nt_el[i];
+        }
+        for( i = 0; i < count; i++ ) {
+            if( cur_nt_el[i] == NULL ) continue;    // some columns may be empty
+            if( top_pos = cur_nt_el[i]->v_pos ) {
+                if( cur_nt_list == NULL ) {
+                    cur_nt_list = cur_nt_el[i];
+                } else {
+                    cur_nt_list->next = cur_nt_el[i];
+                    cur_nt_list = cur_nt_list->next;
+                }
+                cur_nt_el[i] = cur_nt_el[i]->next;
+                cur_nt_list->next = NULL;
+            }
+        }        
+
+        done = true;
+        for( i = 0; i < count; i++ ) {
+            if( cur_el[i] != NULL ) {
+                done = false;
+                break;
+            }
+        }
+    }
+
+    /* Initialize the text_lines array */
+
+    for( i = 0; i < count; i++ ) {
+        tl[i] = NULL;
+    }
+
+    /* Extract the text_lines from the remaining doc_elements into an array */
+
+    for( i = 0; i < count; i++ ) {
+        while( array[i] != NULL ) {
+            if( array[i] == NULL ) continue;    // some columns may be empty
+            while( array[i]->element.text.first != NULL ) {
+                if( tl[i] == NULL ) {
+                    cur_tl[i] = array[i]->element.text.first;
+                    tl[i] = array[i]->element.text.first;
+                } else {
+                    cur_tl[i]->next = array[i]->element.text.first;
+                    cur_tl[i] = cur_tl[i]->next;
+                }
+                array[i]->element.text.first = array[i]->element.text.first->next;
+                cur_tl[i]->next = NULL;
+            }                    
+            sav_el = array[i];
+            array[i] = array[i]->next;
+            sav_el->next = NULL;
+            add_doc_el_to_pool( sav_el );
+        }
+    }
+
+    /* Merge the text_lines array into a single text element */
+
+    done = false;
+    out_el = alloc_doc_el( el_text );
+    cur_tl_list = out_el->element.text.first;
+
+    while( !done ) {
+        top_pos = t_page.page_top;
+        for( i = 0; i < count; i++ ) {
+            if( tl[i] == NULL ) continue;       // some columns may be empty
+            if( bin_driver->y_positive == 0x00 ) {
+                if( top_pos > tl[i]->y_address ) {
+                    top_pos = tl[i]->y_address;
+                }
+            } else {
+                if( top_pos < tl[i]->y_address ) {
+                    top_pos = tl[i]->y_address;
+                }
+            }
+        }
+
+        for( i = 0; i < count; i++ ) {
+            if( tl[i] == NULL ) continue;          // some columns may be empty
+            if( tl[i]->y_address == top_pos ) {
+                if( cur_tl_list == NULL ) {
+                    cur_tl_list = tl[i];
+                    out_el->element.text.first = tl[i];
+                } else {
+                    cur_tl_list->next = tl[i];
+                    cur_tl_list = cur_tl_list->next;
+                }
+                tl[i] = tl[i]->next;
+            }
+        }
+
+        done = true;
+        for( i = 0; i < count; i++ ) {
+            if( tl[i] != NULL ) {
+                done = false;
+                break;
+            }
+        }
+    }
+
+    /* Insert the non-text list into the text element list */
+
+    done = false;
+    cur_out_el = out_el;
+    cur_tl_list = out_el->element.text.first;
+    while( cur_nt_list != NULL ) {
+
+        if( cur_out_el == NULL ) {          // no more text doc elements
+            cur_out_el->next = cur_nt_list; // move rest of non-text elements
+            cur_out_el = cur_out_el->next;  // to out_el list
+            cur_nt_list = NULL;
+            continue;
+        } else if( cur_nt_list == NULL ) {  // no more non-text elements
+            if( cur_out_el->type != el_text ) { // no split if text element
+                cur_out_el->next = alloc_doc_el( el_text );     // create new text doc_el
+                cur_out_el->next->element.text.first = cur_tl_list->next;   // and put remaining lines
+                cur_tl_list->next = NULL;                       // in it
+            }
+            continue;
+        }
+
+        while( cur_tl_list->y_address < cur_nt_list->v_pos ) {
+            cur_tl_list = cur_tl_list->next;
+        }
+        
+        while( cur_tl_list->first->x_address < cur_nt_list->h_pos ) {
+            cur_tl_list = cur_tl_list->next;
+        }
+
+        cur_out_el->next = cur_nt_list;     // insert non-text element
+        cur_out_el = cur_out_el->next;      // in output list
+        cur_nt_list = cur_nt_list->next;
+        cur_out_el->next = NULL;
+
+        if( (cur_out_el != NULL) && (cur_nt_list != NULL) ) {
+            while( (cur_nt_list->v_pos < cur_tl_list->y_address ) &&
+                       (cur_nt_list->h_pos < cur_tl_list->first->x_address) ) {
+                    cur_out_el->next = cur_nt_list;         // move next non-text
+                    cur_out_el = cur_out_el->next;          // element to output
+                    cur_nt_list = cur_nt_list->next;        // list
+                    cur_out_el->next = NULL;
+            }
+        }
+    }
+
+    /* Output linked list of doc_elements */
+
+    do_el_list_out( out_el );
+
+    return;
+}
+
+/***************************************************************************/
+/*  set the horizontal and vertical positions in a linked list of elements */
 /***************************************************************************/
 
 static void set_positions( doc_element * list, uint32_t h_start, uint32_t v_start )
@@ -159,6 +390,7 @@ static void set_positions( doc_element * list, uint32_t h_start, uint32_t v_star
         switch( cur_el->type ) {
         case el_binc :
             cur_el->element.binc.cur_left += h_start;
+            cur_el->h_pos = cur_el->element.binc.cur_left;
             cur_el->element.binc.at_top = at_top && (t_page.top_banner == NULL);
             if( bin_driver->y_positive == 0x00 ) {
                 g_cur_v_start -= cur_spacing;
@@ -166,6 +398,7 @@ static void set_positions( doc_element * list, uint32_t h_start, uint32_t v_star
                 g_cur_v_start += cur_spacing;
             }
             cur_el->element.binc.y_address = g_cur_v_start;
+            cur_el->v_pos = g_cur_v_start;
             if( bin_driver->y_positive == 0x00 ) {
                 g_cur_v_start -= cur_el->depth;
             } else {
@@ -174,12 +407,14 @@ static void set_positions( doc_element * list, uint32_t h_start, uint32_t v_star
             break;
         case el_dbox :
             cur_el->element.dbox.h_start += h_start;
+            cur_el->h_pos = cur_el->element.dbox.h_start;
             if( bin_driver->y_positive == 0x00 ) {
                 g_cur_v_start -= cur_spacing;
             } else {
                 g_cur_v_start += cur_spacing;
             }
             cur_el->element.dbox.v_start = g_cur_v_start;
+            cur_el->v_pos = g_cur_v_start;
             if( bin_driver->y_positive == 0x00 ) {
                 g_cur_v_start -= cur_el->depth;
             } else {
@@ -188,6 +423,7 @@ static void set_positions( doc_element * list, uint32_t h_start, uint32_t v_star
             break;
         case el_graph :
             cur_el->element.graph.cur_left += h_start;
+            cur_el->h_pos = cur_el->element.graph.cur_left;
             cur_el->element.graph.at_top = at_top && (t_page.top_banner == NULL);
             if( bin_driver->y_positive == 0x00 ) {
                 g_cur_v_start -= cur_spacing;
@@ -195,6 +431,7 @@ static void set_positions( doc_element * list, uint32_t h_start, uint32_t v_star
                 g_cur_v_start += cur_spacing;
             }
             cur_el->element.graph.y_address = g_cur_v_start;
+            cur_el->v_pos = g_cur_v_start;
             if( bin_driver->y_positive == 0x00 ) {
                 g_cur_v_start -= cur_el->depth;
             } else {
@@ -203,12 +440,14 @@ static void set_positions( doc_element * list, uint32_t h_start, uint32_t v_star
             break;
         case el_hline :
             cur_el->element.hline.h_start += h_start;
+            cur_el->h_pos = cur_el->element.hline.h_start;
             if( bin_driver->y_positive == 0x00 ) {
                 g_cur_v_start -= cur_spacing;
             } else {
                 g_cur_v_start += cur_spacing;
             }
             cur_el->element.hline.v_start = g_cur_v_start;
+            cur_el->v_pos = g_cur_v_start;
             if( bin_driver->y_positive == 0x00 ) {
                 g_cur_v_start -= cur_el->depth;
             } else {
@@ -296,12 +535,14 @@ static void set_positions( doc_element * list, uint32_t h_start, uint32_t v_star
             break;
         case el_vline :
             cur_el->element.vline.h_start += h_start;
+            cur_el->h_pos = cur_el->element.vline.h_start;
             if( bin_driver->y_positive == 0x00 ) {
                 g_cur_v_start -= cur_spacing;
             } else {
                 g_cur_v_start += cur_spacing;
             }
             cur_el->element.vline.v_start = g_cur_v_start;
+            cur_el->v_pos = g_cur_v_start;
             if( bin_driver->y_positive == 0x00 ) {
                 g_cur_v_start -= cur_el->depth;
             } else {
@@ -318,35 +559,26 @@ static void set_positions( doc_element * list, uint32_t h_start, uint32_t v_star
 
 
 /***************************************************************************/
-/*  output the ban_column(s)                                               */
+/*  output the ban_column                                                  */
+/*  this version only supports on BANREGION per BANNER                     */
+/*  NOTE: it is not clear how banners with more than one region are to be  */
+/*        processed                                                        */
 /***************************************************************************/
 
 static void do_ban_column_out( ban_column * a_column, uint32_t v_start )
 {
     ban_column  *   cur_col;
-    doc_element **  cur_el;
-    int             i;
-    unsigned char   col_count;
-
-    col_count = 0;
-    for( cur_col = a_column; cur_col != NULL; cur_col = cur_col->next ) {
-        col_count++;
-    }
-    cur_el = (doc_element **)mem_alloc( col_count * sizeof( doc_element * ) );
+    doc_element *   cur_el;
 
     cur_col = a_column;
-    for( i = 0; i < col_count; i++ ) {
-        cur_el[i] = NULL;
-        if( cur_col->first != NULL ) {
-            set_positions( cur_col->first, t_page.page_left, v_start );
-            cur_el[i] = cur_col->first;
-            cur_col->first = NULL;
-        }
-        cur_col = cur_col->next;
+    cur_el = NULL;
+    if( cur_col->first != NULL ) {
+        set_positions( cur_col->first, t_page.page_left, v_start );
+        cur_el = cur_col->first;
+        cur_col->first = NULL;
     }
 
-    do_el_list_out( cur_el, col_count );
-    mem_free( cur_el );
+    do_el_list_out( cur_el );
 
     return;
 }
@@ -369,6 +601,16 @@ static void do_doc_panes_out( void )
     doc_pane    *       cur_pane;
     int                 i;
     uint32_t            col_count;
+
+    /****************************************************************/
+    /* Finish drawing any open box.                                 */
+    /* Note: this may need to be done for other control words and   */
+    /* tags that accumulate doc_elements                            */
+    /****************************************************************/
+
+    if( ProcFlags.in_bx_box ) {
+        eoc_bx_box();
+    }
 
     for( i = 0; i < MAX_COL; i++ ) {
         last_el[i] = NULL;
@@ -393,7 +635,7 @@ static void do_doc_panes_out( void )
             cur_pane->page_width = NULL;
             ProcFlags.page_started = true;
         } 
-        for( i = 0; i < MAX_COL; i++ ) {
+        for( i = 0; i < cur_pane->col_count; i++ ) {
             if( cur_pane->cols[i].col_width != NULL ) {
                 set_positions( cur_pane->cols[i].col_width, cur_pane->cols[i].col_left,
                                cur_pane->col_width_top );
@@ -456,58 +698,34 @@ static void do_doc_panes_out( void )
         cur_pane = cur_pane->next;
     }
 
-    do_el_list_out( cur_el, col_count );
+    if( col_count == 1 ) {
+        do_el_list_out( cur_el[0] );   // no need to consolidate one column
+    } else {
+        consolidate_array( cur_el, col_count );
+    }
 
     return;
 }
 
-
 /***************************************************************************/
-/*  update t_page from the elements in n_page                              */
+/*  update a single column from the elements in n_page                     */
 /*  the various n_page fields may or may not be empty on return            */
 /*  NOTE: the order used is:                                               */
-/*    page_width                                                           */
-/*    then in each column:                                                 */
-/*      col_width                                                          */
-/*      col_bot                                                            */
-/*      footnote                                                           */
-/*      main                                                               */
-/*    and this appears to match what wgml 4.0 does                         */
+/*    col_width                                                            */
+/*    col_bot                                                              */
+/*    footnote                                                             */
+/*    main                                                                 */
+/*  and this appears to match what wgml 4.0 does                           */
 /***************************************************************************/
 
-static void update_t_page( void )
+static void update_column( uint32_t old_max_depth )
 {
     bool                splittable;
     doc_element     *   cur_el;
     doc_el_group    *   cur_group;
-    uint32_t            old_max_depth;
     uint32_t            depth;
 
-    reset_t_page();
-    old_max_depth = t_page.max_depth;   // save original value for testing
-
-    /***********************************************************************/
-    /*  The first block in n_page.page_width is processed                  */
-    /*  Remaining blocks will be processed at the rate of one per page     */
-    /*  until none are left in n_page.page_width                           */
-    /*  Note: t_page.page_width will always be NULL at this point          */
-    /***********************************************************************/
-
-    if( n_page.page_width != NULL ) {           // at most one item can be placed
-        cur_group = n_page.page_width;
-        t_page.panes->page_width = cur_group->first;
-        t_page.post_skip = cur_group->post_skip;
-        if( bin_driver->y_positive == 0 ) {
-            t_page.panes_top -= cur_group->depth;
-        } else {
-            t_page.panes_top += cur_group->depth;
-        }
-        t_page.max_depth -= cur_group->depth;
-        n_page.page_width = n_page.page_width->next;
-        cur_group->next = NULL;
-        cur_group->first = NULL;
-        add_doc_el_group_to_pool( cur_group );
-    }
+    t_page.cur_col = &t_page.last_pane->cols[t_page.last_pane->cur_col];
 
     /***********************************************************************/
     /*  The first block in n_page.col_width is processed                   */
@@ -737,6 +955,73 @@ static void update_t_page( void )
 }
 
 /***************************************************************************/
+/*  update t_page from the elements in n_page                              */
+/*  the various n_page fields may or may not be empty on return            */
+/*  NOTE: the order used is:                                               */
+/*    page_width                                                           */
+/*    then in each column:                                                 */
+/*      col_width                                                          */
+/*      col_bot                                                            */
+/*      footnote                                                           */
+/*      main                                                               */
+/*    and this appears to match what wgml 4.0 does                         */
+/***************************************************************************/
+
+static void update_t_page( void )
+{
+    doc_el_group    *   cur_group;
+    uint32_t            old_max_depth;
+
+    reset_t_page();
+    old_max_depth = t_page.max_depth;   // save original value for testing
+
+    /***********************************************************************/
+    /*  The first block in n_page.page_width is processed                  */
+    /*  Remaining blocks will be processed at the rate of one per page     */
+    /*  until none are left in n_page.page_width                           */
+    /*  Note: t_page.page_width will always be NULL at this point          */
+    /***********************************************************************/
+
+    if( n_page.page_width != NULL ) {           // at most one item can be placed
+        cur_group = n_page.page_width;
+        t_page.panes->page_width = cur_group->first;
+        t_page.post_skip = cur_group->post_skip;
+        if( bin_driver->y_positive == 0 ) {
+            t_page.panes_top -= cur_group->depth;
+        } else {
+            t_page.panes_top += cur_group->depth;
+        }
+        t_page.max_depth -= cur_group->depth;
+        n_page.page_width = n_page.page_width->next;
+        cur_group->next = NULL;
+        cur_group->first = NULL;
+        add_doc_el_group_to_pool( cur_group );
+    }
+
+    update_column( old_max_depth );
+
+    return;
+}
+
+/***************************************************************************/
+/*  initialize the next column                                             */
+/*  if the page is full, output it and initialize the new page             */
+/***************************************************************************/
+
+void next_column( void )
+{
+    t_page.last_pane->cur_col++;
+    if( t_page.last_pane->cur_col < t_page.last_pane->col_count ) {
+        t_page.cur_depth = 0;
+        update_column( t_page.max_depth );
+    } else {
+        do_page_out();
+        update_t_page();
+    }
+    return;
+}
+
+/***************************************************************************/
 /*  actually output t_page to the device                                   */
 /***************************************************************************/
 
@@ -835,16 +1120,6 @@ void do_page_out( void )
         out_ban_bot();
     }
 
-    /****************************************************************/
-    /* Finish drawing any open box.                                 */
-    /* Note: this may need to be done for other control words and   */
-    /* tags that accumulate doc_elements                            */
-    /****************************************************************/
-
-    if( ProcFlags.in_bx_box ) {
-        eop_bx_box();
-    }
-
     /* Output the page section by section */
 
     ProcFlags.page_started = false;
@@ -893,15 +1168,14 @@ void full_page_out( void )
     while( (n_page.page_width != NULL) || (n_page.col_width != NULL)
             || (n_page.col_main != NULL) || (n_page.col_bot != NULL)
             || (n_page.col_fn != NULL) ) {
-        do_page_out();
-        update_t_page();
+        next_column();
     }
     return;
 }
 
 
 /****************************************************************************/
-/*  insert a doc_element_group into t_page.cols->bot_fig                    */
+/*  insert a doc_element_group into t_page.cur_col->bot_fig                 */
 /****************************************************************************/
 
 void insert_col_bot( doc_el_group * a_group )
@@ -944,7 +1218,7 @@ void insert_col_bot( doc_el_group * a_group )
 
 
 /***************************************************************************/
-/*  insert a doc_element into t_page.cols->footnote                        */
+/*  insert a doc_element into t_page.cur-col->footnote                     */
 /***************************************************************************/
 
 void insert_col_fn( doc_el_group * a_group )
@@ -1017,9 +1291,7 @@ void insert_col_fn( doc_el_group * a_group )
 
 
 /***************************************************************************/
-/*  insert a doc_element into t_page.cols->main                            */
-/*  may need update to work with multi-column pages: this would be a good  */
-/*  place to add the next column to t_page.cols                            */
+/*  insert a doc_element into t_page.cur_col->main                         */
 /***************************************************************************/
 
 void insert_col_main( doc_element * a_element )
@@ -1427,12 +1699,15 @@ void reset_t_page( void )
             cur_pane = sav_pane;
         }
     }
+    t_page.last_pane = t_page.panes;
     t_page.panes->col_width_top = t_page.panes_top;
     for( i = 0; i < t_page.panes->col_count; i++ ) {
         t_page.panes->cols[i].main_top = t_page.panes_top;
         t_page.panes->cols[i].fig_top = t_page.bot_ban_top;
         t_page.panes->cols[i].fn_top = t_page.bot_ban_top;
     }
+    t_page.panes->cur_col = 0;
+    t_page.cur_col = &t_page.panes->cols[0];
     ProcFlags.page_started = false;
 }
 
@@ -1589,8 +1864,7 @@ bool split_element( doc_element * a_element, uint32_t req_depth )
 void text_page_out( void )
 {
     while( n_page.col_main != NULL ) {
-        do_page_out();
-        update_t_page();
+        next_column();
     }
     return;
 }

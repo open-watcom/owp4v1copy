@@ -409,6 +409,8 @@ void    do_layout_end_processing( void )
 
         ProcFlags.justify = layout_work.defaults.justify;
 
+        layout_work.defaults.def_gutter = conv_hor_unit( &layout_work.defaults.gutter, g_curr_font );
+
         /*******************************************************************/
         /*  Since we have given BODY a columns value, this ensures that it */
         /*  is set to the default value.                                   */

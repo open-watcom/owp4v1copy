@@ -393,5 +393,4 @@ void init_pass_data( void )
     ixhtag[0]   = NULL;         // current level 1 entry in index
     ixhtag[1]   = NULL;         // current level 2 entry in index
     ixhtag[2]   = NULL;         // current level 3 entry in index
-    free_ix_e_index_dict( &index_dict );// clear some index entries
 }

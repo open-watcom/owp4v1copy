@@ -436,45 +436,6 @@ void    free_index_dict( ix_h_blk * * dict )
 
 
 /***************************************************************************/
-/*  free only ix_e entries in index_dict                                   */
-/***************************************************************************/
-
-void    free_ix_e_index_dict( ix_h_blk * * dict )
-{
-    ix_h_blk    *   ixh1;
-    ix_h_blk    *   ixh2;
-    ix_h_blk    *   ixh3;
-
-    ixh1 = *dict;
-    while( ixh1 != NULL ) {             // level 1 entries
-
-        free_entry_block( ixh1->entry );
-
-        ixh2 = ixh1->lower;
-        while( ixh2 != NULL ) {         // level 2 entries
-            free_entry_block( ixh2->entry );
-
-            ixh3 = ixh2->lower;
-            while( ixh3 != NULL ) {     // level 3 entries
-                free_entry_block( ixh3->entry );
-
-//                ixh3->lower = NULL;
-                ixh3->entry = NULL;
-                ixh3        = ixh3->next;
-            }
-//            ixh2->lower = NULL;
-            ixh2->entry = NULL;
-            ixh2        = ixh2->next;
-        }
-//        ixh1->lower = NULL;
-        ixh1->entry = NULL;
-        ixh1        = ixh1->next;
-    }
-//    *dict = NULL;                       // dict is now empty
-}
-
-
-/***************************************************************************/
 /*  allocate and initialize the entry list                                 */
 /***************************************************************************/
 

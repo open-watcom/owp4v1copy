@@ -183,6 +183,7 @@ typedef struct page_lay_tag {
 /***************************************************************************/
  
 typedef struct default_lay_tag {
+    uint32_t        def_gutter;         // gutter value as a number
     su              gutter;             // horizontal space unit
     su              binding;            // horizontal space unit
     int8_t          spacing;            // positive integer

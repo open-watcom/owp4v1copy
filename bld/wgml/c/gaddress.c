@@ -120,14 +120,13 @@ void gml_eaddress( const gmltag * entry )
 
         if( (cur_doc_el_group->depth + t_page.cur_depth) > t_page.max_depth ) {
 
-            /*  the block won't fit on this page */
+            /*  the block won't fit on this column */
 
             if( cur_doc_el_group->depth <= t_page.max_depth ) {
 
-                /*  the block will on the next page */
+                /*  the block will on the next column */
 
-                do_page_out();
-                reset_t_page();
+                next_column();
             }
         }
 

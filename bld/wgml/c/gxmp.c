@@ -205,10 +205,9 @@ void gml_exmp( const gmltag * entry )
 
             if( cur_doc_el_group->depth  <= t_page.max_depth ) {
 
-                /*  the block will be on the next page */
+                /*  the block will be in the next column */
 
-                do_page_out();
-                reset_t_page();
+                next_column();
             }
         }
 

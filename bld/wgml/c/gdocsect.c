@@ -711,8 +711,7 @@ static void gen_index( void )
 
             if( 4 * wgml_fonts[layout_work.ixhead.font].line_height
                    + t_page.cur_depth > t_page.max_depth ) {
-                do_page_out();
-                reset_t_page();
+                next_column();
             }
 
             if( layout_work.ixhead.header == true ) {
@@ -1074,14 +1073,20 @@ static void document_new_position( void )
 
 static void set_cols( void )
 {
-    int i;
-//  <<set up new-form columns when multicolumn is being implemented>>
-//    t_page.panes->col_width = g_net_page_width/t_page.col_count;
-//    t_page.panes->col_width -= conv_hor_unit(&layout_work.defaults.gutter);
-    t_page.last_pane->col_width = g_cl * box_col_width;
+    int         i;
+    uint32_t    col_count;
+    uint32_t    cur_col;
+    uint32_t    width_avail;
+
+    col_count = t_page.last_pane->col_count;
+    width_avail = t_page.page_width - (col_count - 1);
+    t_page.last_pane->col_width = width_avail / col_count;
     t_page.max_width = t_page.last_pane->col_width;
-    for( i = 0; i < t_page.last_pane->col_count; i++ ) {
-        t_page.last_pane->cols[i].col_left = t_page.page_left;
+    t_page.last_pane->cols[0].col_left = t_page.page_left;
+    for( i = 1; i < t_page.last_pane->col_count; i++ ) {
+        cur_col = t_page.last_pane->cols[i - 1].col_left;
+        cur_col += layout_work.defaults.def_gutter;
+        t_page.last_pane->cols[i].col_left = cur_col;
     }
     return;
 }
@@ -1137,6 +1142,7 @@ void start_doc_sect( void )
         page_c = layout_work.titlep.columns;
         page_e = ej_yes;
         page_r = false;                 // no page number reset
+        page_s = layout_work.titlep.spacing;
         header = false;                 // no header string output
         lvl_reset = false;
         init_nest_cb();

@@ -154,6 +154,7 @@ void gen_heading( char * h_text, char * id, hdsrc hn_lvl, hdsrc hds_lvl )
     ref_entry   *   cur_ref;
     uint32_t        bot_depth;
     uint32_t        hx_depth;
+    uint32_t        max_width_sav;
     uint32_t        old_bot_depth;
     uint32_t        old_top_depth;
     uint32_t        page_diff;
@@ -165,6 +166,10 @@ void gen_heading( char * h_text, char * id, hdsrc hn_lvl, hdsrc hds_lvl )
     headx[5] = '0' + hn_lvl;
     htextx[6] = '0' + hn_lvl;
 
+    if( layout_work.hx.hx_head[hds_lvl].page_eject != ej_no ) {
+        max_width_sav = t_page.max_width;
+        t_page.max_width = t_page.page_width;
+   }
     update_headnumx( hn_lvl, hds_lvl );
 
     if( hds_lvl == hds_appendix ) {
@@ -463,6 +468,10 @@ void gen_heading( char * h_text, char * id, hdsrc hn_lvl, hdsrc hds_lvl )
         }
     } else if( pass == 1 ) {                        // only on first pass
         hd_entry->pageno = page + 1;
+    }
+
+    if( layout_work.hx.hx_head[hds_lvl].page_eject != ej_no ) {
+        t_page.max_width = max_width_sav;
     }
 
     /* Reset $TOPHEADx */
