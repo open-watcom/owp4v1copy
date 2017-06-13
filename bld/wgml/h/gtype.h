@@ -1141,7 +1141,6 @@ typedef struct {
             uint32_t            max_width;      // maximum width (page or column)
             uint32_t            cur_left;       // net adjustment to left margin
             uint32_t            cur_width;      // current width
-            uint32_t            post_skip;      // figure or heading at top of page
             doc_pane        *   last_pane;
             doc_column      *   cur_col;        // quick access to t_page.last_pane->cols[t_page.last_pane->cur_col]
             doc_element     *   last_col_main;

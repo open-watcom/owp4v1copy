@@ -610,7 +610,7 @@ static void gml_hx_common( const gmltag * entry, hdsrc hn_lvl )
         ProcFlags.page_ejected = false;
     } else {
         last_page_out();                // ensure we are on a new page
-        if( ProcFlags.page_started ) {
+        if( ProcFlags.col_started ) {
             do_page_out();
             reset_t_page();
         }

@@ -521,7 +521,7 @@ static void gen_figlist( void )
     while( curr != NULL ) {
         if( curr->flags & ffh_figcap ) {    // no FIGCAP used, no FIGLIST output
             g_curr_font = FONT0;            // wgml 4.0 uses font 0
-            if( ProcFlags.page_started ) {  // not on first entry
+            if( ProcFlags.col_started ) {   // not on first entry
                 spacing = layout_work.figlist.spacing;
                 set_skip_vars( NULL, NULL, NULL, spacing, g_curr_font );
             }
@@ -542,7 +542,7 @@ static void gen_figlist( void )
                 } else {
                     t_page.max_width -= 3 * tab_col;
                 }
-                if( !ProcFlags.page_started ) {     // first entry wrapping
+                if( !ProcFlags.col_started ) {      // first entry wrapping
                     spacing = layout_work.figlist.spacing;
                 }
                 set_skip_vars( &layout_work.figlist.skip, NULL, NULL,
@@ -730,13 +730,13 @@ static void gen_index( void )
                     process_text( letter, layout_work.ixhead.font );
                     break;
                 case box_frame :
-                    if( !ProcFlags.page_started ) {  // at top of page
+                    if( !ProcFlags.col_started ) {      // at top of page
                         g_top_skip = wgml_fonts[layout_work.ixhead.font].line_height;
                     }
                     gen_box_head( letter );
                     break;
                 case rule_frame :
-                    if( !ProcFlags.page_started ) {  // at top of page
+                    if( !ProcFlags.col_started ) {      // at top of page
                         g_top_skip = wgml_fonts[layout_work.ixhead.font].line_height;
                     }
                 case char_frame :                   // no top-of-page correction in wgml 4.0
@@ -1068,25 +1068,27 @@ static void document_new_position( void )
 
 /***************************************************************************/
 /*  set up the columns                                                     */
-/*  Note: only sets t_page.max_width; the new column structure is to come  */
 /***************************************************************************/
 
-static void set_cols( void )
+static void set_cols( doc_pane * a_pane )
 {
     int         i;
     uint32_t    col_count;
     uint32_t    cur_col;
+    uint32_t    gutter;
     uint32_t    width_avail;
 
-    col_count = t_page.last_pane->col_count;
-    width_avail = t_page.page_width - (col_count - 1);
-    t_page.last_pane->col_width = width_avail / col_count;
-    t_page.max_width = t_page.last_pane->col_width;
-    t_page.last_pane->cols[0].col_left = t_page.page_left;
-    for( i = 1; i < t_page.last_pane->col_count; i++ ) {
-        cur_col = t_page.last_pane->cols[i - 1].col_left;
-        cur_col += layout_work.defaults.def_gutter;
-        t_page.last_pane->cols[i].col_left = cur_col;
+    col_count = a_pane->col_count;
+    gutter = layout_work.defaults.def_gutter;
+    width_avail = t_page.page_width - (gutter * (col_count - 1));
+    a_pane->col_width = width_avail / col_count;
+    t_page.max_width = a_pane->col_width;
+    a_pane->cols[0].col_left = t_page.page_left;
+    for( i = 1; i < col_count; i++ ) {
+        cur_col = a_pane->cols[i - 1].col_left;
+        cur_col += a_pane->col_width;
+        cur_col += gutter;
+        a_pane->cols[i].col_left = cur_col;
     }
     return;
 }
@@ -1232,7 +1234,7 @@ void start_doc_sect( void )
         lvl_reset = false;
         break;
     case   doc_sect_egdoc :
-        page_c = layout_work.defaults.columns;
+        page_c = 1;                             // as per wgml 4.0
         page_e = ej_yes;
         page_r = false;                         // no page number reset
         page_s = layout_work.defaults.spacing;  // default spacing
@@ -1255,9 +1257,9 @@ void start_doc_sect( void )
         document_new_position();        // first text page ready for content
     } else if( page_e == ej_no ) {
         full_page_out();                // ensure are on last page
-        ProcFlags.page_ejected = false;
-        set_section_banners( ds );
-        reset_bot_ban();
+        ProcFlags.page_ejected = false; // this would be a good place to add a pane
+        set_section_banners( ds );      // since the section begins mid-page
+        reset_bot_ban();    
     } else {
         last_page_out();                // ensure last page output
         ProcFlags.page_ejected = true;  // only first section has nothing to output
@@ -1280,8 +1282,8 @@ void start_doc_sect( void )
 
     ProcFlags.doc_sect = ds;
     ProcFlags.first_hdr = false;
-    t_page.last_pane->col_count = page_c;
-    set_cols();
+    t_page.panes->col_count = page_c;   // implicitly accomodates only one pane
+    set_cols( t_page.panes );           // will need to be updated if multiple panes activated
     if( page_r ) {
         page = 0;
     }

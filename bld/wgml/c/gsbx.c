@@ -798,7 +798,7 @@ static void  box_line_element( bool add_depth )
     /* add_depth must be true only the first time the doc_element is processed */
 
     if( add_depth ) {
-        if( ProcFlags.page_started ) {      // text line not at top of page
+        if( ProcFlags.col_started ) {           // text line not at top of page
             box_depth += cur_el->blank_lines + cur_el->subs_skip + cur_el->depth;
             if( box_skip == 0 ) {
                 cur_el->subs_skip += el_skip;   // add el_skip to both cur_el & box_depth
@@ -811,7 +811,7 @@ static void  box_line_element( bool add_depth )
         } else {                            // top of page
             box_skip = 0;                   // box_skip no longer relevant
             box_depth += cur_el->top_skip + cur_el->depth - v_offset;
-            ProcFlags.page_started = true;
+            ProcFlags.col_started = true;
         }
     }
 
@@ -859,13 +859,13 @@ static void  do_char_device( void )
             if( cur_doc_el_group->depth <= max_depth ) {   // doc_elements will all fit
                 cur_el = cur_doc_el_group->first;
                 while( cur_el != NULL ) {
-                    if( ProcFlags.page_started ) {
+                    if( ProcFlags.col_started ) {
                         skippage = cur_el->blank_lines + cur_el->subs_skip;
                         cur_el->subs_skip = 0;
                     } else {
                         skippage = cur_el->blank_lines + cur_el->top_skip;
                         cur_el->top_skip = 0;
-                        ProcFlags.page_started = true;
+                        ProcFlags.col_started = true;
                     }
                     cur_el->blank_lines = 0;
                     if( skippage > 0 ) {
@@ -1081,7 +1081,7 @@ static void do_line_device( void )
     /* into t_page.main->main. This causes the page to be   */
     /* started, and that triggers the v_offset adjustment   */
     /* inappropriately. do_v_adjust is false even when      */
-    /* ProcFlags.page_started is true, provided that there  */
+    /* ProcFlags.col_started is true, provided that there   */
     /* is only one doc_element on the page and it matches   */
     /* the characteristics of the empty doc_element: it is  */
     /* the only doc_element in t_page.main->main, is is     */
@@ -1089,7 +1089,7 @@ static void do_line_device( void )
     /* text_line has no text_chars, ie, is empty            */ 
     /********************************************************/
 
-    do_v_adjust = ProcFlags.page_started;
+    do_v_adjust = ProcFlags.col_started;
     if( do_v_adjust ) {     // check for initial empty doc_element on page
         if( (t_page.panes->page_width == NULL) && (
                 (t_page.panes->cols[0].main == NULL) || (
@@ -1143,7 +1143,7 @@ static void do_line_device( void )
 
     /* Now deal with the HLINEs and associated VLINEs */
 
-    ProcFlags.top_line = !ProcFlags.page_started && ((cur_doc_el_group == NULL)
+    ProcFlags.top_line = !ProcFlags.col_started && ((cur_doc_el_group == NULL)
                                     || (cur_doc_el_group->first == NULL));
 
     if( (box_line->first == NULL) || (cur_op == bx_can) || (cur_op == bx_set) ||
@@ -1273,24 +1273,24 @@ static void do_line_device( void )
     max_depth = t_page.max_depth - t_page.cur_depth;    // reset value
     if( !ProcFlags.in_bx_box ) {                    // outermost box starts
         if( cur_op == bx_set ) {
-            if( max_depth < (box_skip + (v_offset - 1)) ) {        // to top of next column
+            if( max_depth < (box_skip + (v_offset - 1)) ) {     // to top of next column
                 next_column();
-                ProcFlags.top_line = !ProcFlags.page_started;     // reset for new column
+                ProcFlags.top_line = !ProcFlags.col_started;    // reset for new column
             }
         } else if( cur_op == bx_off ) {
             if( max_depth < (box_skip + (v_offset - 1) + def_height) ) {        // to top of next column
                 next_column();
-                ProcFlags.top_line = !ProcFlags.page_started;     // reset for new column
+                ProcFlags.top_line = !ProcFlags.col_started;    // reset for new column
             }
         } else {
             if( max_depth < (h_line_el->subs_skip + (v_offset - 1) + def_height) ) {        // to top of next column
                 next_column();
-                ProcFlags.top_line = !ProcFlags.page_started;     // reset for new column
+                ProcFlags.top_line = !ProcFlags.col_started;    // reset for new column
             }
         }
         box_depth = 0;                              // top line of box
         draw_box_lines( h_line_el );
-        if( (cur_op == bx_set) && !ProcFlags.page_started ) { // first box line at top of page
+        if( (cur_op == bx_set) && !ProcFlags.col_started ) {    // first box line at top of column
             box_depth = def_height;
             ProcFlags.in_bx_box = true;             // box has started
         } else if( cur_op != bx_off ) {
@@ -1302,15 +1302,15 @@ static void do_line_device( void )
 /// this may be correct inside an inner box
 //            if( max_depth < (box_skip + (v_offset - 1) + def_height) ) {        // to top of next column
 /// this appears to be correct for the bx off that closes the outermost box
-            if( max_depth < (box_skip + def_height) ) {        // to top of next column
+            if( max_depth < (box_skip + def_height) ) {         // to top of next column
                 next_column();
-                ProcFlags.top_line = !ProcFlags.page_started;     // reset for new column
+                ProcFlags.top_line = !ProcFlags.col_started;    // reset for new column
             }
         } else if( max_depth < (el_skip + hl_depth + def_height) ) {    // HLINE to top of column
             next_column();
-            ProcFlags.top_line = !ProcFlags.page_started;     // reset for new column
+            ProcFlags.top_line = !ProcFlags.col_started;        // reset for new column
         }
-        if( (h_line_el != NULL) && ProcFlags.in_bx_box ) {     // adjust for HLINE skips
+        if( (h_line_el != NULL) && ProcFlags.in_bx_box ) {      // adjust for HLINE skips
             if( ProcFlags.top_line ) {
                 box_depth += h_line_el->top_skip;
             } else {
@@ -1386,13 +1386,13 @@ static void eoc_char_device( void ) {
     if( cur_doc_el_group != NULL ) {
         cur_el = cur_doc_el_group->first;
         while( cur_el != NULL ) {
-            if( ProcFlags.page_started ) {
+            if( ProcFlags.col_started ) {
                 cur_skip = cur_el->subs_skip;
                 cur_el->subs_skip = 0;
             } else {
                 cur_skip = cur_el->top_skip;
                 cur_el->top_skip = 0;
-                ProcFlags.page_started = true;
+                ProcFlags.col_started = true;
             }
             skippage = cur_el->blank_lines + cur_skip;
             if( (t_page.cur_depth + skippage + cur_el->depth) <= t_page.max_depth ) {
@@ -1468,11 +1468,11 @@ static void eoc_line_device( void ) {
 
     if( cur_doc_el_group != NULL ) {
         while( cur_doc_el_group->first != NULL ) {
-            if( ProcFlags.page_started ) {      // text line not at top of page
+            if( ProcFlags.col_started ) {      // text line not at top of page
                 cur_skip = cur_doc_el_group->first->subs_skip;
             } else {
                 cur_skip = cur_doc_el_group->first->top_skip;
-                ProcFlags.page_started = true;
+                ProcFlags.col_started = true;
             }
             max_depth = t_page.max_depth - t_page.cur_depth;    // reset value
             skippage = cur_doc_el_group->first->blank_lines + cur_skip;
@@ -2205,7 +2205,7 @@ void eoc_bx_box( void ) {
 
     sav_cur_op = cur_op;
     cur_op = bx_eoc;                        // do eoc processing
-    ProcFlags.page_started = (t_page.last_col_main != NULL);
+    ProcFlags.col_started = (t_page.last_col_main != NULL);
 
     max_depth = t_page.max_depth - t_page.cur_depth;
 
@@ -2438,7 +2438,7 @@ void scr_bx( void )
 
     /* set the ProcFlags specific to BX */
 
-    ProcFlags.page_started = (t_page.last_col_main != NULL);
+    ProcFlags.col_started = (t_page.last_col_main != NULL);
     ProcFlags.no_bx_hline = (cur_op == bx_set) ||
                             ((cur_op == bx_new) && !ProcFlags.box_cols_cur);
 

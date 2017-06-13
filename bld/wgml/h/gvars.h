@@ -169,6 +169,7 @@ global struct ProcFlags {
     unsigned        fb_position_done : 1;// first positioning on new page done
     unsigned        page_ejected    : 1;// a page was deliberately ejected (headings)
     unsigned        page_started    : 1;// we have something for the curr page
+    unsigned        col_started     : 1;// we have something for the curr page
     unsigned        line_started    : 1;// we have something for current line
     unsigned        just_override   : 1;// current line is to be justified
 

@@ -191,15 +191,19 @@ static void consolidate_array( doc_element * array[MAX_COL], uint8_t count )
 
     done = false;
     while( !done ) {
-        top_pos = t_page.page_top;
+        if( bin_driver->y_positive == 0x00 ) {
+            top_pos = t_page.cur_col->fig_top;
+        } else {
+            top_pos = t_page.page_top;
+        }
         for( i = 0; i < count; i++ ) {
             if( cur_nt_el[i] == NULL ) continue;    // some columns may be empty
             if( bin_driver->y_positive == 0x00 ) {
-                if( top_pos > cur_nt_el[i]->v_pos ) {
+                if( top_pos < cur_nt_el[i]->v_pos ) {
                     top_pos = cur_nt_el[i]->v_pos;
                 }
             } else {
-                if( top_pos < cur_nt_el[i]->v_pos ) {
+                if( top_pos > cur_nt_el[i]->v_pos ) {
                     top_pos = cur_nt_el[i]->v_pos;
                 }
             }
@@ -268,15 +272,19 @@ static void consolidate_array( doc_element * array[MAX_COL], uint8_t count )
     cur_tl_list = out_el->element.text.first;
 
     while( !done ) {
-        top_pos = t_page.page_top;
+        if( bin_driver->y_positive == 0x00 ) {
+            top_pos = g_page_bottom_org;
+        } else {
+            top_pos = t_page.page_top;
+        }
         for( i = 0; i < count; i++ ) {
             if( tl[i] == NULL ) continue;       // some columns may be empty
             if( bin_driver->y_positive == 0x00 ) {
-                if( top_pos > tl[i]->y_address ) {
+                if( top_pos < tl[i]->y_address ) {
                     top_pos = tl[i]->y_address;
                 }
             } else {
-                if( top_pos < tl[i]->y_address ) {
+                if( top_pos > tl[i]->y_address ) {
                     top_pos = tl[i]->y_address;
                 }
             }
@@ -624,18 +632,14 @@ static void do_doc_panes_out( void )
             col_count = cur_pane->col_count;
         }
         if( cur_pane->page_width != NULL ) {
-            set_positions( cur_pane->page_width, t_page.page_left, cur_pane->page_width_top );
+            set_positions( cur_pane->page_width, t_page.page_left,
+                           cur_pane->page_width_top );
             cur_el[0] = cur_pane->page_width;
             last_el[0] = cur_pane->page_width;
-            if( (cur_pane == t_page.panes) && (t_page.post_skip > 0)
-                    && (cur_pane->cols != NULL) && (cur_pane->cols->main != NULL) ) {
-                cur_pane->cols->main->top_skip = t_page.post_skip;
-                t_page.post_skip = 0;
-            }
             cur_pane->page_width = NULL;
-            ProcFlags.page_started = true;
-        } 
+        }
         for( i = 0; i < cur_pane->col_count; i++ ) {
+            ProcFlags.page_started = cur_pane->page_width != NULL;
             if( cur_pane->cols[i].col_width != NULL ) {
                 set_positions( cur_pane->cols[i].col_width, cur_pane->cols[i].col_left,
                                cur_pane->col_width_top );
@@ -867,7 +871,7 @@ static void update_column( uint32_t old_max_depth )
             if( (t_page.cur_depth + cur_el->blank_lines) >= t_page.max_depth ) {
                 cur_el->blank_lines -= (t_page.max_depth - t_page.cur_depth);
                 break;
-            } else if( !ProcFlags.page_started && ((t_page.cur_depth +
+            } else if( !ProcFlags.col_started && ((t_page.cur_depth +
                         cur_el->blank_lines + cur_el->top_skip) >=
                         t_page.max_depth) ) {
                 cur_el->top_skip -= (t_page.max_depth - t_page.cur_depth);
@@ -881,13 +885,13 @@ static void update_column( uint32_t old_max_depth )
             }
         }
 
-        if( !ProcFlags.page_started ) {
+        if( !ProcFlags.col_started ) {
             if( cur_el->blank_lines > 0 ) {
                 depth = cur_el->blank_lines + cur_el->subs_skip;
             } else {
                 depth = cur_el->top_skip;
             }
-            ProcFlags.page_started = true;
+            ProcFlags.col_started = true;
         } else {
             depth = cur_el->blank_lines + cur_el->subs_skip;
         }
@@ -951,6 +955,8 @@ static void update_column( uint32_t old_max_depth )
             }
         }
     }
+    ProcFlags.col_started = false;
+
     return;
 }
 
@@ -970,6 +976,7 @@ static void update_column( uint32_t old_max_depth )
 static void update_t_page( void )
 {
     doc_el_group    *   cur_group;
+    uint32_t            depth;
     uint32_t            old_max_depth;
 
     reset_t_page();
@@ -984,14 +991,16 @@ static void update_t_page( void )
 
     if( n_page.page_width != NULL ) {           // at most one item can be placed
         cur_group = n_page.page_width;
+        depth = cur_group->depth + cur_group->post_skip;
         t_page.panes->page_width = cur_group->first;
-        t_page.post_skip = cur_group->post_skip;
         if( bin_driver->y_positive == 0 ) {
-            t_page.panes_top -= cur_group->depth;
+            t_page.panes_top -= depth;
+            t_page.cur_col->main_top -= depth;
         } else {
-            t_page.panes_top += cur_group->depth;
+            t_page.panes_top += depth;
+            t_page.cur_col->main_top += depth;
         }
-        t_page.max_depth -= cur_group->depth;
+        t_page.max_depth -= depth;
         n_page.page_width = n_page.page_width->next;
         cur_group->next = NULL;
         cur_group->first = NULL;
@@ -1345,7 +1354,7 @@ void insert_col_main( doc_element * a_element )
         if( (t_page.cur_depth + a_element->blank_lines) >= t_page.max_depth ) {
             a_element->blank_lines -= (t_page.max_depth - t_page.cur_depth);
             page_full = true;
-        } else if( !ProcFlags.page_started && ((t_page.cur_depth +
+        } else if( !ProcFlags.col_started && ((t_page.cur_depth +
                     a_element->blank_lines + a_element->top_skip) >=
                     t_page.max_depth) ) {
             a_element->top_skip -= (t_page.max_depth - t_page.cur_depth);
@@ -1357,7 +1366,7 @@ void insert_col_main( doc_element * a_element )
             a_element->blank_lines = 0;
             page_full = true;
         }
-    } else if( !ProcFlags.page_started ) {
+    } else if( !ProcFlags.col_started ) {
         if( a_element->top_skip >= t_page.max_depth ) {
             a_element->top_skip -= t_page.max_depth;
             page_full = true;
@@ -1372,7 +1381,7 @@ void insert_col_main( doc_element * a_element )
         /*  may still fill the page                                     */
         /****************************************************************/
 
-        if( !ProcFlags.page_started ) {
+        if( !ProcFlags.col_started ) {
             if( a_element->blank_lines > 0 ) {
                 cur_skip = a_element->blank_lines + a_element->subs_skip;
             } else {
@@ -1434,7 +1443,7 @@ void insert_col_main( doc_element * a_element )
             }
             t_page.cur_depth += depth;
         }
-        ProcFlags.page_started = true;
+        ProcFlags.col_started = true;
     }
 
     if( page_full ) {
@@ -1482,13 +1491,13 @@ void insert_col_width( doc_el_group * a_group )
             t_page.cur_col->col_width = a_group->first;
             t_page.cur_col->post_skip = a_group->post_skip;
             a_group->first = NULL;
-            t_page.max_depth -= depth;
-            ProcFlags.page_started = true;
+            ProcFlags.col_started = true;
             if( bin_driver->y_positive == 0 ) {
                 t_page.cur_col->main_top -= depth;
             } else {
                 t_page.cur_col->main_top += depth;
             }
+            t_page.max_depth -= depth;
             a_group->first = NULL;
             add_doc_el_group_to_pool( a_group );
         } else {        // save on n_page as a block, not as doc_elements
@@ -1535,9 +1544,8 @@ void insert_page_width( doc_el_group * a_group )
     if( depth <= t_page.max_depth ) {
         if( t_page.panes->page_width == NULL ) {       // must be empty
             t_page.panes->page_width = a_group->first;
-            t_page.post_skip = a_group->post_skip;
             a_group->first = NULL;
-            t_page.max_depth -= depth;
+            depth += a_group->post_skip;
             ProcFlags.page_started = true;
             if( bin_driver->y_positive == 0 ) {
                 t_page.panes_top -= depth;
@@ -1546,6 +1554,7 @@ void insert_page_width( doc_el_group * a_group )
                 t_page.panes_top += depth;
                 t_page.cur_col->main_top += depth;
             }
+            t_page.max_depth -= depth;
             a_group->first = NULL;
             add_doc_el_group_to_pool( a_group );
         } else {        // save on n_page as a block, not as doc_elements
@@ -1708,7 +1717,7 @@ void reset_t_page( void )
     }
     t_page.panes->cur_col = 0;
     t_page.cur_col = &t_page.panes->cols[0];
-    ProcFlags.page_started = false;
+    ProcFlags.col_started = false;
 }
 
 

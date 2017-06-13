@@ -144,7 +144,6 @@ void init_global_vars( void )
     t_page.max_width        = 0;
     t_page.cur_left         = 0;
     t_page.cur_width        = 0;
-    t_page.post_skip        = 0;
     t_page.last_pane        = mem_alloc( sizeof(doc_pane) );
     t_page.cur_col          = &t_page.last_pane->cols[0];
     t_page.last_col_main    = NULL;
