@@ -749,7 +749,7 @@ static  void    out_ban_common( banner_lay_tag * ban, bool top )
 
     /* calc banner horizontal margins */
     ban_left  = ban->ban_left_adjust;
-    ban_right = t_page.max_width - ban->ban_right_adjust;
+    ban_right = t_page.page_width - ban->ban_right_adjust;  // banners are not placed in page columns
 
     content_reg( ban );
     curr_x = 0;

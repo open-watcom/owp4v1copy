@@ -142,6 +142,7 @@ static void consolidate_array( doc_element * array[MAX_COL], uint8_t count )
     int             i;
     text_line   *   cur_tl_list;            // text_lines
     text_line   *   cur_tl[MAX_COL];        // text_lines
+    text_line   *   sav_tl;
     text_line   *   tl[MAX_COL];            // text_lines
     uint32_t        top_pos;
 
@@ -153,7 +154,7 @@ static void consolidate_array( doc_element * array[MAX_COL], uint8_t count )
         nt_el[i] = NULL;
     }
 
-    /* Move the non-text elements to the non-text elements array    */
+    /* Move the non-text elements to the non-text elements array */
 
     for( i = 0; i < count; i++ ) {
         sav_el = NULL;
@@ -182,14 +183,15 @@ static void consolidate_array( doc_element * array[MAX_COL], uint8_t count )
         }
     }
 
-    /* Merge the array into a single linked list */
+    /* Merge the non-text elemensts array into a single linked list */
 
+    done = false;
     nt_el_list = NULL;
+    cur_nt_list = NULL;
     for( i = 0; i < count; i++ ) {
         cur_nt_el[i] = nt_el[i];
     }
 
-    done = false;
     while( !done ) {
         if( bin_driver->y_positive == 0x00 ) {
             top_pos = t_page.cur_col->fig_top;
@@ -209,15 +211,12 @@ static void consolidate_array( doc_element * array[MAX_COL], uint8_t count )
             }
         }
 
-        cur_nt_list = nt_el_list;
-        for( i = 0; i < count; i++ ) {
-            cur_nt_el[i] = nt_el[i];
-        }
         for( i = 0; i < count; i++ ) {
             if( cur_nt_el[i] == NULL ) continue;    // some columns may be empty
-            if( top_pos = cur_nt_el[i]->v_pos ) {
+            if( cur_nt_el[i]->v_pos = top_pos ) {
                 if( cur_nt_list == NULL ) {
                     cur_nt_list = cur_nt_el[i];
+                    nt_el_list = cur_nt_el[i];
                 } else {
                     cur_nt_list->next = cur_nt_el[i];
                     cur_nt_list = cur_nt_list->next;
@@ -229,7 +228,7 @@ static void consolidate_array( doc_element * array[MAX_COL], uint8_t count )
 
         done = true;
         for( i = 0; i < count; i++ ) {
-            if( cur_el[i] != NULL ) {
+            if( cur_nt_el[i] != NULL ) {
                 done = false;
                 break;
             }
@@ -248,15 +247,20 @@ static void consolidate_array( doc_element * array[MAX_COL], uint8_t count )
         while( array[i] != NULL ) {
             if( array[i] == NULL ) continue;    // some columns may be empty
             while( array[i]->element.text.first != NULL ) {
-                if( tl[i] == NULL ) {
-                    cur_tl[i] = array[i]->element.text.first;
-                    tl[i] = array[i]->element.text.first;
+                if( array[i]->type != el_text ) {
+                    out_msg( "Yes\n" );
+                    break;
                 } else {
-                    cur_tl[i]->next = array[i]->element.text.first;
-                    cur_tl[i] = cur_tl[i]->next;
+                    if( tl[i] == NULL ) {
+                        cur_tl[i] = array[i]->element.text.first;
+                        tl[i] = array[i]->element.text.first;
+                    } else {
+                        cur_tl[i]->next = array[i]->element.text.first;
+                        cur_tl[i] = cur_tl[i]->next;
+                    }
+                    array[i]->element.text.first = array[i]->element.text.first->next;
+                    cur_tl[i]->next = NULL;
                 }
-                array[i]->element.text.first = array[i]->element.text.first->next;
-                cur_tl[i]->next = NULL;
             }                    
             sav_el = array[i];
             array[i] = array[i]->next;
@@ -269,7 +273,7 @@ static void consolidate_array( doc_element * array[MAX_COL], uint8_t count )
 
     done = false;
     out_el = alloc_doc_el( el_text );
-    cur_tl_list = out_el->element.text.first;
+    cur_tl_list = NULL;
 
     while( !done ) {
         if( bin_driver->y_positive == 0x00 ) {
@@ -313,47 +317,117 @@ static void consolidate_array( doc_element * array[MAX_COL], uint8_t count )
         }
     }
 
-    /* Insert the non-text list into the text element list */
+    if( nt_el_list != NULL ) {                  // out_el is done if there are no non-text elements
 
-    done = false;
-    cur_out_el = out_el;
-    cur_tl_list = out_el->element.text.first;
-    while( cur_nt_list != NULL ) {
+        /* Insert the non-text list into the text element list */
 
-        if( cur_out_el == NULL ) {          // no more text doc elements
-            cur_out_el->next = cur_nt_list; // move rest of non-text elements
-            cur_out_el = cur_out_el->next;  // to out_el list
-            cur_nt_list = NULL;
-            continue;
-        } else if( cur_nt_list == NULL ) {  // no more non-text elements
-            if( cur_out_el->type != el_text ) { // no split if text element
-                cur_out_el->next = alloc_doc_el( el_text );     // create new text doc_el
-                cur_out_el->next->element.text.first = cur_tl_list->next;   // and put remaining lines
-                cur_tl_list->next = NULL;                       // in it
-            }
-            continue;
-        }
+        done = false;
+        cur_out_el = out_el;
+        sav_el = cur_out_el;
+        cur_nt_list = nt_el_list;
+        cur_tl_list = out_el->element.text.first;
+        sav_tl = NULL;
+        while( (cur_nt_list != NULL) || (cur_tl_list != NULL) ) {
 
-        while( cur_tl_list->y_address < cur_nt_list->v_pos ) {
-            cur_tl_list = cur_tl_list->next;
-        }
-        
-        while( cur_tl_list->first->x_address < cur_nt_list->h_pos ) {
-            cur_tl_list = cur_tl_list->next;
-        }
+            if( cur_tl_list == NULL ) {
 
-        cur_out_el->next = cur_nt_list;     // insert non-text element
-        cur_out_el = cur_out_el->next;      // in output list
-        cur_nt_list = cur_nt_list->next;
-        cur_out_el->next = NULL;
+                /* No more text doc elements: append remaining non-text elements */
 
-        if( (cur_out_el != NULL) && (cur_nt_list != NULL) ) {
-            while( (cur_nt_list->v_pos < cur_tl_list->y_address ) &&
-                       (cur_nt_list->h_pos < cur_tl_list->first->x_address) ) {
-                    cur_out_el->next = cur_nt_list;         // move next non-text
-                    cur_out_el = cur_out_el->next;          // element to output
-                    cur_nt_list = cur_nt_list->next;        // list
-                    cur_out_el->next = NULL;
+                if( cur_out_el == NULL ) {
+                    cur_out_el = cur_nt_list;
+                } else {
+                    cur_out_el->next = cur_nt_list;
+                    cur_out_el = cur_out_el->next;
+                }
+                cur_nt_list = NULL;
+
+            } else if( cur_nt_list == NULL ) {
+
+                /* No more non-text elements: do split if non-text element was just inserted */
+
+                if( cur_out_el == NULL ) {
+                    if( sav_el->type != el_text ) {
+                        sav_el->next = alloc_doc_el( el_text );
+                        sav_el->next->element.text.first = cur_tl_list->next;
+                    }
+                } else {
+                    if( cur_out_el->type != el_text ) {
+                        cur_out_el->next = alloc_doc_el( el_text );
+                        cur_out_el->next->element.text.first = cur_tl_list->next;
+                    }
+                }
+                cur_tl_list = NULL;
+
+            } else {                            // both have entries
+
+                /* Find next non-text element to insert */
+
+                if( bin_driver->y_positive == 0x00 ) {
+                    while( (cur_tl_list != NULL) && (cur_tl_list->y_address > cur_nt_list->v_pos) ) {
+                        sav_tl = cur_tl_list;
+                        cur_tl_list = cur_tl_list->next;
+                    }
+                } else {
+                    while( (cur_tl_list != NULL) && (cur_tl_list->y_address < cur_nt_list->v_pos) ) {
+                        sav_tl = cur_tl_list;
+                        cur_tl_list = cur_tl_list->next;
+                    }
+                }
+
+                while( (cur_tl_list != NULL) && (cur_tl_list->first->x_address < cur_nt_list->h_pos) ) {
+                    sav_tl = cur_tl_list;
+                    cur_tl_list = cur_tl_list->next;
+                }
+
+                if( cur_tl_list != NULL ) {
+
+                    if( sav_tl == NULL ) {
+
+                        /* Insert the non-text element(s) before the first out_el element */
+
+                        sav_el = out_el;
+                        out_el = cur_nt_list;
+                        cur_nt_list = cur_nt_list->next;
+                        cur_out_el = out_el;
+                        while( (cur_nt_list != NULL) && (cur_out_el != NULL) &&
+                               (cur_tl_list->y_address < cur_nt_list->v_pos) &&
+                               (cur_tl_list != NULL) &&
+                               (cur_tl_list->first->x_address < cur_nt_list->h_pos) ) {
+                            sav_el = cur_out_el;
+                            cur_out_el = cur_out_el->next;
+                        }
+                        if( cur_out_el == NULL ) {
+                            cur_nt_list = NULL;
+                        } else {
+                            cur_out_el->next = sav_el;
+                            cur_out_el = cur_out_el->next;
+                        }
+
+                    } else {
+
+                        /* Insert the non-text element(s) found into the output list */
+
+                        cur_out_el->next = cur_nt_list;
+                        cur_nt_list = cur_nt_list->next;
+                        cur_out_el = cur_out_el->next;
+                        while( (cur_nt_list != NULL) && (cur_out_el != NULL) &&
+                               (cur_tl_list->y_address < cur_nt_list->v_pos) &&
+                               (cur_tl_list != NULL) &&
+                               (cur_tl_list->first->x_address < cur_nt_list->h_pos) ) {
+                            sav_el = cur_out_el;
+                            cur_out_el = cur_out_el->next;
+                        }
+                        if( cur_out_el == NULL ) {
+                            cur_nt_list = NULL;
+                        } else {
+                            cur_out_el->next = alloc_doc_el( el_text );
+                            cur_out_el->next->element.text.first = cur_tl_list;
+                            cur_out_el = cur_out_el->next;
+                        }
+                        sav_tl->next = NULL;
+                        cur_tl_list = cur_tl_list->next;
+                    }
+                }
             }
         }
     }
@@ -560,6 +634,7 @@ static void set_positions( doc_element * list, uint32_t h_start, uint32_t v_star
         default :
             internal_err( __FILE__, __LINE__ );
         }
+        at_top = false;
     }
 
     return;
@@ -604,8 +679,8 @@ static void do_ban_column_out( ban_column * a_column, uint32_t v_start )
  
 static void do_doc_panes_out( void )
 {
+    doc_element *       out_el[MAX_COL];
     doc_element *       cur_el[MAX_COL];
-    doc_element *       last_el[MAX_COL];
     doc_pane    *       cur_pane;
     int                 i;
     uint32_t            col_count;
@@ -621,8 +696,8 @@ static void do_doc_panes_out( void )
     }
 
     for( i = 0; i < MAX_COL; i++ ) {
-        last_el[i] = NULL;
         cur_el[i] = NULL;
+        out_el[i] = NULL;
     }
 
     col_count = 0;
@@ -634,68 +709,68 @@ static void do_doc_panes_out( void )
         if( cur_pane->page_width != NULL ) {
             set_positions( cur_pane->page_width, t_page.page_left,
                            cur_pane->page_width_top );
+            out_el[0] = cur_pane->page_width;
             cur_el[0] = cur_pane->page_width;
-            last_el[0] = cur_pane->page_width;
+            while( cur_el[0]->next != NULL) cur_el[0] = cur_el[0]->next;
             cur_pane->page_width = NULL;
         }
         for( i = 0; i < cur_pane->col_count; i++ ) {
-            ProcFlags.page_started = cur_pane->page_width != NULL;
             if( cur_pane->cols[i].col_width != NULL ) {
                 set_positions( cur_pane->cols[i].col_width, cur_pane->cols[i].col_left,
                                cur_pane->col_width_top );
-                cur_el[i] = cur_pane->cols[i].col_width;
-                last_el[i] = cur_pane->cols[i].col_width;
-                while( last_el[i]->next != NULL ) {    // find last element
-                    last_el[i] = last_el[i]->next;
+                if( out_el[i] == NULL ) {
+                    out_el[i] = cur_pane->cols[i].col_width;
                 }
+                if( cur_el[i] == NULL ) {
+                    cur_el[i] = cur_pane->cols[i].col_width;
+                } else {
+                    cur_el[i]->next = cur_pane->cols[i].col_width;
+                }
+                while( cur_el[i]->next != NULL ) cur_el[i] = cur_el[i]->next;
                 cur_pane->cols[i].col_width = NULL;
-                if( (cur_pane == t_page.panes) && (cur_pane->cols[i].post_skip > 0)
-                        && (cur_pane->cols[i].main != NULL) ) {
-                    cur_pane->cols[i].main->top_skip = cur_pane->cols[i].post_skip;
-                    cur_pane->cols[i].post_skip = 0;
-                }
-                ProcFlags.page_started = true;
             }
+            ProcFlags.page_started = false;
             if( cur_pane->cols[i].main != NULL ) {
                 set_positions( cur_pane->cols[i].main, cur_pane->cols[i].col_left,
                                cur_pane->cols[i].main_top );
+                if( out_el[i] == NULL ) {
+                    out_el[i] = cur_pane->cols[i].main;
+                }
                 if( cur_el[i] == NULL ) {
                     cur_el[i] = cur_pane->cols[i].main;
-                    last_el[i] = cur_pane->cols[i].main;
                 } else {
-                    last_el[i]->next = cur_pane->cols[i].main;
+                    cur_el[i]->next = cur_pane->cols[i].main;
                 }
-                while( last_el[i]->next != NULL ) {    // find last element
-                    last_el[i] = last_el[i]->next;
-                }
+                while( cur_el[i]->next != NULL ) cur_el[i] = cur_el[i]->next;
                 cur_pane->cols[i].main = NULL;
             }
             ProcFlags.page_started = true;
             if( cur_pane->cols[i].bot_fig != NULL ) {
                 set_positions( cur_pane->cols[i].bot_fig, cur_pane->cols[i].col_left,
                                cur_pane->cols[i].fig_top );
+                if( out_el[i] == NULL ) {
+                    out_el[i] = cur_pane->cols[i].bot_fig;
+                }
                 if( cur_el[i] == NULL ) {
                     cur_el[i] = cur_pane->cols[i].bot_fig;
-                    last_el[i] = cur_pane->cols[i].bot_fig;
                 } else {
-                    last_el[i]->next = cur_pane->cols[i].bot_fig;
+                    cur_el[i]->next = cur_pane->cols[i].bot_fig;
                 }
-                while( last_el[i]->next != NULL ) {    // find last element
-                    last_el[i] = last_el[i]->next;
-                }
+                while( cur_el[i]->next != NULL ) cur_el[i] = cur_el[i]->next;
                 cur_pane->cols[i].bot_fig = NULL;
             }
             if( cur_pane->cols[i].footnote != NULL ) {
                 set_positions( cur_pane->cols[i].footnote, cur_pane->cols[i].col_left,
                                cur_pane->cols[i].fn_top );
+                if( out_el[i] == NULL ) {
+                    out_el[i] = cur_pane->cols[i].footnote;
+                }
                 if( cur_el[i] == NULL ) {
                     cur_el[i] = cur_pane->cols[i].footnote;
                 } else {
-                    last_el[i]->next = cur_pane->cols[i].footnote;
+                    cur_el[i]->next = cur_pane->cols[i].footnote;
                 }
-                while( last_el[i]->next != NULL ) {    // find last element
-                    last_el[i] = last_el[i]->next;
-                }
+                while( cur_el[i]->next != NULL ) cur_el[i] = cur_el[i]->next;
                 cur_pane->cols[i].footnote = NULL;
             }
         }
@@ -703,9 +778,9 @@ static void do_doc_panes_out( void )
     }
 
     if( col_count == 1 ) {
-        do_el_list_out( cur_el[0] );   // no need to consolidate one column
+        do_el_list_out( out_el[0] );   // no need to consolidate one column
     } else {
-        consolidate_array( cur_el, col_count );
+        consolidate_array( out_el, col_count );
     }
 
     return;
@@ -730,6 +805,7 @@ static void update_column( uint32_t old_max_depth )
     uint32_t            depth;
 
     t_page.cur_col = &t_page.last_pane->cols[t_page.last_pane->cur_col];
+    t_page.cur_col->main_top = t_page.last_pane->col_width_top;
 
     /***********************************************************************/
     /*  The first block in n_page.col_width is processed                   */
@@ -741,14 +817,14 @@ static void update_column( uint32_t old_max_depth )
 
     if( n_page.col_width != NULL ) {                // at most one item can be placed
         cur_group = n_page.col_width;
+        depth = cur_group->depth + cur_group->post_skip;
         t_page.cur_col->col_width = cur_group->first;
-        t_page.cur_col->post_skip = cur_group->post_skip;
         if( bin_driver->y_positive == 0 ) {
-            t_page.cur_col->main_top -= cur_group->depth;
+            t_page.cur_col->main_top -= depth;
         } else {
-            t_page.cur_col->main_top += cur_group->depth;
+            t_page.cur_col->main_top += depth;
         }
-        t_page.max_depth -= cur_group->depth;
+        t_page.max_depth -= depth;
         n_page.col_width = n_page.col_width->next;
         cur_group->next = NULL;
         cur_group->first = NULL;
@@ -995,9 +1071,11 @@ static void update_t_page( void )
         t_page.panes->page_width = cur_group->first;
         if( bin_driver->y_positive == 0 ) {
             t_page.panes_top -= depth;
+            t_page.last_pane->col_width_top -= depth;
             t_page.cur_col->main_top -= depth;
         } else {
             t_page.panes_top += depth;
+            t_page.last_pane->col_width_top -= depth;
             t_page.cur_col->main_top += depth;
         }
         t_page.max_depth -= depth;
@@ -1139,6 +1217,7 @@ void do_page_out( void )
     }
 
     if( t_page.panes != NULL ) {
+        ProcFlags.page_started = false;
         do_doc_panes_out();
         ProcFlags.page_started = true;
     }
@@ -1489,7 +1568,7 @@ void insert_col_width( doc_el_group * a_group )
     if( depth <= t_page.max_depth ) {
         if( t_page.cur_col->col_width == NULL ) {          // must be empty
             t_page.cur_col->col_width = a_group->first;
-            t_page.cur_col->post_skip = a_group->post_skip;
+            depth += a_group->post_skip;
             a_group->first = NULL;
             ProcFlags.col_started = true;
             if( bin_driver->y_positive == 0 ) {
@@ -1549,9 +1628,11 @@ void insert_page_width( doc_el_group * a_group )
             ProcFlags.page_started = true;
             if( bin_driver->y_positive == 0 ) {
                 t_page.panes_top -= depth;
+                t_page.last_pane->col_width_top -= depth;
                 t_page.cur_col->main_top -= depth;
             } else {
                 t_page.panes_top += depth;
+                t_page.last_pane->col_width_top -= depth;
                 t_page.cur_col->main_top += depth;
             }
             t_page.max_depth -= depth;
@@ -1709,6 +1790,7 @@ void reset_t_page( void )
         }
     }
     t_page.last_pane = t_page.panes;
+    t_page.panes->page_width_top = t_page.panes_top;
     t_page.panes->col_width_top = t_page.panes_top;
     for( i = 0; i < t_page.panes->col_count; i++ ) {
         t_page.panes->cols[i].main_top = t_page.panes_top;

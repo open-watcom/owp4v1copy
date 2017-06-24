@@ -1100,7 +1100,6 @@ typedef struct {
             uint32_t        fig_top;        // top of page for bot_fig
             uint32_t        fn_top;         // top of page for footnote
             uint32_t        col_left;       // column left margin
-            uint32_t        post_skip;      // figure or heading at top of column
             doc_element *   col_width;
             doc_element *   main;
             doc_element *   bot_fig;
@@ -1139,7 +1138,7 @@ typedef struct {
             uint32_t            page_left;      // page left margin
             uint32_t            page_width;     // page right margin
             uint32_t            max_width;      // maximum width (page or column)
-            uint32_t            cur_left;       // net adjustment to left margin
+            int32_t             cur_left;       // net adjustment to left margin (can be negative)
             uint32_t            cur_width;      // current width
             doc_pane        *   last_pane;
             doc_column      *   cur_col;        // quick access to t_page.last_pane->cols[t_page.last_pane->cur_col]

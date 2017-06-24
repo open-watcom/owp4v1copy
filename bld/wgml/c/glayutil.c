@@ -372,7 +372,9 @@ void    o_char( FILE * f, lay_att curr, char * tm )
 bool    i_content( char * p, lay_att curr, content * tm )
 {
     bool        cvterr;
+    char    *   pa;
     int         k;
+    size_t      len;
 
     cvterr = false;
     tm->content_type = no_content;
@@ -388,6 +390,18 @@ bool    i_content( char * p, lay_att curr, content * tm )
         g_err( err_att_val_inv );
         file_mac_info();
         cvterr = true;
+    }
+    if( tm->content_type == string_content ) {  // unquoted single word
+        pa = p;
+        len = 0;
+        while( *p && (*p != ' ') ) {
+            p++;
+            len++;
+        }
+        p = pa;                                 // reset to start of word
+        if( len >= str_size ) len = str_size;   // truncate to allowed length
+        memcpy( tm->string, p, len );
+        tm->string[len + 1] = '\0';
     }
     return( cvterr );
 }

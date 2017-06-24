@@ -1064,38 +1064,33 @@ static void do_line_device( void )
     }
     hl_depth = def_height - v_offset;
 
-    /********************************************************/
-    /* this code does what wgml 4.0 does in a limited       */
-    /* context:                                             */
-    /* when the text last output used a font other than     */
-    /* font "0", even if the current font is now font "0",  */
-    /* the v_offset and def_height are adjusted as shown    */
-    /* when the text font's line height is different from   */
-    /* the font "0" line height                             */
-    /* This is known to apply to text within the box, and   */
-    /* to text preceding the box except at the top of a     */
-    /* page                                                 */
-    /* Note: do_v_adjust is needed because, when P is       */
-    /* followed by a break with no intervening text, a      */
-    /* line is simulated by inserted an empty doc_element   */
-    /* into t_page.main->main. This causes the page to be   */
-    /* started, and that triggers the v_offset adjustment   */
-    /* inappropriately. do_v_adjust is false even when      */
-    /* ProcFlags.col_started is true, provided that there   */
-    /* is only one doc_element on the page and it matches   */
-    /* the characteristics of the empty doc_element: it is  */
-    /* the only doc_element in t_page.main->main, is is     */
-    /* a text element, it has a text_line, and that         */
-    /* text_line has no text_chars, ie, is empty            */ 
-    /********************************************************/
+                                                            
+    /************************************************************************/
+    /* this code does what wgml 4.0 does in a limited context:              */
+    /* when the text last output used a font other than font "0", even if   */
+    /* the current font is now font "0", the v_offset and def_height are    */
+    /* adjusted as shown when the text font's line height is different from */
+    /* the font "0" line height                                             */
+    /* This is known to apply to text within the box, and to text preceding */
+    /* the box except at the top of a page                                  */
+    /* Note: do_v_adjust is needed because, when P is followed by a break   */
+    /* with no intervening text, a line is simulated by inserted an empty   */
+    /* doc_element into t_page.cur_col->main. This causes the column to be  */
+    /* started, and that triggers the v_offset adjustment inappropriately.  */
+    /* do_v_adjust is false even when ProcFlags.col_started is true,        */
+    /* provided that there is only one doc_element on the page and it       */
+    /* matches the characteristics of the empty doc_element: it is the only */
+    /* doc_element in t_page.cur_col->main, ir is a text element, it has a  */
+    /* text_line, and that text_line has no text_chars, ie, is empty        */ 
+    /************************************************************************/
 
     do_v_adjust = ProcFlags.col_started;
     if( do_v_adjust ) {     // check for initial empty doc_element on page
-        if( (t_page.panes->page_width == NULL) && (
-                (t_page.panes->cols[0].main == NULL) || (
-                (t_page.panes->cols[0].main->type == el_text)
-                && (t_page.panes->cols[0].main->element.text.first != NULL)
-                && (t_page.panes->cols[0].main->element.text.first->first == NULL))) ) {
+        if( (t_page.last_pane->page_width == NULL) && (
+                (t_page.cur_col->main == NULL) || (
+                (t_page.cur_col->main->type == el_text)
+                && (t_page.cur_col->main->element.text.first != NULL)
+                && (t_page.cur_col->main->element.text.first->first == NULL))) ) {
             do_v_adjust = false;
         }
     }
@@ -1372,7 +1367,7 @@ static void do_line_device( void )
 
 
 /***************************************************************************/
-/*  end-of-page processing for character devices                           */
+/*  end-of-column processing for character devices                         */
 /***************************************************************************/
 
 static void eoc_char_device( void ) {
@@ -1433,12 +1428,12 @@ static void eoc_char_device( void ) {
                         }
                     }
                 }
-                cur_el = NULL;                      // nothing more goes on current page
+                cur_el = NULL;                      // nothing more goes in current column
             }
         }
     }
 
-    /* Now finish off the page */
+    /* Now finish off the column */
 
     if( t_page.max_depth > t_page.cur_depth ) {
         box_blank_lines( t_page.max_depth - t_page.cur_depth );
@@ -1449,7 +1444,7 @@ static void eoc_char_device( void ) {
 
 
 /***************************************************************************/
-/*  end-of-page processing for line-drawing devices                        */
+/*  end-of-column processing for line-drawing devices                      */
 /*  NOTE: work was suspended when work on boxtest.gml began, as it is not  */
 /*  clear this is needed for the OW docs; it is even less clear how to     */
 /*  handle the problem that the parameter to box_line_element() was meant  */
@@ -1468,7 +1463,7 @@ static void eoc_line_device( void ) {
 
     if( cur_doc_el_group != NULL ) {
         while( cur_doc_el_group->first != NULL ) {
-            if( ProcFlags.col_started ) {      // text line not at top of page
+            if( ProcFlags.col_started ) {      // text line not at top of column
                 cur_skip = cur_doc_el_group->first->subs_skip;
             } else {
                 cur_skip = cur_doc_el_group->first->top_skip;
@@ -1489,7 +1484,7 @@ static void eoc_line_device( void ) {
                     if( cur_skip > max_depth ) {    // cap top_skip or subs_skip
                         skippage = max_depth;
                     }
-                } else if( (cur_doc_el_group->first->depth + skippage) > max_depth ) {  // cur_doc_el_group.first will fill the page
+                } else if( (cur_doc_el_group->first->depth + skippage) > max_depth ) {  // cur_doc_el_group.first will fill the column
                     splittable = split_element( cur_doc_el_group->first, t_page.max_depth -
                                                 t_page.cur_depth - skippage );
                     if( splittable ) {
@@ -1500,12 +1495,12 @@ static void eoc_line_device( void ) {
                         }
                     }
                 }
-                break;  // end processing & finish page
+                break;  // end processing & finish column
             }
         }
     }
 
-    /* Now finish off the page */
+    /* Now finish off the column */
 
     max_depth = t_page.max_depth - t_page.cur_depth;    // reset value
 
@@ -2194,7 +2189,7 @@ static void merge_lines( void )
 }
 
 /***************************************************************************/
-/*  end-of-page processing for do_page_out()                               */
+/*  end-of-column processing for do_doc_panes_out()                        */
 /*  box_line should be NULL at entry and exit, but be useable in between   */
 /*  the method used only works because box_line is not modified            */
 /***************************************************************************/
@@ -2219,7 +2214,7 @@ void eoc_bx_box( void ) {
         eoc_line_device();
     }
 
-    cur_op = sav_cur_op;                            // restore value on entry
+    cur_op = sav_cur_op;                    // restore value on entry
 
     return;
 }

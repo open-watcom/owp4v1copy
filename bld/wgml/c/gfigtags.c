@@ -41,6 +41,7 @@ static  bool            concat_save;            // for ProcFlags.concat
 static  bool            figcap_done;            // FIGCAP done for current FIG
 static  bool            page_width;             // FIG flag used by eFIG
 static  bool            splitting;              // FIG is being split   
+static  bool            t_page_width    = false;// FIG will actually go into page_width section
 static  char            id[ID_LEN];             // FIG attribute used by eFIG
 static  def_frame       frame;                  // FIG attribute used by eFIG
 static  group_type      sav_group_type;         // save prior group type
@@ -516,7 +517,7 @@ void gml_fig( const gmltag * entry )
                     break;
                 }
                 if( !strnicmp( "page", val_start, 4 ) ) {
-                    // default value is the correct value to use
+                    // this will be used to set t_page_width and width below 
                     page_width = true;
                 } else if( !strnicmp( "column", val_start, 6 ) ) {
                     // default value is the correct value to use
@@ -541,6 +542,10 @@ void gml_fig( const gmltag * entry )
     }
 
     set_skip_vars( &layout_work.fig.pre_skip, NULL, NULL, spacing, g_curr_font );
+
+    /* Only page-width top figs on multi-column pages actually go into the page_width section */
+
+    t_page_width = (place == top_place) && (page_width) && (t_page.last_pane->col_count > 1);
 
     /* For an inline dbox, the actual skip must be done before the box itself */
 
@@ -616,8 +621,9 @@ void gml_fig( const gmltag * entry )
 
     /* This sets text processing up for page width text */
 
-    if( place == top_place ) {
+    if( place == t_page_width ) {
         t_page.max_width = t_page.page_width;
+        width = t_page.page_width;
     }
 
     /* This is for the overall figure, including any frame */
@@ -705,8 +711,8 @@ void gml_efig( const gmltag * entry )
     bool                splittable;
     bool                split_done;
     char            *   p;
-    doc_el_group    *   cur_group;      // current group from n_page, not cur_doc_el_group
-    doc_el_group    *   new_group;      // new group for use in splitting cur_doc_el_group
+    doc_el_group    *   cur_group;              // current group from n_page, not cur_doc_el_group
+    doc_el_group    *   new_group;              // new group for use in splitting cur_doc_el_group
     doc_element     *   cur_el;
     doc_element     *   next_el;
     tag_cb          *   wk;
@@ -973,7 +979,7 @@ void gml_efig( const gmltag * entry )
                 insert_col_bot( cur_doc_el_group );
                 cur_group = n_page.col_bot;
             } else {
-                if( page_width || (t_page.last_pane->col_count == 1) ) {
+                if( t_page_width ) {
                     insert_page_width( cur_doc_el_group );
                     cur_group = n_page.page_width;
                 } else {          // width was "column" at most and page is multi-column
@@ -1046,6 +1052,9 @@ void gml_efig( const gmltag * entry )
     scan_err = false;
     if( *p ) {
         process_text( p, g_curr_font);  // if text follows
+    }
+    if( place == t_page_width ) {
+        t_page.max_width = t_page.last_pane->col_width;
     }
     if( pass > 1 ) {                    // not on first pass
         fig_entry = fig_entry->next;    // get to next FIG

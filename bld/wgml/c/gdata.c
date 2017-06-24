@@ -169,7 +169,6 @@ void init_global_vars( void )
         t_page.panes->cols[i].fig_top   = 0;
         t_page.panes->cols[i].fn_top    = 0;
         t_page.panes->cols[i].col_left  = 0;
-        t_page.panes->cols[i].post_skip = 0;
         t_page.panes->cols[i].col_width = NULL;
         t_page.panes->cols[i].main      = NULL;
         t_page.panes->cols[i].bot_fig   = NULL;

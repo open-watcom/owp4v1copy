@@ -141,6 +141,7 @@ static void hx_header( char * h_num, char * h_text, hdsrc hn_lvl, hdsrc hds_lvl 
 
 void gen_heading( char * h_text, char * id, hdsrc hn_lvl, hdsrc hds_lvl )
 {
+    bool            page_width  = false;
     char        *   headp;
     char        *   prefix      = NULL;
     doc_element *   cur_el;
@@ -154,7 +155,6 @@ void gen_heading( char * h_text, char * id, hdsrc hn_lvl, hdsrc hds_lvl )
     ref_entry   *   cur_ref;
     uint32_t        bot_depth;
     uint32_t        hx_depth;
-    uint32_t        max_width_sav;
     uint32_t        old_bot_depth;
     uint32_t        old_top_depth;
     uint32_t        page_diff;
@@ -166,8 +166,10 @@ void gen_heading( char * h_text, char * id, hdsrc hn_lvl, hdsrc hds_lvl )
     headx[5] = '0' + hn_lvl;
     htextx[6] = '0' + hn_lvl;
 
-    if( layout_work.hx.hx_head[hds_lvl].page_eject != ej_no ) {
-        max_width_sav = t_page.max_width;
+    /* Only H0 headings on multi-column pages actually go into the page_width section */
+
+    page_width = (hds_lvl == hds_h0) && (t_page.last_pane->col_count > 1);
+    if( page_width ) {
         t_page.max_width = t_page.page_width;
    }
     update_headnumx( hn_lvl, hds_lvl );
@@ -448,7 +450,11 @@ void gen_heading( char * h_text, char * id, hdsrc hn_lvl, hdsrc hds_lvl )
                 xx_err( err_heading_too_deep );     // the block won't fit on any page
             } else {
                 cur_doc_el_group->post_skip = g_post_skip;
-                insert_page_width( cur_doc_el_group );
+                if( page_width ) {
+                    insert_page_width( cur_doc_el_group );
+                } else {
+                    insert_col_width( cur_doc_el_group );
+                }
                 cur_doc_el_group = NULL;
             }
         }
@@ -470,8 +476,8 @@ void gen_heading( char * h_text, char * id, hdsrc hn_lvl, hdsrc hds_lvl )
         hd_entry->pageno = page + 1;
     }
 
-    if( layout_work.hx.hx_head[hds_lvl].page_eject != ej_no ) {
-        t_page.max_width = max_width_sav;
+    if( page_width ) {
+        t_page.max_width = t_page.last_pane->col_width;
     }
 
     /* Reset $TOPHEADx */
