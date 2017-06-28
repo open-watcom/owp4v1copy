@@ -508,17 +508,6 @@ static void box_draw_vlines( box_col_set * hline, uint32_t subs_skip,
 
             /* Add the column-specific depth */
 
-            /**************************NOTE********************************/
-            /* This was noticed during conversion to init_doc_el()        */
-            /* It is not clear what the condition should be, or if it is  */
-            /* needed at all. Applying it to the following line did       */
-            /* produce additional diffs in the test file                  */
-            /**************************************************************/
-
-            if( (box_depth == 0) && (((prev_op == bx_can) && (cur_op == bx_can))
-                    || ((prev_op == bx_set) && (cur_op == bx_set))) ) {
-            }
-
             v_line_el->element.vline.v_len += hline->cols[i_h].depth;
 
             /* Set number of AA blocks to use for this column */
@@ -884,6 +873,7 @@ static void  do_char_device( void )
                 }
             } else {                                    // finish off current page
                 next_column();
+                max_depth = t_page.max_depth;
             }
         }
         add_doc_el_group_to_pool( cur_doc_el_group );
@@ -1108,8 +1098,8 @@ static void do_line_device( void )
     /* process any accumulated doc_elements */
 
     if( cur_doc_el_group != NULL ) {
-        if( cur_doc_el_group->depth <= max_depth ) {   // doc_elements will all fit    
-            while( cur_doc_el_group->first != NULL ) {
+        while( cur_doc_el_group->first != NULL ) {
+            if( cur_doc_el_group->depth <= max_depth ) {   // doc_elements will all fit    
                 cur_el = cur_doc_el_group->first;
                 if( cur_el != NULL ) {
                     while( (cur_el != NULL)
@@ -1128,9 +1118,10 @@ static void do_line_device( void )
                         box_line_element( check_el == NULL );
                     }
                 }
+            } else {                            // finish off current column 
+                next_column();
+                max_depth = t_page.max_depth;
             }
-        } else {                            // finish off current column
-            next_column();
         }
         add_doc_el_group_to_pool( cur_doc_el_group );
         cur_doc_el_group = NULL;
@@ -1270,16 +1261,19 @@ static void do_line_device( void )
         if( cur_op == bx_set ) {
             if( max_depth < (box_skip + (v_offset - 1)) ) {     // to top of next column
                 next_column();
+                max_depth = t_page.max_depth;
                 ProcFlags.top_line = !ProcFlags.col_started;    // reset for new column
             }
         } else if( cur_op == bx_off ) {
             if( max_depth < (box_skip + (v_offset - 1) + def_height) ) {        // to top of next column
                 next_column();
+                max_depth = t_page.max_depth;
                 ProcFlags.top_line = !ProcFlags.col_started;    // reset for new column
             }
         } else {
             if( max_depth < (h_line_el->subs_skip + (v_offset - 1) + def_height) ) {        // to top of next column
                 next_column();
+                max_depth = t_page.max_depth;
                 ProcFlags.top_line = !ProcFlags.col_started;    // reset for new column
             }
         }
@@ -1299,10 +1293,12 @@ static void do_line_device( void )
 /// this appears to be correct for the bx off that closes the outermost box
             if( max_depth < (box_skip + def_height) ) {         // to top of next column
                 next_column();
+                max_depth = t_page.max_depth;
                 ProcFlags.top_line = !ProcFlags.col_started;    // reset for new column
             }
         } else if( max_depth < (el_skip + hl_depth + def_height) ) {    // HLINE to top of column
             next_column();
+            max_depth = t_page.max_depth;
             ProcFlags.top_line = !ProcFlags.col_started;        // reset for new column
         }
         if( (h_line_el != NULL) && ProcFlags.in_bx_box ) {      // adjust for HLINE skips
@@ -1354,12 +1350,13 @@ static void do_line_device( void )
     /*      column list is at the exact bottom of the page      */
     /*   BX CAN never positions its VLINEs at the exact bottom  */
     /*     of the page, so it does not do this -- so far        */
+    /* Converted to per-column behavior without testing         */
     /************************************************************/
 
     if( ((cur_op == bx_off) || ((cur_op == bx_on) && !ProcFlags.box_cols_cur)) &&
             (t_page.max_depth == t_page.cur_depth) ) {
-        do_page_out();
-        reset_t_page();
+        next_column;
+        max_depth = t_page.max_depth;
     }
 
     return;
@@ -1392,7 +1389,7 @@ static void eoc_char_device( void ) {
             skippage = cur_el->blank_lines + cur_skip;
             if( (t_page.cur_depth + skippage + cur_el->depth) <= t_page.max_depth ) {
 
-            /* the entire element will fit */
+                /* the entire element will fit */
 
                 cur_el->blank_lines = 0;
                 if( skippage > 0 ) {            // convert skipped lines to output lines
@@ -1403,6 +1400,7 @@ static void eoc_char_device( void ) {
                 cur_doc_el_group->first = cur_el->next;
                 cur_el->next = NULL;
                 box_char_element( cur_el );
+                cur_doc_el_group->depth -= cur_el->depth;
                 cur_el = cur_doc_el_group->first;
             } else {                // the entire element will not fit
                 if( (t_page.cur_depth + skippage) > t_page.max_depth ) {    // skippage too large
@@ -1472,6 +1470,7 @@ static void eoc_line_device( void ) {
             max_depth = t_page.max_depth - t_page.cur_depth;    // reset value
             skippage = cur_doc_el_group->first->blank_lines + cur_skip;
             if( (cur_doc_el_group->first->depth + skippage) <= max_depth ) {  // cur_doc_el_group.first will fit on the page
+                cur_doc_el_group->depth -= cur_doc_el_group->first->depth;
                 box_line_element( true );
             } else {        // the entire element will not fit
                 if( skippage > max_depth ) {    // skippage too large
@@ -1519,9 +1518,6 @@ static void eoc_line_device( void ) {
         }
     }
 
-    box_depth = 0;
-    el_skip = 0;
-
     return;
 }
 
@@ -1547,7 +1543,7 @@ static void merge_lines( void )
         eoc_save = NULL;
     } else {
 
-        /* Save original prev_line for use if the box is split between pages */
+        /* Save original prev_line for use if the box is split between columns */
 
         cur_temp = alloc_box_col_set();
         eoc_save = cur_temp;
@@ -2172,7 +2168,7 @@ static void merge_lines( void )
         }
     }
 
-    /* Restore original prev_line for use if the box is split between pages */
+    /* Restore original prev_line for use if the box is split between columns */
 
     if( prev_line != NULL ) {
         add_box_col_set_to_pool( prev_line  );
@@ -2189,7 +2185,7 @@ static void merge_lines( void )
 }
 
 /***************************************************************************/
-/*  end-of-column processing for do_doc_panes_out()                        */
+/*  end-of-column processing                                               */
 /*  box_line should be NULL at entry and exit, but be useable in between   */
 /*  the method used only works because box_line is not modified            */
 /***************************************************************************/
@@ -2215,6 +2211,9 @@ void eoc_bx_box( void ) {
     }
 
     cur_op = sav_cur_op;                    // restore value on entry
+
+    box_depth = 0;
+    el_skip = 0;
 
     return;
 }
