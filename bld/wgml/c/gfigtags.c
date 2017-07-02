@@ -621,7 +621,7 @@ void gml_fig( const gmltag * entry )
 
     /* This sets text processing up for page width text */
 
-    if( place == t_page_width ) {
+    if( t_page_width ) {
         t_page.max_width = t_page.page_width;
         width = t_page.page_width;
     }
