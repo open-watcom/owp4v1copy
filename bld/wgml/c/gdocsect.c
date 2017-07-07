@@ -26,7 +26,7 @@
 *
 * Description:  WGML tags and routines for document section changes
 *                    :GDOC, :FRONTM, :BODY, ...
-*               and special for :INDEX tag
+*               and special for :FIGLIST :INDEX :TOC tags
 ****************************************************************************/
 #include    "wgml.h"
 #include    "gvars.h"
@@ -1256,7 +1256,7 @@ void start_doc_sect( void )
         reset_t_page();
         document_new_position();        // first text page ready for content
     } else if( page_e == ej_no ) {
-        full_page_out();                // ensure are on last page
+        full_col_out();                 // ensure are in last column
         ProcFlags.page_ejected = false; // this would be a good place to add a pane
         set_section_banners( ds );      // since the section begins mid-page
         reset_bot_ban();    
@@ -1267,17 +1267,18 @@ void start_doc_sect( void )
         if( page_e == ej_odd ) {
             if( (page & 1) ) {          // first page will be odd
                 do_page_out();          // emit blank page
+                reset_t_page();
             }
         } else if( page_e == ej_even ) {
             if( !(page & 1) ) {         // first page will be even
                 do_page_out();          // emit blank page
+                reset_t_page();
             }
         } else if( page_e != ej_yes ) {
             internal_err( __FILE__, __LINE__ );
         }
         g_skip = 0;                     // ignore remaining skip value
         set_section_banners( ds );
-        reset_t_page();
     }
 
     ProcFlags.doc_sect = ds;

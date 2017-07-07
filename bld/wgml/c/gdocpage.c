@@ -31,13 +31,14 @@
 *               do_doc_panes_out        output text from one or more doc_panes
 *               do_el_list_out          output text from an array of element lists
 *               do_page_out             actually output t_page
-*               full_page_out           output all full pages
+*               full_col_out            output all full columns
 *               insert_col_bot          insert doc_element into t_page.cols->bot_fig
 *               insert_col_fn           insert doc_element into t_page.cols->footnote
 *               insert_col_main         insert doc_element into t_page.cols->main
 *               insert_col_width        insert doc_element into t_page.col_width
 *               insert_page_width       insert doc_element into t_page.page_width
-*               last_page_out           force output of all remaining pages
+*               last_col_out            force output of all pending columns
+*               last_page_out           force output of all pending pages
 *               next_column             move to next column 
 *               reset_bot_ban           reset t_page.bottom_banner and related externs
 *               reset_t_page            reset t_page and related externs
@@ -45,7 +46,7 @@
 *               set_skip_vars           merge the various skips into the externs
 *               set_positions           set vertical/horizontal positions in an element list
 *               split_element           splits an element at given depth
-*               text_page_out           output all pages where main is full
+*               text_col_out            output all columns where main is full
 *               update_column           update a single column
 *               update_t_page           update t_page from n_page
 *
@@ -70,47 +71,47 @@ static void do_el_list_out( doc_element * in_element )
 
     while( in_element != NULL ) {
         switch( in_element->type ) {
-            case el_binc :
-                if( GlobalFlags.lastpass ) {
-                    ob_binclude( &in_element->element.binc );
-                }
-                break;
-            case el_dbox :  // should only be found if DBOX block exists
-                if( GlobalFlags.lastpass ) {
-                    fb_dbox( &in_element->element.dbox );
-                }
-                break;
-            case el_graph :
-                if( GlobalFlags.lastpass ) {
-                    if( ProcFlags.ps_device ) {   // only available to PS device
-                        ob_graphic( &in_element->element.graph );
-                    }
-                }
-                break;
-            case el_hline :  // should only be found if HLINE block exists
-                if( GlobalFlags.lastpass ) {
-                    fb_hline( &in_element->element.hline );
-                }
-                break;
-            case el_text :
-                if( GlobalFlags.lastpass ) {
-                    ProcFlags.force_op = in_element->element.text.force_op;
-                    for( cur_line = in_element->element.text.first;
-                            cur_line != NULL; cur_line = cur_line ->next ) {
-                        fb_output_textline( cur_line );
-                    }
-                    ProcFlags.force_op = false;
-                }
-                break;
-            case el_vline :  // should only be found if VLINE block exists
-                if( GlobalFlags.lastpass ) {
-                    fb_vline( &in_element->element.vline );
-                }
-                break;
-            default :
-                internal_err( __FILE__, __LINE__ );
-                break;
+        case el_binc :
+            if( GlobalFlags.lastpass ) {
+                ob_binclude( &in_element->element.binc );
             }
+            break;
+        case el_dbox :  // should only be found if DBOX block exists
+            if( GlobalFlags.lastpass ) {
+                fb_dbox( &in_element->element.dbox );
+            }
+            break;
+        case el_graph :
+            if( GlobalFlags.lastpass ) {
+                if( ProcFlags.ps_device ) {   // only available to PS device
+                    ob_graphic( &in_element->element.graph );
+                }
+            }
+            break;
+        case el_hline :  // should only be found if HLINE block exists
+            if( GlobalFlags.lastpass ) {
+                fb_hline( &in_element->element.hline );
+            }
+            break;
+        case el_text :
+            if( GlobalFlags.lastpass ) {
+                ProcFlags.force_op = in_element->element.text.force_op;
+                for( cur_line = in_element->element.text.first;
+                        cur_line != NULL; cur_line = cur_line ->next ) {
+                    fb_output_textline( cur_line );
+                }
+                ProcFlags.force_op = false;
+            }
+            break;
+        case el_vline :  // should only be found if VLINE block exists
+            if( GlobalFlags.lastpass ) {
+                fb_vline( &in_element->element.vline );
+            }
+            break;
+        default :
+            internal_err( __FILE__, __LINE__ );
+            break;
+        }
         save = in_element->next;
         in_element->next = NULL;            // clear only current element
         add_doc_el_to_pool( in_element ); 
@@ -870,6 +871,9 @@ static void update_column( uint32_t old_max_depth )
 
     t_page.cur_col = &t_page.last_pane->cols[t_page.last_pane->cur_col];
     t_page.cur_col->main_top = t_page.last_pane->col_width_top;
+    t_page.cur_col->fig_top = t_page.bot_ban_top;
+    t_page.cur_col->fn_top = t_page.bot_ban_top;
+    t_page.max_depth = t_page.cur_col->main_top - t_page.cur_col->fig_top;
 
     /***********************************************************************/
     /*  The first block in n_page.col_width is processed                   */
@@ -1325,7 +1329,7 @@ void do_page_out( void )
 /*  the various tags and control words that accumulate doc_elements        */
 /***************************************************************************/
 
-void full_page_out( void )
+void full_col_out( void )
 {
     while( (n_page.page_width != NULL) || (n_page.col_width != NULL)
             || (n_page.col_main != NULL) || (n_page.col_bot != NULL)
@@ -1613,7 +1617,7 @@ void insert_col_main( doc_element * a_element )
             n_page.last_col_main->next = a_element;
             n_page.last_col_main = n_page.last_col_main->next;
         }
-        text_page_out();
+        text_col_out();
     } 
 
     return;
@@ -1644,7 +1648,6 @@ void insert_col_width( doc_el_group * a_group )
             t_page.cur_col->col_width = a_group->first;
             depth += a_group->post_skip;
             a_group->first = NULL;
-            ProcFlags.col_started = true;
             if( bin_driver->y_positive == 0 ) {
                 t_page.cur_col->main_top -= depth;
             } else {
@@ -1735,18 +1738,68 @@ void insert_page_width( doc_el_group * a_group )
 /*  the various tags and control words that accumulate doc_elements        */
 /***************************************************************************/
  
-void last_page_out( void )
+void last_col_out( void )
 {
-    full_page_out();
+    full_col_out();
 
-    /* Emit last page only if it has content, not just banners */
+    /****************************************************************/
+    /* Emit last page only if it has content, not just banners      */
+    /* Note: this should be sufficient: it appears to be impossible */
+    /*       for a page with any content at all to not have some    */
+    /*       content in the first column of the first pane          */
+    /****************************************************************/
 
-    if( (t_page.panes->page_width != NULL) || (t_page.panes->cols[0].main != NULL) ) {
+    if( (t_page.panes->page_width != NULL) ||
+        (t_page.panes->cols[0].col_width != NULL) ||
+        (t_page.panes->cols[0].main != NULL) ||
+        (t_page.panes->cols[0].bot_fig != NULL) ||
+        (t_page.panes->cols[0].footnote != NULL) ) {
 
         /****************************************************************/
         /* Finish drawing any open box.                                 */
         /* Note: this may need to be done for other control words and   */
-        /* tags that accumulate doc_elements                            */
+        /*       tags that accumulate doc_elements                      */
+        /****************************************************************/
+
+        if( ProcFlags.in_bx_box ) {
+            eoc_bx_box();
+        }
+
+        next_column();
+    }
+
+    return;
+}
+
+
+/***************************************************************************/
+/*  force output of the current page, even if not full                     */
+/*  t_page and n_page will both be empty on return                         */
+/*  Note: may need to be expanded to consider doc_elements accumulated by  */
+/*  the various tags and control words that accumulate doc_elements        */
+/***************************************************************************/
+ 
+void last_page_out( void )
+{
+    full_col_out();
+
+    /****************************************************************/
+    /* Emit last page only if it has content, not just banners      */
+    /* Note: this should be sufficient: it appears to be impossible */
+    /*       for a page with any content at all to not have some    */
+    /*       content in the first column of the first pane          */
+    /****************************************************************/
+
+    if( (t_page.panes->page_width != NULL) ||
+        (t_page.panes->cols[0].col_width != NULL) ||
+        (t_page.panes->cols[0].main != NULL) ||
+        (t_page.panes->cols[0].bot_fig != NULL) ||
+        (t_page.panes->cols[0].footnote != NULL) ) {
+
+        /****************************************************************/
+        /* Finish drawing any open box.                                 */
+        /* Note: this may need to be done for other control words and   */
+        /*       tags that accumulate doc_elements                      */
         /****************************************************************/
 
         if( ProcFlags.in_bx_box ) {
@@ -2037,7 +2090,7 @@ bool split_element( doc_element * a_element, uint32_t req_depth )
 /*  the various tags and control words that accumulate doc_elements        */
 /***************************************************************************/
 
-void text_page_out( void )
+void text_col_out( void )
 {
     while( n_page.col_main != NULL ) {
         next_column();

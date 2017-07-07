@@ -117,12 +117,13 @@ extern  void    init_def_lay( void );
 
 /* gdocpage.c                           */
 extern  void        do_page_out( void );
-extern  void        full_page_out( void );
+extern  void        full_col_out( void );
 extern  void        insert_col_bot( doc_el_group * a_group );
 extern  void        insert_col_fn( doc_el_group * a_group );
 extern  void        insert_col_main( doc_element * a_element );
 extern  void        insert_col_width( doc_el_group * a_group );
 extern  void        insert_page_width( doc_el_group * a_group );
+extern  void        last_col_out( void );
 extern  void        last_page_out( void );
 extern  void        next_column( void );
 extern  void        reset_bot_ban( void );
@@ -130,7 +131,7 @@ extern  void        reset_t_page( void );
 extern  void        reset_top_ban( void );
 extern  void        set_skip_vars( su * pre_skip, su * pre_top_skip, su * post_skip, uint32_t spacing, font_number font );
 extern  bool        split_element( doc_element * a_element, uint32_t req_depth );
-extern  void        text_page_out( void );
+extern  void        text_col_out( void );
 
 
 /* gdocsect.c                           */

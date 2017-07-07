@@ -424,6 +424,7 @@ void gml_fig( const gmltag * entry )
     if( frame.type == char_frame ) {
         strcpy_s( frame.string, str_size, layout_work.fig.default_frame.string );
     }
+    place = layout_work.fig.default_place;
     width = t_page.last_pane->col_width;// default value regardless of number of columns
     g_curr_font = layout_work.fig.font;
     spacing_save = spacing;
@@ -655,7 +656,7 @@ void gml_fig( const gmltag * entry )
         if( (frame.type == rule_frame) && (bin_driver->hline.text != NULL)
                 && (place == inline_place) ) {
             g_subs_skip += wgml_fonts[FONT0].line_height;   // this is actually the depth used by the HLINE
-            g_top_skip += wgml_fonts[FONT0].line_height;    // for use if fig moved to top of next page
+            g_top_skip += wgml_fonts[FONT0].line_height;    // for use if fig moved to top of next column
         }
         insert_frame_line();
     }
@@ -785,7 +786,6 @@ void gml_efig( const gmltag * entry )
 
     cur_group_type = sav_group_type;
     if( t_doc_el_group != NULL) {
-        page_pred = page + 1;                   // initialize to current page 
         cur_doc_el_group = t_doc_el_group;      // detach current element group
         t_doc_el_group = t_doc_el_group->next;  // processed doc_elements go to next group, if any
         cur_doc_el_group->next = NULL;
@@ -796,8 +796,8 @@ void gml_efig( const gmltag * entry )
                 splitting = false;
                 if( frame.type == box_frame ) {
                     if( bin_driver->dbox.text != NULL ) {   // DBOX available
-                        bias = wgml_fonts[FONT0].line_height;
-                        cur_doc_el_group->first->top_skip = wgml_fonts[FONT0].line_height; // this is actually the depth used by the HLINE
+                        bias = 2 * wgml_fonts[FONT0].line_height;
+                        cur_doc_el_group->first->top_skip = bias; // this is actually the depth used by the HLINE
                     } else {
                         bias = wgml_fonts[layout_work.fig.font].line_height +
                                                         wgml_fonts[FONT0].line_height;
@@ -808,16 +808,15 @@ void gml_efig( const gmltag * entry )
                 if( (cur_doc_el_group->depth + t_page.cur_depth + bias)
                         > t_page.max_depth ) {
 
-                    /* the block won't fit on this page */
+                    /* the block won't fit in this column */
 
-                    last_page_out();
-                    reset_t_page();
-                    page_pred++;        // update to page FIG ends on
+                    full_col_out();
 
                     if( (cur_doc_el_group->depth + bias) <= t_page.max_depth ) {
 
-                        /* the block will be on the next page */
+                        /* the block will be in the next column */
 
+                        next_column();
                         if( frame.type == box_frame ) {
 
                             /* Last part of split box */
@@ -826,7 +825,7 @@ void gml_efig( const gmltag * entry )
                                 cur_doc_el_group->depth += wgml_fonts[FONT0].line_height;
                                 split_done = false;
                             }
-                            draw_box(cur_doc_el_group);
+                            draw_box( cur_doc_el_group );
                         }
                         while( cur_doc_el_group->first != NULL ) {
                             cur_el = cur_doc_el_group->first;
@@ -836,7 +835,7 @@ void gml_efig( const gmltag * entry )
                         }
                     } else {
 
-                        /* the block won't fit on any page */
+                        /* the block won't fit in any column */
                     
                         /* first split the block */
 
@@ -849,9 +848,10 @@ void gml_efig( const gmltag * entry )
                             cur_doc_el_group->first = cur_doc_el_group->first->next;
                             cur_el->next = NULL;
                             cur_depth = cur_el->blank_lines + cur_el->subs_skip + cur_el->depth;
-                            if( cur_depth <= (t_page.max_depth - (new_group->depth + bias)) ) { 
+                            if( cur_depth <= ((t_page.max_depth - t_page.cur_depth) -
+                                (new_group->depth + bias)) ) { 
 
-                                /* the element will fit on this page */
+                                /* the element will fit in this column */
 
                                 if( new_group->first == NULL ) {
                                     new_group->first = cur_el;
@@ -865,8 +865,8 @@ void gml_efig( const gmltag * entry )
                             
                                 /* the element must be split */
 
-                                splittable = split_element( cur_el, t_page.max_depth -
-                                                    (new_group->depth + bias) );
+                                splittable = split_element( cur_el, (t_page.max_depth  - t_page.cur_depth)
+                                                            - (new_group->depth + bias) );
                                 next_el = cur_el->next;
                                 cur_el->next = NULL;
                                 if( splittable && (next_el != NULL) ) {     // cur_el was split
@@ -884,7 +884,7 @@ void gml_efig( const gmltag * entry )
                                     }
                                     new_group->depth += cur_el->depth;
                                     cur_doc_el_group->depth -= cur_el->depth;
-                                } else {    // cur_el must go on next page
+                                } else {    // cur_el must go in next column
                                     cur_el->next = cur_doc_el_group->first;
                                     cur_doc_el_group->first = cur_el;
                                 }
@@ -900,7 +900,7 @@ void gml_efig( const gmltag * entry )
                         /* then output the part that fits */
 
                         if( frame.type == box_frame ) {
-                            draw_box(cur_doc_el_group);
+                            draw_box( cur_doc_el_group );
                         }
                         while( cur_doc_el_group->first != NULL ) {
                             cur_el = cur_doc_el_group->first;
@@ -916,7 +916,7 @@ void gml_efig( const gmltag * entry )
                     }
                 } else {
                     if( frame.type == box_frame ) {
-                        draw_box(cur_doc_el_group);
+                        draw_box( cur_doc_el_group );
                     }
                     while( cur_doc_el_group->first != NULL ) {
                         cur_el = cur_doc_el_group->first;
@@ -926,6 +926,7 @@ void gml_efig( const gmltag * entry )
                     }
                 }
             }
+            page_pred = page + 1;            // set to page of bottom of FIG
             add_doc_el_group_to_pool( cur_doc_el_group );
             cur_doc_el_group = NULL;
         } else {
@@ -971,7 +972,7 @@ void gml_efig( const gmltag * entry )
             cur_doc_el_group->first->top_skip = 0;
 
             if( frame.type == box_frame ) {
-                draw_box(cur_doc_el_group);
+                draw_box( cur_doc_el_group );
             }
 
             cur_group = NULL;
@@ -982,7 +983,7 @@ void gml_efig( const gmltag * entry )
                 if( t_page_width ) {
                     insert_page_width( cur_doc_el_group );
                     cur_group = n_page.page_width;
-                } else {          // width was "column" at most and page is multi-column
+                } else {          // width was "column" or was "page" and page is single-column
                     insert_col_width( cur_doc_el_group );
                     cur_group = n_page.col_width;
                 }
@@ -992,21 +993,24 @@ void gml_efig( const gmltag * entry )
             /* 1. The destinations (t_page.page_width, t_page.cols->    */
             /*    col_width, t_page.cols->col_bot) take one item only   */
             /* 2. If the destination was empty, then the figure just    */
-            /*    submitted went into it and is on the current page     */
+            /*    submitted went into it and is on the current page or  */
+            /*    in the current column                                 */
             /* 3. If the destination was full, then the figure just     */
             /*    submitted went into n_page->page_width, or n_page->   */
             /*    col_width, or n_page->col_bot and is the last item    */
             /* 4. Each item in the n_page sections will go onto a new   */
-            /*    page whose number can be computed from the number     */
-            /*    of items in the list plus the current page number     */
+            /*    page or column whose number can be computed from the  */
+            /*    number of items in the list plus the current page     */
+            /*    number                                                */
             /* NOTE: no attempt is made at this time to divide these    */
             /*    FIG/eFIG blocks, as that may force some or all of     */
             /*    figure processing into docpage.c (the insert_x()      */
-            /*    functions and update_t_page()).                       */
+            /*    functions and update_column()/update_t_page())        */
             /************************************************************/
 
+            page_pred = page + 1;            // set to current page
             while( cur_group != NULL ) {
-                page_pred++;            // set to future page of top FIG
+                page_pred++;                // set to future page
                 cur_group = cur_group->next;
             }
 
@@ -1053,7 +1057,7 @@ void gml_efig( const gmltag * entry )
     if( *p ) {
         process_text( p, g_curr_font);  // if text follows
     }
-    if( place == t_page_width ) {
+    if( t_page_width ) {
         t_page.max_width = t_page.last_pane->col_width;
     }
     if( pass > 1 ) {                    // not on first pass
