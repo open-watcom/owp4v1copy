@@ -378,10 +378,12 @@ void gen_heading( char * h_text, char * id, hdsrc hn_lvl, hdsrc hds_lvl )
                     g_post_skip;
                 if( ((page_diff + t_page.cur_depth) > t_page.max_depth) ||
                         ((hx_depth + t_page.cur_depth) > t_page.max_depth) ) {
-                    do_page_out();              // the block won't fit on this page
-                    reset_t_page();
-                    ProcFlags.page_ejected = true;
-                } else {                        // this page will do just fine
+                    next_column();
+                    if( t_page.last_pane->cur_col == 0 ) {  // on new page 
+                        ProcFlags.page_ejected = true;
+                    }
+                }
+                if ( !ProcFlags.page_ejected ) {    // this page will do just fine
 
                     /* Adjust page vertical metrics */
 
@@ -422,8 +424,8 @@ void gen_heading( char * h_text, char * id, hdsrc hn_lvl, hdsrc hds_lvl )
 
             if( !ProcFlags.page_ejected ) {
                 hx_depth = cur_doc_el_group->depth +
-                    wgml_fonts[layout_work.hx.hx_sect[hds_lvl].text_font].line_height +
-                    g_post_skip;
+                           wgml_fonts[layout_work.hx.hx_sect[hds_lvl].text_font].line_height +
+                           g_post_skip;
 
                 if( (hx_depth + t_page.cur_depth) > t_page.max_depth ) {
                     do_page_out();              // the block won't fit on this page

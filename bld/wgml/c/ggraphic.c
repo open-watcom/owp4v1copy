@@ -49,7 +49,7 @@ void    gml_graphic( const gmltag * entry )
     su              cur_su;
     uint32_t        depth;
     uint32_t        scale                   = 100;
-    uint32_t        width                   = t_page.last_pane->col_width;
+    uint32_t        width;
     int32_t         xoff                    = 0;
     int32_t         yoff                    = 0;
 
@@ -58,10 +58,15 @@ void    gml_graphic( const gmltag * entry )
             xx_tag_err( err_tag_before_gdoc, entry->tagname );
         }
     }
+
+    scr_process_break();                // flush existing text
+    start_doc_sect();                   // if not already done
+
     file[0] = '\0';
     rt_buff[0] = '\0';
-    p = scan_start;
+    width = t_page.last_pane->col_width;
 
+    p = scan_start;
     if( *p == '.' ) {
         /* already at tag end */
     } else {
@@ -203,9 +208,6 @@ void    gml_graphic( const gmltag * entry )
     if( !depth_found || !file_found ) { // detect missing required attributes
         xx_err( err_att_missing );
     }
-
-    scr_process_break();                // flush existing text
-    start_doc_sect();                   // if not already done
 
     if( !ProcFlags.ps_device ) {        // character devices ignore SK & post_skip
         g_skip = 0;
