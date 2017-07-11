@@ -131,7 +131,7 @@ static void do_el_list_out( doc_element * in_element )
  
 static void consolidate_array( doc_element * array[MAX_COL], uint8_t count )
 {
-    bool            done;
+    bool                done;
     doc_element     *   cur_h_el;
     doc_element     *   cur_nt_el[MAX_COL]; // non-text doc_elements
     doc_element     *   cur_nt_el_list;     // non-text doc_elements
@@ -366,11 +366,12 @@ static void consolidate_array( doc_element * array[MAX_COL], uint8_t count )
                 if( cur_tl_list == NULL ) {
                     cur_tl_list = tl[i];
                     out_el->element.text.first = tl[i];
+                    tl[i] = tl[i]->next;
                 } else {
                     cur_tl_list->next = tl[i];
                     cur_tl_list = cur_tl_list->next;
+                    tl[i] = tl[i]->next;
                 }
-                tl[i] = tl[i]->next;
             }
         }
 
@@ -440,7 +441,8 @@ static void consolidate_array( doc_element * array[MAX_COL], uint8_t count )
                     }
                 }
 
-                while( (cur_tl_list != NULL) && (cur_tl_list->first->x_address < nt_el_list->h_pos) ) {
+                while( (cur_tl_list != NULL) && (sav_tl->y_address == nt_el_list->v_pos) &&
+                       (sav_tl->first->x_address < nt_el_list->h_pos) ) {
                     sav_tl = cur_tl_list;
                     cur_tl_list = cur_tl_list->next;
                 }
@@ -505,6 +507,46 @@ static void consolidate_array( doc_element * array[MAX_COL], uint8_t count )
                 }
             }
         }
+    }
+
+    /* text_lines at the same vertical position in the same doc_element must be merged */
+
+    cur_out_el = out_el;
+    while( cur_out_el != NULL ) {
+        if( cur_out_el->type == el_text ) {         // text elements only
+            cur_tl_list = cur_out_el->element.text.first;
+            sav_tl = cur_tl_list;
+            cur_tl_list = cur_tl_list->next;
+            while( cur_tl_list != NULL ) {
+                if( sav_tl->y_address == cur_tl_list->y_address ) {
+                    if( cur_tl_list->first == NULL ) {      // empty line
+                        /* nothing to do, will be discarded below */
+                    } else if( sav_tl->first == NULL ) {    // empty line
+                        sav_tl->first = cur_tl_list->first;
+                        sav_tl->last = cur_tl_list->last;
+                    } else {
+                        sav_tl->last->next = cur_tl_list->first;
+                        cur_tl_list->first->prev = sav_tl->last;
+                        sav_tl->last = cur_tl_list->last;
+                    }
+                    sav_tl->next = cur_tl_list->next;
+                    cur_tl_list->next = NULL;
+                    cur_tl_list->first = NULL;
+                    cur_tl_list->last = NULL;
+                    add_text_line_to_pool( cur_tl_list );
+                    cur_tl_list = sav_tl->next;
+                    if( cur_tl_list != NULL ) {
+                        cur_tl_list = cur_tl_list->next;
+                    }
+                } else {
+                    sav_tl = sav_tl->next;
+                    if( cur_tl_list == sav_tl ) {
+                        cur_tl_list = cur_tl_list->next;
+                    }
+                }
+            }
+        }
+        cur_out_el = cur_out_el->next;
     }
 
     /* Output linked list of doc_elements */

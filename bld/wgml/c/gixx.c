@@ -82,6 +82,9 @@ static void gml_ixxx_common( const gmltag * entry, int hx_lvl )
         scan_start = scan_stop + 1;     // ignore tag
         return;
     }
+
+    start_doc_sect();                   // if not already done
+
     lvlc = '0' + hx_lvl;
     *hxstring = GML_char;           // construct tagname for possible error msg
     strcpy_s( (hxstring + 1), TAG_NAME_LENGTH, entry->tagname );

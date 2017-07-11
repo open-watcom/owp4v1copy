@@ -1129,7 +1129,7 @@ void gml_figcap( const gmltag * entry )
 
     t_page.cur_left += (t_line->last->width + wgml_fonts[g_curr_font].spc_width );
     if( ProcFlags.has_aa_block ) {          // matches wgml 4.0
-        t_page.max_width += tab_col;
+        t_page.max_width += 2 * tab_col;
     }
     t_page.cur_width = t_page.cur_left;
     g_curr_font = layout_work.figcap.font;

@@ -2254,6 +2254,8 @@ void scr_bx( void )
     size_t              len;
     su                  boxcolwork;
     
+    start_doc_sect();                   // if not already done
+
     ProcFlags.box_cols_cur = false;     // new BX line: no box column list yet
     ProcFlags.no_bx_hline = false;      // emit horizontal line by default
 

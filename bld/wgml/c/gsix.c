@@ -178,6 +178,7 @@ void scr_ix( void )
          return;                         // no need to process .ix
     }
 
+    start_doc_sect();                   // if not already done
     scan_restart = scan_stop + 1;
 
     cwcurr[0] = SCR_char;

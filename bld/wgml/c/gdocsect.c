@@ -680,7 +680,8 @@ static void gen_index( void )
     t_page.cur_width = t_page.cur_left;
 
     t_page.max_width -= (conv_hor_unit( &layout_work.index.right_adjust, layout_work.ixhead.font ) * 9) / 10;
-    
+    t_page.max_width += tab_col;    // matches wgml 4.0
+
     wrap[0] = indent[0] +
             conv_hor_unit( &layout_work.ix[0].wrap_indent, layout_work.ix[0].font );
     wrap[1] = indent[1] +
@@ -1246,6 +1247,10 @@ void start_doc_sect( void )
         break;
     }
 
+    /***********************************************************************/
+    /*  set up/move to the next section                                    */
+    /***********************************************************************/
+
     if( first_section ) {               // nothing precedes the first section
         if( page_e == ej_even ) {
             do_page_out();              // apage of first page is odd
@@ -1267,18 +1272,18 @@ void start_doc_sect( void )
         if( page_e == ej_odd ) {
             if( (page & 1) ) {          // first page will be odd
                 do_page_out();          // emit blank page
-                reset_t_page();
             }
         } else if( page_e == ej_even ) {
             if( !(page & 1) ) {         // first page will be even
                 do_page_out();          // emit blank page
-                reset_t_page();
             }
         } else if( page_e != ej_yes ) {
             internal_err( __FILE__, __LINE__ );
         }
-        g_skip = 0;                     // ignore remaining skip value
         set_section_banners( ds );
+        reset_t_page();
+
+        g_skip = 0;                     // ignore remaining skip value
     }
 
     ProcFlags.doc_sect = ds;

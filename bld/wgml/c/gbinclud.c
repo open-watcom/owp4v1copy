@@ -58,6 +58,10 @@ void    gml_binclude( const gmltag * entry )
             xx_tag_err( err_tag_before_gdoc, entry->tagname );
         }
     }
+
+    scr_process_break();                // flush existing text
+    start_doc_sect();                   // if not already done
+
     file[0] = '\0';
     rt_buff[0] = '\0';
     p = scan_start;
@@ -139,9 +143,6 @@ void    gml_binclude( const gmltag * entry )
     if( !depth_found || !file_found || !reposition_found ) {
         xx_err( err_att_missing );
     }
-
-    scr_process_break();                // flush existing text
-    start_doc_sect();                   // if not already done
 
     if( depth == 0 ) {
         cur_el = alloc_doc_el(  el_binc );

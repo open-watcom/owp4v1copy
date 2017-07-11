@@ -2124,7 +2124,7 @@ void process_text( const char *text, font_number font )
                     wrap_done = true;
                 }
                 if( s_chars == NULL ) {
-                    n_chars->x_address = t_page.cur_width;
+                    n_chars->x_address = t_page.cur_left;
                 } else {
                     if( t_line == NULL ) {
                         t_line = alloc_text_line();

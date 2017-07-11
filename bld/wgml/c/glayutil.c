@@ -401,7 +401,7 @@ bool    i_content( char * p, lay_att curr, content * tm )
         p = pa;                                 // reset to start of word
         if( len >= str_size ) len = str_size;   // truncate to allowed length
         memcpy( tm->string, p, len );
-        tm->string[len + 1] = '\0';
+        tm->string[len] = '\0';
     }
     return( cvterr );
 }
