@@ -67,5 +67,14 @@ boxtest.gml     the test file (includes tbtext, tbmacs, tbsyms, bxtext, bxmacs)
 bxtext.gml      the test text
 bxmacs.gml      the macros used in boxtest.gml
 
+These files can be used to test columns by experimenting with multiple columns in various sections 
+and comparing the results to wgml 4.0. Note that only the INDEX must be an exact match, as that is 
+the only place the OW Docs use more than one column. 
+    coltest.gml rule.eps    acc4.ps psfont.opt
+The intended command line is: 
+    ( dev ps file psfont
+Note that acc4.ps is just an arbitrarily chosen PS image file; it has no other significance.
+
 This file contains notes useful in interpreting TASA and WHELP output:
 devices.txt
+
