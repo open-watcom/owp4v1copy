@@ -961,7 +961,7 @@ char * get_att_value( char * p )
         scan_start = scan_stop + 1;
         return( p );
     }
-    if( *p == '"' || *p == '\'' ) {
+    if( *p == '"' || *p == '\'' || *p == '`' ) {
         quote = *p;
         quote_char = *p;
         ++p;

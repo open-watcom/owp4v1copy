@@ -29,6 +29,7 @@
 *                    gml_dummy()
 *                    lay_dummy()
 *                    scr_dummy()
+*   NOTE:   output modified to list only the item name, not the context
 *
 ****************************************************************************/
 
@@ -54,7 +55,7 @@ void    scr_dummy( void )
 
     g_warn( wng_unsupp_cw, cwcurr );
     wng_count++;
-    file_mac_info();
+//    file_mac_info();
 }
 
 
@@ -69,7 +70,7 @@ void    gml_dummy( const gmltag * entry )
 
     g_warn( wng_unsupp_tag, entry->tagname );
     wng_count++;
-    file_mac_info();
+//    file_mac_info();
 }
 
 /***************************************************************************/
@@ -84,7 +85,7 @@ void    lay_dummy( const gmltag * entry )
     if( GlobalFlags.firstpass ) {       // layout msg only in pass 1
         g_warn( wng_unsupp_lay, entry->tagname );
         wng_count++;
-        show_include_stack();
+//        show_include_stack();
     }
     eat_lay_sub_tag();                  // ignore any attribute / value
 }

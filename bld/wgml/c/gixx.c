@@ -129,6 +129,7 @@ static void gml_ixxx_common( const gmltag * entry, int hx_lvl )
     /*        as text and appear in the document text                      */
     /***********************************************************************/
 
+    while( *p == ' ' ) p++;
     if( *p == '.' ) {
         /* already at tag end */
     } else {

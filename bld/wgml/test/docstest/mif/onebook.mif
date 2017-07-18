@@ -3,7 +3,7 @@
 do_pass1b = false
 do_pass2a = false
 do_pass2b = false
-ptf_only  = true
+ptf_only  = false
 use_wgml4 = false
 
 !else ifeq dotest miftest
@@ -635,10 +635,6 @@ prepare_wgml_opts : .PROCEDURE
     @%append $(wgml_optfile) ( index
     @%append $(wgml_optfile) ( setsymbol dotarget $(wgml_target)
     @%append $(wgml_optfile) ( setsymbol book_ver $(%BLD_VER_STR)
-!ifeq dotest pstest
-    @%append $(wgml_optfile) ( setsymbol date $(psdate)
-    @%append $(wgml_optfile) ( setsymbol time $(pstime)
-!endif
 # add default windowing for NT
 #    @%append $(wgml_optfile) ( setsymbol defwinnt 1
 # add default windowing for OS/2

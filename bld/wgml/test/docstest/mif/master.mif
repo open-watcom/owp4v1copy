@@ -18,6 +18,6 @@ all: .SYMBOLIC $(books)
     @%null
 
 $(books) : .SYMBOLIC
-    @wmake -h -f $(%OWROOT)/bld/wgml/test/docstest/mif/onebook.mif hbook=$@ dotarget=$(dotarget) dotest=$(dotest) subtest=$(subtest) psdate=$(psdate) pstime=$(pstime)
+    @wmake -h -f $(%OWROOT)/bld/wgml/test/docstest/mif/onebook.mif hbook=$@ dotarget=$(dotarget) dotest=$(dotest) subtest=$(subtest)
 
 !include $(%OWROOT)/bld/wgml/test/docstest/mif/clean.mif

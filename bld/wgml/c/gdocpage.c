@@ -116,7 +116,7 @@ static void do_el_list_out( doc_element * in_element )
         in_element->next = NULL;            // clear only current element
         add_doc_el_to_pool( in_element ); 
         in_element = save;
-    }    
+    }
 
     return;
 }

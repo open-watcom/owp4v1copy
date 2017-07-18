@@ -129,66 +129,64 @@ void gml_figref( const gmltag * entry )
 
     p = get_ref_attributes();
 
-    if( refid[0] != '\0' ) {    // no reference for heading without an id
-        cur_re = find_refid( fig_ref_dict, refid );
+    cur_re = find_refid( fig_ref_dict, refid );
 
-        if( page_found ) {
-            do_page = ref_page;
-            page_found = false;
-            ref_page = false;
-        } else if( cur_re != NULL ) {
-            do_page = ((page + 1) != cur_re->entry->pageno);
-        }
+    if( page_found ) {
+        do_page = ref_page;
+        page_found = false;
+        ref_page = false;
+    } else if( cur_re != NULL ) {
+        do_page = ((page + 1) != cur_re->entry->pageno);
+    }
 
-        dp_len = strlen( def_page );
-        dr_len = strlen( def_ref );
-        op_len = strlen( on_page );
-        if( cur_re == NULL ) {              // undefined refid
-            if( do_page ) {
-                ref_text = (char *) mem_alloc( dr_len + dp_len + 1 );
-                strcpy( ref_text, def_ref );
-                strcat( ref_text, def_page );
-            } else {
-                ref_text = (char *) mem_alloc( dr_len + 1 );
-                strcpy( ref_text, def_ref );
-            }
+    dp_len = strlen( def_page );
+    dr_len = strlen( def_ref );
+    op_len = strlen( on_page );
+    if( cur_re == NULL ) {              // undefined refid
+        if( do_page ) {
+            ref_text = (char *) mem_alloc( dr_len + dp_len + 1 );
+            strcpy( ref_text, def_ref );
+            strcat( ref_text, def_page );
         } else {
-            len = strlen( cur_re->entry->prefix );        
-            if( do_page ) {
-                format_num( cur_re->entry->pageno, &buffer, sizeof( buffer ), 
-                            cur_re->entry->style );
-                bu_len = strlen( buffer );
-                ref_text = (char *) mem_alloc( len + op_len + bu_len  + 1 );
-                strcpy_s( ref_text, len + 1, cur_re->entry->prefix );
-                ref_text[len - 1] = '\0';       // remove delim
-                len += (dr_len + op_len + bu_len );
-                strcat( ref_text, on_page );
-                strcat_s( ref_text, len + 1, buffer );
+            ref_text = (char *) mem_alloc( dr_len + 1 );
+            strcpy( ref_text, def_ref );
+        }
+    } else {
+        len = strlen( cur_re->entry->prefix );        
+        if( do_page ) {
+            format_num( cur_re->entry->pageno, &buffer, sizeof( buffer ), 
+                        cur_re->entry->style );
+            bu_len = strlen( buffer );
+            ref_text = (char *) mem_alloc( len + op_len + bu_len  + 1 );
+            strcpy_s( ref_text, len + 1, cur_re->entry->prefix );
+            ref_text[len - 1] = '\0';       // remove delim
+            len += (dr_len + op_len + bu_len );
+            strcat( ref_text, on_page );
+            strcat_s( ref_text, len + 1, buffer );
+        } else {
+            ref_text = (char *) mem_alloc( len + 1 );
+            strcpy_s( ref_text, len + 1, cur_re->entry->prefix );
+            ref_text[len - 1] = '\0';       // remove delim
+        }
+    }
+    process_text( ref_text, g_curr_font );
+    mem_free( ref_text );
+    ref_text = NULL;
+
+    if( !ProcFlags.reprocess_line && *p ) {
+        if( *p == '.' ) p++;                // possible tag end
+        if( *p ) {                          // only if text follows
+            post_space = 0;                 // cancel space after ref_text
+            process_text( p, g_curr_font );
+        }
+    }
+
+    if( GlobalFlags.lastpass ) {
+        if( cur_re == NULL ) {
+            if( passes == 1 ) {
+                fig_fwd_refs = init_fwd_ref( fig_fwd_refs, refid );
             } else {
-                ref_text = (char *) mem_alloc( len + 1 );
-                strcpy_s( ref_text, len + 1, cur_re->entry->prefix );
-                ref_text[len - 1] = '\0';       // remove delim
-            }
-        }
-        process_text( ref_text, g_curr_font );
-        mem_free( ref_text );
-        ref_text = NULL;
-
-        if( !ProcFlags.reprocess_line && *p ) {
-            if( *p == '.' ) p++;                // possible tag end
-            if( *p ) {                          // only if text follows
-                post_space = 0;                 // cancel space after ref_text
-                process_text( p, g_curr_font );
-            }
-        }
-
-        if( GlobalFlags.lastpass ) {
-            if( cur_re == NULL ) {
-                if( passes == 1 ) {
-                    fig_fwd_refs = init_fwd_ref( fig_fwd_refs, refid );
-                } else {
-                    undef_id_warn_info( refid, "figure" );
-                }
+                undef_id_warn_info( refid, "figure" );
             }
         }
     }

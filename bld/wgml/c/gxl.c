@@ -71,7 +71,8 @@ static void gml_xl_lp_common( e_tags t )
 
     scan_err = false;
     p = scan_start;
-    if( *p == '.' ) p++;                    // possible tag end
+    while( *p == ' ' ) p++;                 // skip spaces
+    if( *p == '.' ) p++;                    // skip tag end
     if( t != t_LP ) {                       // text only allowed for :LP
         if( t != t_DL && t != t_GL ) {      // DL/GL don't require LI/LP
             ProcFlags.need_li_lp = true;    // :LI or :LP  next

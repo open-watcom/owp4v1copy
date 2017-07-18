@@ -1035,7 +1035,7 @@ static void set_symbol( option * opt )
         if( tokennext == NULL || tokennext->bol ||
             tokennext->token[0] == '(' || is_option() == true ) {
 
-            g_err( ERR_MISSING_VALUE, opt->option );
+            g_err( err_missing_value, opt->option );
             err_count++;
         } else {
             value = tokennext->token;
@@ -1101,6 +1101,15 @@ static void set_stats( option * opt )
     GlobalFlags.statistics = opt->value;
 }
 
+
+/***************************************************************************/
+/*  ( warning or ( nowarning                                               */
+/***************************************************************************/
+
+static void set_warning( option * opt )
+{
+    GlobalFlags.warning = opt->value;
+}
 
 /***************************************************************************/
 /*  ( file xxx    command option file                                      */
@@ -1317,7 +1326,7 @@ static option GML_old_Options[] =
     { "noscript",      7,  5,       0,       wng_option,     0 },
     { "nostatistics",  11, 6,       0,       set_stats,      0 },
     { "nowait",        5,  6,       0,       ign_option,     0 },
-    { "nowarning",     8,  6,       0,       ign_option,     0 },
+    { "nowarning",     8,  6,       0,       set_warning,    0 },
     { "output",        5,  3,       0,       set_outfile,    1 },
     { "passes",        5,  4,       1,       set_passes,     1 },
     { "pause",         4,  5,       1,       ign_option,     0 },
@@ -1332,7 +1341,7 @@ static option GML_old_Options[] =
     { "valueset",      7,  6,       0,       ign_option,     1 },
     { "verbose",       6,  4,       1,       ign_option,     0 },
     { "wait",          3,  4,       1,       ign_option,     0 },
-    { "warning",       6,  4,       1,       ign_option,     0 },
+    { "warning",       6,  4,       1,       set_warning,    0 },
     { "wscript",       6,  4,       1,       ign_option,     0 },// always set
     { NULL, 0, 0, 0, ign_option, 0 }    // end marker
 };

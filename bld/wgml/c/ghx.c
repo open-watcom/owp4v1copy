@@ -256,7 +256,7 @@ void gen_heading( char * h_text, char * id, hdsrc hn_lvl, hdsrc hds_lvl )
             hd_entry->text = (char *) mem_alloc( txtlen + 1 );
             strcpy_s( hd_entry->text, txtlen + 1, h_text );
         }
-        if( id != NULL ) {              // add this entry to fig_ref_dict
+        if( id[0] ) {                   // add this entry to fig_ref_dict
             cur_ref = find_refid( hd_ref_dict, id );
             if( cur_ref == NULL ) {             // new entry
                 cur_ref = (ref_entry *) mem_alloc( sizeof( ref_entry ) );

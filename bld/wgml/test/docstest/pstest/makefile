@@ -4,14 +4,11 @@
 hbpar = hbook=$(hbook)
 !endif
 
-psdate = pstestDate
-pstime = pstestTime
-
 all : .SYMBOLIC
     @cd pdf4
-    @wmake -h $(hbpar) psdate=$(psdate) pstime=$(pstime)
+    @wmake -h $(hbpar)
     @cd ../pdf
-    @wmake -h $(hbpar) psdate=$(psdate) pstime=$(pstime)
+    @wmake -h $(hbpar)
     @cd ..
 
 clean : .SYMBOLIC
