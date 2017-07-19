@@ -165,35 +165,50 @@ void set_section_banners( doc_section ds )
     }
 }
 
-/***************************************************************************/
-/*  this function sets up tabbing for the fill-string and page number in   */
-/*  the PAGELIST or TOC.                                                   */
-/*  Since TB only supports fill chars, only the first character of fill    */
-/*  will actually be used                                                  */
-/***************************************************************************/
+/**************************************************************************/
+/*  this function sets up or removes tabbing for the fill-string and page */
+/*  number in the PAGELIST or TOC.                                        */
+/*  Since TB only supports fill chars, only the first character of fill   */
+/*  will actually be used                                                 */
+/**************************************************************************/
 
-static void figlist_toc_tabs( char * fill, uint32_t size )
+static void figlist_toc_tabs( char * fill, uint32_t size, bool setup )
 {
 
-    /* Set tab char to "$" */
+    if( setup) {                    // set up tabbing
 
-    tab_char = '$';
-    add_to_sysdir( "$tb", tab_char );
-    add_to_sysdir( "$tab", tab_char );
+        /* Set tab char to "$" */
 
-    /************************************************************/
-    /* Set the tab stops                                        */
-    /* the one-column shift is normal                           */
-    /************************************************************/
+        tab_char = '$';
+        add_to_sysdir( "$tb", tab_char );
+        add_to_sysdir( "$tab", tab_char );
 
-    user_tabs.current = 2;
-    user_tabs.tabs[0].column = t_page.max_width - tab_col - size;
-    user_tabs.tabs[0].fill_char = fill[0];
-    user_tabs.tabs[0].alignment = al_right;
+        /************************************************************/
+        /* Set the tab stops                                        */
+        /* the one-column shift is normal                           */
+        /************************************************************/
 
-    user_tabs.tabs[1].column = t_page.max_width - tab_col;
-    user_tabs.tabs[1].fill_char = ' ';
-    user_tabs.tabs[1].alignment = al_right;
+        user_tabs.current = 2;
+        user_tabs.tabs[0].column = t_page.max_width - tab_col - size;
+        user_tabs.tabs[0].fill_char = fill[0];
+        user_tabs.tabs[0].alignment = al_right;
+
+        user_tabs.tabs[1].column = t_page.max_width - tab_col;
+        user_tabs.tabs[1].fill_char = ' ';
+        user_tabs.tabs[1].alignment = al_right;
+
+    } else {                        // remove tabbing (restore to default)
+        tab_char = 0x09;
+        add_to_sysdir( "$tb", tab_char );
+        add_to_sysdir( "$tab", tab_char );
+
+        /************************************************************/
+        /* Set the tab stops                                        */
+        /* the one-column shift is normal                           */
+        /************************************************************/
+
+        user_tabs.current = 0;
+    }
 
     return;    
 }
@@ -508,7 +523,7 @@ static void gen_figlist( void )
     t_page.max_width = t_page.page_width -
                    conv_hor_unit( &layout_work.figlist.right_adjust, g_curr_font );
     size = conv_hor_unit( &layout_work.flpgnum.size, g_curr_font );  // space from fill to right edge
-    figlist_toc_tabs( layout_work.figlist.fill_string, size );
+    figlist_toc_tabs( layout_work.figlist.fill_string, size, true );
 
     /* Output FIGLIST */
 
@@ -568,6 +583,7 @@ static void gen_figlist( void )
         curr = curr->next;
     }
 
+    figlist_toc_tabs( layout_work.figlist.fill_string, size, false );
     ProcFlags.concat = concat_save;
     ProcFlags.justify = justify_save;
 
@@ -919,7 +935,7 @@ static void gen_toc( void )
     t_page.max_width = t_page.page_width -
                    conv_hor_unit( &layout_work.toc.right_adjust, g_curr_font );
     size = conv_hor_unit( &layout_work.tocpgnum.size, g_curr_font );     // space from fill to right edge
-    figlist_toc_tabs( layout_work.toc.fill_string, size );
+    figlist_toc_tabs( layout_work.toc.fill_string, size, true );
 
     /* Initialize levels and indent values */
 
@@ -1011,6 +1027,7 @@ static void gen_toc( void )
         curr = curr->next;
     }
 
+    figlist_toc_tabs( layout_work.figlist.fill_string, size, false );
     ProcFlags.concat = concat_save;
     ProcFlags.justify = justify_save;
 

@@ -498,32 +498,30 @@ static void wgml_tabs( void )
         }
     } else if( tabbing ) {          // text belongs to current tab stop
         if( tab_chars.last != NULL ) {
-            if( !(input_cbs->fmflags & II_sol) ) {   // not if at start of input line
-                if( (tab_chars.first != NULL) && ((c_stop->alignment != al_left) ||
-                    !(input_cbs->fmflags & II_tag_mac)) ) {
-                    // remove all markers/fill chars
-                    if( tab_chars.first->prev !=NULL) {
-                        tab_chars.first->prev->next = tab_chars.last->next;
-                    }
-                    if( tab_chars.last->next != NULL) {
-                        tab_chars.last->next->prev = tab_chars.first->prev;
-                    }
-                    if( in_chars->prev == tab_chars.last ) {
-                        in_chars->prev = tab_chars.first->prev;
-                    }
-                    tab_chars.first->prev = NULL;
-                    tab_chars.last->next = NULL;
-                    add_text_chars_to_pool( &tab_chars );
-                    tab_chars.first = NULL;
-                    tab_chars.last = NULL;
-                    t_line->last = in_chars->prev;
-                    if( t_line->last == NULL ) {
-                        t_line->first = NULL;
-                    }
-                } else {
-                    tab_chars.first = NULL;
-                    tab_chars.last = NULL;
+            if( (tab_chars.first != NULL) && ((c_stop->alignment != al_left) ||
+                !(input_cbs->fmflags & II_tag_mac)) ) {
+                // remove all markers/fill chars
+                if( tab_chars.first->prev !=NULL) {
+                    tab_chars.first->prev->next = tab_chars.last->next;
                 }
+                if( tab_chars.last->next != NULL) {
+                    tab_chars.last->next->prev = tab_chars.first->prev;
+                }
+                if( in_chars->prev == tab_chars.last ) {
+                    in_chars->prev = tab_chars.first->prev;
+                }
+                tab_chars.first->prev = NULL;
+                tab_chars.last->next = NULL;
+                add_text_chars_to_pool( &tab_chars );
+                tab_chars.first = NULL;
+                tab_chars.last = NULL;
+                t_line->last = in_chars->prev;
+                if( t_line->last == NULL ) {
+                    t_line->first = NULL;
+                }
+            } else {
+                tab_chars.first = NULL;
+                tab_chars.last = NULL;
             }
             if( tab_space > 0 ) {   // tab followed by spaces then text
                 if( c_stop->alignment == al_left ) {   // alignment left

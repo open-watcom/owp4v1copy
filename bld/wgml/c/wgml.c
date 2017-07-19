@@ -407,16 +407,18 @@ static  bool    test_comment( void )
 
 static  void    proc_input( char * filename )
 {
-    ifcb        *   ic;
-    filecb      *   cb;
-    laystack    *   curr_lay_file;
     char            attrwork[32];
-    ifcb            ic_work;
     condcode        cc;
+    filecb      *   cb;
+    ifcb            ic_work;
+    ifcb        *   ic;
+    laystack    *   cur_lay_file;
+    laystack    *   tmp_lay_file;
 
     ProcFlags.newLevelFile = 1;
     strcpy_s( token_buf, buf_size, filename );
 
+    cur_lay_file = lay_files;           // start each pass with same list
     for( ; ; ) {                        // as long as there is input
         if( ProcFlags.newLevelFile ) {
             ProcFlags.newLevelFile = 0; // start a new include FILE level
@@ -462,17 +464,17 @@ static  void    proc_input( char * filename )
                 g_info_lm( inf_curr_input, "file", cb->filename );
             }
 
-            /***************************************************************/
-            /*  If ( LAYOUT file option specified, then process            */
-            /*  layout file(s)   before master file                        */
-            /***************************************************************/
+            /****************************************************************/
+            /*  If ( LAYOUT file option specified, then process             */
+            /*  layout file(s) before master file                           */
+            /*  NOTE: this must be done on each pass in case the LAYOUT     */
+            /*        file contains symbol/macro/user tag definitions       */
+            /****************************************************************/
 
-//            if( (lay_files != NULL) && (inc_level == 1) && (cb->lineno == 0) ) {
-            if( (lay_files != NULL) && (inc_level == 1) ) {
-                curr_lay_file = lay_files;
-                strcpy_s( token_buf, buf_size, lay_files->layfn );
-                lay_files = curr_lay_file->next;
-                mem_free( curr_lay_file );
+            if( (cur_lay_file != NULL) ) {
+                tmp_lay_file = cur_lay_file;
+                strcpy_s( token_buf, buf_size, tmp_lay_file->layfn );
+                cur_lay_file = tmp_lay_file->next;
                 ProcFlags.newLevelFile = 1; // start a new include FILE level
                 continue;               // with cmdline    layout option file
             }
@@ -620,11 +622,10 @@ static  void    proc_input( char * filename )
         if( inc_level == 0 ) {          // EOF for master document file
             break;
         }
-        if( lay_files != NULL ) {   // any more  LAYfiles
-            curr_lay_file = lay_files;
-            strcpy_s( token_buf, buf_size, lay_files->layfn );
-            lay_files = curr_lay_file->next;
-            mem_free( curr_lay_file );
+        if( cur_lay_file != NULL ) {   // any more  LAYfiles
+            tmp_lay_file = cur_lay_file;
+            strcpy_s( token_buf, buf_size, tmp_lay_file->layfn );
+            cur_lay_file = tmp_lay_file->next;
             ProcFlags.newLevelFile = 1; // start a new include file level
             continue;                   // with cmdline layout option file
         }
