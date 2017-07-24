@@ -472,39 +472,27 @@ void gml_ul( const gmltag * entry )
 /*  common :eXXX processing                                                */
 /***************************************************************************/
 
-void    gml_exl_common( const gmltag * entry, e_tags t )
+void    gml_exl_common( const gmltag * entry )
 {
     char    *   p;
     tag_cb  *   wk;
 
-    if( nest_cb->c_tag == t_LP ) {      // terminate :LP if active
-        end_lp();
-    }
+    t_page.cur_left = nest_cb->lm;
+    t_page.max_width = nest_cb->rm;
 
-    if( nest_cb->c_tag != t ) {         // unexpected exxx tag
-        if( nest_cb->c_tag == t_NONE ) {
-            g_err_tag_no( str_tags[t + 1] );// no exxx expected, no tag active
-        } else {
-            g_err_tag_nest( str_tags[nest_cb->c_tag + 1] ); // exxx expected
-        }
+    wk = nest_cb;
+    nest_cb = nest_cb->prev;
+    add_tag_cb_to_pool( wk );
+    g_curr_font = nest_cb->font;
+
+    t_page.cur_width = t_page.cur_left;
+    scan_err = false;
+    p = scan_start;
+    if( *p == '.' ) p++;            // over '.'
+    if( *p ) {
+        gml_pc( NULL );
     } else {
-        t_page.cur_left = nest_cb->lm;
-        t_page.max_width = nest_cb->rm;
-
-        wk = nest_cb;
-        nest_cb = nest_cb->prev;
-        add_tag_cb_to_pool( wk );
-        g_curr_font = nest_cb->font;
-
-        t_page.cur_width = t_page.cur_left;
-        scan_err = false;
-        p = scan_start;
-        if( *p == '.' ) p++;            // over '.'
-        if( *p ) {
-            gml_pc( NULL );
-        } else {
-            ProcFlags.skips_valid = false;  // force use of post_skip with following text element
-        }
+        ProcFlags.skips_valid = false;  // force use of post_skip with following text element
     }
 
     ProcFlags.need_li_lp = false;       // :LI or :LP no longer needed
@@ -550,12 +538,24 @@ void    gml_edl( const gmltag * entry ) // not tested TBD
         ProcFlags.para_starting = false;    // clear for this tag's break
     }
     scr_process_break();
-    set_skip_vars( NULL, NULL, &((dl_lay_level *)(nest_cb->lay_tag))->post_skip, 1, g_curr_font );
-    gml_exl_common( entry, t_DL );
-    if( dl_cur_level == 1 ) {
-        dl_cur_level = layout_work.dl.max_level;
+    if( nest_cb->c_tag == t_LP ) {      // terminate :LP if active
+        end_lp();
+    }
+
+    if( nest_cb->c_tag != t_DL ) {      // unexpected exxx tag
+        if( nest_cb->c_tag == t_NONE ) {
+            g_err_tag_no( str_tags[t_DL + 1] );// no exxx expected, no tag active
+        } else {
+            g_err_tag_nest( str_tags[nest_cb->c_tag + 1] ); // exxx expected
+        }
     } else {
-        dl_cur_level++;
+        set_skip_vars( NULL, NULL, &((dl_lay_level *)(nest_cb->lay_tag))->post_skip, 1, g_curr_font );
+        gml_exl_common( entry );
+        if( dl_cur_level == 1 ) {
+            dl_cur_level = layout_work.dl.max_level;
+        } else {
+            dl_cur_level++;
+        }
     }
 }
 
@@ -565,12 +565,24 @@ void    gml_egl( const gmltag * entry ) // not tested TBD
         ProcFlags.para_starting = false;    // clear for this tag's break
     }
     scr_process_break();
-    set_skip_vars( NULL, NULL, &((gl_lay_level *)(nest_cb->lay_tag))->post_skip, 1, g_curr_font );
-    gml_exl_common( entry, t_GL );
-    if( gl_cur_level == 1 ) {
-        gl_cur_level = layout_work.gl.max_level;
+    if( nest_cb->c_tag == t_LP ) {      // terminate :LP if active
+        end_lp();
+    }
+
+    if( nest_cb->c_tag != t_GL ) {      // unexpected exxx tag
+        if( nest_cb->c_tag == t_NONE ) {
+            g_err_tag_no( str_tags[t_GL + 1] );// no exxx expected, no tag active
+        } else {
+            g_err_tag_nest( str_tags[nest_cb->c_tag + 1] ); // exxx expected
+        }
     } else {
-        gl_cur_level++;
+        set_skip_vars( NULL, NULL, &((gl_lay_level *)(nest_cb->lay_tag))->post_skip, 1, g_curr_font );
+        gml_exl_common( entry );
+        if( gl_cur_level == 1 ) {
+            gl_cur_level = layout_work.gl.max_level;
+        } else {
+            gl_cur_level++;
+        }
     }
 }
 
@@ -580,12 +592,24 @@ void    gml_eol( const gmltag * entry )
         ProcFlags.para_starting = false;    // clear for this tag's break
     }
     scr_process_break();
-    set_skip_vars( NULL, NULL, &((ol_lay_level *)(nest_cb->lay_tag))->post_skip, 1, g_curr_font );
-    gml_exl_common( entry, t_OL );
-    if( ol_cur_level == 1 ) {
-        ol_cur_level = layout_work.ol.max_level;
+    if( nest_cb->c_tag == t_LP ) {      // terminate :LP if active
+        end_lp();
+    }
+
+    if( nest_cb->c_tag != t_OL ) {      // unexpected exxx tag
+        if( nest_cb->c_tag == t_NONE ) {
+            g_err_tag_no( str_tags[t_OL + 1] );// no exxx expected, no tag active
+        } else {
+            g_err_tag_nest( str_tags[nest_cb->c_tag + 1] ); // exxx expected
+        }
     } else {
-        ol_cur_level++;
+        set_skip_vars( NULL, NULL, &((ol_lay_level *)(nest_cb->lay_tag))->post_skip, 1, g_curr_font );
+        gml_exl_common( entry );
+        if( ol_cur_level == 1 ) {
+            ol_cur_level = layout_work.ol.max_level;
+        } else {
+            ol_cur_level++;
+        }
     }
 }
 
@@ -595,12 +619,24 @@ void    gml_esl( const gmltag * entry )
         ProcFlags.para_starting = false;    // clear for this tag's break
     }
     scr_process_break();
-    set_skip_vars( NULL, NULL, &((sl_lay_level *)(nest_cb->lay_tag))->post_skip, 1, g_curr_font );
-    gml_exl_common( entry, t_SL );
-    if( sl_cur_level == 1 ) {
-        sl_cur_level = layout_work.sl.max_level;
+    if( nest_cb->c_tag == t_LP ) {      // terminate :LP if active
+        end_lp();
+    }
+
+    if( nest_cb->c_tag != t_SL ) {      // unexpected exxx tag
+        if( nest_cb->c_tag == t_NONE ) {
+            g_err_tag_no( str_tags[t_SL + 1] );// no exxx expected, no tag active
+        } else {
+            g_err_tag_nest( str_tags[nest_cb->c_tag + 1] ); // exxx expected
+        }
     } else {
-        sl_cur_level++;
+        set_skip_vars( NULL, NULL, &((sl_lay_level *)(nest_cb->lay_tag))->post_skip, 1, g_curr_font );
+        gml_exl_common( entry );
+        if( sl_cur_level == 1 ) {
+            sl_cur_level = layout_work.sl.max_level;
+        } else {
+            sl_cur_level++;
+        }
     }
 }
 
@@ -610,12 +646,24 @@ void    gml_eul( const gmltag * entry )
         ProcFlags.para_starting = false;    // clear for this tag's break
     }
     scr_process_break();
-    set_skip_vars( NULL, NULL, &((ul_lay_level *)(nest_cb->lay_tag))->post_skip, 1, g_curr_font );
-    gml_exl_common( entry, t_UL );
-    if( ul_cur_level == 1 ) {
-        ul_cur_level = layout_work.ul.max_level;
+    if( nest_cb->c_tag == t_LP ) {      // terminate :LP if active
+        end_lp();
+    }
+
+    if( nest_cb->c_tag != t_UL ) {      // unexpected exxx tag
+        if( nest_cb->c_tag == t_NONE ) {
+            g_err_tag_no( str_tags[t_UL + 1] );// no exxx expected, no tag active
+        } else {
+            g_err_tag_nest( str_tags[nest_cb->c_tag + 1] ); // exxx expected
+        }
     } else {
-        ul_cur_level++;
+        set_skip_vars( NULL, NULL, &((ul_lay_level *)(nest_cb->lay_tag))->post_skip, 1, g_curr_font );
+        gml_exl_common( entry );
+        if( ul_cur_level == 1 ) {
+            ul_cur_level = layout_work.ul.max_level;
+        } else {
+            ul_cur_level++;
+        }
     }
 }
 

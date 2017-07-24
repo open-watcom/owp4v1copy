@@ -206,9 +206,9 @@ int find_symvar( symvar * * dict, char * name, sub_index sub, symsub * * symsubv
 /***************************************************************************/
 /*  find_symvar_l   find local symbolic variable                           */
 /*          if the dictionary is the local dict then                       */
-/*          search up thru the local dictionaries up to the master file    */
-/*                                                                         */
+/*          search up thru the local dictionaries up to the first file     */
 /***************************************************************************/
+
 int find_symvar_l( symvar * * dict, char * name, sub_index sub, symsub * * symsubval )
 {
     symvar  *   wk;
@@ -224,6 +224,7 @@ int find_symvar_l( symvar * * dict, char * name, sub_index sub, symsub * * symsu
                                         // search upwards thru all local dicts
 
         for( incbs = input_cbs->prev; incbs != NULL; incbs = incbs->prev ) {
+            if( incbs->fmflags && II_file ) break;  // stop at first file
             if( incbs->local_dict != NULL ) {
                 wk = incbs->local_dict;
                 rc = find_symvar( &wk, name, sub, symsubval );
