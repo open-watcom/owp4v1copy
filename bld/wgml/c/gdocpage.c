@@ -58,6 +58,7 @@
 #include "gvars.h"
 
 static  uint32_t        bottom_depth;   // used in setting banners
+static  uint32_t        old_max_depth;  // used in splitting elements
 static  uint32_t        top_depth;      // used in setting banners
 
 /***************************************************************************/
@@ -904,7 +905,7 @@ static void do_doc_panes_out( void )
 /*  and this appears to match what wgml 4.0 does                           */
 /***************************************************************************/
 
-static void update_column( uint32_t old_max_depth )
+static void update_column( void )
 {
     bool                splittable;
     doc_element     *   cur_el;
@@ -1114,10 +1115,6 @@ static void update_column( uint32_t old_max_depth )
                 t_page.last_col_main->next = NULL;
                 t_page.cur_depth += cur_el->depth;
             } else {
-                if( cur_el->depth > old_max_depth ) {   // cur_el will not fit on any page
-                    xx_err( err_text_line_too_deep );
-                    g_suicide();                        // prevents looping
-                }
                 n_page.col_main = cur_el->next;
                 if( n_page.last_col_main == NULL ) {
                     n_page.last_col_main = n_page.col_main;
@@ -1163,10 +1160,8 @@ static void update_t_page( void )
 {
     doc_el_group    *   cur_group;
     uint32_t            depth;
-    uint32_t            old_max_depth;
 
     reset_t_page();
-    old_max_depth = t_page.max_depth;   // save original value for testing
 
     /***********************************************************************/
     /*  The first block in n_page.page_width is processed                  */
@@ -1195,7 +1190,7 @@ static void update_t_page( void )
         add_doc_el_group_to_pool( cur_group );
     }
 
-    update_column( old_max_depth );
+    update_column();
 
     return;
 }
@@ -1220,7 +1215,7 @@ void next_column( void )
     t_page.last_pane->cur_col++;
     if( t_page.last_pane->cur_col < t_page.last_pane->col_count ) {
         t_page.cur_depth = 0;
-        update_column( t_page.max_depth );
+        update_column();
     } else {
         do_page_out();
         update_t_page();
@@ -1955,6 +1950,7 @@ void reset_t_page( void )
     }
 
     t_page.max_depth = g_page_depth - top_depth - bottom_depth;
+    old_max_depth = t_page.max_depth;
     t_page.cur_depth = 0;
     t_page.last_col_main = NULL;
     t_page.last_col_fn = NULL;
@@ -2078,14 +2074,20 @@ bool split_element( doc_element * a_element, uint32_t req_depth )
         splittable = false;     
         break;
     case el_text :
-        for( cur_line = a_element->element.text.first; cur_line != NULL;
-                                cur_line = cur_line->next ) {
+        cur_line = a_element->element.text.first;
+        /* Error if first line will not fit on any page */
+        if( (cur_line->line_height + cur_line->spacing) > old_max_depth ) {
+            xx_err( err_text_line_too_deep );
+            break;
+        }
+        while( cur_line != NULL ) {
             if( (cur_depth + cur_line->line_height + cur_line->spacing) > req_depth ) {
                 break;
             }
             count++;
             cur_depth += cur_line->line_height + cur_line->spacing;
             last = cur_line;
+            cur_line = cur_line->next;
         }
 
         if( cur_line != NULL ) {    // at least one more line

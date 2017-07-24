@@ -492,7 +492,7 @@ static void     scan_script( void )
         inc_inc_level();
         add_macro_parms( p );
         scan_restart = scan_stop + 1;
-    } else {                            // try script controlword
+    } else if( !ProcFlags.literal ) {    // try script controlword if not in LI
         cwfound = false;
         if( cb->fmflags & II_research && GlobalFlags.firstpass ) {
             if( cb->fmflags & II_tag_mac ) {

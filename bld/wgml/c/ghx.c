@@ -403,6 +403,7 @@ void gen_heading( char * h_text, char * id, hdsrc hn_lvl, hdsrc hds_lvl )
                     } else if( top_depth < old_top_depth ) {
                         t_page.max_depth += (old_top_depth - top_depth);
                     }
+                    t_page.top_banner = sect_ban_top[!(page & 1)];
 
                     if( bot_depth > 0 ) {
                         if( bin_driver->y_positive == 0x00 ) {
@@ -419,6 +420,7 @@ void gen_heading( char * h_text, char * id, hdsrc hn_lvl, hdsrc hds_lvl )
                     } else if( bot_depth  < old_bot_depth ) {
                         max_depth += (old_bot_depth - bot_depth );
                     }
+                    t_page.bottom_banner = sect_ban_bot[!(page & 1)];
                 }
             }
 
