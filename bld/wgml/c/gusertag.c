@@ -385,8 +385,7 @@ bool        process_tag( gtentry * ge, mac_entry * me )
         add_macro_cb_entry( me, ge );   // prepare GML macro as input
         input_cbs->local_dict = loc_dict;
         inc_inc_level();                // start new include level
-        if( ge->tagflags & tag_cont ) {   // +++++++++++++++++++ TBD trial
-//            post_space = 0;
+        if( ge->tagflags & tag_cont ) {
             if( !(input_cbs->fmflags & II_sol) ) {
                 ProcFlags.utc = true;
             }
@@ -398,7 +397,7 @@ bool        process_tag( gtentry * ge, mac_entry * me )
     } else {                            // user-defined tag has no attributes
         if( ge->tagflags & tag_texterr ) {  // no text allowed
             // '.' or CW_sep_char immediately after the tag does not count as text
-            if( (*p == '.') || (*p == CW_sep_char ) ) {
+            if( (*p == '.') || (*p == CW_sep_char) ) {
                 p++;
             }
             while( *p == ' ' ) {        // spaces don't count as text
@@ -430,7 +429,7 @@ bool        process_tag( gtentry * ge, mac_entry * me )
             }
         }
         // per wgml 4.0 behavior
-        if( *p == CW_sep_char ) {
+        if( *p && (*p == CW_sep_char) ) {   // null CW_sep_char does not count
             processed = false;
             return( processed );
         }
@@ -456,8 +455,7 @@ bool        process_tag( gtentry * ge, mac_entry * me )
         add_macro_cb_entry( me, ge );   // prepare GML macro as input
         input_cbs->local_dict = loc_dict;
         inc_inc_level();                // start new include level
-        if( ge->tagflags & tag_cont ) { // +++++++++++++++++++ TBD trial
-//            post_space = 0;
+        if( ge->tagflags & tag_cont ) {
             if( !(input_cbs->fmflags & II_sol) ) {
                 ProcFlags.utc = true;
             }

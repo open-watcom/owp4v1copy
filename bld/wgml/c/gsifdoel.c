@@ -71,21 +71,22 @@ typedef enum logop {
 
 void    show_ifcb( char * txt, ifcb * cb ) {
     if( cb->if_level ) {
-        out_msg( "%-8s %dL%d %c%c %s %s %s cw(l,i,te,d) %d,%d,%d,%d kp %d\n",
-             txt,
-             inc_level,
-             cb->if_level,
-             cb->if_flags[cb->if_level].iftrue?'t':' ',
-             cb->if_flags[cb->if_level].iffalse?'f':' ',
+        out_msg( "%-8s %dL%d %c%c %s %s %s %s %s %s %s %s kp %d\n",
+            txt,
+            inc_level,
+            cb->if_level,
+            cb->if_flags[cb->if_level].iftrue?'t':' ',
+            cb->if_flags[cb->if_level].iffalse?'f':' ',
 
-             cb->if_flags[cb->if_level].ifthen?"th":"  ",
-             cb->if_flags[cb->if_level].ifelse?"el":"  ",
-             cb->if_flags[cb->if_level].ifdo?"do":"  ",
-             cb->if_flags[cb->if_level].iflast,
-             cb->if_flags[cb->if_level].ifcwif,
-             cb->if_flags[cb->if_level].ifcwte,
-             cb->if_flags[cb->if_level].ifcwdo,
-             ProcFlags.keep_ifstate
+            cb->if_flags[cb->if_level].ifthen?"th":"  ",
+            cb->if_flags[cb->if_level].ifelse?"el":"  ",
+            cb->if_flags[cb->if_level].ifdo?"do":"  ",
+            cb->if_flags[cb->if_level].iflast?"last":"    ",
+            cb->if_flags[cb->if_level].ifcwif?"cwif":"    ",
+            cb->if_flags[cb->if_level].ifcwte?"cwte":"    ",
+            cb->if_flags[cb->if_level].ifcwdo?"cwdo":"    ",
+            cb->if_flags[cb->if_level].ifindo?"indo":"    ",
+            ProcFlags.keep_ifstate
           );
     }
 }
@@ -763,9 +764,8 @@ void    scr_do( void )
 
     cb->if_flags[cb->if_level].ifcwdo = false;
     if( cc == omit || !strnicmp( tok_start, "begin", 5 )) {
-
         if( !(cb->if_flags[cb->if_level].ifthen
-              || cb->if_flags[cb->if_level].ifelse)
+            || cb->if_flags[cb->if_level].ifelse)
             || cb->if_flags[cb->if_level].ifdo ) {
 
             scan_err = true;
@@ -783,6 +783,7 @@ void    scr_do( void )
             return;
         }
         cb->if_flags[cb->if_level].ifdo = true;
+        cb->if_flags[cb->if_level].ifindo = true;
         if( input_cbs->fmflags & II_research && GlobalFlags.firstpass ) {
             show_ifcb( "dobegin", cb );
         }
@@ -805,10 +806,12 @@ void    scr_do( void )
                     scan_restart = scan_stop + 1;
                     return;
                 }
-                if( cb->if_flags[cb->if_level].ifthen
-                    || cb->if_flags[cb->if_level].ifelse
+
+                if( (!cb->if_flags[cb->if_level].ifindo
+                    && (cb->if_flags[cb->if_level].ifthen
+                    || cb->if_flags[cb->if_level].ifelse))
                     || !(cb->if_flags[cb->if_level].iftrue
-                         || cb->if_flags[cb->if_level].iffalse) ) {
+                    || cb->if_flags[cb->if_level].iffalse) ) {
 
                     scan_err = true;
                     g_err( err_if_do_end );
@@ -825,6 +828,7 @@ void    scr_do( void )
                     return;
                 }
 
+                cb->if_flags[cb->if_level].ifindo = false;
             } while( cb->if_level-- > 0 );
 #if 0
             if( input_cbs->fmflags & II_research && GlobalFlags.firstpass ) {

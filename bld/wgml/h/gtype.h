@@ -303,6 +303,9 @@ typedef struct ifflags {
     unsigned    ifcwdo  : 1;            // .do control word
     unsigned    ifcwif  : 1;            // .if control word
 
+    unsigned    ifindo  : 1;            // .do begin done (not cleared by do end)
+
+
 } ifflags;
 
 

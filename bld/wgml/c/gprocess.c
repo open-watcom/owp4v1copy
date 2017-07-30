@@ -505,20 +505,16 @@ bool resolve_symvar_functions( char * buf )
             }
             if( rc == 2 ) {             // variable found + resolved
                 ProcFlags.substituted = true;
-                if( !ProcFlags.CW_sep_ignore &&
+                    
+                /* Split when called from process_line, not when called to get a parameter */
+
+                if( !ProcFlags.CW_sep_ignore && (buf == buff2) &&
                     symsubval->value[0] == CW_sep_char &&
                     symsubval->value[1] != CW_sep_char ) {
 
                                 // split record at control word separator
                                 // if variable starts with SINGLE cw separator
                                 // and ignore cw separator
-
-                    if( buf != buff2 ) {
-
-                        // splitting input if not outermost buffer ++++ TBD
-                        // needed ???
-                        g_suicide();
-                    }
 
                     if( *pchar == '.' ) {
                         pchar++;        // skip optional terminating dot
