@@ -1997,7 +1997,7 @@ void process_text( const char *text, font_number font )
             /***********************************************************/
 
             while( !tabbing && 
-                    (n_chars->x_address + n_chars->width) > t_page.max_width ) {
+                    ((int32_t)(n_chars->x_address + n_chars->width) > (int32_t)t_page.max_width) ) {
                 if( t_line == NULL ) {  // added when INDEX implemented
                     t_line = alloc_text_line();
                 }

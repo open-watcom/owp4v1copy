@@ -539,6 +539,9 @@ pick( ERR_INV_CW_OP_VAL,        "Invalid control word operand value",
 pick( ERR_NUM_TOO_LARGE,        "Number is too large or contains invalid characters",
                                 "Number is too large or contains invalid characters" )
 
+pick( ERR_VAL_NEG,              "Value cannot be negative",
+                                "Value cannot be negative" )
+
 /* General parsing error messages */
 
 pick( ERR_RIGHT_DELIM,          "Right string delimiter missing",

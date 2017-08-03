@@ -487,8 +487,8 @@ bool resolve_symvar_functions( char * buf )
                         ProcFlags.unresolved  = true;
                     }
                 }
-                p2 += pchar - varstart;
-                pw = pchar;
+
+                *p2++ = ampchar;                // effectively copy &
                 pchar = strchr( pw, ampchar );  // look for next & in buffer
 
                 continue;

@@ -177,8 +177,8 @@ void    scr_pe( void )
             }
         } else {
             scan_start = gn.argstart;
-            if( gn.result < 1 ) {
-                xx_opt_err( cwcurr, pa );
+            if( gn.result < 0 ) {
+                xx_line_err( err_val_neg, pa );
             } else {
                 init_pe_line( gn.result );
             }

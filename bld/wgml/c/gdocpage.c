@@ -569,6 +569,7 @@ static void set_positions( doc_element * list, uint32_t h_start, uint32_t v_star
     text_chars  *   cur_text;
     text_line   *   cur_line;
     uint32_t        cur_spacing;
+    uint32_t        offset;
     uint32_t        old_v_start;
 
     at_top = !ProcFlags.page_started;
@@ -657,6 +658,15 @@ static void set_positions( doc_element * list, uint32_t h_start, uint32_t v_star
         case el_text :
             for( cur_line = cur_el->element.text.first; cur_line != NULL;
                                                 cur_line = cur_line->next ) {
+                if( (cur_line->first != NULL) &&
+                        ((int32_t)(cur_line->first->x_address + h_start)) < 0 ) {
+                    offset = -1 * (int32_t)cur_line->first->x_address + h_start;
+                    cur_text = cur_line->first;
+                    while( cur_text != NULL ) {         // rebase line to keep on physical page
+                        cur_text->x_address += offset;
+                        cur_text = cur_text->next;
+                    }
+                }
                 cur_text = cur_line->first;
                 while( cur_text != NULL ) {
                     cur_text->x_address += h_start;
