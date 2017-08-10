@@ -369,13 +369,10 @@ static  bool    test_comment( void )
 {
 
     if( *buff2 == SCR_char ) {          // test for .*  .cm
-//      if( ( *(buff2 + 1) == '*') ||    TBD
-        if(
-                ( (tolower( *(buff2 + 1) ) == 'c') &&
-                  (tolower( *(buff2 + 2) ) == 'm') &&
-                  (*(buff2+3) == ' ')
-                )
-        ) {
+        if( (*(buff2 + 1) == '*') || 
+            ((tolower( *(buff2 + 1) ) == 'c') &&
+             (tolower( *(buff2 + 2) ) == 'm') &&
+             (*(buff2+3) == ' ')) ) {
            return( true );
         }
     } else {                            // test for :cmt

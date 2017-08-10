@@ -86,15 +86,14 @@ static  char    * alloc_resbuf( inp_line ** in_wk )
 /*  find end of parm for multi letter functions
  *     end of parm is either , or )
  *     but only if outside of string and not in deeper paren level
- *      string delimiters are several chars
+ *     string delimiters are several chars
  *
  */
 
 static  char    * find_end_of_parm( char * pchar, char * pend )
 {
-#define max_paren 50                    // should be enough
-    char    quotechar[max_paren];
-    bool    instring[max_paren];
+    char    quotechar[MAX_PAREN];
+    bool    instring[MAX_PAREN];
     int     paren_level;
     int     delta_paren;
     char    c;
@@ -145,7 +144,7 @@ static  char    * find_end_of_parm( char * pchar, char * pend )
                     paren_level += 1 + delta_paren;
                     delta_paren = 0;
                     test_for_quote = true;
-                    if( paren_level < max_paren ) {
+                    if( paren_level < MAX_PAREN ) {
                         instring[paren_level] = false;
                     } else {
                         paren_level--;
@@ -153,10 +152,13 @@ static  char    * find_end_of_parm( char * pchar, char * pend )
                     }
                     break;
                 case    ')' :
-                    if( paren_level <= 1 ) {
-                        finished = true;
-                    }
                     paren_level--;
+                    if( paren_level <= 0 ) {
+                        finished = true;
+                        if( pchar < pend ) {
+                            pchar++;    // step over final ')'
+                        }
+                    }
                     break;
                 case    ',' :
                     if( paren_level == 0 ) {
@@ -175,7 +177,6 @@ static  char    * find_end_of_parm( char * pchar, char * pend )
         }
     }
     return( pchar );
-#undef max_paren
 }
 
 
@@ -238,7 +239,10 @@ char  * scr_multi_funcs( char * in, char * end, char ** result, int32_t valsize 
     bool                found;
     parm                parms[MAX_FUN_PARMS];
     int                 parmcount;
+    int                 p_level;
     condcode            cc;
+    char            *   p;
+    char            *   pend;
     char            *   ps;
     char            *   resbuf;
     inp_line        *   in_wk;
@@ -247,9 +251,29 @@ char  * scr_multi_funcs( char * in, char * end, char ** result, int32_t valsize 
     rc = 0;
     fnlen = 0;
     pchar = in + 2;                     // over &' to function name
+    p_level = 0;
+
+    // find true end of function
+    p = pchar;
+    while( p <= end ) {                 // to end of buffer
+        if( *p == '(' ) {
+            p_level++;
+        } else if( *p == ')' ) {
+            p_level--;
+            if( p_level == 0 ) {
+                pend = p;               // pend points to outermost ')'
+                break;
+            }
+        }
+        p++;
+    }
+
+    if( p_level > 0 ) {                  // at least one missing ')'
+        xx_line_err( err_func_parm_end, buff2 );
+    }
 
     // collect function name
-    while( *pchar && pchar <= end && is_function_char( *pchar ) ) {
+    while( *pchar && pchar <= pend && is_function_char( *pchar ) ) {
         fn[fnlen] = *pchar++;
         if( fnlen < FUN_NAME_LENGTH ) {
             fnlen++;
@@ -295,7 +319,7 @@ char  * scr_multi_funcs( char * in, char * end, char ** result, int32_t valsize 
         parms[k].incomplete = false;
 
         parms[k].a = find_start_of_parm( pchar );
-        pchar = find_end_of_parm( parms[k].a, end );
+        pchar = find_end_of_parm( parms[k].a, pend );
 
         if( multiletter_function || var_in_parm ) {
             parms[k].incomplete = true;
@@ -325,7 +349,7 @@ char  * scr_multi_funcs( char * in, char * end, char ** result, int32_t valsize 
         }
         parms[k + 1].a = pchar + 1;
 
-        if( (*pchar == ')') || (pchar >= end) ) {
+        if( pchar >= pend ) {
             break;                      // end of parms
         }
     }
@@ -338,7 +362,7 @@ char  * scr_multi_funcs( char * in, char * end, char ** result, int32_t valsize 
     }
 
     // collect the optional parm(s)
-    if( (*pchar == ')') || (pchar >= end) ) {   // no optional parms
+    if( pchar >= pend ) {               // no optional parms
         k = 0;
     } else {
         for( k = 0; k < scr_functions[funcind].opt_parm_cnt; k++ ) {
@@ -346,7 +370,7 @@ char  * scr_multi_funcs( char * in, char * end, char ** result, int32_t valsize 
             var_in_parm = false;
             parms[m + k].incomplete = false;
             parms[m + k].a = find_start_of_parm( pchar );
-            pchar = find_end_of_parm( parms[m + k].a, end );
+            pchar = find_end_of_parm( parms[m + k].a, pend );
 
             if( multiletter_function || var_in_parm ) {
                 parms[m + k].incomplete = true;
@@ -377,7 +401,7 @@ char  * scr_multi_funcs( char * in, char * end, char ** result, int32_t valsize 
             }
             parms[m + k + 1].a = pchar + 1;
 
-            if( (*pchar == ')') || (pchar >= end) ) {
+        if( pchar >= pend ) {
                 break;                  // end of parms
             }
         }
@@ -385,12 +409,6 @@ char  * scr_multi_funcs( char * in, char * end, char ** result, int32_t valsize 
     }
     parmcount = m + k;                  // total parmcount
     parms[parmcount].a = NULL;          // end of parms indicator
-
-    if( *pchar != ')' ) {
-        g_err( err_func_parm_end );
-        err_info( result );
-        return( in + 1 );               // avoid endless loop
-    }
 
     ProcFlags.suppress_msg = multiletter_function;
 

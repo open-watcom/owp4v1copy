@@ -244,8 +244,8 @@ pick( ERR_FUNC_PARM,            "Function parm %s invalid",
 pick( ERR_FUNC_PARM_MISS,       "Function parms missing",
                                 "Function parms missing" )
 
-pick( ERR_FUNC_PARM_END,        "Function parm end missing",
-                                "Function parm end missing" )
+pick( ERR_FUNC_PARM_END,        "The symbol function is missing a right parenthesis",
+                                "The symbol function is missing a right parenthesis" )
 
 pick( ERR_FUNC_NAME,            "Unknown function '%s'",
                                 "Unknown function '%s'" )

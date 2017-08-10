@@ -53,6 +53,7 @@
 #define MAX_FILE_ATTR   15              // max size for fileattr (T:xxxx)
 #define SCR_KW_LENGTH   2               // script control word length
 #define FUN_NAME_LENGTH 11              // &'function name max length
+#define MAX_PAREN       50              // max parenthesis nesting in &'functions
 
 #define TAG_NAME_LENGTH 15              // :tag name length
 #define ATT_NAME_LENGTH 9               // :tag attr name length
