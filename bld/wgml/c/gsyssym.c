@@ -507,7 +507,7 @@ static void syshsfun( symvar * e )
 
 static void syshyfun( symvar * e )
 {
-    var_wng( e->name, e );
+    syshy0.value = str[ju_off];     // will need adjustment if hyphenation is implemented
     return;
 };
 
