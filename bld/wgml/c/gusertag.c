@@ -204,7 +204,7 @@ bool        process_tag( gtentry * ge, mac_entry * me )
                 break;
             }
             p2 = token_buf;
-            while( is_id_char( *p ) ) {
+            while( is_macro_char( *p ) ) {
                 *p2++ = *p++;
             }
             *p2 = '\0';

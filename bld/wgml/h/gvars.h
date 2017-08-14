@@ -93,9 +93,9 @@ global  int32_t         gotargetno;     // .go to line no
 global  int             err_count;      // Overall Errorcount
 global  int             wng_count;      // Overall warning count
 
-global  char            GML_char;       // GML Keywword start char :
-global  char            SCR_char;       // SCRIPT keywword start char .
-global  char            CW_sep_char;    // Control Word separator char ;
+global  char            GML_char;       // GML Keywword start char (normally ":")
+global  char            SCR_char;       // SCRIPT keywword start char (normally ".")
+global  char            CW_sep_char;    // Control Word separator char (normally ";")
 
 global  int             CPI;            // chars per inch
 global  space_units     CPI_units;      // unit for chars per inch
@@ -156,10 +156,6 @@ global  struct GlobalFlags {
 global struct ProcFlags {
     doc_section     doc_sect;           // which part are we in (FRONTM, BODY, ...
     doc_section     doc_sect_nxt;       // next section (tag already seen)
-#if 0 // no clear use found -- yet
-    doc_section     header_sect;        // header      placeholder for now    TBD
-    doc_section     header_sect_nxt;    // header nxt  placeholder for now    TBD
-#endif
     unsigned        frontm_seen    : 1; // FRONTM tag seen
     unsigned        start_section  : 1; // start section call done
 
@@ -186,7 +182,8 @@ global struct ProcFlags {
     unsigned        gml_tag         : 1;// input buf starts with GML_char
     unsigned        scr_cw          : 1;// input buf starts with SCR_char
     unsigned        macro_ignore    : 1;// .. in col 1-2
-    unsigned        CW_sep_ignore   : 1;// .' in col 1-2
+    unsigned        CW_indented     : 1;// scr cw line was indented
+    unsigned        CW_sep_ignore   : 1;// ignore scr cw separator
     unsigned        in_macro_define : 1;// macro definition active
     unsigned        suppress_msg    : 1;// suppress error msg (during scanning)
     unsigned        blanks_allowed  : 1;// blanks allowed (during scanning)

@@ -416,24 +416,26 @@ static void     scan_script( void )
     } else {
         if( *p == '\'' ) {                  // .'
             p++;
-            ProcFlags.CW_sep_ignore = 1;
-        } else {
+            if( !ProcFlags.CW_indented ) {  // only change if not indented
+                ProcFlags.CW_sep_ignore = true;
+            }
+        } else {                            // no ': set per CW_sep_char
             if( CW_sep_char == '\0') {
-                ProcFlags.CW_sep_ignore = 1;// No separator char no split
+                ProcFlags.CW_sep_ignore = true;// no separator char no split
             } else{
-                ProcFlags.CW_sep_ignore = 0;
+                ProcFlags.CW_sep_ignore = false;
             }
             if( *p == SCR_char ) {          // ..
                 p++;
-                ProcFlags.macro_ignore = 1;
+                ProcFlags.macro_ignore = true;
                 me = NULL;
             } else {
-                ProcFlags.macro_ignore = 0;
+                ProcFlags.macro_ignore = false;
             }
         }
         if( ProcFlags.literal ) {       // no macro or split line if literal
-            ProcFlags.CW_sep_ignore = 1;
-            ProcFlags.macro_ignore = 1;
+            ProcFlags.CW_sep_ignore = true;
+            ProcFlags.macro_ignore = true;
         }
         if( !ProcFlags.CW_sep_ignore ) { // scan line for CW_sep_char
             char    *   pchar;

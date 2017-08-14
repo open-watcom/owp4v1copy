@@ -277,7 +277,9 @@ static  void    del_input_cb_entry( void )
 
 
 /***************************************************************************/
-/* remove leading  .  from input                                           */
+/* remove leading . from input                                             */
+/* remove leading .' from input                                            */
+/* set related flags                                                       */
 /* special processing for   .:tag  construct                               */
 /***************************************************************************/
 
@@ -287,27 +289,45 @@ static void remove_indentation( void )
     char    *   pb;
     int         offset;
 
-    p = buff2;
-    while( *p == SCR_char && *(p + 1) == ' ' ) {
-        while( *++p == ' ' ) /* empty */ ;  // skip blanks
-    }
-    if( *p == SCR_char && *(p + 1) == GML_char ) {
-        p++;                            // skip SCR_char
-    }
-    if( p != buff2 ) {                  // found some blanks now copy buffer
+    ProcFlags.CW_indented = false;
+    ProcFlags.CW_sep_ignore = false;
 
-        offset = p - buff2;
-        pb = buff2;
-        while( *p ) {
-            *pb++ = *p++;
+    p = buff2;
+    while( ((buff2_lg > 1) && ( *p == SCR_char && *(p + 1) == ' ')) ||
+            ((buff2_lg > 2) && ( *p == SCR_char && *(p + 1) == '\'' && *(p + 2) == ' ')) ) {
+        p++;                                        // over SCR_char
+        if( *p == ' ' ) {
+            ProcFlags.CW_indented = true;
+            ProcFlags.CW_sep_ignore = false;
+        } else {                                    // *p == '\''
+            if( ProcFlags.CW_indented == false ) {  // first indent
+                ProcFlags.CW_indented = true;
+                ProcFlags.CW_sep_ignore = true;
+            }
+            p++;                                    // over '
         }
-        if( offset > 0 ) {
-            memset( pb, '\0', offset ); // clear rest
+        while( *p == ' ' ) {
+            p++;                                    // skip blanks
         }
-        buff2_lg = strnlen_s( buff2, buf_size );
-//        if( GlobalFlags.research && GlobalFlags.firstpass ) {
-//            g_info( INF_INDENT_REM, buff2 );
-//        }
+        if( *p == SCR_char && *(p + 1) == GML_char ) {
+            p++;                                    // skip SCR_char
+        }
+        if( p != buff2 ) {                          // skipped indent now copy buffer
+
+            offset = p - buff2;
+            pb = buff2;
+            while( *p ) {
+                *pb++ = *p++;
+            }
+            if( offset > 0 ) {
+                memset( pb, '\0', offset ); // clear rest
+            }
+            buff2_lg = strnlen_s( buff2, buf_size );
+            p = buff2;
+//            if( GlobalFlags.research && GlobalFlags.firstpass ) {
+//                g_info( INF_INDENT_REM, buff2 );
+//            }
+        }
     }
 }
 

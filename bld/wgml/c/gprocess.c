@@ -201,7 +201,7 @@ static void split_at_CW_sep_char( char * splitpos ) {
     /*  also don't split if last char of record                */
     /***********************************************************/
 
-    if( !(*(buff2 + 1) == '\'') ) {
+    if( !ProcFlags.CW_sep_ignore ) {
         if( splitpos == NULL ) {        // splitpos not yet known
             splitpos = strchr( buff2 + 2, CW_sep_char );
         }
@@ -303,10 +303,12 @@ static bool split_input_buffer( void )
             }
 
             /***************************************************************/
-            /*  for records starting  .' ignore control word separator     */
+            /*  for records starting  .' which were not indented ignore    */
+            /*  control word separator                                     */
             /*  or if control word separator is 0x00                       */
             /***************************************************************/
-            if( (*(buff2 + k) == '\'') || (CW_sep_char == '\0') ) {
+
+            if( (!ProcFlags.CW_indented && (*(buff2 + k) == '\'')) || (CW_sep_char == '\0') ) {
                 ProcFlags.CW_sep_ignore = true;
             } else {
                 ProcFlags.CW_sep_ignore = false;
