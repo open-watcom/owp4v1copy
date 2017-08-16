@@ -131,6 +131,10 @@ void gml_dl( const gmltag * entry )  // not tested TBD
     char            *   p;
     dl_lay_level    *   dl_layout   = NULL;
 
+    if( !ProcFlags.start_section ) {
+        start_doc_sect();
+    }
+
     p = scan_start;
     p++;
     while( *p == ' ' ) {
@@ -204,6 +208,10 @@ void gml_gl( const gmltag * entry )  // not tested TBD
     char            *   p;
     gl_lay_level    *   gl_layout   = NULL;
 
+    if( !ProcFlags.start_section ) {
+        start_doc_sect();
+    }
+
     p = scan_start;
     p++;
     while( *p == ' ' ) {
@@ -273,6 +281,10 @@ void gml_ol( const gmltag * entry )
     bool                compact;
     char            *   p;
     ol_lay_level    *   ol_layout   = NULL;
+
+    if( !ProcFlags.start_section ) {
+        start_doc_sect();
+    }
 
     p = scan_start + 1;
     while( *p == ' ' ) {
@@ -344,6 +356,10 @@ void gml_sl( const gmltag * entry )
     bool                compact;
     char            *   p;
     sl_lay_level    *   sl_layout   = NULL;
+
+    if( !ProcFlags.start_section ) {
+        start_doc_sect();
+    }
 
     p = scan_start + 1;
     while( *p == ' ' ) {
@@ -417,6 +433,10 @@ void gml_ul( const gmltag * entry )
     bool                compact;
     char            *   p;
     ul_lay_level    *   ul_layout   = NULL;
+
+    if( !ProcFlags.start_section ) {
+        start_doc_sect();
+    }
 
     p = scan_start + 1;
     while( *p == ' ' ) {

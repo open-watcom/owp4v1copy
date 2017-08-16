@@ -35,6 +35,7 @@
 *               free_fwd_ref
 *               get_att_start
 *               get_att_value
+*               get_tag_value
 *               greater_su
 *               init_ffh_entry
 *               init_fwd_refs
@@ -952,6 +953,75 @@ char * get_att_value( char * p )
         xx_line_err( err_eq_missing, p );
         scan_start = scan_stop + 1;
         return( p );
+    }
+    if( (*p == '\0') || (*p == '.') ) { // value is missing
+        if( *p == '.' ) {
+            ProcFlags.tag_end_found = true;
+        }
+        xx_line_err( err_att_val_missing, p );
+        scan_start = scan_stop + 1;
+        return( p );
+    }
+    if( *p == '"' || *p == '\'' || *p == '`' ) {
+        quote = *p;
+        quote_char = *p;
+        ++p;
+        val_start = p;
+        while( *p ) {
+            if( *p == quote ) {
+                if( *(p + 1) != quote ) {
+                    break;
+                }
+                { // this should almost never be used
+                    char    *   q;
+                    char    *   r;
+                    q = p;
+                    r = p + 1;
+                    while( *r ) {
+                        *q = *r;
+                        q++;
+                        r++;
+                    }
+                }
+            }
+            ++p;
+        }
+        val_len = p - val_start;    // up to (not including) final quote
+        if( *p != quote ) {         // terminating quote not found
+            xx_line_err( err_att_val_open, val_start - 1 );
+            scan_start = scan_stop + 1;
+            return( p );
+        }
+        ++p;                        // over final quote
+    } else {
+        val_start = p;
+        while( *p && *p != ' ' && *p != '.' ) {
+            ++p;
+        }
+        val_len = p - val_start;
+    }
+    if( *p == '.' ) {
+        ProcFlags.tag_end_found = true;
+    }
+    return( p );
+}
+
+/***************************************************************************/
+/* get the tag value and report tag-end ('.') if found                     */
+/*     [<white space>]<value>                                              */
+/*     used by INCLUDE to capture file names without the "file" attribute  */
+/***************************************************************************/
+
+char * get_tag_value( char * p )
+{
+    char        quote;
+
+    ProcFlags.tag_end_found = false;
+    quote_char = '\0';
+    val_start = NULL;
+    val_len = 0;
+    while( *p == ' ' ) {                // over WS to '='
+        p++;
     }
     if( (*p == '\0') || (*p == '.') ) { // value is missing
         if( *p == '.' ) {

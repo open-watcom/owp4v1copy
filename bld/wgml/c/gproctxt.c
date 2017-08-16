@@ -1406,6 +1406,7 @@ void set_h_start( void )
 /***************************************************************************/
 /* finalize line and place into t_element                                  */
 /* Note: this now presumes that a_line->next is NULL on entry              */
+/* Note: invoking start_doc_sect() sets up a loop with scr_process_break() */
 /***************************************************************************/
 
 void process_line_full( text_line * a_line, bool justify )
@@ -1418,9 +1419,6 @@ void process_line_full( text_line * a_line, bool justify )
 
     if( (a_line == NULL) || (a_line->first == NULL) ) { // why are we called?
         return;
-    }
-    if( !ProcFlags.start_section ) {
-        start_doc_sect();
     }
 
     /************************************************************************/

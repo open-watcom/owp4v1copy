@@ -58,39 +58,52 @@
 /* the current directory, the directories specified by the include path    */
 /* list are searched for the file.  If the file is still not found, the    */
 /* directories specified by the DOS environment symbol PATH are searched.  */
+/*                                                                         */ 
+/* NOTE: The attribute turns out to not, in face, be needed: the token     */
+/*       after the tag is treated as a filename if it is not "file"        */
 /*                                                                         */
 /***************************************************************************/
 
 extern  void    gml_include( const gmltag * entry )
 {
     char    *   p;
+    char    *   pa;
 
+    *token_buf = '\0';
     p = scan_start;
     p++;
     while( *p == ' ' ) {
         p++;
     }
-    *token_buf = '\0';
-    if( !strnicmp( "file=", p, 5 ) ) {
-        char    quote;
-        char    *fnstart;
-
-        p += 5;
-        if( *p == '"' || *p == '\'' ) {
-            quote = *p;
-            ++p;
-        } else {
-            quote = '.';                // error?? filename without quotes
+    if( *p == '.' ) {
+        /* already at tag end */
+    } else {
+        pa = get_att_start( p );
+        p = att_start;
+        if( !ProcFlags.reprocess_line ) {
+            if( !strnicmp( "file", p, 4 ) ) {
+                p += 4;
+                p = get_att_value( p );
+            } else {
+                p = pa;                 // reset for possible file name
+                p = get_tag_value( p );
+            }
+            if( val_start != NULL ) {
+                memcpy_s( token_buf, FILENAME_MAX, val_start, val_len );
+                if( val_len < FILENAME_MAX ) {
+                    token_buf[val_len] = '\0';
+                } else {
+                    token_buf[FILENAME_MAX - 1] = '\0';
+                }
+                ProcFlags.newLevelFile = 1;     // start new include level
+                scan_start = scan_stop + 1;     // .. and ignore remaining line
+            }
+        } else {                                // wgml 4.0 appears to mark "" as the filename
+            ProcFlags.newLevelFile = 1;         // start new include level
+            scan_start = scan_stop + 1;         // .. and ignore remaining line
         }
-        fnstart = p;
-        while( *p && *p != quote ) {
-            ++p;
-        }
-        *p = '\0';
-        strcpy_s( token_buf, buf_size, fnstart );
-        ProcFlags.newLevelFile = 1;     // start new include level
-        scan_start = scan_stop + 1;     // .. and ignore remaining line
     }
+    
     return;
 }
 

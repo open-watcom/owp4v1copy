@@ -445,6 +445,7 @@ extern  void            free_ffh_list( ffh_entry * ffh_list );
 extern  void            free_fwd_refs( fwd_ref * fwd_refs );
 extern  char        *   get_att_start( char * p );
 extern  char        *   get_att_value( char * p );
+extern  char        *   get_tag_value( char * p );
 extern  su          *   greater_su( su * su_a, su * su_b, unsigned char spacing );
 extern  ffh_entry   *   init_ffh_entry( ffh_entry * ffh_list );
 extern  fwd_ref     *   init_fwd_ref( fwd_ref * fr_dict, const char * fr_id );
