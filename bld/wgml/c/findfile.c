@@ -372,11 +372,17 @@ static int try_open( char * prefix, char * filename )
     /* Try to open the file. Return 0 on failure. */
 
     for( ;; ) {
-        strlwr( buff );                 // for the sake of linux use lower only
         erc = fopen_s( &fp, buff, "rb" );
         if( erc == 0 ) {
             break;
         }
+#if defined( __UNIX__ )
+        strlwr( buff );                 // for the sake of linux try again with lower case filename
+        erc = fopen_s( &fp, buff, "rb" );
+        if( erc == 0 ) {
+            break;
+        }
+#endif
         if( errno != ENOMEM && errno != ENFILE && errno != EMFILE ) {
             break;
         }
@@ -565,6 +571,8 @@ void ff_teardown( void )
 
 int search_file_in_dirs( const char *filename, const char *defext, const char *altext, dirseq sequence )
 {
+    bool                full_name_done;
+    bool                short_name_done;
     char                buff[_MAX_PATH2];
     char                alternate_file[FILENAME_MAX];
     char                default_file[FILENAME_MAX];
@@ -579,11 +587,22 @@ int search_file_in_dirs( const char *filename, const char *defext, const char *a
     directory_list  *   searchdirs[4];
     int                 i;
     int                 j;
+    size_t              fn_length;
+    size_t              max_ext_len;
     size_t              member_length;
+
+    fn_length = strnlen_s( filename, FILENAME_MAX );
+    max_ext_len = 3;    // for literal extensions used below
+    if( strnlen_s( defext, FILENAME_MAX ) > max_ext_len ) {
+        max_ext_len = strnlen_s( defext, FILENAME_MAX );
+    }
+    if( strnlen_s( altext, FILENAME_MAX ) > max_ext_len ) {
+        max_ext_len = strnlen_s( altext, FILENAME_MAX );
+    }
 
     /* Ensure filename will fit into buff. */
 
-    if( strnlen_s( filename, FILENAME_MAX ) == FILENAME_MAX ) {
+    if( fn_length == FILENAME_MAX ) {
         xx_simple_err_c( err_file_max, filename );
         return( 0 );
     }
@@ -700,87 +719,113 @@ int search_file_in_dirs( const char *filename, const char *defext, const char *a
 
     /* Search each directory for each filename. */
 
-    for( i = 0; i < 4; i++ ) {
-        list_ptr = searchdirs[i];
-        if( list_ptr == NULL ) {
-            break;
-        }
+    full_name_done = false;
+    short_name_done = false;
+    while( !short_name_done ) {
+        for( i = 0; i < 4; i++ ) {
+            list_ptr = searchdirs[i];
+            if( list_ptr == NULL ) {
+                break;
+            }
 
-        for( j = 0; j < list_ptr->count; j++ ) {
+            for( j = 0; j < list_ptr->count; j++ ) {
 
-            dir_ptr = list_ptr->directories[j];
+                dir_ptr = list_ptr->directories[j];
 
-            /* For ds_bin_lib, set primary file from the defined name. */
+                /* For ds_bin_lib, set primary file from the defined name. */
 
-            if( sequence == ds_bin_lib ) {
+                if( sequence == ds_bin_lib ) {
 
-            /* See if dir_ptr contains a wgmlst.cop file. */
+                /* See if dir_ptr contains a wgmlst.cop file. */
 
-                if( try_open( dir_ptr, "wgmlst.cop" ) == 0 ) {
-                    continue;
-                }
+                    if( try_open( dir_ptr, "wgmlst.cop" ) == 0 ) {
+                        continue;
+                    }
 
-                /* try_fp now contains a FILE * to the directory file. */
+                    /* try_fp now contains a FILE * to the directory file. */
 
-                member_name = get_member_name( filename );
-                if( member_name == NULL ) {
-                    continue;
-                }
+                    member_name = get_member_name( filename );
+                    if( member_name == NULL ) {
+                        continue;
+                    }
 
-                /* Construct primary_file and open it normally. */
+                    /* Construct primary_file and open it normally. */
 
-                member_length = strnlen_s( member_name, FILENAME_MAX );
-                if( memchr( member_name, '.', member_length ) == NULL ) {
+                    member_length = strnlen_s( member_name, FILENAME_MAX );
+                    if( memchr( member_name, '.', member_length ) == NULL ) {
 
-                    /* Avoid buffer overflow from member_name. */
+                        /* Avoid buffer overflow from member_name. */
 
-                    if( member_length < FILENAME_MAX ) {
-                        strcpy_s( primary_file, FILENAME_MAX, member_name );
+                        if( member_length < FILENAME_MAX ) {
+                            strcpy_s( primary_file, FILENAME_MAX, member_name );
 
-                        /* Avoid buffer overflow from the extension. */
+                            /* Avoid buffer overflow from the extension. */
 
-                        if( member_length + 4 < FILENAME_MAX ) {
-                            strcat_s( primary_file, FILENAME_MAX, ".cop" );
-                            mem_free( member_name );
-                            member_name = NULL;
+                            if( member_length + 4 < FILENAME_MAX ) {
+                                strcat_s( primary_file, FILENAME_MAX, ".cop" );
+                                mem_free( member_name );
+                                member_name = NULL;
+                            } else {
+                                xx_simple_err_cc( err_file_max, member_name, ".cop" );
+                                mem_free( member_name );
+                                member_name = NULL;
+                                return( 0 );
+                            }
                         } else {
-                            xx_simple_err_cc( err_file_max, member_name, ".cop" );
+                            xx_simple_err_cc( err_file_max, member_name, "" );
                             mem_free( member_name );
                             member_name = NULL;
                             return( 0 );
                         }
-                    } else {
-                        xx_simple_err_cc( err_file_max, member_name, "" );
-                        mem_free( member_name );
-                        member_name = NULL;
-                        return( 0 );
+                    }
+                }
+
+                if( try_open( dir_ptr, primary_file ) != 0 ) {
+                    return( 1 );
+                }
+
+                /* Not finding the file is only a problem for ds_bin_lib. */
+
+                if( sequence == ds_bin_lib ) {
+                    xx_simple_err_cc( err_mem_dir, dir_ptr, primary_file );
+                    return( 0 );
+                }
+
+                if( alternate_file != NULL ) {
+                    if( try_open( dir_ptr, alternate_file ) != 0 ) {
+                        return( 1 );
+                    }
+                }
+
+                if( default_file != NULL ) {
+                    if( try_open( dir_ptr, default_file ) != 0 ) {
+                        return( 1 );
                     }
                 }
             }
-
-            if( try_open( dir_ptr, primary_file ) != 0 ) {
-                return( 1 );
-            }
-
-            /* Not finding the file is only a problem for ds_bin_lib. */
-
-            if( sequence == ds_bin_lib ) {
-                xx_simple_err_cc( err_mem_dir, dir_ptr, primary_file );
-                return( 0 );
-            }
-
-            if( alternate_file != NULL ) {
-                if( try_open( dir_ptr, alternate_file ) != 0 ) {
-                    return( 1 );
+        }
+        if( full_name_done ) {
+            short_name_done = true;
+        } else {                            // first pass done
+            full_name_done = true;
+            if( (fn_length > 8) || (max_ext_len > 3) ) {    // try 8.3 version of filename, as wgml 4.0 does
+                if( *primary_file ) {
+                    memmove_s( &primary_file[8], FILENAME_MAX, &primary_file[fn_length], 4 );
+                    primary_file[12] = '\0';
                 }
-            }
-
-            if( default_file != NULL ) {
-                if( try_open( dir_ptr, default_file ) != 0 ) {
-                    return( 1 );
+                if( *alternate_file ) {
+                    memmove_s( &alternate_file[8], FILENAME_MAX, &alternate_file[fn_length], 4 );
+                    alternate_file[12] = '\0';
                 }
+                if( *default_file ) {
+                    memmove_s( &default_file[8], FILENAME_MAX, &default_file[fn_length], 4 );
+                    default_file[12] = '\0';
+                }
+            } else {
+                short_name_done = true;     // no second pass if filename short enough
             }
         }
+
     }
 
     return( 0 );

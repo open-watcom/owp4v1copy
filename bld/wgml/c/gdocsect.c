@@ -523,7 +523,6 @@ static void gen_figlist( void )
     t_page.max_width = t_page.page_width -
                    conv_hor_unit( &layout_work.figlist.right_adjust, g_curr_font );
     size = conv_hor_unit( &layout_work.flpgnum.size, g_curr_font );  // space from fill to right edge
-    figlist_toc_tabs( layout_work.figlist.fill_string, size, true );
 
     /* Output FIGLIST */
 
@@ -572,18 +571,19 @@ static void gen_figlist( void )
             }
             ProcFlags.ct = true;                    // emulate CT
             g_curr_font = FONT0;
+            figlist_toc_tabs( layout_work.figlist.fill_string, size, true );
             process_text( "$", g_curr_font );
             format_num( curr->pageno, &buffer, sizeof( buffer ), curr->style );
             strcpy_s( postfix, 12, "$" );           // insert tab characters
             strcat_s( postfix, 12, buffer );        // append page number
             g_curr_font = layout_work.flpgnum.font;
             process_text( postfix, g_curr_font );
+            figlist_toc_tabs( layout_work.figlist.fill_string, size, false );
         }
         scr_process_break();                // ensure line break
         curr = curr->next;
     }
 
-    figlist_toc_tabs( layout_work.figlist.fill_string, size, false );
     ProcFlags.concat = concat_save;
     ProcFlags.justify = justify_save;
 
@@ -935,7 +935,6 @@ static void gen_toc( void )
     t_page.max_width = t_page.page_width -
                    conv_hor_unit( &layout_work.toc.right_adjust, g_curr_font );
     size = conv_hor_unit( &layout_work.tocpgnum.size, g_curr_font );     // space from fill to right edge
-    figlist_toc_tabs( layout_work.toc.fill_string, size, true );
 
     /* Initialize levels and indent values */
 
@@ -1015,19 +1014,20 @@ static void gen_toc( void )
             }
             ProcFlags.ct = true;                    // emulate CT
             g_curr_font = FONT0;
+            figlist_toc_tabs( layout_work.toc.fill_string, size, true );
             process_text( "$", g_curr_font );
             format_num( curr->pageno, &buffer, sizeof( buffer ), curr->style );
             strcpy_s( postfix, 12, "$" );           // insert tab characters
             strcat_s( postfix, 12, buffer );        // append page number
             g_curr_font = layout_work.tocpgnum.font;
             process_text( postfix, g_curr_font );
+            figlist_toc_tabs( layout_work.figlist.fill_string, size, false );
         }
         scr_process_break();                        // ensure line break
         levels[cur_level] = true;                   // first entry of level done
         curr = curr->next;
     }
 
-    figlist_toc_tabs( layout_work.figlist.fill_string, size, false );
     ProcFlags.concat = concat_save;
     ProcFlags.justify = justify_save;
 

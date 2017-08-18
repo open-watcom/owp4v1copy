@@ -864,7 +864,6 @@ static void  do_char_device( void )
                     cur_doc_el_group->first = cur_el->next;
                     cur_el->next = NULL;
                     if( cur_el->depth == 0 ) {  // remove blank lines marker, which has one empty text_line
-                        add_text_line_to_pool( cur_el->element.text.first );
                         add_doc_el_to_pool( cur_el );
                     } else {
                         box_char_element( cur_el );
