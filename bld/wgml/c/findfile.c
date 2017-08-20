@@ -591,18 +591,9 @@ int search_file_in_dirs( const char *filename, const char *defext, const char *a
     size_t              max_ext_len;
     size_t              member_length;
 
-    fn_length = strnlen_s( filename, FILENAME_MAX );
-    max_ext_len = 3;    // for literal extensions used below
-    if( strnlen_s( defext, FILENAME_MAX ) > max_ext_len ) {
-        max_ext_len = strnlen_s( defext, FILENAME_MAX );
-    }
-    if( strnlen_s( altext, FILENAME_MAX ) > max_ext_len ) {
-        max_ext_len = strnlen_s( altext, FILENAME_MAX );
-    }
-
     /* Ensure filename will fit into buff. */
 
-    if( fn_length == FILENAME_MAX ) {
+    if( strnlen_s( filename, FILENAME_MAX ) == FILENAME_MAX ) {
         xx_simple_err_c( err_file_max, filename );
         return( 0 );
     }
@@ -651,6 +642,21 @@ int search_file_in_dirs( const char *filename, const char *defext, const char *a
                 return( 0 );
             }
         }
+
+        /* Capture the bare filename length and the longest extension's length */
+
+        fn_length = strnlen_s( fn_name, FILENAME_MAX );
+        max_ext_len = 3;    // for literal extensions used above
+        if( strnlen_s( defext, FILENAME_MAX ) > max_ext_len ) {
+            max_ext_len = strnlen_s( defext, FILENAME_MAX );
+        }
+        if( strnlen_s( altext, FILENAME_MAX ) > max_ext_len ) {
+            max_ext_len = strnlen_s( altext, FILENAME_MAX );
+        }
+        if( strnlen_s( fn_ext, FILENAME_MAX ) > max_ext_len ) {
+            max_ext_len = strnlen_s( fn_ext, FILENAME_MAX );
+        }
+
     }
 
     /* Set up the file names and the dirs for the specified sequence. */
@@ -808,7 +814,7 @@ int search_file_in_dirs( const char *filename, const char *defext, const char *a
             short_name_done = true;
         } else {                            // first pass done
             full_name_done = true;
-            if( (fn_length > 8) || (max_ext_len > 3) ) {    // try 8.3 version of filename, as wgml 4.0 does
+            if( (sequence != ds_bin_lib) && ((fn_length > 8) || (max_ext_len > 3)) ) {    // try 8.3 version of filename, as wgml 4.0 does
                 if( *primary_file ) {
                     memmove_s( &primary_file[8], FILENAME_MAX, &primary_file[fn_length], 4 );
                     primary_file[12] = '\0';
