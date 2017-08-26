@@ -214,6 +214,9 @@ pick( INF_MAC_LINE,             "\tLine %s of macro '%s'",
 pick( INF_FILE_LINE,            "\tLine %s of file '%s'",
                                 "\tLine %s of file '%s'" )
 
+pick( ERR_EQ_EXPECTED,          "Expecting an equal sign",
+                                "Expecting an equal sign" )
+
 pick( ERR_EQ_MISSING,           "Missing required equals sign",
                                 "Missing required equals sign" )
 

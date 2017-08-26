@@ -115,11 +115,6 @@ char    *scan_sym( char * p, symvar * sym, sub_index * subscript )
                 strcpy_s( sym->name, SYM_NAME_LENGTH, MAC_STAR_NAME );
             } else {
                 scan_err = true;
-                if( !ProcFlags.suppress_msg ) {
-                    g_err( err_missing_name, sym_start );
-                    err_count++;
-                    show_include_stack();
-                }
             }
         }
     }
@@ -197,16 +192,25 @@ char    *scan_sym( char * p, symvar * sym, sub_index * subscript )
 /*                          = <character string>                           */
 /*         .SE       symbol = <numeric expression>                         */
 /*                          <OFF>                                          */
-/*   symbol may be subscripted (3) or () for auto increment 1 - n          */
+/*  symbol may be subscripted (3) or () for auto increment 1 - n           */
 /*                                                                         */
-/*         .se x1     'string            case 1                            */
-/*         .se x2  =  'string            case 2 a                          */
-/*         .se x2  =  'string'           case 2 b                          */
-/*         .se x2  =  "string"           case 2 b                          */
-/*         .se x2     off                case 3                            */
-/*         .se n1  =  1234               case 2                            */
-/*         .se n2  =  (1+(2+5)/6)        case 4                            */
-/*         .se n2  =  -1+(2+5)/6)        case 4                            */
+/*  This summarizes SR, since SE extends SR and SR is not implemented      */
+/*         .se x1     off                                                  */
+/*         .se x2a    'string (Note 1)                                     */
+/*         .se x2b    'string (Note 1)                                     */
+/*         .se x3a =  string                                               */
+/*         .se x3b =  'string (Note 2)                                     */
+/*         .se x4c =  'string'(Note 2)                                     */
+/*         .se n1  =  1234                                                 */
+/*         .se n2a =  (1+(2+5)/6)                                          */
+/*         .se n2b =  -1+(2+5)/6)                                          */
+/*  Note 1: these apply only to ', the first of which must be present      */
+/*  Note 2: these apply to all delimiters: ', ", /, |, !, ^, 0x9b and,     */
+/*          apparently, 0xdd and 0x60                                      */
+/*                                                                         */
+/*  Except for local symbol *, spaces are removed from the end of the line */
+/*  before further processing (so that spaces inside delimiters are not    */
+/*  afftected, but any following the closing delimiter are)                */
 /*                                                                         */
 /***************************************************************************/
 
@@ -214,15 +218,28 @@ void    scr_se( void )
 {
     char        *   p;
     char        *   valstart;
-    symvar          sym;
-    sub_index       subscript;
     int             rc;
-    symvar      * * working_dict;
+    sub_index       subscript;
     symsub      *   symsubval;
+    symvar          sym;
+    symvar      * * working_dict;
 
     subscript = no_subscript;           // not subscripted
     scan_err = false;
     p = scan_sym( scan_start, &sym, &subscript );
+
+    if(  sym.name != MAC_STAR_NAME ) {  // remove trailing blanks from all symbols but *
+        valstart = p;
+        while( *p ) {                   // find end of line
+            p++;
+        }
+        p--;
+        while( (valstart < p) && (*p == ' ') ) {    // find last non-space character
+            p--;
+        }
+        *++p = '\0';                    // mark end of line
+        p = valstart;
+    }
 
     if( sym.flags & local_var ) {
         working_dict = &input_cbs->local_dict;
@@ -237,37 +254,30 @@ void    scr_se( void )
     }
     if( *p == '\0' ) {
         if( !ProcFlags.suppress_msg ) {
-            g_warn( err_missing_value, sym.name );
-            show_include_stack();
-            wng_count++;
+            xx_line_err ( err_eq_expected, p);
         }
         scan_err = true;
     }
     if( !scan_err ) {
-        if( (*p == '=') || (*p == '\'') ) {
-            if( *p == '=' ) {
-                p++;                    // over =
-            }
+        valstart = p;
+        if( *p == '=' ) {                       // all other cases have no equal sign (see above)
+            p++;
             if( ProcFlags.blanks_allowed ) {
-                while( *p && *p == ' ' ) {  // skip over spaces
+                while( *p && *p == ' ' ) {      // skip over spaces to value
                     p++;
                 }
             }
             valstart = p;
-            if( is_quote_char( *valstart ) ) {  // quotes ?
+            if( is_quote_char( *valstart ) ) {      // quotes ?
                 p++;
-                while( *p && (*valstart != *p) ) { // look for quote end
+                while( *p && (*valstart != *p) ) {  // look for quote end
                     ++p;
                 }
-                if( *p == *valstart ) { // delete quotes case 2 b
+                if( (valstart < p) && (*p == *valstart) ) { // delete quotes if more than one character
                     valstart++;
                     *p = '\0';
-                } else {
-                    if( *valstart == '\'' ) {   // case 1 and 2a
-                        valstart++;
-                    }
                 }
-            } else {                    // case 2 and 4
+            } else {                                // numeric or undelimited string
                 getnum_block    gn;
                 condcode        cc;
 
@@ -275,47 +285,50 @@ void    scr_se( void )
                 gn.argstop       = scan_stop;
                 gn.ignore_blanks = 1;
 
-                cc = getnum( &gn );     // try numeric expression evaluation
+                cc = getnum( &gn );             // try numeric expression evaluation
                 if( cc != notnum ) {
                     valstart = gn.resultstr;
-                }                       // if notnum treat as character value
+                }                               // if notnum treat as character value
             }
 
             rc = add_symvar( working_dict, sym.name, valstart, subscript,
                              sym.flags );
 
-        } else {                        // OFF value = delete variable ?
-            if( *(p + 3)            == '\0' &&  // case 3
-                tolower( *p )       == 'o' &&
-                tolower( *(p + 1) ) == 'f' &&
-                tolower( *(p + 2) ) == 'f' ) {
-
+        } else if( *p == '\'' ) {                   // \' without equal sign 
+            p++;
+            while( *p && (*valstart != *p) ) {      // look for final \'
+                p++;
+            }
+            valstart++;                             // delete initial \'
+            if( (valstart < p) && (*p == '\'') ) {  // delete \' at end
+                *p = '\0';
+            }
+            rc = add_symvar( working_dict, sym.name, valstart, subscript,
+                             sym.flags );
+        } else if( !strncmp( p, "off", 3 ) ) {       // OFF
                 p += 3;
                 rc = find_symvar( working_dict, sym.name, subscript,
                                   &symsubval );
                 if( rc == 2 ) {
                     symsubval->base->flags |= deleted;
                 }
-            } else {
-                if( !ProcFlags.suppress_msg ) {
-                     char    linestr[MAX_L_AS_STR];
+        } else if( !ProcFlags.suppress_msg ) {
+                char    linestr[MAX_L_AS_STR];
 
-                     wng_count++;
-                     g_err( wng_miss_inv_value, sym.name, p );
-                     if( input_cbs->fmflags & II_tag_mac ) {
-                         utoa( input_cbs->s.m->lineno, linestr, 10 );
-                         g_info( inf_mac_line, linestr,
-                                 input_cbs->s.m->mac->name );
-                     } else {
-                         utoa( input_cbs->s.f->lineno, linestr, 10 );
-                         g_info( inf_file_line, linestr,
-                                 input_cbs->s.f->filename );
-                     }
-                     show_include_stack();
+                wng_count++;
+                g_err( wng_miss_inv_value, sym.name, p );
+                if( input_cbs->fmflags & II_tag_mac ) {
+                    utoa( input_cbs->s.m->lineno, linestr, 10 );
+                    g_info( inf_mac_line, linestr,
+                            input_cbs->s.m->mac->name );
+                } else {
+                    utoa( input_cbs->s.f->lineno, linestr, 10 );
+                    g_info( inf_file_line, linestr,
+                            input_cbs->s.f->filename );
                 }
-                scan_err = true;
-            }
+                show_include_stack();
         }
+        scan_err = true;
     }
     scan_restart = scan_stop;
     return;

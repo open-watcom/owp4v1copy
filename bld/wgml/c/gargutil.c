@@ -394,11 +394,13 @@ bool    is_space_tab_char( char c )
 /*
  * If first and last character are the same and one of the quote chars
  * the start and end pointers are adjusted
+ * but only if a and z are not equal (that is, only if the value has more
+ * than one character
  */
 void    unquote_if_quoted( char **a, char **z )
 {
 
-    if( **a == **z && is_quote_char( **a ) ) {
+    if( (*a != *z) && (**a == **z) && is_quote_char( **a ) ) {
         *a += 1;
         *z -= 1;
     }
