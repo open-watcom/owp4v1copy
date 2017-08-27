@@ -125,9 +125,10 @@ void    garginitdot( void )
 /***************************************************************************/
 /*  scan blank delimited argument perhaps quoted                           */
 /*                                                                         */
-/* extension: if unquoted and equalsign, then quoted parm allowed          */
+/*  extension: if unquoted and equalsign, then quoted parm allowed         */
 /*            *var="value "                                                */
 /*                                                                         */
+/*  single-char arguments are special-cased                                */
 /***************************************************************************/
 
 condcode    getarg( void )
@@ -151,6 +152,13 @@ condcode    getarg( void )
             return( omit );             // nothing found
         }
 
+        if( p == scan_stop) {           // one character token found
+            arg_flen = 1;
+            tok_start = p;
+            scan_start = p + 1;         // address of start for next call
+            return( pos );              // arg found
+        }
+
         quote = '\0';
         valquote = '\0';
         quoted = false;
@@ -171,6 +179,10 @@ condcode    getarg( void )
                 if( quoted ) {
                     quote = '\0';
                     quoted = false;
+                    p = tok_start;              // find end of space-delimited token
+                    while( (p < scan_stop) && (*p != ' ') ) {
+                        p++;
+                    }
                 }
                 break;
             }
@@ -202,7 +214,7 @@ condcode    getarg( void )
         } else {
             scan_start = p;             // address of start for next call
         }
-        arg_flen = p - tok_start;       // length of arg
+        arg_flen = p - tok_start;       // length of multichar arg
         if( arg_flen > 0 ) {
             if( quoted ) {
                 cc = quotes;            // quoted arg found

@@ -291,8 +291,7 @@ void    scr_se( void )
                 }                               // if notnum treat as character value
             }
 
-            rc = add_symvar( working_dict, sym.name, valstart, subscript,
-                             sym.flags );
+            rc = add_symvar( working_dict, sym.name, valstart, subscript, sym.flags );
 
         } else if( *p == '\'' ) {                   // \' without equal sign 
             p++;
@@ -303,32 +302,28 @@ void    scr_se( void )
             if( (valstart < p) && (*p == '\'') ) {  // delete \' at end
                 *p = '\0';
             }
-            rc = add_symvar( working_dict, sym.name, valstart, subscript,
-                             sym.flags );
+            rc = add_symvar( working_dict, sym.name, valstart, subscript, sym.flags );
         } else if( !strncmp( p, "off", 3 ) ) {       // OFF
-                p += 3;
-                rc = find_symvar( working_dict, sym.name, subscript,
-                                  &symsubval );
-                if( rc == 2 ) {
-                    symsubval->base->flags |= deleted;
-                }
+            p += 3;
+            rc = find_symvar( working_dict, sym.name, subscript, &symsubval );
+            if( rc == 2 ) {
+                symsubval->base->flags |= deleted;
+            }
         } else if( !ProcFlags.suppress_msg ) {
-                char    linestr[MAX_L_AS_STR];
+            char    linestr[MAX_L_AS_STR];
 
-                wng_count++;
-                g_err( wng_miss_inv_value, sym.name, p );
-                if( input_cbs->fmflags & II_tag_mac ) {
-                    utoa( input_cbs->s.m->lineno, linestr, 10 );
-                    g_info( inf_mac_line, linestr,
-                            input_cbs->s.m->mac->name );
-                } else {
-                    utoa( input_cbs->s.f->lineno, linestr, 10 );
-                    g_info( inf_file_line, linestr,
-                            input_cbs->s.f->filename );
-                }
-                show_include_stack();
+            wng_count++;
+            g_err( wng_miss_inv_value, sym.name, p );
+            if( input_cbs->fmflags & II_tag_mac ) {
+                utoa( input_cbs->s.m->lineno, linestr, 10 );
+                g_info( inf_mac_line, linestr, input_cbs->s.m->mac->name );
+            } else {
+                utoa( input_cbs->s.f->lineno, linestr, 10 );
+                g_info( inf_file_line, linestr, input_cbs->s.f->filename );
+            }
+            show_include_stack();
+            scan_err = true;
         }
-        scan_err = true;
     }
     scan_restart = scan_stop;
     return;

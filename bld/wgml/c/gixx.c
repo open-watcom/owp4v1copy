@@ -301,12 +301,13 @@ static void gml_ixxx_common( const gmltag * entry, int hx_lvl )
     }
 
     if( *p == '.' ) p++;        // possible tag end
+    while( *p == ' ' ) p++;     // step over spaces
     if( hx_lvl > 0 ) {          // not for IREF, take existing text, if any, as-is
         while( !*p ) {          // we need a text line for :Ix :IHx
             get_line( true );
             p = buff2;
         }
-        if( *p == ' ' ) p++;    // step over spaces
+        while( *p == ' ' ) p++; // step over spaces
     }
 
     /***********************************************************************/
