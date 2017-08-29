@@ -89,23 +89,6 @@ static void gml_ixxx_common( const gmltag * entry, int hx_lvl )
     *hxstring = GML_char;           // construct tagname for possible error msg
     strcpy_s( (hxstring + 1), TAG_NAME_LENGTH, entry->tagname );
 
-    if( hx_lvl > 0 ) {              // exclude IREF
-        if( hx_lvl == 1 ) {         // first level tag
-            ixhlvl[0] = true;       // record first level found
-            ixhlvl[1] = false;      // second level not found
-        } else if( hx_lvl == 2 ) {  // second level tag
-            if( !ixhlvl[0] ) {      // first level must exist
-                xx_tag_err( err_parent_undef, hxstring );
-            } else {
-                ixhlvl[1] = true;   // record first level found
-            }
-        } else if( hx_lvl == 3 ) {  // third level tag
-            if( !ixhlvl[1] ) {      // second level must exist
-                xx_tag_err( err_parent_undef, hxstring );
-            }
-        }
-    }
-
     pgvalue = pgnone;
 
     p = scan_start;
@@ -328,7 +311,23 @@ static void gml_ixxx_common( const gmltag * entry, int hx_lvl )
         if( !refidseen ) {              // refid= missing
             xx_err( err_att_missing );
         }
+    } else if( !refidseen ) {           // not required for refid
+        if( hx_lvl == 1 ) {             // first level tag
+            ixhlvl[0] = true;           // record first level found
+            ixhlvl[1] = false;          // second level not found
+        } else if( hx_lvl == 2 ) {      // second level tag
+            if( !ixhlvl[0] ) {          // first level must exist
+                xx_tag_err( err_parent_undef, hxstring );
+            } else {
+                ixhlvl[1] = true;       // record first level found
+            }
+        } else if( hx_lvl == 3 ) {      // third level tag
+            if( !ixhlvl[1] ) {          // second level must exist
+                xx_tag_err( err_parent_undef, hxstring );
+            }
+        }
     }
+
 
     if( GlobalFlags.lastpass ) {
         if( hx_lvl == 0 ) {                 // :IREF tag
