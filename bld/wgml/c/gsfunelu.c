@@ -26,8 +26,8 @@
 *
 * Description:  WGML single letter functions &e'    &l'     &u'     &w'
 *                                             exist, length, upper,  width
-*                           &s'        &S'
-*                            subscript, Superscript
+*                           &s'        &S'          &x'
+*                            subscript, Superscript hex-to-char
 ****************************************************************************/
 
 #define __STDC_WANT_LIB_EXT1__  1      /* use safer C library              */
@@ -41,7 +41,7 @@
 /*              returns   0 or 1 in result                                 */
 /***************************************************************************/
 
-char    *scr_single_func_e( char * in, char * end, char * * result )
+static char *scr_single_func_e( char * in, char * end, char * * result )
 {
     char            *   pchar;
     sub_index           var_ind;
@@ -71,7 +71,6 @@ char    *scr_single_func_e( char * in, char * end, char * * result )
     if( *pchar == '.' ) {
         pchar++;                    // skip optional terminating dot
     }
-    ProcFlags.substituted = true;       // something changed
     return( pchar );
 }
 
@@ -81,7 +80,7 @@ char    *scr_single_func_e( char * in, char * end, char * * result )
 /*              returns   length of value or length of name in result      */
 /***************************************************************************/
 
-char    *scr_single_func_l( char * in, char * end, char * * result )
+static char *scr_single_func_l( char * in, char * end, char * * result )
 {
     char            *   pchar;
     sub_index           var_ind;
@@ -120,7 +119,6 @@ char    *scr_single_func_l( char * in, char * end, char * * result )
     if( *pchar == '.' ) {
         pchar++;                    // skip optional terminating dot
     }
-    ProcFlags.substituted = true;       // something changed
     return( pchar );
 }
 
@@ -131,7 +129,7 @@ char    *scr_single_func_l( char * in, char * end, char * * result )
 /*                       subscript or superscript is coded in parm fun     */
 /***************************************************************************/
 
-char    *scr_single_func_sS( char * in, char * end, char * * result, char fun )
+static char *scr_single_func_sS( char * in, char * end, char * * result, char fun )
 {
     char            *   pchar;
     sub_index           var_ind;
@@ -181,7 +179,6 @@ char    *scr_single_func_sS( char * in, char * end, char * * result, char fun )
     if( *pchar == '.' ) {
         pchar++;                    // skip optional terminating dot
     }
-    ProcFlags.substituted = true;       // something changed
     return( pchar );
 }
 
@@ -191,7 +188,7 @@ char    *scr_single_func_sS( char * in, char * end, char * * result, char fun )
 /*                                                                         */
 /***************************************************************************/
 
-char    *scr_single_func_u( char * in, char * end, char * * result )
+static char *scr_single_func_u( char * in, char * end, char * * result )
 {
     char            *   pchar;
     sub_index           var_ind;
@@ -234,7 +231,6 @@ char    *scr_single_func_u( char * in, char * end, char * * result )
     if( *pchar == '.' ) {
         pchar++;                    // skip optional terminating dot
     }
-    ProcFlags.substituted = true;       // something changed
     return( pchar );
 }
 
@@ -246,7 +242,7 @@ char    *scr_single_func_u( char * in, char * end, char * * result )
 /*  some logic has to be in sync with scr_width() in gsfwidth.c            */
 /***************************************************************************/
 
-char    *scr_single_func_w( char * in, char * end, char * * result )
+static char *scr_single_func_w( char * in, char * end, char * * result )
 {
     char            *   pchar;
     sub_index           var_ind;
@@ -292,26 +288,82 @@ char    *scr_single_func_w( char * in, char * end, char * * result )
     len = width;
     width = (width * CPI + g_resh / 2) / g_resh;
     sprintf( *result, "%d", width );
-#if 0                                   // perhaps as debug output
-    sprintf( *result + strlen( *result ), " %d", len );
-#endif
     *result  += strlen( *result );
     **result = '\0';
 
     if( *pchar == '.' ) {
         pchar++;                    // skip optional terminating dot
     }
-    ProcFlags.substituted = true;       // something changed
     return( pchar );
 }
 
+
+/***************************************************************************/
+/*  script single letter function &x'         hex to char                  */
+/*              returns   character equivalent of hex pair                 */
+/*                                                                         */
+/*  Note: multiple concatenated pairs may be processed (sometimes)         */
+/*        this version always processes all concatenated pairs, or none    */
+/*        invalid operands result in the entire operand being displayed    */
+/***************************************************************************/
+
+static char *scr_single_func_x( char * in, char * end, char * * result )
+{
+    bool        accept;        
+    char        c;
+    char    *   pchar;
+
+    accept = true;
+    pchar = in + 3;
+    if( *pchar != '&' ) {               // symbols/symbol values are not converted
+        if( (end - pchar + 1 ) % 2 ) {  // odd number of characters
+            accept = false;
+        } else {
+            for( ; pchar <= end; pchar++ ) {    // check for non-hex-digit in input
+                if( !isxdigit( *pchar ) ) {
+                    accept = false;
+                    break;
+                }
+            }
+            pchar = in + 3;             // reset to start of input
+        }
+        if( accept ) {                  // input is acceptable
+            for( ; pchar < end; pchar++ ) { // check for non-hex-digit in input
+
+                c = 0;
+                if( isdigit( *pchar ) ) {
+                    c += *pchar - '0';
+                } else {
+                    c += toupper( *pchar ) - 'A' + 10;
+                }
+                c *= 16;
+                pchar++;
+                if( isdigit( *pchar ) ) {
+                    c += *pchar - '0';
+                } else {
+                    c += toupper( *pchar ) - 'A' + 10;
+                }
+
+                **result = c;
+                (*result)++;
+            }
+            **result = '\0';
+            pchar++;                            // skip final 2nd hex digit
+            if( *pchar == '.' ) {
+                pchar++;                        // skip optional terminating dot
+            }
+        }
+    }
+    
+    return( pchar );
+}
 
 /***************************************************************************/
 /*  script single letter functions unsupported   process to comsume        */
 /*                                               variable for scanning     */
 /***************************************************************************/
 
-static  char    *scr_single_func_unsupport( char * in, char * * result )
+static char *scr_single_func_unsupport( char * in, char * * result )
 {
     char        linestr[MAX_L_AS_STR];
     char        charstr[2];
@@ -338,20 +390,21 @@ static  char    *scr_single_func_unsupport( char * in, char * * result )
 /*  functions used within the OW doc build system:                     */
 /*   &e'  existance of variable 0 or 1                                 */
 /*   &l'  length of variable content or if undefined length of name    */
-/*   &u'  upper                                                        */
+/*   &u'  upper case                                                   */
+/*   &w'  width for internal use                                       */
+/*   &x'  convert valid hex pairs to characters                        */
 /*                                                                     */
 /*   &s'  subscript                                                    */
 /*   &S'  superscript                                                  */
 /*                                                                     */
 /*   other single letter functions are not used AFAIK                  */
 /*                                                                     */
-/*   &w'  width for internal use                                       */
 /***********************************************************************/
 
-char    *scr_single_funcs( char * in, char * end, char * * result )
+char *scr_single_funcs( char * in, char * end, char * * result )
 {
     char            *   pw;
-
+  
     if( *(in + 2) == '\'' ) {
         switch( *(in + 1) ) {
         case  'e' :                     // exist function
@@ -371,6 +424,9 @@ char    *scr_single_funcs( char * in, char * end, char * * result )
             break;
         case  'w' :                     // width function
             pw = scr_single_func_w( in, end, result );
+            break;
+        case  'x' :                     // hex-to-char function
+            pw = scr_single_func_x( in, end, result );
             break;
         default:
             pw = scr_single_func_unsupport( in, result );

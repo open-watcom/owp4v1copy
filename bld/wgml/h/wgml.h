@@ -335,10 +335,6 @@ extern  char    *   scr_multi_funcs( char * in, char * end, char * * ppval, int3
 
 /* gsfunelu.c                           */
 extern  char    *   scr_single_funcs( char * in, char * end, char * * result );
-extern  char    *   scr_single_func_e( char * in, char * end, char * * result );
-extern  char    *   scr_single_func_l( char * in, char * end, char * * result );
-extern  char    *   scr_single_func_u( char * in, char * end, char * * result );
-extern  char    *   scr_single_func_w( char * in, char * end, char * * result );
 
 
 /* gsgoto.c                             */
