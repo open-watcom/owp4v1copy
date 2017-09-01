@@ -57,7 +57,7 @@
 //picks( cm, scr_dummy, 0                  )// comment ----- handled differently
   picks( co, scr_co,    cw_break+cw_o_t    )// concatenate
   picks( cp, scr_cp,    cw_break+cw_o_t    )// conditional page
-  picks( cs, scr_dummy, cw_o_t             )// conditional section
+  picks( cs, scr_cs,    cw_o_t             )// conditional section
   picks( ct, scr_ct,    cw_o_t             )// continued text
   picks( cw, scr_cw,    0                  )// control word separator
   picks( dc, scr_dc,    0                  )// define character

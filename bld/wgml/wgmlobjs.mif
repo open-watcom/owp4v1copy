@@ -127,6 +127,7 @@ scr_objs =  &
         gsbx.obj     &
         gscd.obj     &
         gscofoju.obj &
+        gscs.obj     &
         gsct.obj     &
         gsdccw.obj   &
         gsetvar.obj  &
