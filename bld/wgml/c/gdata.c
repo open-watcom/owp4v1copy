@@ -125,6 +125,11 @@ void init_global_vars( void )
     c_stop              = NULL;
     tt_stack            = NULL;
 
+    block_queue         = NULL;
+    block_queue_end     = NULL;
+    keep_queue          = NULL;
+    keep_queue_end      = NULL;
+
     cur_group_type      = gt_none;
     cur_doc_el_group    = NULL;
     doc_el_group_pool   = NULL;

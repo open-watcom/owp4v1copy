@@ -383,13 +383,6 @@ void xx_simple_err_cc( const msg_ids errid, const char * arg1, const char * arg2
     return;
 }
 
-void xx_simple_warn( const msg_ids errid )
-{
-    wng_count++;
-    g_warn( errid );
-    return;
-}
-
 void xx_err( const msg_ids errid )
 {
     err_count++;
@@ -414,6 +407,21 @@ void xx_warn_att( const msg_ids errid, const char * arg )
     return;
 }
 
+void xx_val_line_warn( const msg_ids errid, const char * cw, const char * pa )
+{
+    wng_count++;
+    g_warn( errid, cw );
+    file_mac_info();
+    show_line_error( pa );
+    return;
+}
+
+void xx_simple_warn( const msg_ids errid )
+{
+    wng_count++;
+    g_warn( errid );
+    return;
+}
 
 /***************************************************************************/
 /*  messages for duplicate, forward, or undefined figure, footnote, or     */

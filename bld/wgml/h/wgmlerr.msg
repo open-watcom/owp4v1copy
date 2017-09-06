@@ -545,10 +545,21 @@ pick( ERR_NUM_TOO_LARGE,        "Number is too large or contains invalid charact
 pick( ERR_VAL_NEG,              "Value cannot be negative",
                                 "Value cannot be negative" )
 
+pick( WNG_TOO_MANY_OPS,         "Too many operands in %s control word",
+                                "Too many operands in %s control word" )
+
 /* General parsing error messages */
 
 pick( ERR_RIGHT_DELIM,          "Right string delimiter missing",
                                 "Right string delimiter missing" )
+
+/* Control words FB/FK error messages */
+
+pick( ERR_NO_FB_BEGIN,          "FB END not preceded by FB BEGIN",
+                                "FB END not preceded by FB BEGIN" )
+
+pick( ERR_NO_FK_BEGIN,          "FK END not preceded by FK BEGIN",
+                                "FK END not preceded by FK BEGIN" )
 
 /* Control word TB value error messages */
 

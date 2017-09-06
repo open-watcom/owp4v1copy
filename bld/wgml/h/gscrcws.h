@@ -73,9 +73,9 @@
   picks( em, scr_em,    0                  )// execute macro
   picks( eq, scr_dummy, cw_o_t             )// equation
   picks( er, scr_dummy, 0                  )// error
-  picks( fb, scr_dummy, cw_o_t             )// floating block
+  picks( fb, scr_fb,    cw_o_t             )// floating block
 //picks( fi, scr_dummy, 0                  )// old
-  picks( fk, scr_dummy, cw_o_t             )// floating keep
+  picks( fk, scr_fk,    cw_o_t             )// floating keep
   picks( fm, scr_dummy, cw_break+cw_o_t    )// footing margin
   picks( fn, scr_dummy, cw_o_t             )// footnote
   picks( fo, scr_fo,    cw_break+cw_o_t    )// format

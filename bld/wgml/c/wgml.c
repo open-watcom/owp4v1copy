@@ -780,7 +780,7 @@ int main( int argc, char * argv[] )
     clock_t     end_time;
 
 
-#undef TRMEM
+//   #undef TRMEM                         // activate to disable TRMEM
 
     environment = &env;
     if( setjmp( env ) ) {               // if fatal error has occurred
@@ -929,7 +929,7 @@ int main( int argc, char * argv[] )
 
     fini_msgs();                        // end of msg resources, no more msgs built from
                                         // resources possible after this point
-//    mem_fini();
+    mem_fini();                         // TRMEM final report
 
     my_exit( err_count ? 8 : wng_count ? 4 : 0 );
     return( 0 );                    // never reached, but makes compiler happy

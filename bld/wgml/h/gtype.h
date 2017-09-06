@@ -32,7 +32,6 @@
 #ifndef GTYPE_H_INCLUDED
 #define GTYPE_H_INCLUDED
 
-
 #if defined(__QNX__) || defined(__LINUX__) // try to be nice to linux
     #define PATH_SEP        '/'
     #define INCLUDE_SEP     ':'
@@ -1066,23 +1065,29 @@ typedef struct doc_element {
 /*   the others; ADDRESS allows none of the tags and the control    */
 /*   words FB and FK have no apparent effect                        */
 /* In addition, CC and CP cannot occur inside any of these except   */
-/*   address                                                        */
+/*   ADDRESS                                                        */
+/* wgml 4.0 does not recognize cc or cp blocks, so they are not     */
+/*   assigned tags here                                             */
+/* control word FN has not been implemented, so no tag is assigned  */
+/*   it may, of course, turn out to be possible to use gt_fn        */
 /* Control word BX can be used to draw a box around any block or    */
 /*   inside any block, or both with the same block                  */
 /* Thus, the stack intermingles BX groups and other groups, but can */
 /*   only contain one of the other types of groups at any time      */
+/* The queues used with FB and FK can, of course, contain multiple  */
+/*   instances of those blocks                                      */
 /********************************************************************/
 
 typedef enum {
-    gt_none     =   0,  // no doc_el_group in use
-    gt_address  =   1,  // tag ADDRESS
-    gt_bx       =   2,  // control word BX
-    gt_fn       =   4,  // tag or control word FN
-    gt_fig      =   8,  // tag FIG
-    gt_xmp      =   16, // tag XMP
-    gt_fb       =   32, // control word FB
-    gt_fk       =   64, // control work FK
-    gt_hx       =  128, // tags H0--H6
+    gt_none,    // no doc_el_group in use
+    gt_address, // tag ADDRESS
+    gt_bx,      // control word BX
+    gt_fn,      // tag FN
+    gt_fig,     // tag FIG
+    gt_fb,      // control word FB
+    gt_fk,      // control work FK
+    gt_hx,      // tags H0--H6
+    gt_xmp,     // tag XMP
 } group_type;
 
 typedef struct doc_el_group {

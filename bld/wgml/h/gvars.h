@@ -256,6 +256,13 @@ global  long        li_cnt;             // remaining count for .li processing
 
 global  uint8_t     in_esc;             // input escape char from .ti
 
+
+// block/keep support
+global doc_el_group     *   block_queue;        // queue of FB blocks; blocks removed from here
+global doc_el_group     *   block_queue_end;    // add point for new FB blocks
+global doc_el_group     *   keep_queue;         // queue of FK blocks; blocks removed from here
+global doc_el_group     *   keep_queue_end;     // add point for new FK blocks
+
 // box support
 global  box_col_set     *   box_col_set_pool;   // pool of box_col_set instances
 global  box_col_set     *   cur_line;           // the line from the current BX line
