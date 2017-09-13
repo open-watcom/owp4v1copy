@@ -330,6 +330,10 @@ extern  void                set_if_then_do( ifcb * cb );
 extern  condcode            test_process( ifcb * cb );
 
 
+/* gsfbfk.c                             */
+extern  void                fb_blocks_out( void );
+
+
 /* gsfuncs.c                            */
 extern  char    *   scr_multi_funcs( char * in, char * end, char * * ppval, int32_t valsize );
 

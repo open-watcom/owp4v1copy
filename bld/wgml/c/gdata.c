@@ -127,8 +127,6 @@ void init_global_vars( void )
 
     block_queue         = NULL;
     block_queue_end     = NULL;
-    keep_queue          = NULL;
-    keep_queue_end      = NULL;
 
     cur_group_type      = gt_none;
     cur_doc_el_group    = NULL;
@@ -180,11 +178,13 @@ void init_global_vars( void )
         t_page.panes->cols[i].footnote  = NULL;
     }
 
+    n_page.last_fk_queue    = NULL;
     n_page.last_page_width  = NULL;
     n_page.last_col_width   = NULL;
     n_page.last_col_main    = NULL;
     n_page.last_col_bot     = NULL;
     n_page.last_col_fn      = NULL;
+    n_page.fk_queue         = NULL;
     n_page.page_width       = NULL;
     n_page.col_width        = NULL;
     n_page.col_main         = NULL;

@@ -40,17 +40,28 @@ typedef enum {
     fbk_end     // FB END/FK END
 } fbk_cmd;
 
+/**************************************************************************/
+/* In addition to items shown, the following are not saved/restored by    */
+/* wgml 4.0 but it might make sense to do so: concatenation state,        */
+/* justification state, and the current IN indents, both left and right   */
+/**************************************************************************/
+
 typedef struct {
     doc_element *   text_el;    // for t_element
     text_line   *   last_line;  // for t_el_last
     text_line   *   text_line;  // for t_line
+    uint32_t        cur_width;  // for t_page.cur_width
+    uint32_t        subs_skip;  // for g_subs_skip
 } print_vars;
 
 static  fbk_cmd         cur_cmd;        // current command
 static  group_type      sav_group_type; // save prior group type
-static  int32_t         add_space;      // additional space
-static  print_vars      sav_state = { NULL, NULL, NULL };   // save/reset values on entry
-static  uint32_t        dump_cnt;       // number of blocks to dump
+static  print_vars      sav_state;      // save/reset values on entry
+
+/**************************************************************************/
+/* get the parameters for FB and FK                                       */
+/* NOTE: only the operands BEGIN, END, and DUMP are actually used         */
+/**************************************************************************/
 
 static char * get_params( const char * scw_name ) {
     char            *   p;
@@ -58,60 +69,80 @@ static char * get_params( const char * scw_name ) {
     size_t              len;
     su                  fbk_su;
 
-    dump_cnt = 0;
-    add_space = 0;
     p = scan_start;
 
     while( *p && (*p == ' ') ) {
         p++;
     }
-    pa = p;
-    while( *p && (*p != ' ') ) {
-        p++;
-    }
-    len = p - pa;
 
-    /* Identify the first operand */
-
-    cur_cmd = fbk_none;
-    if( (len == 3) && !memicmp( pa , "end", len ) ) {
-        cur_cmd = fbk_end;
-    } else if( (len == 4) && !memicmp( pa , "dump", len ) ) {
-        cur_cmd = fbk_dump;
-    } else if( (len == 5) && !memicmp( pa , "begin", len ) ) {
-        cur_cmd = fbk_begin;
-    }
-
-    if( cur_cmd == fbk_none ) {
-        p = pa;                             // reset, invalid input
-    } else {
-        while( *p && (*p == ' ') ) {        // find next argument, if any
+    if( *p ) {                  // at least one potential operand
+        pa = p;
+        while( *p && (*p != ' ') ) {
             p++;
         }
-        if( *p ) {
-            if( cur_cmd == fbk_dump ) {       // dump takes an integer >= 0
-    //        dump_cnt
-            } else if( cur_cmd == fbk_end ) {        // end take a vertical space unit
-                pa = p;
-                if( !cw_val_to_su( &p, &fbk_su ) ) {
-                    add_space = conv_vert_unit( &fbk_su, spacing, g_curr_font );
-                    if( add_space <= 0 ) {
-//***                    xx_line_err( err_inv_box_pos, pa );
-                    } else {
+        len = p - pa;
+
+        /* Identify the first operand */
+
+        cur_cmd = fbk_none;
+        if( (len == 3) && !memicmp( pa , "end", len ) ) {
+            cur_cmd = fbk_end;
+        } else if( (len == 4) && !memicmp( pa , "dump", len ) ) {
+            cur_cmd = fbk_dump;
+        } else if( (len == 5) && !memicmp( pa , "begin", len ) ) {
+            cur_cmd = fbk_begin;
+        }
+
+        if( cur_cmd == fbk_none ) {
+            p = pa;                                 // reset, invalid input
+        } else {
+            while( *p && (*p == ' ') ) {            // find next argument, if any
+                p++;
+            }
+            if( *p ) {
+                if( cur_cmd == fbk_begin ) {        // begin does not allow another operand
+                    xx_val_line_warn( wng_too_many_ops, scw_name, p );
+                } else {                            // both <n> and <0|w> are treated as space
+                    pa = p;                         // values and ignored by wgml 4.0
+                    if( !cw_val_to_su( &p, &fbk_su ) ) {
                         if( fbk_su.su_relative ) {
-//***                        cur_col += prev_col;
+                            xx_line_err( err_spc_not_valid, pa );
                         }
                     }
-                } else {
-                    xx_line_err( err_spc_not_valid, pa );
                 }
-            } else {                                // begin does not allow another operand
-                xx_val_line_warn( wng_too_many_ops, scw_name, p );
             }
         }
     }
-
     return( p );
+}
+
+/**************************************************************************/
+/* Output all remaining FB blocks (for use at end-of-file)                */
+/**************************************************************************/
+
+void fb_blocks_out( void )
+{
+    doc_element *   cur_el;
+    doc_element *   sav_el;
+
+    while( block_queue != NULL ) {
+        cur_doc_el_group = block_queue;
+        block_queue = block_queue->next;
+        cur_el = cur_doc_el_group->first;
+        while( cur_el != NULL ) {
+            sav_el = cur_el->next;
+            cur_el->next = NULL;
+            insert_col_main( cur_el );
+            cur_el = sav_el;
+        }
+        cur_doc_el_group->first = NULL;
+        cur_doc_el_group->next = NULL;
+        add_doc_el_group_to_pool( cur_doc_el_group );
+    }
+    block_queue_end = NULL;
+    last_page_out();
+
+    return;
 }
 
 /**************************************************************************/
@@ -151,7 +182,10 @@ static char * get_params( const char * scw_name ) {
 /*     used to determine the count of lines within the first outstanding  */
 /*     block.                                                             */
 /*                                                                        */
-/* NOTE: FB BEGIN does not, in fact, take <0|w>; only FB END does         */
+/* NOTE: FB BEGIN does not, in fact, take a space value; only FB END does */
+/* NOTE: even after FB END, a space value has no effect                   */
+/* NOTE: FB DUMP ignores any count it is given: all pending blocks are    */
+/*       output without regard to any value following DUMP                */
 /*                                                                        */
 /**************************************************************************/
 
@@ -162,18 +196,25 @@ static char * get_params( const char * scw_name ) {
 void scr_fb( void )
 {
     char    *   p;
+    doc_element *   cur_el;
+    doc_element *   sav_el;
 
     p = get_params( "FB" );
 
     switch( cur_cmd) {
     case fbk_begin : 
         g_keep_nest( "FB" );                // catch nesting errors
+        ProcFlags.in_fb_fk_block = true;
         sav_state.text_el = t_element;
         t_element = NULL;
         sav_state.last_line = t_el_last;
         t_el_last = NULL;
         sav_state.text_line = t_line;
         t_line = NULL;
+        sav_state.cur_width = t_page.cur_width;
+        t_page.cur_width = t_page.cur_left;
+        sav_state.subs_skip = g_subs_skip;
+        g_subs_skip = 0;
         sav_group_type = cur_group_type;
         cur_group_type = gt_fb;
         cur_doc_el_group = alloc_doc_el_group( gt_fb );
@@ -183,31 +224,53 @@ void scr_fb( void )
         break;
     case fbk_end :
         if( cur_group_type == gt_fb ) {
-            if( t_doc_el_group != NULL) {
-                scr_process_break();
-                cur_group_type = sav_group_type;
-                cur_doc_el_group = t_doc_el_group;
-                t_doc_el_group = t_doc_el_group->next;
-                cur_doc_el_group->next = NULL;
-                if( block_queue == NULL ) {
-                    block_queue = cur_doc_el_group;
-                    block_queue_end = block_queue;
-                } else {
-                    block_queue_end->next = cur_doc_el_group;
-                    block_queue_end = block_queue_end->next;
-                }
+            scr_process_break();
+            cur_group_type = sav_group_type;
+            cur_doc_el_group = t_doc_el_group;
+            t_doc_el_group = t_doc_el_group->next;
+            cur_doc_el_group->next = NULL;
+            if( block_queue == NULL ) {
+                block_queue = cur_doc_el_group;
+                block_queue_end = block_queue;
+            } else {
+                block_queue_end->next = cur_doc_el_group;
+                block_queue_end = block_queue_end->next;
             }
+            t_element = sav_state.text_el;
+            t_el_last = sav_state.last_line;
+            t_line = sav_state.text_line;
+            t_page.cur_width = sav_state.cur_width;
+            g_subs_skip = sav_state.subs_skip;
+            ProcFlags.in_fb_fk_block = false;
         } else {
             xx_line_err( err_no_fb_begin, p );
         }
-        t_element = sav_state.text_el;
-        t_el_last = sav_state.last_line;
-        t_line = sav_state.text_line;
         break;
     case fbk_dump :
         g_keep_nest( "FB" );                // catch nesting errors
+
+        /* Dump all pending blocks*/
+
+        ProcFlags.fb_fk_dump = true;
+        while( block_queue != NULL ) {
+            cur_doc_el_group = block_queue;
+            block_queue = block_queue->next;
+            cur_el = cur_doc_el_group->first;
+            while( cur_el != NULL ) {
+                sav_el = cur_el->next;
+                cur_el->next = NULL;
+                insert_col_main( cur_el );
+                cur_el = sav_el;
+            }
+            cur_doc_el_group->first = NULL;
+            cur_doc_el_group->next = NULL;
+            add_doc_el_group_to_pool( cur_doc_el_group );
+        }
+        block_queue_end = NULL;
+        ProcFlags.fb_fk_dump = false;
         break;
     case fbk_none :
+        xx_val_line_err( err_no_operand, "FB", p - 1 );
         break;
     default:
         internal_err( __FILE__, __LINE__ );
@@ -255,6 +318,11 @@ void scr_fb( void )
 /* &SYSFKC System Set Symbol can be examined after the ".FK END" control  */
 /* word to determine the count of lines in all Floating Keep blocks       */
 /* currently waiting to be output.                                        */
+/*                                                                        */
+/* NOTE: FK BEGIN does not, in fact, take a space value; only FK END does */
+/* NOTE: even after FK END, a space value has no effect                   */
+/* NOTE: FK DUMP ignores any count it is given: all pending blocks are    */
+/*       output without regard to any value following DUMP                */
 /**************************************************************************/
 
 /************************************************************************/
@@ -263,19 +331,27 @@ void scr_fb( void )
 
 void scr_fk( void )
 {
-    char    *   p;
+    char        *   p;
+    doc_element *   cur_el;
+    doc_element *   sav_el;
 
     p = get_params( "FK" );
 
     switch( cur_cmd) {
     case fbk_begin : 
         g_keep_nest( "FK" );                // catch nesting errors
+        ProcFlags.in_fb_fk_block = true;
         sav_state.text_el = t_element;
         t_element = NULL;
         sav_state.last_line = t_el_last;
         t_el_last = NULL;
         sav_state.text_line = t_line;
         t_line = NULL;
+        sav_state.cur_width = t_page.cur_width;
+        t_page.cur_width = t_page.cur_left;
+        sav_state.subs_skip = g_subs_skip;
+        g_subs_skip = 0;
+        sav_group_type = cur_group_type;
         cur_group_type = gt_fk;
         cur_doc_el_group = alloc_doc_el_group( gt_fk );
         cur_doc_el_group->next = t_doc_el_group;
@@ -284,31 +360,50 @@ void scr_fk( void )
         break;
     case fbk_end :
         if( cur_group_type == gt_fk ) {
-            if( t_doc_el_group != NULL) {
-                scr_process_break();
-                cur_group_type = sav_group_type;
-                cur_doc_el_group = t_doc_el_group;
-                t_doc_el_group = t_doc_el_group->next;
-                cur_doc_el_group->next = NULL;
-                if( keep_queue == NULL ) {
-                    keep_queue = cur_doc_el_group;
-                    keep_queue_end = keep_queue;
+            scr_process_break();
+            cur_group_type = sav_group_type;
+            cur_doc_el_group = t_doc_el_group;
+            t_doc_el_group = t_doc_el_group->next;
+            cur_doc_el_group->next = NULL;
+            if( (n_page.fk_queue != NULL) ||
+                    (t_page.cur_depth + cur_doc_el_group->depth > t_page.max_depth) ) {
+                if( n_page.fk_queue == NULL ) {
+                    n_page.fk_queue = cur_doc_el_group;
+                    n_page.last_fk_queue = n_page.fk_queue;
                 } else {
-                    keep_queue_end->next = cur_doc_el_group;
-                    keep_queue_end = keep_queue_end->next;
+                    n_page.last_fk_queue->next = cur_doc_el_group;
+                    n_page.last_fk_queue = n_page.last_fk_queue->next;
                 }
+            } else {
+                cur_el = cur_doc_el_group->first;
+                while( cur_el != NULL ) {
+                    sav_el = cur_el->next;
+                    cur_el->next = NULL;
+                        insert_col_main( cur_el );
+                    cur_el = sav_el;
+                }
+                cur_doc_el_group->first = NULL;
+                cur_doc_el_group->next = NULL;
+                add_doc_el_group_to_pool( cur_doc_el_group );
             }
+            t_element = sav_state.text_el;
+            t_el_last = sav_state.last_line;
+            t_line = sav_state.text_line;
+            t_page.cur_width = sav_state.cur_width;
+            g_subs_skip = sav_state.subs_skip;
+            ProcFlags.in_fb_fk_block = false;
         } else {
             xx_line_err( err_no_fk_begin, p );
         }
-        t_element = sav_state.text_el;
-        t_el_last = sav_state.last_line;
-        t_line = sav_state.text_line;
         break;
     case fbk_dump :
         g_keep_nest( "FK" );                // catch nesting errors
+        ProcFlags.fb_fk_dump = true;
+        next_column();
+        ProcFlags.fb_fk_dump = false;
         break;
     case fbk_none :
+        xx_val_line_err( err_no_operand, "FK", p - 1 );
         break;
     default:
         internal_err( __FILE__, __LINE__ );

@@ -1163,11 +1163,13 @@ typedef struct {
 } doc_page;
 
 typedef struct {
+            doc_el_group    *   last_fk_queue;
             doc_el_group    *   last_page_width;
             doc_el_group    *   last_col_width;
             doc_element     *   last_col_main;
             doc_el_group    *   last_col_bot;
             doc_el_group    *   last_col_fn;
+            doc_el_group    *   fk_queue;       // pending FK blocks
             doc_el_group    *   page_width;     // page_width
             doc_el_group    *   col_width;      // cols->col_width
             doc_element     *   col_main;       // cols->main

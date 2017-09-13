@@ -185,6 +185,8 @@ global struct ProcFlags {
     unsigned        CW_indented     : 1;// scr cw line was indented
     unsigned        CW_sep_ignore   : 1;// ignore scr cw separator
     unsigned        in_macro_define : 1;// macro definition active
+    unsigned        in_fb_fk_block  : 1;// inside FB/FK block     
+    unsigned        fb_fk_dump      : 1;// FB/FK DUMP
     unsigned        suppress_msg    : 1;// suppress error msg (during scanning)
     unsigned        blanks_allowed  : 1;// blanks allowed (during scanning)
     unsigned        keep_ifstate    : 1;// leave ifstack unchanged for next line
@@ -257,11 +259,9 @@ global  long        li_cnt;             // remaining count for .li processing
 global  uint8_t     in_esc;             // input escape char from .ti
 
 
-// block/keep support
+// file block support
 global doc_el_group     *   block_queue;        // queue of FB blocks; blocks removed from here
 global doc_el_group     *   block_queue_end;    // add point for new FB blocks
-global doc_el_group     *   keep_queue;         // queue of FK blocks; blocks removed from here
-global doc_el_group     *   keep_queue_end;     // add point for new FK blocks
 
 // box support
 global  box_col_set     *   box_col_set_pool;   // pool of box_col_set instances

@@ -192,7 +192,8 @@ bool    free_resources( errno_t in_errno )
 
 void    free_some_mem( void )
 {
-    int i;
+    doc_pane    *   sav_pane;
+    int             i;
 
     if( token_buf != NULL ) {
         mem_free( token_buf );
@@ -320,7 +321,9 @@ void    free_some_mem( void )
                 }
             }
         }
-        t_page.panes = t_page.panes->next;
+        sav_pane = t_page.panes->next;
+        mem_free( t_page.panes );
+        t_page.panes = sav_pane;
     }
     if( t_page.bot_ban != NULL ) {
         if( t_page.bot_ban->first != NULL ) {

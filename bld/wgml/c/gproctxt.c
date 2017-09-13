@@ -1789,7 +1789,9 @@ void process_text( const char *text, font_number font )
         t_line = alloc_text_line();
     }
     if( t_line->first == NULL ) {    // first phrase in paragraph
-        post_space = 0;
+        if( !ProcFlags.in_fb_fk_block || !ProcFlags.concat ) {
+            post_space = 0;
+        }
         tab_space = 0;
         if( ProcFlags.concat ) {    // ".co on": skip initial spaces
             while( *p == ' ' ) {
@@ -2385,6 +2387,7 @@ void process_text( const char *text, font_number font )
 
     ProcFlags.ct = false;
     ProcFlags.fsp = false;
+    ProcFlags.para_starting = false;
     ProcFlags.stop_xspc = false;
     ProcFlags.utc = false;
 }

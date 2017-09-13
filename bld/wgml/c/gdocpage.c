@@ -1040,81 +1040,147 @@ static void update_column( void )
     }
 
     /***********************************************************************/
-    /*  As many blocks from n_page.col_main as will fit are processed      */
-    /*  A page is not full unless there is at least one element left in    */
-    /*    at least one of the sections of n_page                           */
-    /*  The original value of max_depth is used to prevent looping if the  */
-    /*    current element is too large to fit on any page                  */
-    /*  Note: a page which is not full will only be emitted if it is the   */
-    /*    last page in a section (or the document)                         */
-    /*  Note: t_page.cols will only be NULL at this point if neither       */
-    /*    footnotes nor a buttom FIG has been placed on the page           */
+    /*  As many blocks from n_page.fk_queue as will fit are processed      */
+    /*  Note: t_page.cols will only be NULL at this point if no top column */
+    /*        width or bottom FIG has been placed on the page              */
     /***********************************************************************/
 
-    while( n_page.col_main != NULL ) {
-        cur_el = n_page.col_main;
-        n_page.col_main = n_page.col_main->next;
-        if( n_page.col_main == NULL ) {
-            n_page.last_col_main = NULL;
-        }
-
-        /****************************************************************/
-        /*  this section identifies skips and blank lines that finish   */
-        /*  the current page and then exits the loop after adjusting    */
-        /*  the element field values as needed                          */
-        /****************************************************************/
-        
-        if( cur_el->blank_lines > 0 ) {
-            if( (t_page.cur_depth + cur_el->blank_lines) >= t_page.max_depth ) {
-                cur_el->blank_lines -= (t_page.max_depth - t_page.cur_depth);
-                break;
-            } else if( !ProcFlags.col_started && ((t_page.cur_depth +
-                        cur_el->blank_lines + cur_el->top_skip) >=
-                        t_page.max_depth) ) {
-                cur_el->top_skip -= (t_page.max_depth - t_page.cur_depth);
-                cur_el->top_skip += cur_el->blank_lines;
-                cur_el->blank_lines = 0;
-                break;
-            } else if( (t_page.cur_depth + cur_el->blank_lines +
-                         cur_el->subs_skip) >= t_page.max_depth ) {
-                cur_el->blank_lines = 0;
-                break;
-            }
-        }
-
-        if( !ProcFlags.col_started ) {
-            if( cur_el->blank_lines > 0 ) {
-                depth = cur_el->blank_lines + cur_el->subs_skip;
+    if( n_page.fk_queue != NULL ) {
+        while( n_page.fk_queue != NULL ) {
+            cur_group = n_page.fk_queue;
+            if( t_page.cur_depth + cur_group->depth > t_page.max_depth ) {
+                if( cur_group->depth > t_page.max_depth ) { // split FK block too large for any page
+                    while( (cur_group->first != NULL) &&
+                            (t_page.cur_depth + cur_group->first->depth <= t_page.max_depth) ) {
+                        cur_el = cur_group->first; 
+                        if( t_page.cur_col->main == NULL ) {
+                        t_page.cur_col->main = cur_el;
+                        } else {
+                            t_page.last_col_main->next = cur_el;
+                        }
+                        t_page.last_col_main = cur_el;
+                        cur_group->first = cur_group->first->next;
+                        cur_el->next = NULL;
+                        t_page.cur_depth += cur_el->depth;
+                        cur_group->depth -= cur_el->depth;
+                    }
+                } else {
+                    break;
+                }
             } else {
-                depth = cur_el->top_skip;
+                cur_el = cur_group->first;          // here, cur_el is the last element
+                while( cur_el->next != NULL ) {
+                    cur_el = cur_el->next;
+                }
+                if( t_page.cur_col->main == NULL ) {
+                    t_page.cur_col->main = cur_group->first;
+                } else {
+                    t_page.last_col_main->next = cur_group->first;
+                }
+                t_page.last_col_main = cur_el;
+                t_page.cur_depth += cur_group->depth;
             }
-            ProcFlags.col_started = true;
-        } else {
-            depth = cur_el->blank_lines + cur_el->subs_skip;
+            n_page.fk_queue = n_page.fk_queue->next;    // postponed in case cur_group not output
+            cur_group->next = NULL;
+            cur_group->first = NULL;
+            add_doc_el_group_to_pool( cur_group );
         }
+    }
 
-        if( depth >= t_page.max_depth ) {    // skip fills page
-            break;
-        }
+    if( !ProcFlags.fb_fk_dump || (n_page.fk_queue == NULL) ) {  // nothing from n_page.col_main until all FK blocks placed
 
-        /****************************************************************/
-        /*  Does the first line minimum apply here? If so, it needs to  */
-        /*  be implemented. Note that cur_el->depth does not reflect it */
-        /*  because there is no way to tell if it will apply when the   */
-        /*  cur_el->depth is computed.                                  */
-        /****************************************************************/
+        /***********************************************************************/
+        /*  As many blocks from n_page.col_main as will fit are processed      */
+        /*  A page is not full unless there is at least one element left in    */
+        /*    at least one of the sections of n_page                           */
+        /*  The original value of max_depth is used to prevent looping if the  */
+        /*    current element is too large to fit on any page                  */
+        /*  Note: a page which is not full will only be emitted if it is the   */
+        /*    last page in a section (or the document)                         */
+        /*  Note: t_page.cols will only be NULL at this point if neither       */
+        /*    footnotes nor a buttom FIG has been placed on the page           */
+        /***********************************************************************/
 
-        if( (depth + cur_el->depth) > t_page.max_depth ) {    // cur_el will fill the page
-            splittable = split_element( cur_el, t_page.max_depth -
-                                                t_page.cur_depth - depth );
-            if( splittable ) {
-                if( cur_el->next != NULL ) {    // cur_el was split
+        while( n_page.col_main != NULL ) {
+            cur_el = n_page.col_main;
+            n_page.col_main = n_page.col_main->next;
+            if( n_page.col_main == NULL ) {
+                n_page.last_col_main = NULL;
+            }
+
+            /****************************************************************/
+            /*  this section identifies skips and blank lines that finish   */
+            /*  the current page and then exits the loop after adjusting    */
+            /*  the element field values as needed                          */
+            /****************************************************************/
+        
+            if( cur_el->blank_lines > 0 ) {
+                if( (t_page.cur_depth + cur_el->blank_lines) >= t_page.max_depth ) {
+                    cur_el->blank_lines -= (t_page.max_depth - t_page.cur_depth);
+                    break;
+                } else if( !ProcFlags.col_started && ((t_page.cur_depth +
+                            cur_el->blank_lines + cur_el->top_skip) >=
+                            t_page.max_depth) ) {
+                    cur_el->top_skip -= (t_page.max_depth - t_page.cur_depth);
+                    cur_el->top_skip += cur_el->blank_lines;
+                    cur_el->blank_lines = 0;
+                    break;
+                } else if( (t_page.cur_depth + cur_el->blank_lines +
+                            cur_el->subs_skip) >= t_page.max_depth ) {
+                    cur_el->blank_lines = 0;
+                    break;
+                }
+            }
+            if( !ProcFlags.col_started ) {
+                if( cur_el->blank_lines > 0 ) {
+                    depth = cur_el->blank_lines + cur_el->subs_skip;
+                } else {
+                    depth = cur_el->top_skip;
+                }
+                ProcFlags.col_started = true;
+            } else {
+                depth = cur_el->blank_lines + cur_el->subs_skip;
+            }
+
+            if( depth >= t_page.max_depth ) {    // skip fills page
+                break;
+            }
+
+            /****************************************************************/
+            /*  Does the first line minimum apply here? If so, it needs to  */
+            /*  be implemented. Note that cur_el->depth does not reflect it */
+            /*  because there is no way to tell if it will apply when the   */
+            /*  cur_el->depth is computed.                                  */
+            /****************************************************************/
+
+            if( (depth + cur_el->depth) > t_page.max_depth ) {    // cur_el will fill the page
+                splittable = split_element( cur_el, t_page.max_depth -
+                                                    t_page.cur_depth - depth );
+                if( splittable ) {
+                    if( cur_el->next != NULL ) {    // cur_el was split
+                        n_page.col_main = cur_el->next;
+                        if( n_page.last_col_main == NULL ) {
+                            n_page.last_col_main = n_page.col_main;
+                        }
+                        cur_el->next = NULL;
+                    }
+                    if( t_page.cur_col->main == NULL ) {
+                        t_page.cur_col->main = cur_el;
+                        t_page.last_col_main = t_page.cur_col->main;
+                    } else {
+                        t_page.last_col_main->next = cur_el;
+                        t_page.last_col_main = t_page.last_col_main->next;
+                    }
+                    t_page.last_col_main->next = NULL;
+                    t_page.cur_depth += cur_el->depth;
+                } else {
                     n_page.col_main = cur_el->next;
                     if( n_page.last_col_main == NULL ) {
                         n_page.last_col_main = n_page.col_main;
                     }
                     cur_el->next = NULL;
                 }
+            } else {                                    // cur_el fits as-is
                 if( t_page.cur_col->main == NULL ) {
                     t_page.cur_col->main = cur_el;
                     t_page.last_col_main = t_page.cur_col->main;
@@ -1123,31 +1189,16 @@ static void update_column( void )
                     t_page.last_col_main = t_page.last_col_main->next;
                 }
                 t_page.last_col_main->next = NULL;
-                t_page.cur_depth += cur_el->depth;
-            } else {
-                n_page.col_main = cur_el->next;
-                if( n_page.last_col_main == NULL ) {
-                    n_page.last_col_main = n_page.col_main;
+                if( (cur_el->type == el_text) && cur_el->element.text.overprint
+                                              && cur_el->element.text.force_op ) {
+                    /* do nothing, adjusts for top-of-page overprint */
+                } else {
+                    t_page.cur_depth += cur_el->depth;
                 }
-                cur_el->next = NULL;
-            }
-        } else {                                    // cur_el fits as-is
-            if( t_page.cur_col->main == NULL ) {
-                t_page.cur_col->main = cur_el;
-                t_page.last_col_main = t_page.cur_col->main;
-            } else {
-                t_page.last_col_main->next = cur_el;
-                t_page.last_col_main = t_page.last_col_main->next;
-            }
-            t_page.last_col_main->next = NULL;
-            if( (cur_el->type == el_text) && cur_el->element.text.overprint
-                                          && cur_el->element.text.force_op ) {
-                /* do nothing, adjusts for top-of-page overprint */
-            } else {
-                t_page.cur_depth += cur_el->depth;
             }
         }
     }
+
     ProcFlags.col_started = false;
 
     return;
@@ -1378,7 +1429,7 @@ void do_page_out( void )
 
 void full_col_out( void )
 {
-    while( (n_page.page_width != NULL) || (n_page.col_width != NULL)
+    while( (n_page.fk_queue != NULL) || (n_page.page_width != NULL) || (n_page.col_width != NULL)
             || (n_page.col_main != NULL) || (n_page.col_bot != NULL)
             || (n_page.col_fn != NULL) ) {
         next_column();

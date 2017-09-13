@@ -561,6 +561,9 @@ pick( ERR_NO_FB_BEGIN,          "FB END not preceded by FB BEGIN",
 pick( ERR_NO_FK_BEGIN,          "FK END not preceded by FK BEGIN",
                                 "FK END not preceded by FK BEGIN" )
 
+pick( ERR_NO_OPERAND,           "%s must have one of operands BEGIN, END or DUMP",
+                                "%s must have one of operands BEGIN, END or DUMP" )
+
 /* Control word TB value error messages */
 
 pick( ERR_INV_TAB_STOP,         "Invalid tab-stop position",
