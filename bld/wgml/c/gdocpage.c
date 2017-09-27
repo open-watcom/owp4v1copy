@@ -927,6 +927,7 @@ static void update_column( void )
     t_page.cur_col->fig_top = t_page.bot_ban_top;
     t_page.cur_col->fn_top = t_page.bot_ban_top;
     t_page.max_depth = t_page.cur_col->main_top - t_page.cur_col->fig_top;
+    ProcFlags.col_started = false;
 
     /***********************************************************************/
     /*  The first block in n_page.col_width is processed                   */
@@ -1048,24 +1049,83 @@ static void update_column( void )
     if( n_page.fk_queue != NULL ) {
         while( n_page.fk_queue != NULL ) {
             cur_group = n_page.fk_queue;
-            if( t_page.cur_depth + cur_group->depth > t_page.max_depth ) {
-                if( cur_group->depth > t_page.max_depth ) { // split FK block too large for any page
-                    while( (cur_group->first != NULL) &&
-                            (t_page.cur_depth + cur_group->first->depth <= t_page.max_depth) ) {
-                        cur_el = cur_group->first; 
-                        if( t_page.cur_col->main == NULL ) {
-                        t_page.cur_col->main = cur_el;
-                        } else {
-                            t_page.last_col_main->next = cur_el;
+            if( (t_page.cur_depth + cur_group->depth) > t_page.max_depth ) {
+                if( (t_page.cur_depth == 0) && (cur_group->depth > t_page.max_depth) ) { // split FK block too large for any page
+                    cur_el = cur_group->first;
+                    while( cur_el != NULL ) {
+                        if( cur_el->blank_lines > 0 ) {
+                            if( (t_page.cur_depth + cur_el->blank_lines) >= t_page.max_depth ) {
+                                cur_el->blank_lines -= (t_page.max_depth - t_page.cur_depth);
+                                break;
+                            } else if( !ProcFlags.col_started && ((t_page.cur_depth +
+                                cur_el->blank_lines + cur_el->top_skip) >=
+                                t_page.max_depth) ) {
+                                cur_el->top_skip -= (t_page.max_depth - t_page.cur_depth);
+                                cur_el->top_skip += cur_el->blank_lines;
+                                cur_el->blank_lines = 0;
+                                break;
+                            } else if( (t_page.cur_depth + cur_el->blank_lines +
+                                        cur_el->subs_skip) >= t_page.max_depth ) {
+                                cur_el->blank_lines = 0;
+                                break;
+                            }
                         }
-                        t_page.last_col_main = cur_el;
-                        cur_group->first = cur_group->first->next;
-                        cur_el->next = NULL;
-                        t_page.cur_depth += cur_el->depth;
-                        cur_group->depth -= cur_el->depth;
+                        if( !ProcFlags.col_started ) {
+                            if( cur_el->blank_lines > 0 ) {
+                                depth = cur_el->blank_lines + cur_el->subs_skip;
+                            } else {
+                                depth = cur_el->top_skip;
+                                cur_group->depth -= cur_el->subs_skip;
+                            }
+                            ProcFlags.col_started = true;
+                        } else {
+                            depth = cur_el->blank_lines + cur_el->subs_skip;
+                        }
+                        if( (t_page.cur_depth + depth) >= t_page.max_depth ) {  // skip fills page
+                            break;
+                        }
+
+                        /****************************************************************/
+                        /*  Does the first line minimum apply here? If so, it needs to  */
+                        /*  be implemented. Note that cur_el->depth does not reflect it */
+                        /*  because there is no way to tell if it will apply when the   */
+                        /*  cur_el->depth is computed.                                  */
+                        /****************************************************************/
+
+                        if( (t_page.cur_depth + cur_el->depth + depth) > t_page.max_depth ) {    // split element
+                            splittable = split_element( cur_el, t_page.max_depth -
+                                                        t_page.cur_depth - depth );
+                            if( splittable ) {
+                                if( t_page.cur_col->main == NULL ) {
+                                    t_page.cur_col->main = cur_el;
+                                } else {
+                                    t_page.last_col_main->next = cur_el;
+                                }
+                                t_page.last_col_main = cur_el;
+                                cur_group->first = cur_el->next;
+                                t_page.last_col_main->next = NULL;
+                                t_page.cur_depth += cur_el->depth + depth;
+                                cur_group->depth -= cur_el->depth + depth;
+                                ProcFlags.col_started = true;
+                            }
+                            break;                              // column is now full
+                        } else {                                // fits as-is
+                            if( t_page.cur_col->main == NULL ) {
+                                t_page.cur_col->main = cur_el;
+                            } else {
+                                t_page.last_col_main->next = cur_el;
+                            }
+                            t_page.last_col_main = cur_el;
+                            cur_group->first = cur_el->next;
+                            t_page.last_col_main->next = NULL;
+                            t_page.cur_depth += cur_el->depth + depth;
+                            cur_group->depth -= cur_el->depth + depth;
+                            ProcFlags.col_started = true;
+                        }
+                        cur_el = cur_group->first;
                     }
                 } else {
-                    break;
+                    break;                          // can't split, keep for next column
                 }
             } else {
                 cur_el = cur_group->first;          // here, cur_el is the last element
@@ -1079,15 +1139,21 @@ static void update_column( void )
                 }
                 t_page.last_col_main = cur_el;
                 t_page.cur_depth += cur_group->depth;
+                n_page.fk_queue = n_page.fk_queue->next;    // only when entire doc_el_group is moved
+                if( n_page.fk_queue == NULL ) {
+                    n_page.last_fk_queue = NULL;
+                }
+                cur_group->next = NULL;
+                cur_group->first = NULL;
+                add_doc_el_group_to_pool( cur_group );
+                ProcFlags.col_started = true;
             }
-            n_page.fk_queue = n_page.fk_queue->next;    // postponed in case cur_group not output
-            cur_group->next = NULL;
-            cur_group->first = NULL;
-            add_doc_el_group_to_pool( cur_group );
         }
     }
 
-    if( !ProcFlags.fb_fk_dump || (n_page.fk_queue == NULL) ) {  // nothing from n_page.col_main until all FK blocks placed
+    /* This appears to replicate the behavior of wgml 4.0 */
+
+    if( n_page.fk_queue == NULL ) {
 
         /***********************************************************************/
         /*  As many blocks from n_page.col_main as will fit are processed      */
@@ -1103,10 +1169,6 @@ static void update_column( void )
 
         while( n_page.col_main != NULL ) {
             cur_el = n_page.col_main;
-            n_page.col_main = n_page.col_main->next;
-            if( n_page.col_main == NULL ) {
-                n_page.last_col_main = NULL;
-            }
 
             /****************************************************************/
             /*  this section identifies skips and blank lines that finish   */
@@ -1142,7 +1204,7 @@ static void update_column( void )
                 depth = cur_el->blank_lines + cur_el->subs_skip;
             }
 
-            if( depth >= t_page.max_depth ) {    // skip fills page
+            if( (t_page.cur_depth + depth) >= t_page.max_depth ) {  // skip fills page
                 break;
             }
 
@@ -1153,7 +1215,7 @@ static void update_column( void )
             /*  cur_el->depth is computed.                                  */
             /****************************************************************/
 
-            if( (depth + cur_el->depth) > t_page.max_depth ) {    // cur_el will fill the page
+            if( (t_page.cur_depth + depth + cur_el->depth) > t_page.max_depth ) {    // cur_el will fill the column
                 splittable = split_element( cur_el, t_page.max_depth -
                                                     t_page.cur_depth - depth );
                 if( splittable ) {
@@ -1166,19 +1228,14 @@ static void update_column( void )
                     }
                     if( t_page.cur_col->main == NULL ) {
                         t_page.cur_col->main = cur_el;
-                        t_page.last_col_main = t_page.cur_col->main;
                     } else {
                         t_page.last_col_main->next = cur_el;
-                        t_page.last_col_main = t_page.last_col_main->next;
                     }
+                    t_page.last_col_main = cur_el;
                     t_page.last_col_main->next = NULL;
-                    t_page.cur_depth += cur_el->depth;
-                } else {
-                    n_page.col_main = cur_el->next;
-                    if( n_page.last_col_main == NULL ) {
-                        n_page.last_col_main = n_page.col_main;
-                    }
-                    cur_el->next = NULL;
+                    t_page.cur_depth += cur_el->depth + depth;
+                } else {                                // leave for next column
+                    break;
                 }
             } else {                                    // cur_el fits as-is
                 if( t_page.cur_col->main == NULL ) {
@@ -1193,13 +1250,15 @@ static void update_column( void )
                                               && cur_el->element.text.force_op ) {
                     /* do nothing, adjusts for top-of-page overprint */
                 } else {
-                    t_page.cur_depth += cur_el->depth;
+                    t_page.cur_depth += cur_el->depth + depth;
+                }
+                n_page.col_main = n_page.col_main->next;    // only when entire doc_el_group is moved
+                if( n_page.col_main == NULL ) {
+                    n_page.last_col_main = NULL;
                 }
             }
         }
     }
-
-    ProcFlags.col_started = false;
 
     return;
 }
@@ -1683,7 +1742,7 @@ void insert_col_main( doc_element * a_element )
                     t_page.last_col_main->next = a_element;
                     t_page.last_col_main = t_page.last_col_main->next;
                 }
-                t_page.cur_depth += depth;
+                t_page.cur_depth += a_element->depth + cur_skip;
                 a_element = a_element->next;
                 t_page.last_col_main->next = NULL;
             }
@@ -2122,7 +2181,6 @@ bool split_element( doc_element * a_element, uint32_t req_depth )
 
     count = 0;
     cur_depth = 0;
-    last = NULL;
     splittable = true;
 
     switch( a_element->type ) {
@@ -2151,7 +2209,7 @@ bool split_element( doc_element * a_element, uint32_t req_depth )
             cur_line = cur_line->next;
         }
 
-        if( cur_line != NULL ) {    // at least one more line
+        if( cur_line != NULL ) {        // at least one more line
             if( count < g_cur_threshold ) {
                 splittable = false;     // widow criteria failed
                 a_element->blank_lines = 0;
@@ -2159,7 +2217,7 @@ bool split_element( doc_element * a_element, uint32_t req_depth )
             }
         }
 
-        if( last == NULL ) {        // all lines fit; unlikely, but seen
+        if( cur_line == NULL ) {        // all lines fit; unlikely, but seen
             break;
         }
 
@@ -2171,7 +2229,7 @@ bool split_element( doc_element * a_element, uint32_t req_depth )
 
         split_el->depth = a_element->depth - cur_depth;
         split_el->element.text.first = cur_line;
-        last->next = NULL;
+        last->next = NULL;                  // this restricts cur_el to the lines allowed
         a_element->depth = cur_depth;
         if( a_element->next == NULL ) {
             a_element->next = split_el;

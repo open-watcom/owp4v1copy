@@ -1671,6 +1671,7 @@ extern void gml_egdoc( const gmltag * entry )
     }
 
     gml_doc_xxx( doc_sect_egdoc );
+    fb_blocks_out();
 }
 
 /***************************************************************************/

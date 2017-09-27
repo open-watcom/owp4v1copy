@@ -242,7 +242,7 @@ extern  unsigned long   mem_get_peak_usage( void );
 extern  void            mem_prt_curr_usage( void );
 extern  void            *mem_realloc( void * p, size_t size );
 extern  int             mem_validate( void );
-
+extern  void            mem_prt_list( void );
 
 /* gnestut.c                            */
 extern  void            init_nest_cb( void );

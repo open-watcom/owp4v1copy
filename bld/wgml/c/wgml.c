@@ -627,7 +627,6 @@ static  void    proc_input( char * filename )
 
         if( inc_level == 1 ) {          // EOF for master file end
             last_page_out();            // forces final page(s) out
-            fb_blocks_out();            // output any remaining FB blocks
 
             /***************************************************************/
             /*  Test for missing eXXX tag                                  */

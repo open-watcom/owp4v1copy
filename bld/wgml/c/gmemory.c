@@ -111,19 +111,6 @@ void mem_banner( void )
 
 
 /***************************************************************************/
-/*  memorytracker validate allocated storage                               */
-/***************************************************************************/
-
-int mem_validate( void )
-{
-#ifdef TRMEM
-    return(_trmem_validate_all( handle ));
-#endif
-    return 1;   // always succeed if trmem not in use
-}
-
-
-/***************************************************************************/
 /*   memorytracker end processing                                          */
 /***************************************************************************/
 
@@ -191,3 +178,30 @@ void mem_free( void * p )
 #endif
     p = NULL;
 }
+
+/* These functions were added for use in debugging */
+
+/***************************************************************************/
+/*  memorytracker validate allocated storage                               */
+/***************************************************************************/
+
+int mem_validate( void )
+{
+#ifdef TRMEM
+    return(_trmem_validate_all( handle ));
+#endif
+    return 1;   // always succeed if trmem not in use
+}
+
+
+/***************************************************************************/
+/*   memorytracker print list                                              */
+/***************************************************************************/
+
+void mem_prt_list( void )
+{
+#ifdef TRMEM
+    _trmem_prt_list( handle );
+#endif
+}
+

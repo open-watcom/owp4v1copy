@@ -57,10 +57,45 @@ typedef struct {
 static  fbk_cmd         cur_cmd;        // current command
 static  group_type      sav_group_type; // save prior group type
 static  print_vars      sav_state;      // save/reset values on entry
+static  uint32_t        sav_post_space; // save/restore post_space for line after FB/FK END
+
+/**************************************************************************/
+/* save the "printing variables", as the TSO calls them                   */
+/**************************************************************************/
+
+static void save_state( void )
+{
+    sav_state.text_el = t_element;
+    t_element = NULL;
+    sav_state.last_line = t_el_last;
+    t_el_last = NULL;
+    sav_state.text_line = t_line;
+    t_line = NULL;
+    sav_state.cur_width = t_page.cur_width;
+    t_page.cur_width = t_page.cur_left;
+    sav_state.subs_skip = g_subs_skip;
+    g_subs_skip = 0;
+
+    return;
+}
+
+/**************************************************************************/
+/* restore the "printing variables", as the TSO calls them                */
+/**************************************************************************/
+
+static void restore_state( void )
+{
+    t_element = sav_state.text_el;
+    t_el_last = sav_state.last_line;
+    t_line = sav_state.text_line;
+    t_page.cur_width = sav_state.cur_width;
+    g_subs_skip = sav_state.subs_skip;
+
+    return;
+}
 
 /**************************************************************************/
 /* get the parameters for FB and FK                                       */
-/* NOTE: only the operands BEGIN, END, and DUMP are actually used         */
 /**************************************************************************/
 
 static char * get_params( const char * scw_name ) {
@@ -114,35 +149,6 @@ static char * get_params( const char * scw_name ) {
         }
     }
     return( p );
-}
-
-/**************************************************************************/
-/* Output all remaining FB blocks (for use at end-of-file)                */
-/**************************************************************************/
-
-void fb_blocks_out( void )
-{
-    doc_element *   cur_el;
-    doc_element *   sav_el;
-
-    while( block_queue != NULL ) {
-        cur_doc_el_group = block_queue;
-        block_queue = block_queue->next;
-        cur_el = cur_doc_el_group->first;
-        while( cur_el != NULL ) {
-            sav_el = cur_el->next;
-            cur_el->next = NULL;
-            insert_col_main( cur_el );
-            cur_el = sav_el;
-        }
-        cur_doc_el_group->first = NULL;
-        cur_doc_el_group->next = NULL;
-        add_doc_el_group_to_pool( cur_doc_el_group );
-    }
-    block_queue_end = NULL;
-    last_page_out();
-
-    return;
 }
 
 /**************************************************************************/
@@ -205,16 +211,7 @@ void scr_fb( void )
     case fbk_begin : 
         g_keep_nest( "FB" );                // catch nesting errors
         ProcFlags.in_fb_fk_block = true;
-        sav_state.text_el = t_element;
-        t_element = NULL;
-        sav_state.last_line = t_el_last;
-        t_el_last = NULL;
-        sav_state.text_line = t_line;
-        t_line = NULL;
-        sav_state.cur_width = t_page.cur_width;
-        t_page.cur_width = t_page.cur_left;
-        sav_state.subs_skip = g_subs_skip;
-        g_subs_skip = 0;
+        save_state();
         sav_group_type = cur_group_type;
         cur_group_type = gt_fb;
         cur_doc_el_group = alloc_doc_el_group( gt_fb );
@@ -224,7 +221,9 @@ void scr_fb( void )
         break;
     case fbk_end :
         if( cur_group_type == gt_fb ) {
+            sav_post_space = post_space;
             scr_process_break();
+            post_space = sav_post_space;
             cur_group_type = sav_group_type;
             cur_doc_el_group = t_doc_el_group;
             t_doc_el_group = t_doc_el_group->next;
@@ -236,11 +235,7 @@ void scr_fb( void )
                 block_queue_end->next = cur_doc_el_group;
                 block_queue_end = block_queue_end->next;
             }
-            t_element = sav_state.text_el;
-            t_el_last = sav_state.last_line;
-            t_line = sav_state.text_line;
-            t_page.cur_width = sav_state.cur_width;
-            g_subs_skip = sav_state.subs_skip;
+            restore_state();
             ProcFlags.in_fb_fk_block = false;
         } else {
             xx_line_err( err_no_fb_begin, p );
@@ -251,10 +246,10 @@ void scr_fb( void )
 
         /* Dump all pending blocks*/
 
-        ProcFlags.fb_fk_dump = true;
         while( block_queue != NULL ) {
             cur_doc_el_group = block_queue;
             block_queue = block_queue->next;
+            cur_doc_el_group->next = NULL;
             cur_el = cur_doc_el_group->first;
             while( cur_el != NULL ) {
                 sav_el = cur_el->next;
@@ -263,11 +258,9 @@ void scr_fb( void )
                 cur_el = sav_el;
             }
             cur_doc_el_group->first = NULL;
-            cur_doc_el_group->next = NULL;
             add_doc_el_group_to_pool( cur_doc_el_group );
         }
         block_queue_end = NULL;
-        ProcFlags.fb_fk_dump = false;
         break;
     case fbk_none :
         xx_val_line_err( err_no_operand, "FB", p - 1 );
@@ -341,16 +334,7 @@ void scr_fk( void )
     case fbk_begin : 
         g_keep_nest( "FK" );                // catch nesting errors
         ProcFlags.in_fb_fk_block = true;
-        sav_state.text_el = t_element;
-        t_element = NULL;
-        sav_state.last_line = t_el_last;
-        t_el_last = NULL;
-        sav_state.text_line = t_line;
-        t_line = NULL;
-        sav_state.cur_width = t_page.cur_width;
-        t_page.cur_width = t_page.cur_left;
-        sav_state.subs_skip = g_subs_skip;
-        g_subs_skip = 0;
+        save_state();
         sav_group_type = cur_group_type;
         cur_group_type = gt_fk;
         cur_doc_el_group = alloc_doc_el_group( gt_fk );
@@ -360,7 +344,9 @@ void scr_fk( void )
         break;
     case fbk_end :
         if( cur_group_type == gt_fk ) {
+            sav_post_space = post_space;
             scr_process_break();
+            post_space = sav_post_space;
             cur_group_type = sav_group_type;
             cur_doc_el_group = t_doc_el_group;
             t_doc_el_group = t_doc_el_group->next;
@@ -386,11 +372,7 @@ void scr_fk( void )
                 cur_doc_el_group->next = NULL;
                 add_doc_el_group_to_pool( cur_doc_el_group );
             }
-            t_element = sav_state.text_el;
-            t_el_last = sav_state.last_line;
-            t_line = sav_state.text_line;
-            t_page.cur_width = sav_state.cur_width;
-            g_subs_skip = sav_state.subs_skip;
+            restore_state();
             ProcFlags.in_fb_fk_block = false;
         } else {
             xx_line_err( err_no_fk_begin, p );
@@ -398,9 +380,10 @@ void scr_fk( void )
         break;
     case fbk_dump :
         g_keep_nest( "FK" );                // catch nesting errors
-        ProcFlags.fb_fk_dump = true;
-        next_column();
-        ProcFlags.fb_fk_dump = false;
+        if( n_page.fk_queue != NULL ) {
+            scr_process_break();
+            next_column();
+        }
         break;
     case fbk_none :
         xx_val_line_err( err_no_operand, "FK", p - 1 );
@@ -413,4 +396,37 @@ void scr_fk( void )
     scan_restart = scan_stop + 1;
     return;
 }
+
+/**************************************************************************/
+/* Output all remaining FB blocks (for use at end-of-file)                */
+/**************************************************************************/
+
+void fb_blocks_out( void )
+{
+    doc_element *   cur_el;
+    doc_element *   sav_el;
+
+    if( block_queue != NULL ) {
+        next_column();
+        while( block_queue != NULL ) {
+            cur_doc_el_group = block_queue;
+            block_queue = block_queue->next;
+            cur_el = cur_doc_el_group->first;
+            while( cur_el != NULL ) {
+                sav_el = cur_el->next;
+                cur_el->next = NULL;
+                insert_col_main( cur_el );
+                cur_el = sav_el;
+            }
+            cur_doc_el_group->first = NULL;
+            cur_doc_el_group->next = NULL;
+            add_doc_el_group_to_pool( cur_doc_el_group );
+        }
+        block_queue_end = NULL;
+        last_page_out();
+    }
+
+    return;
+}
+
 
