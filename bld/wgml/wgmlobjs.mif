@@ -154,6 +154,7 @@ scr_objs =  &
         gsga.obj     &
         gsgoto.obj   &
         gsgt.obj     &
+        gshy.obj     &
         gsifdoel.obj &
         gsimbed.obj  &
         gsin.obj     &
