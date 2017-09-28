@@ -53,7 +53,7 @@
 /* required.                                                              */
 /*    An input line that contains only, one or more blank characters is   */
 /* processed by the Blank Line (.BL) control word. A null input line is   */
-/* different from a blank input line.                                     */                                                                        */
+/* different from a blank input line.                                     */
 /*                                                                        */
 /**************************************************************************/
 
