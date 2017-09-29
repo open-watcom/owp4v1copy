@@ -167,7 +167,7 @@ scr_objs =  &
         gspe.obj     &
         gspp.obj     &
         gspu.obj     &
-        gssk.obj     &
+        gssksp.obj   &
         gstb.obj     &
         gstitr.obj   &
         gsty.obj     &
