@@ -125,7 +125,7 @@
   picks( pl, scr_dummy, cw_break+cw_o_t    )// page length
   picks( pm, scr_dummy, 0                  )// page margin
   picks( pn, scr_dummy, 0                  )// page number
-  picks( pp, scr_dummy, cw_break+cw_o_t    )// paragraph
+  picks( pp, scr_pp,    cw_break+cw_o_t    )// paragraph
   picks( ps, scr_dummy, 0                  )// page naumber symbol
   picks( pt, scr_dummy, 0                  )// put table of contents
   picks( pu, scr_pu,    0                  )// put workfile

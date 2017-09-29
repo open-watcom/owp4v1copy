@@ -340,7 +340,22 @@ static  int evaluate( char **line, long *val )
             if( NULL == op ) {
                 if( !coper ) {
                     *line = ptr;                    // next scan position
-                    return( pop_val( val ) );       // no operations left return result
+
+                    /********************************************************/
+                    /* This little bit of confusion is brought to you by    */
+                    /* the tendency of the calling code to replace the byte */
+                    /* following the expression with '\0' before invoking   */
+                    /* this function and then restoring it afterwards.      */
+                    /* Thus, this byte /should/ be '\0' here but can be     */
+                    /* expected to become something else after this         */
+                    /* function returns                                     */
+                    /********************************************************/
+
+                    if( *line ) {                   // should be '\0' here
+                        return( not_ok );
+                    } else {
+                        return( pop_val( val ) );   // no operations left return result
+                    }
                 } else {
                     return( not_ok );
                 }
