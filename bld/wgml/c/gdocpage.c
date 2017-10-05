@@ -680,11 +680,7 @@ static void set_positions( doc_element * list, uint32_t h_start, uint32_t v_star
                 }
                 if( !at_top ) {                 // not first element
                     if( cur_el->element.text.overprint ) {  // overprint
-                        if( use_spacing ) {
-                            cur_spacing -= cur_line->spacing + cur_line->line_height;
-                        } else {
-                            cur_spacing -= cur_line->line_height;
-                        }
+                        cur_spacing -= cur_line->line_height;
                         cur_el->element.text.overprint = false;
                     }
                 } else {
@@ -2110,8 +2106,11 @@ void set_skip_vars( su * pre_skip, su * pre_top_skip, su * post_skip,
     int32_t skippost;
     int32_t skippre;
     int32_t skipsk;
+    int32_t skipsp;
 
-    skipsk = calc_skip_value();     // pending .sk value?
+    skipsk = calc_skip_value();     // pending .sk value
+    skipsp = calc_space_value();    // pending .sp value
+
     if( pre_skip != NULL ) {
         skippre = conv_vert_unit( pre_skip, spacing, font );
     } else {

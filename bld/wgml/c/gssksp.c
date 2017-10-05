@@ -24,12 +24,12 @@
 *
 *  ========================================================================
 *
-* Description: implement .sk (skip)  script control word
+* Description: implement script control word .sk (skip) and .sp (space)
 *              and helper functions
 *
 *              calc_skip_value
+*              calc_space_value
 *
-*  comments are from script-tso.txt
 ****************************************************************************/
 
 #define __STDC_WANT_LIB_EXT1__  1      /* use safer C library              */
@@ -39,8 +39,8 @@
 
 
 /***************************************************************************/
-/*   calc_skip_value                                                       */
-/*   used by set_skip_vars()                                               */
+/* calc_skip_value                                                         */
+/* used by set_skip_vars()                                                 */
 /***************************************************************************/
 int32_t calc_skip_value( void )
 {
@@ -49,6 +49,20 @@ int32_t calc_skip_value( void )
     skip_value = (g_skip * (int32_t)bin_device->vertical_base_units ) / LPI;
     g_skip = 0;
     return( skip_value );
+}
+
+
+/***************************************************************************/
+/* calc_space_value                                                         */
+/* used by set_skip_vars()                                                 */
+/***************************************************************************/
+int32_t calc_space_value( void )
+{
+    int32_t     space_value;
+
+    space_value = (g_space * (int32_t)bin_device->vertical_base_units ) / LPI;
+    g_space = 0;
+    return( space_value );
 }
 
 
@@ -103,8 +117,10 @@ int32_t calc_skip_value( void )
 /* SCRIPT's internal counting of the number of lines in the text area for */
 /* pagination purposes.                                                   */
 /*                                                                        */
+/* NOTE: so far as I can tell, "C" is accepted by wgml 4.0 but has no     */
+/*       effect.                                                          */
+/*                                                                        */
 /**************************************************************************/
-
 
 void    scr_sk( void )
 {
@@ -112,15 +128,6 @@ void    scr_sk( void )
     int             skip;
     int             sign;
     int             spc;
-
-#if 0
-    char            cwcurr[4];          // if errmsg becomes neccessary
-
-    cwcurr[0] = SCR_char;
-    cwcurr[1] = 's';
-    cwcurr[2] = 'k';
-    cwcurr[3] = '\0';
-#endif
 
     skip = -1;
     sign = 1;                           // default sign +
@@ -180,6 +187,93 @@ void    scr_sk( void )
 
     scr_process_break();
     g_skip = skip;
+
+    scan_restart = scan_stop + 1;
+    return;
+}
+
+/***************************************************************************/
+/* SPACE generates the specified number of blank output lines.             */
+/*                                                                         */
+/*      旼컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴커       */
+/*      |       |                                                  |       */
+/*      |  .SP  | <1|v> <A> <C>                                    |       */
+/*      |       |                                                  |       */
+/*      읕컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴켸       */
+/*                                                                         */
+/* This control word causes a break. The operands and the results are      */
+/* identical to those for the SKIP (.SK) control word with the exception   */
+/* that SPACE lines are never thrown away at the top of the page or        */
+/* column when .LE YES is in effect. For details, see the .SK description. */
+/*                                                                         */
+/* NOTE: SP ignores "A" in wgml 4.0                                        */
+/*                                                                         */
+/***************************************************************************/
+
+void    scr_sp( void )
+{
+    char        *   p;
+    int             space;
+    int             sign;
+    int             spc;
+
+    space = -1;
+    sign = 1;                           // default sign +
+    spc =  spacing;
+
+    p = scan_start;
+
+    if( *p ) {
+        while( *p == ' ' ) {
+            p++;
+        }
+        if( *p == '-' ) {
+            sign = -1;
+            p++;
+        }
+        while( isdigit( *p ) ) {
+            if( space < 0 ) {           // first digit
+                space = 0;              // .. init value
+            }
+            space = space * 10 + *p - '0';
+            p++;
+        }
+        while( *p == ' ' ) {
+            p++;
+        }
+        if( toupper( *p ) == 'A' ) {      // "A" is ignored by SP
+            while( isalpha( *p ) ) {
+                p++;
+            }
+        }
+        while( *p == ' ' ) {
+            p++;
+        }
+#if 0
+        if( toupper( *p ) == 'C' ) {
+            if( space > 0 ) {
+                ProcFlags.sk_cond = true;   // conditional space
+            }
+        }
+#endif
+    }
+    if( space < 0 ) {                   // no space value specified
+        space = 1;                      // set default value
+    } else {
+        space = sign * space;           // apply sign
+    }
+    space = space * spc;                // apply spacing
+    if( space <= -1 ) {
+        ProcFlags.overprint = true;     // enable overprint
+    } else {
+        if( g_space > space ) {         // merge with existing value
+            space = g_space;
+        }
+        ProcFlags.overprint = false;    // disable overprint
+    }
+
+    scr_process_break();
+    g_space = space;
 
     scan_restart = scan_stop + 1;
     return;

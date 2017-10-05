@@ -365,6 +365,7 @@ global  uint32_t    g_subs_skip;        // subs_skip
 global  uint32_t    g_top_skip;         // top_skip
 global  uint32_t    g_spacing;          // spacing (in vertical base units)
 global  int32_t     g_skip;             // .sk skip value ( -1 to +nn )
+global  int32_t     g_space;            // .sp space value ( -1 to +nn )
 global  uint32_t    spacing;            // spacing between lines (line count)
 
 global  uint32_t    post_space;         // spacing within a line

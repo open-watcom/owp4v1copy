@@ -97,6 +97,7 @@ void scr_pa( void )
     char        *   p;
     int             len;
     char            cwcurr[4];
+    uint32_t        cur_page;
 
     cwcurr[0] = SCR_char;
     cwcurr[1] = 'p';
@@ -122,7 +123,11 @@ void scr_pa( void )
         }
         /* fallthru for NOSTART */
     case 0 :
+        cur_page = page;
         last_page_out();                // default action
+        if( cur_page == page ) {        // no page output
+            do_page_out();              // needed at start of doc, at least
+        }
         reset_t_page();
         break;
     case 3 :
@@ -245,6 +250,7 @@ void scr_cp( void )
     getnum_block    gn;
     condcode        cc;
     char            cwcurr[4];
+    uint32_t        cur_page;
 
     cwcurr[0] = SCR_char;
     cwcurr[1] = 'c';
@@ -275,7 +281,11 @@ void scr_cp( void )
             if( gn.result > 0 ) {       // ignore values < 1
                 if( ((gn.result * wgml_fonts[g_curr_font].line_height) +
                                 t_page.cur_depth) > t_page.max_depth ) {
+                    cur_page = page;
                     last_page_out();
+                    if( cur_page == page ) {        // no page output
+                        do_page_out();              // needed at start of doc, at least
+                    }
                     reset_t_page();
                 }
             }

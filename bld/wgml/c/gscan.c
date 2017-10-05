@@ -809,6 +809,8 @@ void    scan_line( void )
                     process_text( scan_start, g_curr_font );
                 }
             }
+        } else if( !ProcFlags.concat) {             // blank line found with concatenation off
+            blank_lines++;
         }
 
         /*******************************************************************/

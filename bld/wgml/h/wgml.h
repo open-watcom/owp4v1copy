@@ -375,8 +375,8 @@ extern  void    close_all_pu_files( void );
 
 
 /* gssk.c                               */
-extern  void    calc_skip( void );
 extern  int32_t calc_skip_value( void );
+extern  int32_t calc_space_value( void );
 
 
 /* gsymvar.c                            */

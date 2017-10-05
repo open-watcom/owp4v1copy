@@ -1270,12 +1270,22 @@ void start_doc_sect( void )
 
     if( first_section ) {               // nothing precedes the first section
         if( page_e == ej_even ) {
+
+        /*******************************************************************/
+        /*  reset_t_page was moved here from below the if() block because  */
+        /*  a page that starts with blank lines cannot be reset without    */
+        /*  causing a GP-fault, as last_col_main() is set to NULL while    */
+        /*  the first main section contains those lines and they should    */
+        /*  appear at the top of the page                                  */
+        /*  this may or may not require further adjustment                 */
+        /*******************************************************************/
+
             do_page_out();              // apage of first page is odd
+            reset_t_page();
             page = 0;                   // restart page for first text page
             ProcFlags.page_ejected = true;
         }
         set_section_banners( ds );
-        reset_t_page();
         document_new_position();        // first text page ready for content
     } else if( page_e == ej_no ) {
         full_col_out();                 // ensure are in last column

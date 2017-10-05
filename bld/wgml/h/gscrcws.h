@@ -143,7 +143,7 @@
   picks( se, scr_se,    0                  )// set symbol
   picks( sk, scr_sk,    cw_break           )// skip (generate blank line(s)
   picks( sl, scr_dummy, cw_break+cw_o_t    )// set leading
-  picks( sp, scr_dummy, cw_break+cw_o_t    )// space
+  picks( sp, scr_sp,    cw_break+cw_o_t    )// space
   picks( sr, scr_se,    0                  )// treat as .se as substitute is always on
   picks( ss, scr_dummy, cw_break+cw_o_t    )// single space
   picks( su, scr_dummy, 0                  )// substitute symbol

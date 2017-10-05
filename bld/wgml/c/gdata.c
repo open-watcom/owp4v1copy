@@ -250,6 +250,7 @@ void init_global_vars( void )
     g_top_skip          = 0;
     g_spacing           = 0;
 
+    spacing             = 1;            // needed for init_next_cb()
     init_nest_cb();                     // base of stack must exist at start
 
     msg_indent          = 0;            // should be correct initial value

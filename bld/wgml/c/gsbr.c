@@ -168,10 +168,11 @@ void  scr_process_break( void )
             set_skip_vars( NULL, NULL, NULL, spacing, g_curr_font);
         }
     } else if( blank_lines > 0 ) {              // blank lines into own doc_element
-        set_skip_vars( NULL, NULL, NULL, 1, g_curr_font );  // generate g_blank_lines
+        set_skip_vars( NULL, NULL, NULL, spacing, g_curr_font );  // generate g_blank_lines
         t_element = init_doc_el( el_text, 0 );  // g_blank_lines goes into t_element.blank_lines, not depth
         t_element->element.text.first = alloc_text_line();
         t_element->element.text.first->first = NULL;
+        t_element->depth = t_element->element.text.first->spacing;
         insert_col_main( t_element );
         t_element = NULL;
         t_el_last = NULL;
