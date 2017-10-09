@@ -1269,24 +1269,27 @@ void start_doc_sect( void )
     /***********************************************************************/
 
     if( first_section ) {               // nothing precedes the first section
+
+        /*******************************************************************/
+        /*  The first page must have the correct banners applied, but the  */
+        /*  remainder of reset_t_page() is not needed (unless the first    */
+        /*  page is ejected) because the first page may already have one   */
+        /*  or more doc_elements containing blank space intended to appear */
+        /*  at the top of the page or of the first column, yet this        */
+        /*  function will not be called until text is to be output         */
+        /*  Further adjustment may be needed                               */
+        /*******************************************************************/
+
+        set_section_banners( ds );
+        reset_top_ban();
+        reset_bot_ban();
+        document_new_position();
         if( page_e == ej_even ) {
-
-        /*******************************************************************/
-        /*  reset_t_page was moved here from below the if() block because  */
-        /*  a page that starts with blank lines cannot be reset without    */
-        /*  causing a GP-fault, as last_col_main() is set to NULL while    */
-        /*  the first main section contains those lines and they should    */
-        /*  appear at the top of the page                                  */
-        /*  this may or may not require further adjustment                 */
-        /*******************************************************************/
-
             do_page_out();              // apage of first page is odd
             reset_t_page();
             page = 0;                   // restart page for first text page
             ProcFlags.page_ejected = true;
         }
-        set_section_banners( ds );
-        document_new_position();        // first text page ready for content
     } else if( page_e == ej_no ) {
         full_col_out();                 // ensure are in last column
         ProcFlags.page_ejected = false; // this would be a good place to add a pane
