@@ -2068,8 +2068,12 @@ void reset_t_page( void )
     t_page.max_depth = g_page_depth - top_depth - bottom_depth;
     old_max_depth = t_page.max_depth;
     t_page.cur_depth = 0;
-    t_page.last_col_main = NULL;
-    t_page.last_col_fn = NULL;
+    if( t_page.panes->cols[0].main == NULL ) {
+        t_page.last_col_main = NULL;
+    }
+    if( t_page.panes->cols[0].footnote == NULL ) {
+        t_page.last_col_fn = NULL;
+    }
     max_depth = t_page.max_depth - t_page.cur_depth;
 
     if( t_page.panes->next != NULL ) {  // keep only the first pane
@@ -2155,6 +2159,7 @@ void set_skip_vars( su * pre_skip, su * pre_top_skip, su * post_skip,
         g_post_skip = 0;
     }
     g_blank_lines = blank_lines * wgml_fonts[font].line_height;
+    g_blank_lines += skipsp;
     blank_lines = 0;
     g_spacing = (spacing - 1) * wgml_fonts[font].line_height;
     ProcFlags.skips_valid = true;

@@ -1269,24 +1269,11 @@ void start_doc_sect( void )
     /***********************************************************************/
 
     if( first_section ) {               // nothing precedes the first section
-
-        /*******************************************************************/
-        /*  The first page must have the correct banners applied, but the  */
-        /*  remainder of reset_t_page() is not needed (unless the first    */
-        /*  page is ejected) because the first page may already have one   */
-        /*  or more doc_elements containing blank space intended to appear */
-        /*  at the top of the page or of the first column, yet this        */
-        /*  function will not be called until text is to be output         */
-        /*  Further adjustment may be needed                               */
-        /*******************************************************************/
-
         set_section_banners( ds );
-        reset_top_ban();
-        reset_bot_ban();
-        document_new_position();
+        reset_t_page();
+        document_new_position();        // page is now ready for output
         if( page_e == ej_even ) {
-            do_page_out();              // apage of first page is odd
-            reset_t_page();
+            do_page_out();              // apage since first page is odd
             page = 0;                   // restart page for first text page
             ProcFlags.page_ejected = true;
         }
