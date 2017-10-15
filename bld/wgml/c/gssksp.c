@@ -42,6 +42,7 @@
 /* calc_skip_value                                                         */
 /* used by set_skip_vars()                                                 */
 /***************************************************************************/
+
 int32_t calc_skip_value( void )
 {
     int32_t     skip_value;
@@ -56,6 +57,7 @@ int32_t calc_skip_value( void )
 /* calc_space_value                                                         */
 /* used by set_skip_vars()                                                 */
 /***************************************************************************/
+
 int32_t calc_space_value( void )
 {
     int32_t     space_value;
@@ -117,9 +119,6 @@ int32_t calc_space_value( void )
 /* SCRIPT's internal counting of the number of lines in the text area for */
 /* pagination purposes.                                                   */
 /*                                                                        */
-/* NOTE: so far as I can tell, "C" is accepted by wgml 4.0 but has no     */
-/*       effect.                                                          */
-/*                                                                        */
 /**************************************************************************/
 
 void    scr_sk( void )
@@ -162,13 +161,11 @@ void    scr_sk( void )
         while( *p == ' ' ) {
             p++;
         }
-#if 0
         if( toupper( *p ) == 'C' ) {
             if( skip > 0 ) {
-                ProcFlags.sk_cond = true;   // conditional skip
+//                ProcFlags.sk_cond = true;   // conditional skip
             }
         }
-#endif
     }
     if( skip < 0 ) {                    // no skip value specified
         skip = 1;                       // set default value
@@ -183,6 +180,10 @@ void    scr_sk( void )
             skip = g_skip;
         }
         ProcFlags.overprint = false;    // disable overprint
+    }
+
+    if( (blank_lines > 0) || g_space > 0 ) {
+        ProcFlags.sk_2nd = true;
     }
 
     scr_process_break();
@@ -242,6 +243,7 @@ void    scr_sp( void )
             p++;
         }
         if( toupper( *p ) == 'A' ) {      // "A" is ignored by SP
+            spc = 1;                    // with abs always single spacing
             while( isalpha( *p ) ) {
                 p++;
             }
@@ -249,13 +251,11 @@ void    scr_sp( void )
         while( *p == ' ' ) {
             p++;
         }
-#if 0
         if( toupper( *p ) == 'C' ) {
             if( space > 0 ) {
-                ProcFlags.sk_cond = true;   // conditional space
+//                ProcFlags.sk_cond = true;   // conditional space
             }
         }
-#endif
     }
     if( space < 0 ) {                   // no space value specified
         space = 1;                      // set default value

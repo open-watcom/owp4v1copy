@@ -167,23 +167,21 @@ void  scr_process_break( void )
         } else {
             set_skip_vars( NULL, NULL, NULL, spacing, g_curr_font);
         }
-    } else if( blank_lines > 0 ) {              // blank lines into own doc_element
+    } else if( blank_lines > 0 ) {                  // blank lines into own doc_element
         set_skip_vars( NULL, NULL, NULL, spacing, g_curr_font );  // generate g_blank_lines
-        t_element = init_doc_el( el_text, 0 );  // g_blank_lines goes into t_element.blank_lines, not depth
-        t_element->element.text.first = alloc_text_line();
-        t_element->element.text.first->first = NULL;
-        t_element->depth = t_element->element.text.first->spacing;
+        t_element = init_doc_el( el_vspace, 0 );
+        t_element->element.vspace.spacing = g_spacing;
         insert_col_main( t_element );
         t_element = NULL;
         t_el_last = NULL;
+        ProcFlags.skips_valid = false;
     } else if( g_blank_lines > 0 ) {            // arbitrary blank space
-        t_element = init_doc_el( el_text, 0 );  // g_blank_lines goes into t_element.blank_lines, not depth
-        t_element->element.text.first = alloc_text_line();
-        t_element->element.text.first->first = NULL;
+        t_element = init_doc_el( el_vspace, 0 );
+        t_element->element.vspace.spacing = g_spacing;
         insert_col_main( t_element );
         t_element = NULL;
         t_el_last = NULL;
-        g_blank_lines = 0;
+        ProcFlags.skips_valid = false;
     }
     set_h_start();      // to stop paragraph indent from being used after a break
     ProcFlags.para_starting = false;

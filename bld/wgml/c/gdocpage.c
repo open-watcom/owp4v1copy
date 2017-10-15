@@ -109,6 +109,9 @@ static void do_el_list_out( doc_element * in_element )
                 fb_vline( &in_element->element.vline );
             }
             break;
+        case el_vspace :
+            // do nothing, next element is positioned to skip the space
+            break;
         default :
             internal_err( __FILE__, __LINE__ );
             break;
@@ -748,6 +751,23 @@ static void set_positions( doc_element * list, uint32_t h_start, uint32_t v_star
                 g_cur_v_start += cur_spacing;
             }
             cur_el->element.vline.v_start = g_cur_v_start;
+            cur_el->v_pos = g_cur_v_start;
+            if( bin_driver->y_positive == 0x00 ) {
+                g_cur_v_start -= cur_el->depth;
+            } else {
+                g_cur_v_start += cur_el->depth;
+            }
+            break;
+        case el_vspace :
+            cur_el->h_pos = h_start;
+            if( !at_top ) {                 // not first element
+                cur_spacing += cur_el->element.vspace.spacing;
+            }
+            if( bin_driver->y_positive == 0x00 ) {
+                g_cur_v_start -= cur_spacing;
+            } else {
+                g_cur_v_start += cur_spacing;
+            }
             cur_el->v_pos = g_cur_v_start;
             if( bin_driver->y_positive == 0x00 ) {
                 g_cur_v_start -= cur_el->depth;
@@ -2115,11 +2135,30 @@ void set_skip_vars( su * pre_skip, su * pre_top_skip, su * post_skip,
     skipsk = calc_skip_value();     // pending .sk value
     skipsp = calc_space_value();    // pending .sp value
 
+    g_spacing = (spacing - 1) * wgml_fonts[font].line_height;
+    g_blank_lines = blank_lines * wgml_fonts[font].line_height;
+    if( blank_lines > 0 ) {
+        g_blank_lines += (blank_lines - 1) * g_spacing;
+    }
+    g_blank_lines += skipsp;
+    blank_lines = 0;
+
+    if( !ProcFlags.sk_2nd ) {
+        if( g_blank_lines > skipsk ) {  // order of this operation is not entirely certain
+            skipsk = 0;                 // use g_blank_lines
+        } else {
+            g_blank_lines = 0;          // use SK skip
+        }
+    } else {
+        ProcFlags.sk_2nd = false;
+    }
+
     if( pre_skip != NULL ) {
         skippre = conv_vert_unit( pre_skip, spacing, font );
     } else {
         skippre = 0;
     }
+
     if( pre_top_skip != NULL ) {
         skiptop = conv_vert_unit( pre_top_skip, spacing, font );
     } else {
@@ -2158,10 +2197,6 @@ void set_skip_vars( su * pre_skip, su * pre_top_skip, su * post_skip,
     } else {
         g_post_skip = 0;
     }
-    g_blank_lines = blank_lines * wgml_fonts[font].line_height;
-    g_blank_lines += skipsp;
-    blank_lines = 0;
-    g_spacing = (spacing - 1) * wgml_fonts[font].line_height;
     ProcFlags.skips_valid = true;
 
     return;
@@ -2194,6 +2229,7 @@ bool split_element( doc_element * a_element, uint32_t req_depth )
     case el_graph :
     case el_hline :
     case el_vline :
+    case el_vspace :
         splittable = false;     
         break;
     case el_text :

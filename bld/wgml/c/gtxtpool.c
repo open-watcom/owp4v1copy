@@ -406,6 +406,9 @@ doc_element * alloc_doc_el( element_type type )
         curr->element.vline.v_len = 0;
         curr->element.vline.twice = true;
         break;
+    case el_vspace :
+        curr->element.vspace.spacing = g_spacing;
+        break;
     default :
         internal_err( __FILE__, __LINE__ );
     }
@@ -627,6 +630,7 @@ void clear_doc_element( doc_element * a_element )
         case el_graph :
         case el_hline :
         case el_vline :
+        case el_vspace :
             break;      // should be nothing to do
         case el_text :
             cur_line = cur_el->element.text.first;
@@ -656,6 +660,7 @@ doc_element * init_doc_el( element_type type, uint32_t depth )
 
     curr = alloc_doc_el( type );
 
+    curr->depth = depth;
     curr->blank_lines = g_blank_lines;
     g_blank_lines = 0;
     curr->subs_skip = g_subs_skip;
@@ -663,12 +668,11 @@ doc_element * init_doc_el( element_type type, uint32_t depth )
     curr->top_skip = g_top_skip;
     g_top_skip = 0;
 
-    if( type == el_text ) {             // spacing only applies to text lines
-        curr->depth = depth;
+    if( type == el_text ) {             // overprint applies to text lines
         curr->element.text.overprint = ProcFlags.overprint;
         ProcFlags.overprint = false;
-    } else {
-        curr->depth = depth;
+    } else if( type == el_vspace ) {      // spacing applies to vertical space elements
+        curr->element.vspace.spacing = g_spacing;
     }
 
     ProcFlags.skips_valid = false;

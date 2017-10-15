@@ -57,8 +57,6 @@ void    init_page_geometry( void )
     g_resh = bin_device->horizontal_base_units; // hor resolution  &sysresh
     g_resv = bin_device->vertical_base_units;   // vert resolution &sysresv
 
-    spacing = layout_work.defaults.spacing;
-
     g_cur_threshold = layout_work.widow.threshold;
 
     g_max_char_width = 0;
@@ -384,8 +382,8 @@ static void finish_banners( void )
 void    do_layout_end_processing( void )
 {
     /***********************************************************************/
-    /*  Since the LAYOUT blocks are only processed on the first pass, this */
-    /*  function is similarly restricted to the first pass.                */
+    /*  Since the LAYOUT blocks are only processed on the first pass, most */
+    /*  of this function is similarly restricted to the first pass.        */
     /***********************************************************************/
 
     if( GlobalFlags.firstpass == 1) {
@@ -431,13 +429,17 @@ void    do_layout_end_processing( void )
 
         out_msg( "Formatting document\n" );
 
-        fb_document();                 // DOCUMENT :PAUSE & :INIT processing.
-        ProcFlags.fb_document_done = true;
+        fb_document();                  // DOCUMENT :PAUSE & :INIT processing.
 
         set_banners();                  // prepare banners for selection
         set_pgnum_style();              // set the pgnum_style values
         reset_t_page();                 // set up t_page
     }
+
+    /* These items must be done at this point on every pass */
+
+    spacing = layout_work.defaults.spacing;
+    ProcFlags.fb_document_done = true;  // done on pass 1
 }
 
 

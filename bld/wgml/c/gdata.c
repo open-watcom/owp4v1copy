@@ -270,13 +270,11 @@ void init_global_vars( void )
 
 void init_pass_data( void )
 {
-    bool    flag_save   = ProcFlags.fb_document_done;
     bool    aa_save     = ProcFlags.has_aa_block;
     bool    ps_save     = ProcFlags.ps_device;
     int     i;
 
     memset( &ProcFlags, 0, sizeof( ProcFlags ) );
-    ProcFlags.fb_document_done = flag_save; // keep value
     ProcFlags.blanks_allowed = 1;       // blanks during scanning
                                         // i.e. .se var  =    7
                                         // .se var=7  without

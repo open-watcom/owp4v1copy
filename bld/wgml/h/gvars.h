@@ -199,6 +199,7 @@ global struct ProcFlags {
     unsigned        utc             : 1;// user tag with "continue" is active
     unsigned        in_trans        : 1;// esc char is specified (.ti set x)
     unsigned        reprocess_line  : 1;// unget for current input line
+    unsigned        sk_2nd          : 1;// .sk follows blank lines of .sp
 #if 0   // used in docs, but doesn't seem to /do/ anything in wgml 4.0
     unsigned        sk_cond         : 1;// .sk n C found
 #endif

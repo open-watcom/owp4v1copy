@@ -985,6 +985,7 @@ typedef enum {
     el_hline,       // HLINE element
     el_text,        // text element
     el_vline,       // VLINE element
+    el_vspace,      // vertical space element (blank lines and SP)
 } element_type;
 
 // struct oc_element; // Forward declaration (uncomment when needed)
@@ -1038,14 +1039,18 @@ typedef struct {
     bool        twice;
 } vline_element;
 
+typedef struct {
+    uint32_t    spacing;                // this is for single-space, double-space etc
+} vspace_element;
+
 typedef struct doc_element {
     struct  doc_element     *   next;
             uint32_t            blank_lines;
             uint32_t            depth;
             uint32_t            subs_skip;
             uint32_t            top_skip;
-            uint32_t            h_pos;          // multicolumn support only
-            uint32_t            v_pos;          // multicolumn support only
+            uint32_t            h_pos;          // used by multicolumn support only
+            uint32_t            v_pos;          // used by multicolumn support only
     union {
             binclude_element    binc;
             dbox_element        dbox;
@@ -1053,6 +1058,7 @@ typedef struct doc_element {
             hline_element       hline;
             text_element        text;
             vline_element       vline;
+            vspace_element      vspace;
     } element;
             element_type        type;   // placement avoids padding warning
 } doc_element;
