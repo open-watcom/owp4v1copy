@@ -35,6 +35,12 @@
 
 static  int32_t    vspace  = 0;                 // vertical space entered (vbus)
 
+/**************************************************************************/
+/* Implements most of SK and SP                                           */
+/* NOTE: "C" does not appear to do anything in wgml 4.0, and so is not    */
+/*       implemented here                                                 */
+/**************************************************************************/
+
 static void sksp_common( void )
 {
     bool            a_seen          = false;    // records use of operand A (or ABS)
@@ -98,10 +104,6 @@ static void sksp_common( void )
                 }
             }
         }
-    }
-
-    if( c_seen && (vspace > 0) ) {
-//        ProcFlags.sk_cond = true;           // conditional skip
     }
 
     if( !scanerr ) {
@@ -213,8 +215,6 @@ void    scr_sk( void )
 /* identical to those for the SKIP (.SK) control word with the exception   */
 /* that SPACE lines are never thrown away at the top of the page or        */
 /* column when .LE YES is in effect. For details, see the .SK description. */
-/*                                                                         */
-/* NOTE: SP ignores "A" in wgml 4.0                                        */
 /*                                                                         */
 /***************************************************************************/
 
