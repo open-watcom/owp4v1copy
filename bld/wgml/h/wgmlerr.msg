@@ -415,6 +415,9 @@ pick( ERR_NESTED_PE,            "Nested .pe not supported",
 pick( INF_ERROR_STOP,           "  Remaining pass%s skipped due to error count",
                                 "  Remaining pass%s skipped due to error count" )
 
+pick( ERR_PARM_INVALID,         "A control word parameter is invalid",
+                                "A control word parameter is invalid" )
+
 pick( ERR_PARM_MISSING,         "A control word parameter is required for %s",
                                 "A control word parameter is required for %s" )
 

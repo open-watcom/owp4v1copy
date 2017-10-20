@@ -24,11 +24,7 @@
 *
 *  ========================================================================
 *
-* Description: implement script control word .sk (skip) and .sp (space)
-*              and helper functions
-*
-*              calc_skip_value
-*              calc_space_value
+* Description: implement script control words .sk (skip) and .sp (space)
 *
 ****************************************************************************/
 
@@ -37,34 +33,104 @@
 #include "wgml.h"
 #include "gvars.h"
 
+static  int32_t    vspace  = 0;                 // vertical space entered (vbus)
 
-/***************************************************************************/
-/* calc_skip_value                                                         */
-/* used by set_skip_vars()                                                 */
-/***************************************************************************/
-
-int32_t calc_skip_value( void )
+static void sksp_common( void )
 {
-    int32_t     skip_value;
+    bool            a_seen          = false;    // records use of operand A (or ABS)
+    bool            c_seen          = false;    // records use of operand C (or COND)
+    bool            scanerr         = false;
+    char        *   p;
+    char        *   pa;
+    size_t          len;
+    su              spskwork;
+    uint32_t        line_spacing    = spacing;  // forced to "1" if A (ABS) is used with integer
 
-    skip_value = (g_skip * (int32_t)bin_device->vertical_base_units ) / LPI;
-    g_skip = 0;
-    return( skip_value );
-}
+    p = scan_start;
 
+    if( *p ) {
+        while( *p == ' ' ) {
+            p++;
+        }
+        pa = p;
+ 
+        while( *p && *p != ' ' ) {          // end of word
+            p++;
+        }
+        len = p - pa;
 
-/***************************************************************************/
-/* calc_space_value                                                         */
-/* used by set_skip_vars()                                                 */
-/***************************************************************************/
+        if( len > 0 ) {                     // arguments exist
+            p = pa;
+            scanerr = cw_val_to_su( &p, &spskwork );
+            if( scanerr ) {
+                p = pa;                     // reset scan pointer if no space value found
+            }
 
-int32_t calc_space_value( void )
-{
-    int32_t     space_value;
+            while( *p ) {                   // the operands can appear in either order, or not at all
+                while( *p == ' ' ) {
+                    p++;
+                }
 
-    space_value = (g_space * (int32_t)bin_device->vertical_base_units ) / LPI;
-    g_space = 0;
-    return( space_value );
+                pa = p;
+                while( *pa && (*pa != ' ') ) {
+                    pa++;
+                }
+                len = pa - p;
+                if( !a_seen && (len <= 3) ) {
+                    if( !memicmp( p, "abs", len ) ) {   // wgml 4.0 matches 'a', 'ab', 'abs' only
+                        a_seen = true;
+                        p = pa;
+                        continue;
+                    }
+                }
+
+                if( !c_seen && (len <= 4) ) {
+                    if( !memicmp( p, "cond", len ) ) {  // wgml 4.0 matches 'c', 'co', 'con', 'cond' only
+                        c_seen = true;
+                        p = pa;
+                        continue;
+                    }
+                }
+
+                if( *p ) {                              // more text on line
+                    xx_line_err( err_parm_invalid, p );
+                    break;                              // avoids looping
+                }
+            }
+        }
+    }
+
+    if( c_seen && (vspace > 0) ) {
+//        ProcFlags.sk_cond = true;           // conditional skip
+    }
+
+    if( !scanerr ) {
+        vspace = conv_vert_unit( &spskwork, 1, g_curr_font );
+    }
+
+    if( vspace == 0 ) {                     // no vertical space value specified
+        vspace = 1;                         // set default value
+    }
+
+    if( vspace <= -1 ) {
+        ProcFlags.overprint = true;     // enable overprint
+        vspace = 0;                     // avoid evaluating negative spacing
+    } else {
+        ProcFlags.overprint = false;    // disable overprint
+    }
+
+    if( (vspace > 0) && (spskwork.su_u == SU_chars_lines) ) { // special processing for integers
+        if( a_seen ) {
+            line_spacing = 1;               // with abs always single spacing
+        }
+        vspace = (line_spacing * spskwork.su_whole * (int32_t)bin_device->vertical_base_units ) / LPI;
+    }
+
+    if( (blank_lines > 0) || g_space > 0 ) {
+        ProcFlags.sk_2nd = true;
+    }
+
+    return;
 }
 
 
@@ -123,75 +189,16 @@ int32_t calc_space_value( void )
 
 void    scr_sk( void )
 {
-    char        *   p;
-    int             skip;
-    int             sign;
-    int             spc;
-
-    skip = -1;
-    sign = 1;                           // default sign +
-    spc =  spacing;
-
-    p = scan_start;
-
-    if( *p ) {
-        while( *p == ' ' ) {
-            p++;
-        }
-        if( *p == '-' ) {
-            sign = -1;
-            p++;
-        }
-        while( isdigit( *p ) ) {
-            if( skip < 0 ) {            // first digit
-                skip = 0;               // .. init value
-            }
-            skip = skip * 10 + *p - '0';
-            p++;
-        }
-        while( *p == ' ' ) {
-            p++;
-        }
-        if( toupper( *p ) == 'A' ) {
-            spc = 1;                    // with abs always single spacing
-            while( isalpha( *p ) ) {
-                p++;
-            }
-        }
-        while( *p == ' ' ) {
-            p++;
-        }
-        if( toupper( *p ) == 'C' ) {
-            if( skip > 0 ) {
-//                ProcFlags.sk_cond = true;   // conditional skip
-            }
-        }
-    }
-    if( skip < 0 ) {                    // no skip value specified
-        skip = 1;                       // set default value
-    } else {
-        skip = sign * skip;             // apply sign
-    }
-    skip = skip * spc;                  // apply spacing
-    if( skip <= -1 ) {
-        ProcFlags.overprint = true;     // enable overprint
-    } else {
-        if( g_skip > skip ) {           // merge with existing value
-            skip = g_skip;
-        }
-        ProcFlags.overprint = false;    // disable overprint
-    }
-
-    if( (blank_lines > 0) || g_space > 0 ) {
-        ProcFlags.sk_2nd = true;
-    }
-
     scr_process_break();
-    g_skip = skip;
+    sksp_common();                  // set vspace
+    if( vspace > g_skip ) {         // merge with existing value
+        g_skip = vspace;
+    }
 
     scan_restart = scan_stop + 1;
     return;
 }
+
 
 /***************************************************************************/
 /* SPACE generates the specified number of blank output lines.             */
@@ -213,67 +220,11 @@ void    scr_sk( void )
 
 void    scr_sp( void )
 {
-    char        *   p;
-    int             space;
-    int             sign;
-    int             spc;
-
-    space = -1;
-    sign = 1;                           // default sign +
-    spc =  spacing;
-
-    p = scan_start;
-
-    if( *p ) {
-        while( *p == ' ' ) {
-            p++;
-        }
-        if( *p == '-' ) {
-            sign = -1;
-            p++;
-        }
-        while( isdigit( *p ) ) {
-            if( space < 0 ) {           // first digit
-                space = 0;              // .. init value
-            }
-            space = space * 10 + *p - '0';
-            p++;
-        }
-        while( *p == ' ' ) {
-            p++;
-        }
-        if( toupper( *p ) == 'A' ) {      // "A" is ignored by SP
-            spc = 1;                    // with abs always single spacing
-            while( isalpha( *p ) ) {
-                p++;
-            }
-        }
-        while( *p == ' ' ) {
-            p++;
-        }
-        if( toupper( *p ) == 'C' ) {
-            if( space > 0 ) {
-//                ProcFlags.sk_cond = true;   // conditional space
-            }
-        }
-    }
-    if( space < 0 ) {                   // no space value specified
-        space = 1;                      // set default value
-    } else {
-        space = sign * space;           // apply sign
-    }
-    space = space * spc;                // apply spacing
-    if( space <= -1 ) {
-        ProcFlags.overprint = true;     // enable overprint
-    } else {
-        if( g_space > space ) {         // merge with existing value
-            space = g_space;
-        }
-        ProcFlags.overprint = false;    // disable overprint
-    }
-
     scr_process_break();
-    g_space = space;
+    sksp_common();                  // set vspace
+    if( vspace > g_space ) {        // merge with existing value
+        g_space = vspace;
+    }
 
     scan_restart = scan_stop + 1;
     return;

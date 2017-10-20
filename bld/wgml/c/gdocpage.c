@@ -2129,23 +2129,18 @@ void set_skip_vars( su * pre_skip, su * pre_top_skip, su * post_skip,
     int32_t skiptop;
     int32_t skippost;
     int32_t skippre;
-    int32_t skipsk;
-    int32_t skipsp;
-
-    skipsk = calc_skip_value();     // pending .sk value
-    skipsp = calc_space_value();    // pending .sp value
 
     g_spacing = (spacing - 1) * wgml_fonts[font].line_height;
     g_blank_lines = blank_lines * wgml_fonts[font].line_height;
     if( blank_lines > 0 ) {
         g_blank_lines += (blank_lines - 1) * g_spacing;
     }
-    g_blank_lines += skipsp;
+    g_blank_lines += g_space;
     blank_lines = 0;
 
     if( !ProcFlags.sk_2nd ) {
-        if( g_blank_lines > skipsk ) {  // order of this operation is not entirely certain
-            skipsk = 0;                 // use g_blank_lines
+        if( g_blank_lines > g_skip ) {  // order of this operation is not entirely certain
+            g_skip = 0;                 // use g_blank_lines
         } else {
             g_blank_lines = 0;          // use SK skip
         }
@@ -2165,14 +2160,14 @@ void set_skip_vars( su * pre_skip, su * pre_top_skip, su * post_skip,
         skiptop = 0;
     }
 
-    if( g_subs_skip > skipsk ) {    // provisional: merge with existing value
-        skipsk = g_subs_skip;       // not yet in Wiki per server failure
+    if( g_subs_skip > g_skip ) {    // provisional: merge with existing value
+        g_skip = g_subs_skip;       // not yet in Wiki per server failure
     }
 
-    if( g_post_skip > skipsk ) {    // merge sk-skip & post-skip per Wiki
+    if( g_post_skip > g_skip ) {    // merge sk-skip & post-skip per Wiki
         skippost = g_post_skip;
     } else {
-        skippost = skipsk;
+        skippost = g_skip;
     }
 
     if( skippre > skiptop ) {   // merge pre-skip & pre-top-skip per Wiki
@@ -2198,6 +2193,8 @@ void set_skip_vars( su * pre_skip, su * pre_top_skip, su * post_skip,
         g_post_skip = 0;
     }
     ProcFlags.skips_valid = true;
+    g_skip = 0;
+    g_space = 0;
 
     return;
 }
