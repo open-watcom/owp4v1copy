@@ -581,7 +581,9 @@ static void set_positions( doc_element * list, uint32_t h_start, uint32_t v_star
     for( cur_el = list; cur_el != NULL; cur_el = cur_el->next ) {
         use_spacing = false;
         if( at_top ) {
-            if( cur_el->blank_lines > 0 ) {
+            if( cur_el->type == el_vspace ) {
+                cur_spacing = cur_el->blank_lines;
+            } else if( cur_el->blank_lines > 0 ) {
                 cur_spacing = cur_el->blank_lines + cur_el->subs_skip;
             } else {
                 cur_spacing = cur_el->top_skip;
@@ -760,9 +762,6 @@ static void set_positions( doc_element * list, uint32_t h_start, uint32_t v_star
             break;
         case el_vspace :
             cur_el->h_pos = h_start;
-            if( !at_top ) {                 // not first element
-                cur_spacing += cur_el->element.vspace.spacing;
-            }
             if( bin_driver->y_positive == 0x00 ) {
                 g_cur_v_start -= cur_spacing;
             } else {
@@ -942,7 +941,11 @@ static void update_column( void )
     t_page.cur_col->main_top = t_page.last_pane->col_width_top;
     t_page.cur_col->fig_top = t_page.bot_ban_top;
     t_page.cur_col->fn_top = t_page.bot_ban_top;
-    t_page.max_depth = t_page.cur_col->main_top - t_page.cur_col->fig_top;
+    if( bin_driver->y_positive == 0x00 ) {
+        t_page.max_depth = t_page.cur_col->main_top - t_page.cur_col->fig_top;
+    } else {
+        t_page.max_depth = t_page.cur_col->fig_top - t_page.cur_col->main_top;
+    }
     ProcFlags.col_started = false;
 
     /***********************************************************************/

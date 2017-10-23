@@ -107,29 +107,32 @@ static void sksp_common( void )
     }
 
     if( !scanerr ) {
-        vspace = conv_vert_unit( &spskwork, 1, g_curr_font );
-    }
+        if( spskwork.su_u == SU_chars_lines ) {     // processing for integers
+            vspace = spskwork.su_whole;
 
-    if( vspace == 0 ) {                     // no vertical space value specified
-        vspace = 1;                         // set default value
-    }
+            if( vspace == 0 ) {                     // no vertical space value specified
+                vspace = 1;                         // set default value
+            }
 
-    if( vspace <= -1 ) {
-        ProcFlags.overprint = true;     // enable overprint
-        vspace = 0;                     // avoid evaluating negative spacing
-    } else {
-        ProcFlags.overprint = false;    // disable overprint
-    }
+            if( vspace <= -1 ) {
+                ProcFlags.overprint = true;     // enable overprint
+                vspace = 0;                     // avoid evaluating negative spacing
+            } else {
+                ProcFlags.overprint = false;    // disable overprint
+            }
 
-    if( (vspace > 0) && (spskwork.su_u == SU_chars_lines) ) { // special processing for integers
-        if( a_seen ) {
-            line_spacing = 1;               // with abs always single spacing
+            if( (vspace > 0) && (spskwork.su_u == SU_chars_lines) ) { // special processing for integers
+                if( a_seen ) {
+                    line_spacing = 1;               // with abs always single spacing
+                }
+                vspace = (line_spacing * spskwork.su_whole * (int32_t)bin_device->vertical_base_units ) / LPI;
+            }
+        } else {
+            if( vspace == 0 ) {                     // no vertical space value specified
+                vspace = 1;                         // set default value
+            }
+            vspace = conv_vert_unit( &spskwork, 1, g_curr_font );
         }
-        vspace = (line_spacing * spskwork.su_whole * (int32_t)bin_device->vertical_base_units ) / LPI;
-    }
-
-    if( (blank_lines > 0) || g_space > 0 ) {
-        ProcFlags.sk_2nd = true;
     }
 
     return;
@@ -195,6 +198,10 @@ void    scr_sk( void )
     sksp_common();                  // set vspace
     if( vspace > g_skip ) {         // merge with existing value
         g_skip = vspace;
+    }
+
+    if( (blank_lines > 0) || g_space > 0 ) {
+        ProcFlags.sk_2nd = true;
     }
 
     scan_restart = scan_stop + 1;

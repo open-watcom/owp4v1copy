@@ -235,8 +235,8 @@ static bool             at_start                = true;
 static bool             htab_done               = false;
 static bool             page_start              = false;
 static bool             shift_done              = false;
-static page_state       current_state           = { 0, 0, 0 };
-static page_state       desired_state           = { 0, 0, 0 };
+static page_state       current_state           = { 0, 0, 0, norm };
+static page_state       desired_state           = { 0, 0, 0, norm };
 static uint32_t         line_pass_number        = 0;
 
 /* These are used to hold values returned by device functions. */
@@ -3749,8 +3749,6 @@ void fb_enterfont( void )
  *      This function is to be used only by fb_output_text(), which includes
  *          a test ensuring that out_line contains at least one text_chars
  *          instance (that is, that out_line->first is not NULL).
- *      Other functions are expected to be created for outputting lines
- *          created using :BOX characters.
  */
 
 void fb_first_text_line_pass( text_line *out_line )
@@ -3791,6 +3789,7 @@ void fb_first_text_line_pass( text_line *out_line )
     }
     x_address = desired_state.x_address;
     fb_first_text_chars( current, cur_lineproc );
+    page_start = false;     // solves problem but putting it here may not be best place
 
     /* Now do the remaining text_chars instances. */
 
@@ -4116,8 +4115,6 @@ void fb_position( uint32_t h_start, uint32_t v_start )
  *      This function is to be used only by fb_output_text(), which includes
  *          a test ensuring that out_line contains at least one text_chars
  *          instance (that is, that out_line->first is not NULL).
- *      Other functions are expected to be created for outputting lines
- *          created using :BOX characters.
  */
 
 void fb_subsequent_text_line_pass( text_line *out_line, uint16_t line_pass )

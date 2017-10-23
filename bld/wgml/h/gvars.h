@@ -200,9 +200,6 @@ global struct ProcFlags {
     unsigned        in_trans        : 1;// esc char is specified (.ti set x)
     unsigned        reprocess_line  : 1;// unget for current input line
     unsigned        sk_2nd          : 1;// .sk follows blank lines of .sp
-#if 0   // used in docs, but doesn't seem to /do/ anything in wgml 4.0
-    unsigned        sk_cond         : 1;// .sk n C found
-#endif
     unsigned        overprint       : 1;// .sk -1 active or not
     unsigned        tag_end_found   : 1;// '.' ending tag found
     unsigned        skips_valid     : 1;// controls set_skip_vars() useage
@@ -365,8 +362,8 @@ global  uint32_t    g_post_skip;        // post_skip
 global  uint32_t    g_subs_skip;        // subs_skip
 global  uint32_t    g_top_skip;         // top_skip
 global  uint32_t    g_spacing;          // spacing (in vertical base units)
-global  int32_t     g_skip;             // .sk skip value ( -1 to +nn )
-global  int32_t     g_space;            // .sp space value ( -1 to +nn )
+global  int32_t     g_skip;             // .sk skip value (in vbus)
+global  int32_t     g_space;            // .sp space value (in vbus)
 global  uint32_t    spacing;            // spacing between lines (line count)
 
 global  uint32_t    post_space;         // spacing within a line
