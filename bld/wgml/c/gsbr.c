@@ -167,14 +167,6 @@ void  scr_process_break( void )
         } else {
             set_skip_vars( NULL, NULL, NULL, spacing, g_curr_font);
         }
-    } else if( blank_lines > 0 ) {                  // blank lines into own doc_element
-        set_skip_vars( NULL, NULL, NULL, spacing, g_curr_font );  // generate g_blank_lines
-        t_element = init_doc_el( el_vspace, 0 );
-        t_element->subs_skip = t_element->element.vspace.spacing;
-        insert_col_main( t_element );
-        t_element = NULL;
-        t_el_last = NULL;
-        ProcFlags.skips_valid = false;
     } else if( g_blank_lines > 0 ) {            // arbitrary blank space
         t_element = init_doc_el( el_vspace, 0 );
         t_element->subs_skip = t_element->element.vspace.spacing;

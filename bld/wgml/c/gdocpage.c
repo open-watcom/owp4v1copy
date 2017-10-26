@@ -2141,14 +2141,27 @@ void set_skip_vars( su * pre_skip, su * pre_top_skip, su * post_skip,
     g_blank_lines += g_space;
     blank_lines = 0;
 
+    /* SK can tell if it follows SP or blank lines, but not if it precedes them */
+
+    g_top_skip = 0;
     if( !ProcFlags.sk_2nd ) {
-        if( g_blank_lines > g_skip ) {  // order of this operation is not entirely certain
+        if( g_blank_lines > g_skip ) {
             g_skip = 0;                 // use g_blank_lines
         } else {
-            g_blank_lines = 0;          // use SK skip
+            g_top_skip = g_blank_lines; // use g_blank_lines at top of page        
+            g_blank_lines = 0;          // use SK skip elsewhere
         }
     } else {
-        ProcFlags.sk_2nd = false;
+        ProcFlags.sk_2nd = false;       // if was true, make false
+    }
+
+    if( g_blank_lines > 0 ) {           // blank space into el_vspace element
+        t_element = init_doc_el( el_vspace, 0 );
+        t_element->subs_skip = t_element->element.vspace.spacing;
+        insert_col_main( t_element );
+        t_element = NULL;
+        t_el_last = NULL;
+        g_blank_lines = 0;
     }
 
     if( pre_skip != NULL ) {
@@ -2188,7 +2201,7 @@ void set_skip_vars( su * pre_skip, su * pre_top_skip, su * post_skip,
     }    
 
     g_subs_skip = skippre;
-    g_top_skip = skiptop;
+    g_top_skip += skiptop;
 
     if( post_skip != NULL ) {
         g_post_skip = conv_vert_unit( post_skip, spacing, font );
