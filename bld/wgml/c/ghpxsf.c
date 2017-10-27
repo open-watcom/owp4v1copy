@@ -26,6 +26,8 @@
 *
 * Description:  WGML tags :HP0 :HP1, :HP2, :HP3, :eHPx
 *                         :SF  and :eSF processing
+*               extended to add :CIT and :eCIT, since they are essentially
+*               a specialized form of :SF and :eSF
 *
 ****************************************************************************/
 #include    "wgml.h"
@@ -34,7 +36,7 @@
 static font_number  tt_font     = 0;    // font number to be replaced with "0"
 
 /***************************************************************************/
-/*  :HPx :SF common processing                                             */
+/*  :CIT :HPx :SF common processing                                        */
 /***************************************************************************/
 
 static void gml_hp_sf_common( const gmltag * entry, int level, e_tags t )
@@ -133,7 +135,7 @@ void    gml_hp3( const gmltag * entry )
 
 
 /***************************************************************************/
-/*  :eHPx :eSF common processing                                           */
+/*  :eCIT :eHPx :eSF common processing                                           */
 /***************************************************************************/
 
 static  void    gml_ehp_esf_common( const gmltag * entry, e_tags t )
@@ -292,3 +294,41 @@ void    gml_sf( const gmltag * entry )
     scan_start = scan_stop + 1;
     return;
 }
+
+/********************************************************************************************/
+/* Format: :CIT.                                                                            */
+/*                                                                                          */
+/* This tag starts the highlighting of a citation (e.g., the title of a book). The actual   */
+/* highlighting to be performed is determined by the layout and the type of output device   */
+/* the document is processed for. Examples of highlighting include underlining,             */
+/* displaying in bold face, or using a different character shape (such as italics).         */
+/*                                                                                          */
+/* A citation may not be used where the GML layout explicitly determines the emphasis to    */
+/* be used, such as in the text of a heading.                                               */
+/*                                                                                          */
+/* The citation tag is a paragraph element. It is used with text to create the content of a */
+/* basic document element, such as a paragraph. A corresponding :ecit tag must be           */
+/* specified for each :cit tag.                                                             */
+/*                                                                                          */
+/********************************************************************************************/
+
+void gml_cit( const gmltag * entry )
+{
+    gml_hp_sf_common( entry, layout_work.cit.font, t_CIT );
+    return;
+}
+
+
+/************************************************************************************/
+/* Format: :eCIT.                                                                   */
+/*                                                                                  */
+/* This tag ends the highlighting of a citation. A corresponding :cit tag must be   */
+/* previously specified for each :ecit tag.                                         */
+/*                                                                                          */
+/************************************************************************************/
+
+void gml_ecit( const gmltag * entry )
+{
+    gml_ehp_esf_common( entry, t_CIT );
+}
+
