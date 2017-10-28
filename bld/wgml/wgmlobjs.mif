@@ -51,6 +51,7 @@ gml_objs =  &
         gauthor.obj  &
         gbanner.obj  &
         gbinclud.obj &
+        gchpxsfq.obj &
         gcmt.obj     &
         gdate.obj    &
         gdocnum.obj  &
@@ -59,7 +60,6 @@ gml_objs =  &
 	gfnefn.obj   &
         ggraphic.obj &
         ghx.obj      &
-        ghpxsf.obj   &
         ginclude.obj &
         gixx.obj     &
         gnestut.obj  &
