@@ -24,22 +24,25 @@
 *
 *  ========================================================================
 *
-* Description:  WGML tags :HP0 :HP1, :HP2, :HP3, :eHPx
-*                         :SF  and :eSF processing
-*               extended to add :CIT and :eCIT, since they are essentially
-*               a specialized form of :SF and :eSF
+* Description:  WGML tags :CIT :eCIT :HP0 :eHP0 :HP1, :eHP1 :HP2, :eHP2
+*                         :HP3, :eHP3, :Q, :eQ, :SF, and :eSF processing
+*
+* These tags all begin/end some form of inline phrase
 *
 ****************************************************************************/
 #include    "wgml.h"
 #include    "gvars.h"
 
-static font_number  tt_font     = 0;    // font number to be replaced with "0"
+static  char    *       double_q    = "\""; // string for output of '"'
+static  char    *       single_q    = "'";  // string for output of "'"
+static  font_number     tt_font     = 0;    // font number to be replaced with "0"
+static  uint32_t        quote_lvl   = 0;    // nesting level of Q phrases
 
 /***************************************************************************/
-/*  :CIT :HPx :SF common processing                                        */
+/*  :CIT :HPx :Q :SF common processing                                        */
 /***************************************************************************/
 
-static void gml_hp_sf_common( const gmltag * entry, int level, e_tags t )
+static void gml_inline_common( const gmltag * entry, int level, e_tags t )
 {
     char    *   p;
 
@@ -82,6 +85,15 @@ static void gml_hp_sf_common( const gmltag * entry, int level, e_tags t )
         }
     }
 
+    if( t == t_Q ) {                            // Q/eQ inserts quote char
+        if( (quote_lvl % 2) ) {
+            process_text( single_q, g_curr_font );
+        } else {
+            process_text( double_q, g_curr_font );
+        }
+        quote_lvl++;
+    }
+
     scan_err = false;
     p = scan_start;
     if( *p == '.' ) p++;                // over '.'
@@ -113,32 +125,32 @@ static void gml_hp_sf_common( const gmltag * entry, int level, e_tags t )
 /* A corresponding :EHPn tag must be specified for each :HPn tag.          */
 /***************************************************************************/
 
-void    gml_hp0( const gmltag * entry )
+void gml_hp0( const gmltag * entry )
 {
-    gml_hp_sf_common( entry, 0, t_HP0 );
+    gml_inline_common( entry, 0, t_HP0 );
 }
 
-void    gml_hp1( const gmltag * entry )
+void gml_hp1( const gmltag * entry )
 {
-    gml_hp_sf_common( entry, 1, t_HP1 );
+    gml_inline_common( entry, 1, t_HP1 );
 }
 
-void    gml_hp2( const gmltag * entry )
+void gml_hp2( const gmltag * entry )
 {
-    gml_hp_sf_common( entry, 2, t_HP2 );
+    gml_inline_common( entry, 2, t_HP2 );
 }
 
-void    gml_hp3( const gmltag * entry )
+void gml_hp3( const gmltag * entry )
 {
-    gml_hp_sf_common( entry, 3, t_HP3 );
+    gml_inline_common( entry, 3, t_HP3 );
 }
 
 
 /***************************************************************************/
-/*  :eCIT :eHPx :eSF common processing                                           */
+/*  :eCIT :eHPx :eQ :eSF common processing                                           */
 /***************************************************************************/
 
-static  void    gml_ehp_esf_common( const gmltag * entry, e_tags t )
+static void gml_e_inlne_common( const gmltag * entry, e_tags t )
 {
     char    *   p;
     tag_cb  *   wk;
@@ -161,7 +173,9 @@ static  void    gml_ehp_esf_common( const gmltag * entry, e_tags t )
         wk = nest_cb;
         nest_cb = nest_cb->prev;
         add_tag_cb_to_pool( wk );
-        g_curr_font = nest_cb->font;
+        if( t != t_Q ) {                    // Q/eQ does not restore the prior font
+            g_curr_font = nest_cb->font;
+        }
 
         // recompute space at SOL if inline end tag - TBD
         if( (post_space !=0) && (input_cbs->fmflags & II_sol) ) {
@@ -171,6 +185,15 @@ static  void    gml_ehp_esf_common( const gmltag * entry, e_tags t )
                 if( is_stop_char( t_line->last->text[t_line->last->count - 1] ) ) {
                     post_space += wgml_fonts[g_curr_font].spc_width;
                 }
+            }
+        }
+
+        if( t == t_Q ) {                    // Q/eQ insert quote character
+            quote_lvl--;
+            if( (quote_lvl % 2) ) {
+                process_text( single_q, g_curr_font );
+            } else {
+                process_text( double_q, g_curr_font );
             }
         }
 
@@ -199,24 +222,24 @@ static  void    gml_ehp_esf_common( const gmltag * entry, e_tags t )
 /* Each :ehpn tag must be preceded by a corresponding :hpn tag.            */
 /***************************************************************************/
 
-void    gml_ehp0( const gmltag * entry )
+void gml_ehp0( const gmltag * entry )
 {
-    gml_ehp_esf_common( entry, t_HP0 );
+    gml_e_inlne_common( entry, t_HP0 );
 }
 
-void    gml_ehp1( const gmltag * entry )
+void gml_ehp1( const gmltag * entry )
 {
-    gml_ehp_esf_common( entry, t_HP1 );
+    gml_e_inlne_common( entry, t_HP1 );
 }
 
-void    gml_ehp2( const gmltag * entry )
+void gml_ehp2( const gmltag * entry )
 {
-    gml_ehp_esf_common( entry, t_HP2 );
+    gml_e_inlne_common( entry, t_HP2 );
 }
 
-void    gml_ehp3( const gmltag * entry )
+void gml_ehp3( const gmltag * entry )
 {
-    gml_ehp_esf_common( entry, t_HP3 );
+    gml_e_inlne_common( entry, t_HP3 );
 }
 
 /***************************************************************************/
@@ -227,9 +250,9 @@ void    gml_ehp3( const gmltag * entry )
 /*   This tag ends the highlighting of phrases started by the last :sf tag */
 /***************************************************************************/
 
-void    gml_esf( const gmltag * entry )
+void gml_esf( const gmltag * entry )
 {
-    gml_ehp_esf_common( entry, t_SF );
+    gml_e_inlne_common( entry, t_SF );
 }
 
 
@@ -258,7 +281,7 @@ void    gml_esf( const gmltag * entry )
 /*    processing needs to know what the actual font was                    */
 /***************************************************************************/
 
-void    gml_sf( const gmltag * entry )
+void gml_sf( const gmltag * entry )
 {
     char    *   p;
     char    *   pe;
@@ -283,7 +306,7 @@ void    gml_sf( const gmltag * entry )
         } else {
             font = strtol( p, &pe, 10 );
             scan_start = pe;
-            gml_hp_sf_common( entry, font, t_SF );
+            gml_inline_common( entry, font, t_SF );
         }
     } else {
         err_count++;
@@ -294,6 +317,7 @@ void    gml_sf( const gmltag * entry )
     scan_start = scan_stop + 1;
     return;
 }
+
 
 /********************************************************************************************/
 /* Format: :CIT.                                                                            */
@@ -314,7 +338,7 @@ void    gml_sf( const gmltag * entry )
 
 void gml_cit( const gmltag * entry )
 {
-    gml_hp_sf_common( entry, layout_work.cit.font, t_CIT );
+    gml_inline_common( entry, layout_work.cit.font, t_CIT );
     return;
 }
 
@@ -324,11 +348,48 @@ void gml_cit( const gmltag * entry )
 /*                                                                                  */
 /* This tag ends the highlighting of a citation. A corresponding :cit tag must be   */
 /* previously specified for each :ecit tag.                                         */
-/*                                                                                          */
+/*                                                                                  */
 /************************************************************************************/
 
 void gml_ecit( const gmltag * entry )
 {
-    gml_ehp_esf_common( entry, t_CIT );
+    gml_e_inlne_common( entry, t_CIT );
+}
+
+
+/***********************************************************************************************/
+/* Format: :Q.                                                                                 */
+/*                                                                                             */
+/* This tag starts a quote. The quote is enclosed in double quotation marks. When quotes       */
+/* are specified within other quotes, they are alternately enclosed by single and double       */
+/* quotation marks.                                                                            */
+/* The quote tag is a paragraph element. It is used with text to create the content of a basic */
+/* document element, such as a paragraph. A corresponding :eq tag must be specified for        */
+/* each :q tag.                                                                                */
+/*                                                                                             */
+/* NOTE: Q always uses font 0, even when the value of attribute font of the LAYOUT tag         */
+/*       DEFAULT has a different value.                                                        */
+/*                                                                                             */
+/***********************************************************************************************/
+
+void gml_q( const gmltag * entry )
+{
+    gml_inline_common( entry, FONT0, t_Q );
+    return;
+}
+
+
+/************************************************************************************/
+/* Format: :eQ.                                                                     */
+/* This tag signals the end of a quote. A corresponding :q tag must be previously   */
+/* specified for each :eq tag.                                                      */
+/*                                                                                  */
+/* NOTE: eQ does not restore the prior font in wgml 4.0, and so also here.         */
+/*                                                                                  */
+/************************************************************************************/
+
+void gml_eq( const gmltag * entry )
+{
+    gml_e_inlne_common( entry, t_Q );
 }
 

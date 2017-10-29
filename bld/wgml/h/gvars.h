@@ -57,8 +57,6 @@ global  char        *   scan_restart;   // used by character scanning routines
 global  bool            scan_err;       // used by character scanning routines
 global  char        *   tok_start;      // start of scanned token
 global  size_t          arg_flen;       // arg length
-//global  char        *   var_start;      // variable start
-//global  size_t          var_len;        // variable length
 global  char        *   att_start;      // (potential) attribute start
 global  size_t          val_len;        // attribute value length
 global  char        *   val_start;      // attribute value start

@@ -144,8 +144,8 @@
   pickg( PSC,      3,      gml_dummy,      tag_out_txt, 0 )
   pickg( EPSC,     4,      gml_dummy,      tag_out_txt, 0 )
 
-  pickg( Q,        1,      gml_dummy,      tag_out_txt, 0 )
-  pickg( EQ,       2,      gml_dummy,      tag_out_txt, 0 )
+  pickg( Q,        1,      gml_q,          tag_out_txt, 0 )
+  pickg( EQ,       2,      gml_eq,         tag_out_txt, 0 )
 
   pickg( SET,      3,      gml_set,        tag_is_general, 0 )
 
