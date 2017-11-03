@@ -854,10 +854,9 @@ void    scan_line( void )
 /*  search gml tag entry for given token                                   */
 /*  This is for system (predefined) tags only                              */
 /*  return ptr to entry if found, else NULL                                */
-/*                                                                         */
 /***************************************************************************/
 
-gmltag  const   *   find_sys_tag( char * token, size_t toklen )
+const gmltag * find_sys_tag( char * token, size_t toklen )
 {
     int k;
 
@@ -876,10 +875,9 @@ gmltag  const   *   find_sys_tag( char * token, size_t toklen )
 /*  search gml layout tag entry for given token                            */
 /*  This is for layout tags only                                           */
 /*  return ptr to entry if found, else NULL                                */
-/*                                                                         */
 /***************************************************************************/
 
-gmltag  const   *   find_lay_tag( char * token, size_t toklen )
+const gmltag * find_lay_tag( char * token, size_t toklen )
 {
     int k;
 
@@ -892,3 +890,24 @@ gmltag  const   *   find_lay_tag( char * token, size_t toklen )
     }
     return( NULL );                     // not found
 }
+
+
+/***************************************************************************/
+/*  find gml tag entry by e_tag value and determine if is an ip_tag        */
+/*  ip_tags are CIT, HPx, Q, SF                                            */
+/*  return true if offset is for an ip_tag, false otherwise                */
+/*  NOTE: for some reason, an offset specified as, say "t_CIT" is actually */
+/*        the offset for the gmltag object for tag eCIT, hence the         */
+/*        adjustment                                                       */
+/***************************************************************************/
+
+bool is_ip_tag( e_tags offset )
+{
+    if( (offset < t_NONE) || (offset >= t_MAX) ) {  // catch invalid offset values
+        internal_err( __FILE__, __LINE__ );
+    } else if( offset != t_NONE ) {                 // t_NONE is valid, but is not an ip_tag
+        return( gml_tags[offset - 1].taglocs & ip_tag );
+    }
+    return( false );                                // not found
+}
+

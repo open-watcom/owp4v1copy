@@ -60,6 +60,7 @@ gml_objs =  &
 	gfnefn.obj   &
         ggraphic.obj &
         ghx.obj      &
+        glq.obj      &
         ginclude.obj &
         gixx.obj     &
         gnestut.obj  &

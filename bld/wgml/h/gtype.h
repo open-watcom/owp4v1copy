@@ -393,6 +393,7 @@ typedef enum {
 /*      When assigned to rs_loc, limits tags allowed to those with the  */
 /*      corresponding flag set in gmltag.taglocs.                       */
 /*  Special use tags:                                                   */
+/*      ip_tag is used to mark inline phrase tags for tag LQ            */
 /*      li_lp_tag is used with ProcFlags.need_li_lp.                    */
 /************************************************************************/
 
@@ -402,7 +403,8 @@ typedef enum {
     address_tag = 2,                    // tag allowed in ADDRESS section
     figcap_tag  = 4,                    // tag allowed after FIGCAP
     /*  special use tags */
-    li_lp_tag   = 8,                    // marks LI and LP tags
+    ip_tag      = 8,                    // marks CIT, HP0, HP1, HP2, HP3, SF, Q
+    li_lp_tag   = 16,                   // marks LI and LP tags
 } locflags;
 
 typedef struct gmltag {
