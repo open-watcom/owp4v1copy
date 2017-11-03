@@ -370,11 +370,11 @@ static void content_reg( banner_lay_tag * ban )
                     if( *pbuf ) {
                         curr_t = alloc_text_chars( pbuf, strlen( pbuf ), ban->region->font );
                         /***************************************************/
-                        /* use font 0 for width calculation                */
+                        /* use current font for width calculation          */
                         /* even if another font is used for banregion      */
-                        /* to get the same result as wgml4            TBD  */
+                        /* to get the same result as wgml4                 */
                         /***************************************************/
-                        curr_t->width = cop_text_width( curr_t->text, curr_t->count, 0 );
+                        curr_t->width = cop_text_width( curr_t->text, curr_t->count, g_curr_font );
                                                        //   ban->region->font );
                         reg_text[k] = curr_t;
                     }
