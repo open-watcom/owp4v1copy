@@ -24,10 +24,16 @@
 *
 *  ========================================================================
 *
-* Description:  WGML tags :OL, :SL, :UL  :DL, :GL  and corresponding
-*                         :eXX processing
-*                         :LI and :LP processing
-*               only some of the attributes are supported   TBD
+* Description:  WGML tags :OL, :SL, :UL :DL, :GL
+*                         :eOL, :eSL, :eUL :eDL, :eGL
+*                         :LI, :LP
+*                         :DD, :DDHD, :DT, :DTHD
+*                         :GD, :GT
+*
+* Note: :LIREF is not yet implemented; it might be better placed
+*       with :FIGREF, :FNREF, and :HDREF than here, depending on how it works
+*       This file was originally done very early; other features may not be
+*       fully implemented as well
 ****************************************************************************/
 #include    "wgml.h"
 #include    "gvars.h"
@@ -40,7 +46,7 @@ static  uint8_t     ul_cur_level    = 1;    // current UL list level
 
 
 /***************************************************************************/
-/*  end_lp  processing as if the non existant :eLP tag was seen            */
+/* end_lp  processing as if the non existant :eLP tag was seen             */
 /***************************************************************************/
 static void end_lp( void )
 {
@@ -55,7 +61,7 @@ static void end_lp( void )
 
 
 /***************************************************************************/
-/*  :SL, ... common processing                                             */
+/* :SL, ... common processing                                              */
 /***************************************************************************/
 
 static void gml_xl_lp_common( e_tags t )
@@ -91,39 +97,40 @@ static void gml_xl_lp_common( e_tags t )
 }
 
 
-/***************************************************************************/
-/* Format:  :DL [compact]                                                  */
-/*              [break]                                                    */
-/*              [headhi=head-highlight]                                    */
-/*              [termhi=term-highlight]                                    */
-/*              [tsize='hor-space-unit'].                                  */
-/*                                                                         */
-/* The definition list tag signals the start of a definition list.  Each   */
-/* list item in a definition list has two parts.  The first part is the    */
-/* definition term and is defined with the :dt tag.  The second part is    */
-/* the definition description and is defined with the :dd tag.  A          */
-/* corresponding :edl tag must be specified for each :dl tag.  The compact */
-/* corresponding :edl tag must be specified for each :dl tag.  The compact */
-/* attribute indicates that the list items should be compacted.  Blank     */
-/* lines that are normally placed between the list items will be           */
-/* suppressed.  The compact attribute is one of the few WATCOM Script/GML  */
-/* attributes which does not have an attribute value associated with it.   */
-/* The break attribute indicates that the definition description should be */
-/* started on a new output line if the size of the definition term exceeds */
-/* the maximum horizontal space normally allowed for it.  If this          */
-/* attribute is not specified, the definition description will be placed   */
-/* after the definition term.  The break attribute is one of the few       */
-/* WATCOM Script/GML attributes which does not have an attribute value     */
-/* associated with it.  The headhi attribute allows you to set the         */
-/* highlighting level of the definition list headings.  Non-negative       */
-/* integer numbers are valid highlighting values.  The termhi attribute    */
-/* allows you to set the highlighting level of the definition term.        */
-/* Non-negative integer numbers are valid highlighting values.  The tsize  */
-/* attribute allows you to set the minimum horizontal space taken by the   */
-/* definition term.  Any valid horizontal space unit may be specified.     */
-/* The attribute value is linked to the font of the :DT tag if the termhi  */
-/* attribute is not specified.                                             */
-/***************************************************************************/
+/**************************************************************************************************/
+/* Format:  :DL [compact]                                                                         */
+/*              [break]                                                                           */
+/*              [headhi=head-highlight]                                                           */
+/*              [termhi=term-highlight]                                                           */
+/*              [tsize='hor-space-unit'].                                                         */
+/*                                                                                                */
+/* The definition list tag signals the start of a definition list. Each list item in a definition */
+/* list has two parts. The first part is the definition term and is defined with the :dt tag.     */
+/* The second part is the definition description and is defined with the :dd tag. A               */
+/* corresponding :edl tag must be specified for each :dl tag.                                     */
+/*                                                                                                */
+/* The compact attribute indicates that the list items should be compacted. Blank lines           */
+/* that are normally placed between the list items will be suppressed. The compact                */
+/* attribute is one of the few WATCOM Script/GML attributes which does not have an                */
+/* attribute value associated with it.                                                            */
+/*                                                                                                */
+/* The break attribute indicates that the definition description should be started on a new       */
+/* output line if the size of the definition term exceeds the maximum horizontal space            */
+/* normally allowed for it. If this attribute is not specified, the definition description will   */
+/* be placed after the definition term. The break attribute is one of the few WATCOM              */
+/* Script/GML attributes which does not have an attribute value associated with it.               */
+/*                                                                                                */
+/* The headhi attribute allows you to set the highlighting level of the definition list           */
+/* headings. Non-negative integer numbers are valid highlighting values.                          */
+/*                                                                                                */
+/* The termhi attribute allows you to set the highlighting level of the definition term.          */
+/* Non-negative integer numbers are valid highlighting values.                                    */
+/*                                                                                                */
+/* The tsize attribute allows you to set the minimum horizontal space taken by the                */
+/* definition term. Any valid horizontal space unit may be specified. The attribute value         */
+/* is linked to the font of the :DT tag if the termhi attribute is not specified (see "Font       */
+/* Linkage" on page 77).                                                                          */
+/**************************************************************************************************/
 
 void gml_dl( const gmltag * entry )  // not tested TBD
 {
@@ -185,22 +192,24 @@ void gml_dl( const gmltag * entry )  // not tested TBD
 }
 
 
-/***************************************************************************/
-/* Format:  :GL [compact] [termhi=term-highlight].                         */
-/*                                                                         */
-/* The glossary list tag signals the start of a glossary list, and is      */
-/* usually used in the back material section.  Each list item in a         */
-/* glossary list has two parts.  The first part is the glossary term and   */
-/* is defined with the :gt tag.  The second part is the glossary           */
-/* description and is defined with the :gd tag.  A corresponding :egl tag  */
-/* must be specified for each :gl tag.  The compact attribute indicates    */
-/* that the list items should be compacted.  Blank lines that are normally */
-/* placed between the list items will be suppressed.  The compact          */
-/* attribute is one of the few WATCOM Script/GML attributes which does not */
-/* have an attribute value associated with it.  The termhi attribute       */
-/* allows you to set the highlighting level of the glossary term.          */
-/* Non-negative integer numbers are valid highlighting values.             */
-/***************************************************************************/
+/***********************************************************************************************/
+/* Format:  :GL [compact]                                                                      */
+/*              [termhi=term-highlight].                                                       */
+/*                                                                                             */
+/* The glossary list tag signals the start of a glossary list, and is usually used in the back */
+/* material section. Each list item in a glossary list has two parts. The first part is the    */
+/* glossary term and is defined with the :gt tag. The second part is the glossary              */
+/* description and is defined with the :gd tag. A corresponding :egl tag must be specified     */
+/* for each :gl tag.                                                                           */
+/*                                                                                             */
+/* The compact attribute indicates that the list items should be compacted. Blank lines        */
+/* that are normally placed between the list items will be suppressed. The compact             */
+/* attribute is one of the few WATCOM Script/GML attributes which does not have an             */
+/* attribute value associated with it.                                                         */
+/*                                                                                             */
+/* The termhi attribute allows you to set the highlighting level of the glossary term.         */
+/* Non-negative integer numbers are valid highlighting values.                                 */
+/***********************************************************************************************/
 
 void gml_gl( const gmltag * entry )  // not tested TBD
 {
@@ -261,20 +270,21 @@ void gml_gl( const gmltag * entry )  // not tested TBD
     return;
 }
 
-/***************************************************************************/
-/*Format: :OL [compact].                                                   */
-/*                                                                         */
-/*This tag signals the start of an ordered list. Items in the list are     */
-/*specified using the :li tag. The list items are preceded by the number   */
-/*of the list item. The layout determines the style of the number. An      */
-/*ordered list may be used wherever a basic document element is permitted  */
-/*to appear. A corresponding :eol tag must be specified for each :ol tag.  */
-/*                                                                         */
-/*The compact attribute indicates that the list items should be compacted. */
-/*Blank lines that are normally placed between the list items will be      */
-/*suppressed. The compact attribute is one of the few WATCOM Script/GML    */
-/*attributes which does not have an attribute value associated with it.    */
-/***************************************************************************/
+/************************************************************************************************/
+/* Format: :OL [compact].                                                                       */
+/*                                                                                              */
+/* This tag signals the start of an ordered list. Items in the list are specified using the :li */
+/* tag. The list items are preceded by the number of the list item. The layout determines       */
+/* the style of the number.                                                                     */
+/*                                                                                              */
+/* An ordered list may be used wherever a basic document element is permitted to appear.        */
+/* A corresponding :eol tag must be specified for each :ol tag.                                 */
+/*                                                                                              */
+/* The compact attribute indicates that the list items should be compacted. Blank lines         */
+/* that are normally placed between the list items will be suppressed. The compact              */
+/* attribute is one of the few WATCOM Script/GML attributes which does not have an              */
+/* attribute value associated with it.                                                          */
+/************************************************************************************************/
 
 void gml_ol( const gmltag * entry )
 {
@@ -337,19 +347,19 @@ void gml_ol( const gmltag * entry )
 }
 
 
-/***************************************************************************/
-/* Format:  :SL [compact].                                                 */
-/*                                                                         */
-/* This tag signals the start of a simple list.                            */
-/* Items in the list are specified using the :li tag.  A simple list may   */
-/* occur wherever a basic document element is permitted to appear.  A      */
-/* corresponding :esl tag must be specified for each :sl tag.  The compact */
-/* attribute indicates that the list items should be compacted.  Blank     */
-/* lines that are normally placed between the list items will be           */
-/* suppressed.  The compact attribute is one of the few WATCOM Script/GML  */
-/* attributes which does not have an attribute value associated with it.   */
-/*                                                                         */
-/***************************************************************************/
+/***************************************************************************************************/
+/* Format:  :SL [compact].                                                                         */
+/*                                                                                                 */
+/* This tag signals the start of a simple list. Items in the list are specified using the :li tag. */
+/*                                                                                                 */
+/* A simple list may occur wherever a basic document element is permitted to appear. A             */
+/* corresponding :esl tag must be specified for each :sl tag.                                      */
+/*                                                                                                 */
+/* The compact attribute indicates that the list items should be compacted. Blank lines            */
+/* that are normally placed between the list items will be suppressed. The compact                 */
+/* attribute is one of the few WATCOM Script/GML attributes which does not have an                 */
+/* attribute value associated with it.                                                             */
+/***************************************************************************************************/
 
 void gml_sl( const gmltag * entry )
 {
@@ -411,22 +421,20 @@ void gml_sl( const gmltag * entry )
     return;
 }
 
-/***************************************************************************/
-/* Format:  :UL [compact].                                                 */
-/*                                                                         */
-/* This tag signals the start of an unordered                              */
-/* list.  Items in the list are specified using the :li tag.  The list     */
-/* items are preceded by a symbol such as an asterisk or a bullet.  This   */
-/* tag may be used wherever a basic document element is permitted to       */
-/* appear.  A corresponding :eul tag must be specified for each :ul tag.   */
-/*                                                                         */
-/* The compact attribute indicates that the list items should be           */
-/* compacted.  Blank lines that are normally placed between the list items */
-/* will be suppressed.  The compact attribute is one of the few WATCOM     */
-/* Script/GML attributes which does not have an attribute value associated */
-/* with it.                                                                */
-/*                                                                         */
-/***************************************************************************/
+/**************************************************************************************************/
+/* Format:  :UL [compact].                                                                        */
+/*                                                                                                */
+/* This tag signals the start of an unordered list. Items in the list are specified using the :li */
+/* tag. The list items are preceded by a symbol such as an asterisk or a bullet.                  */
+/*                                                                                                */
+/* This tag may be used wherever a basic document element is permitted to appear. A               */
+/* corresponding :eul tag must be specified for each :ul tag.                                     */
+/*                                                                                                */
+/* The compact attribute indicates that the list items should be compacted. Blank lines           */
+/* that are normally placed between the list items will be suppressed. The compact                */
+/* attribute is one of the few WATCOM Script/GML attributes which does not have an                */
+/* attribute value associated with it.                                                            */
+/**************************************************************************************************/
 
 void gml_ul( const gmltag * entry )
 {
@@ -489,7 +497,7 @@ void gml_ul( const gmltag * entry )
 }
 
 /***************************************************************************/
-/*  common :eXXX processing                                                */
+/* common :eXXX processing                                                 */
 /***************************************************************************/
 
 void    gml_exl_common( const gmltag * entry )
@@ -520,37 +528,36 @@ void    gml_exl_common( const gmltag * entry )
 }
 
 
-/***************************************************************************/
-/* Format:  :eDL.                                                          */
-/*                                                                         */
-/* This tag signals the end of a definition list.  A                       */
-/* corresponding :DL tag must be previously specified for each :eDL tag.   */
-/*                                                                         */
-/*                                                                         */
-/* Format:  :eGL.                                                          */
-/*                                                                         */
-/* This tag signals the end of a glossary list.  A                         */
-/* corresponding :GL tag must be previously specified for each :eGL tag.   */
-/*                                                                         */
-/*                                                                         */
-/* Format:  :eOL.                                                          */
-/*                                                                         */
-/* This tag signals the end of an ordered list.  A                         */
-/* corresponding :OL tag must be previously specified for each :eOL tag.   */
-/*                                                                         */
-/*                                                                         */
-/* Format:  :eSL.                                                          */
-/*                                                                         */
-/* This tag signals the end of a simple list.  A                           */
-/* corresponding :SL tag must be previously specified for each :eSL tag.   */
-/*                                                                         */
-/*                                                                         */
-/* Format:  :eUL.                                                          */
-/*                                                                         */
-/* This tag signals the end of a unordered list.  A                        */
-/* corresponding :UL tag must be previously specified for each :eUL tag.   */
-/*                                                                         */
-/***************************************************************************/
+/*********************************************************************************************/
+/* Format:  :eDL.                                                                            */
+/*                                                                                           */
+/* This tag signals the end of a definition list. A corresponding :dl tag must be previously */
+/* specified for each :edl tag.                                                              */
+/*                                                                                           */
+/*                                                                                           */
+/* Format:  :eGL.                                                                            */
+/*                                                                                           */
+/* This tag signals the end of a glossary list. A corresponding :gl tag must be previously   */
+/* specified for each :egl tag.                                                              */
+/*                                                                                           */
+/*                                                                                           */
+/* Format:  :eOL.                                                                            */
+/*                                                                                           */
+/* This tag signals the end of an ordered list. A corresponding :ol tag must be previously   */
+/* specified for each :eol tag.                                                              */
+/*                                                                                           */
+/*                                                                                           */
+/* Format:  :eSL.                                                                            */
+/*                                                                                           */
+/* This tag signals the end of a simple list. A corresponding :sl tag must be previously     */
+/* specified for each :esl tag.                                                              */
+/*                                                                                           */
+/*                                                                                           */
+/* Format:  :eUL.                                                                            */
+/*                                                                                           */
+/* This tag signals the end of an unordered list. A corresponding :ul tag must be            */
+/* previously specified for each :eul tag.                                                   */
+/*********************************************************************************************/
 
 void    gml_edl( const gmltag * entry ) // not tested TBD
 {
@@ -970,19 +977,20 @@ static  void    gml_li_ul( const gmltag * entry )
 
 
 
-/****************************************************************************/
-/*Format: :LI [id='id-name'].<paragraph elements>                           */
-/*                           <basic document elements>                      */
-/*                                                                          */
-/*This tag signals the start of an item in a simple, ordered, or unordered  */
-/*list. The unordered list items are preceded by an annotation symbol, such */
-/*as an asterisk. The ordered list items are annotated by an ordered        */
-/*sequence. The id attribute associates an identifier name with the list    */
-/*item, and may only be used when the list item is in an ordered list. The  */
-/*identifier name is used when processing a list item reference, and must   */
-/*be unique within the document.                                            */
-/*wgml 4.0 does not allow LI inside a DL or GL, but does produce an error   */
-/****************************************************************************/
+/*******************************************************************************************/
+/* Format: :LI [id='id-name'].<paragraph elements>                                         */
+/*                            <basic document elements>                                    */
+/*                                                                                         */
+/* This tag signals the start of an item in a simple, ordered, or unordered list. The      */
+/* unordered list items are preceded by an annotation symbol, such as an asterisk. The     */
+/* ordered list items are annotated by an ordered sequence.                                */
+/*                                                                                         */
+/* The id attribute associates an identifier name with the list item, and may only be used */
+/* when the list item is in an ordered list. The identifier name is used when processing a */
+/* list item reference, and must be unique within the document.                            */
+/*                                                                                         */
+/* NOTE: wgml 4.0 produces an error if LI occurs inside a DL or GL                         */
+/*******************************************************************************************/
 
 void    gml_li( const gmltag * entry )
 {
@@ -1002,10 +1010,10 @@ void    gml_li( const gmltag * entry )
         break;
 #if 0
     case t_DL :
-        gml_li_dl( entry );             // error message here?
+        gml_li_dl( entry );             // error message here
         break;
     case t_GL :
-        gml_li_gl( entry );             // error message here?
+        gml_li_gl( entry );             // error message here
         break;
 #endif
     default:
@@ -1015,9 +1023,12 @@ void    gml_li( const gmltag * entry )
 }
 
 
-/***************************************************************************/
-/* :LP                                                                     */
-/***************************************************************************/
+/************************************************************************************************/
+/* Format: :LP.<paragraph elements>                                                             */
+/*                                                                                              */
+/* The list part tag is used to insert an explanation into the middle of a list. It may be used */
+/* in simple, ordered, unordered, definition and glossary lists.                                */
+/************************************************************************************************/
 
 void    gml_lp( const gmltag * entry )
 {
@@ -1091,4 +1102,57 @@ void    gml_lp( const gmltag * entry )
     scan_start = scan_stop + 1;
     return;
 }
+
+/********************************************************************************************/
+/* Format: :DD.<paragraph elements>                                                         */
+/*             <basic document elements>                                                    */
+/*                                                                                          */
+/* This tag signals the start of the text for an item description in a definition list. The */
+/* definition description tag must be preceded by a corresponding :dt tag, and may only     */
+/* appear in a definition list.                                                             */
+/********************************************************************************************/
+
+/*******************************************************************************************/
+/* Format: :DDHD.<text line>                                                               */
+/*                                                                                         */
+/* The definition description heading tag is used to specify a heading for the definition  */
+/* description of a definition list. It must be preceded by a corresponding :dthd tag, and */
+/* may only appear in a definition list. The heading tag may be used more than once        */
+/* within a single definition list.                                                        */
+/*******************************************************************************************/
+
+/************************************************************************************************/
+/* Format: :DT.<text line>                                                                      */
+/*                                                                                              */
+/* This tag is used to specify the term which is defined for each item in a definition list. It */
+/* is always followed by a :dd tag, which specifies the start of the text to define the term,   */
+/* and may only appear in a definition list.                                                    */
+/************************************************************************************************/
+
+/**********************************************************************************************/
+/* Format: :DTHD.<text line>                                                                  */
+/*                                                                                            */
+/* The definition term heading tag is used to specify a heading for the definition terms of a */
+/* definition list. It is always followed by a :ddhd tag, and may only appear in a            */
+/* definition list. The heading tag may be used more than once within a single definition     */
+/* list.                                                                                      */
+/**********************************************************************************************/
+
+/**********************************************************************************************/
+/* Format: :GD.<paragraph elements>                                                           */
+/*             <basic document elements>                                                      */
+/*                                                                                            */
+/* The glossary description tag signals the start of the text for an item in a glossary list. */
+/* The glossary description tag must be preceded by a corresponding :gt tag, and may only     */
+/* appear in a glossary list.                                                                 */
+/**********************************************************************************************/
+
+/**********************************************************************************************/
+/* Format: :GT.<text line>                                                                    */
+/*                                                                                            */
+/* This tag is used to specify the term which is defined for each item in a glossary list. It */
+/* is always followed by a :gd tag, which specifies the start of the text to define the term, */
+/* and may only appear in a glossary list.                                                    */
+/**********************************************************************************************/
+
 
