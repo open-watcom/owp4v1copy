@@ -2103,16 +2103,7 @@ void process_text( const char *text, font_number font )
                 }
 
                 if( t_line->first != NULL ) { // t_line is ready for output
-                    if( (t_element == NULL) && (ProcFlags.justify != ju_center)
-                            && (ProcFlags.justify != ju_right)
-                            && (ProcFlags.justify != ju_half) ) {    // catch first line
-//                        process_line_full( t_line, false );
-                        process_line_full( t_line, ProcFlags.concat
-                                          && (ProcFlags.justify > ju_off) );
-                    } else {                            // subsequent line
-                        process_line_full( t_line, ProcFlags.concat
-                                          && (ProcFlags.justify > ju_off) );
-                    }
+                    process_line_full( t_line, ProcFlags.concat && (ProcFlags.justify > ju_off) );
                     t_line = NULL;
                 }
                 // s_chars processing
