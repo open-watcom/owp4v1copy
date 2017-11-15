@@ -435,7 +435,7 @@ extern  bool        process_tag( gtentry * ge, mac_entry * me );
 /* gutil.c                              */
 extern  bool            att_val_to_su( su * spaceunit, bool pos );
 extern  int32_t         conv_hor_unit( su * spaceunit, font_number font );
-extern  int32_t         conv_vert_unit( su * spaceunit, unsigned char spacing, font_number font );
+extern  int32_t         conv_vert_unit( su * spaceunit, uint32_t spacing, font_number font );
 extern  bool            cw_val_to_su( char * * scaninput, su * spaceunit );
 extern  char        *   format_num( uint32_t n, char * r, size_t rsize, num_style ns );
 extern  void            free_ffh_list( ffh_entry * ffh_list );
@@ -443,7 +443,6 @@ extern  void            free_fwd_refs( fwd_ref * fwd_refs );
 extern  char        *   get_att_start( char * p );
 extern  char        *   get_att_value( char * p );
 extern  char        *   get_tag_value( char * p );
-extern  su          *   greater_su( su * su_a, su * su_b, unsigned char spacing );
 extern  ffh_entry   *   init_ffh_entry( ffh_entry * ffh_list );
 extern  fwd_ref     *   init_fwd_ref( fwd_ref * fr_dict, const char * fr_id );
 extern  char        *   int_to_roman( uint32_t n, char * r, size_t rsize );

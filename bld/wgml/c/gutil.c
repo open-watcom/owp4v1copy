@@ -36,7 +36,6 @@
 *               get_att_start
 *               get_att_value
 *               get_tag_value
-*               greater_su
 *               init_ffh_entry
 *               init_fwd_refs
 *               int_to_roman
@@ -717,7 +716,7 @@ int32_t conv_hor_unit( su * s, font_number font )
     return( ds );
 }
 
-int32_t conv_vert_unit( su *s, unsigned char spc, font_number font )
+int32_t conv_vert_unit( su *s, uint32_t spc, font_number font )
 {
     int32_t         ds;
     int32_t         fp;
@@ -1073,27 +1072,6 @@ char * get_tag_value( char * p )
         ProcFlags.tag_end_found = true;
     }
     return( p );
-}
-
-/***************************************************************************/
-/*  return the parameter which has the larger value                        */
-/*  initially for LP, should also be needed for FIGCAP                     */
-/*  these are intended to be vertical values                               */
-/***************************************************************************/
-
-su * greater_su( su *su_a, su *su_b, unsigned char spacing )
-{
-    uint32_t    val_a;
-    uint32_t    val_b;
-
-    val_a = conv_vert_unit( su_a, spacing, g_curr_font );
-    val_b = conv_vert_unit( su_b, spacing, g_curr_font );
-
-    if( val_a > val_b ) {
-        return( su_a );
-    } else {
-        return( su_b );
-    }
 }
 
 /***************************************************************************/

@@ -831,29 +831,48 @@ typedef struct nest_stack {
 } nest_stack;
 
 /***************************************************************************/
-/*  stack of margins and other values for nested tags  incomplete TBD      */
+/*  Stack of margins and other values for nested tags                      */
+/*                                                                         */
+/*  Primarily for tag/etag pairs, to catch mismatches and report the error */
+/*  Inevitably, other item were added, some of them very tag-specific      */
+/*  "on entry" indicates the field is intended to save the value found     */
+/*  when the start tag is processed so it can be restored by the end tag   */
+/*  "current" fields are for values pertaining to the current tag pair     */
+/*  the lists depend heavily on this stack                                 */
 /***************************************************************************/
 
+struct dl_lay_level;    // avoids include circularity with gtypelay.h
+struct gl_lay_level;    // avoids include circularity with gtypelay.h
+struct ol_lay_level;    // avoids include circularity with gtypelay.h
+struct sl_lay_level;    // avoids include circularity with gtypelay.h
+struct ul_lay_level;    // avoids include circularity with gtypelay.h
+
 typedef struct tag_cb {
-    struct  tag_cb  *   prev;           // open tag chain
-    nest_stack      *   p_stack;        // calling chain for this tag
-    void            *   lay_tag;        // ptr to layout tag
-    uint32_t            li_number;      // list item no for :OL
-    uint32_t            lm;             // left margin at tag start
-    uint32_t            rm;             // right margin at tag start
-    int32_t             align;          // attribute value
-    int32_t             left_indent;    // attribute value
-    int32_t             right_indent;   // attribute value
-    uint32_t            post_skip;      // skip at tag end
-    uint32_t            tsize;          // :dl
-    su                  xl_pre_skip;    // :dl :gl :ol :sl :ul
-    uint8_t             spacing;        // spacing on entry (not spacing per layout)
-    uint8_t             headhi;         // :dl
-    uint8_t             termhi;         // :dl :gl
-    font_number         font;           // :HPx, :SF
-    bool                dl_break : 1;   // :dl
-    bool                compact  : 1;   // :dl :gl :ol :sl :ul
-    e_tags              c_tag;          // enum of tag
+    struct  tag_cb      *   prev;           // open tag chain
+    nest_stack          *   p_stack;        // calling chain for this tag
+    union {     // these will be for the specific level in effect
+        struct  dl_lay_level    *   dl_layout;  // current DL LAYOUT record
+        struct  gl_lay_level    *   gl_layout;  // current GL LAYOUT record
+        struct  ol_lay_level    *   ol_layout;  // current OL LAYOUT record
+        struct  sl_lay_level    *   sl_layout;  // current SL LAYOUT record
+        struct  ul_lay_level    *   ul_layout;  // current UL LAYOUT record
+    };
+    uint32_t                li_number;      // current list item no
+    uint32_t                lm;             // left margin on entry
+    uint32_t                rm;             // max width on entry
+    int32_t                 align;          // current attribute value
+    int32_t                 left_indent;    // current attribute value
+    int32_t                 right_indent;   // current attribute value
+    uint32_t                post_skip;      // current attribute value
+    uint32_t                tsize;          // current attribute value
+    uint32_t                xl_pre_skip;    // parent list pre_skip value (used by LP)
+    uint8_t                 spacing;        // spacing on entry (not spacing per layout)
+    uint8_t                 headhi;         // current attribute value
+    uint8_t                 termhi;         // current attribute value
+    font_number             font;           // font on entry
+    bool                    dl_break : 1;   // current attribute value
+    bool                    compact  : 1;   // current attribute value
+    e_tags                  c_tag;          // enum of tag
 } tag_cb;
 
 

@@ -132,7 +132,7 @@ static void gml_xl_lp_common( e_tags t )
 /* Linkage" on page 77).                                                                          */
 /**************************************************************************************************/
 
-void gml_dl( const gmltag * entry )  // not tested TBD
+void gml_dl( const gmltag * entry )
 {
     bool                compact;
     char            *   p;
@@ -172,15 +172,14 @@ void gml_dl( const gmltag * entry )  // not tested TBD
     }
 
     nest_cb->compact = compact;
+    nest_cb->font = g_curr_font;
 
     nest_cb->li_number = 0;
     nest_cb->align = conv_hor_unit( &dl_layout->align, g_curr_font );
-    nest_cb->left_indent = conv_hor_unit( &dl_layout->left_indent, g_curr_font )
-                            + nest_cb->prev->left_indent + nest_cb->prev->align;
-    nest_cb->right_indent = -1 * conv_hor_unit( &dl_layout->right_indent, g_curr_font )
-                            + nest_cb->prev->right_indent;
-    nest_cb->xl_pre_skip = dl_layout->pre_skip;
-    nest_cb->lay_tag = dl_layout;
+    nest_cb->left_indent = conv_hor_unit( &dl_layout->left_indent, g_curr_font );
+    nest_cb->right_indent = -1 * conv_hor_unit( &dl_layout->right_indent, g_curr_font );
+    nest_cb->xl_pre_skip = conv_vert_unit( &dl_layout->pre_skip, spacing, g_curr_font );
+    nest_cb->dl_layout = dl_layout;
 
     nest_cb->lm = t_page.cur_left;
     nest_cb->rm = t_page.max_width;
@@ -211,7 +210,7 @@ void gml_dl( const gmltag * entry )  // not tested TBD
 /* Non-negative integer numbers are valid highlighting values.                                 */
 /***********************************************************************************************/
 
-void gml_gl( const gmltag * entry )  // not tested TBD
+void gml_gl( const gmltag * entry )
 {
     bool                compact;
     char            *   p;
@@ -251,15 +250,14 @@ void gml_gl( const gmltag * entry )  // not tested TBD
     }
 
     nest_cb->compact = compact;
+    nest_cb->font = g_curr_font;
 
     nest_cb->li_number = 0;
     nest_cb->align = conv_hor_unit( &gl_layout->align, g_curr_font );
-    nest_cb->left_indent = conv_hor_unit( &gl_layout->left_indent, g_curr_font )
-                            + nest_cb->prev->left_indent + nest_cb->prev->align;
-    nest_cb->right_indent = -1 * conv_hor_unit( &gl_layout->right_indent, g_curr_font )
-                            + nest_cb->prev->right_indent;
-    nest_cb->xl_pre_skip = gl_layout->pre_skip;
-    nest_cb->lay_tag = gl_layout;
+    nest_cb->left_indent = conv_hor_unit( &gl_layout->left_indent, g_curr_font );
+    nest_cb->right_indent = -1 * conv_hor_unit( &gl_layout->right_indent, g_curr_font );
+    nest_cb->xl_pre_skip = conv_vert_unit( &gl_layout->pre_skip, spacing, g_curr_font );
+    nest_cb->gl_layout = gl_layout;
 
     nest_cb->lm = t_page.cur_left;
     nest_cb->rm = t_page.max_width;
@@ -328,14 +326,14 @@ void gml_ol( const gmltag * entry )
     }
 
     nest_cb->compact = compact;
+    nest_cb->font = g_curr_font;
+    g_curr_font = ol_layout->font;
 
     nest_cb->li_number = 0;
-    nest_cb->left_indent = conv_hor_unit( &ol_layout->left_indent, g_curr_font )
-                            + nest_cb->prev->left_indent + nest_cb->prev->align;
-    nest_cb->right_indent = -1 * conv_hor_unit( &ol_layout->right_indent, g_curr_font )
-                            + nest_cb->prev->right_indent;
-    nest_cb->xl_pre_skip = ol_layout->pre_skip;
-    nest_cb->lay_tag = ol_layout;
+    nest_cb->left_indent = conv_hor_unit( &ol_layout->left_indent, g_curr_font );
+    nest_cb->right_indent = -1 * conv_hor_unit( &ol_layout->right_indent, g_curr_font );
+    nest_cb->xl_pre_skip = conv_vert_unit( &ol_layout->pre_skip, spacing, g_curr_font );
+    nest_cb->ol_layout = ol_layout;
 
     nest_cb->lm = t_page.cur_left;
     nest_cb->rm = t_page.max_width;
@@ -403,14 +401,14 @@ void gml_sl( const gmltag * entry )
     }
 
     nest_cb->compact = compact;
+    nest_cb->font = g_curr_font;
+    g_curr_font = sl_layout->font;
 
     nest_cb->li_number = 0;
-    nest_cb->left_indent = conv_hor_unit( &sl_layout->left_indent, g_curr_font )
-                            + nest_cb->prev->left_indent + nest_cb->prev->align;
-    nest_cb->right_indent = -1 * conv_hor_unit( &sl_layout->right_indent, g_curr_font )
-                            + nest_cb->prev->right_indent;
-    nest_cb->xl_pre_skip = sl_layout->pre_skip;
-    nest_cb->lay_tag = sl_layout;
+    nest_cb->left_indent = conv_hor_unit( &sl_layout->left_indent, g_curr_font );
+    nest_cb->right_indent = -1 * conv_hor_unit( &sl_layout->right_indent, g_curr_font );
+    nest_cb->xl_pre_skip = conv_vert_unit( &sl_layout->pre_skip, spacing, g_curr_font );
+    nest_cb->sl_layout = sl_layout;
 
     nest_cb->lm = t_page.cur_left;
     nest_cb->rm = t_page.max_width;
@@ -478,14 +476,14 @@ void gml_ul( const gmltag * entry )
     }
 
     nest_cb->compact = compact;
+    nest_cb->font = g_curr_font;
+    g_curr_font = ul_layout->font;
 
     nest_cb->li_number = 0;
-    nest_cb->left_indent = conv_hor_unit( &ul_layout->left_indent, g_curr_font )
-                            + nest_cb->prev->left_indent + nest_cb->prev->align;
-    nest_cb->right_indent = -1 * conv_hor_unit( &ul_layout->right_indent, g_curr_font )
-                            + nest_cb->prev->right_indent;
-    nest_cb->xl_pre_skip = ul_layout->pre_skip;
-    nest_cb->lay_tag = ul_layout;
+    nest_cb->left_indent = conv_hor_unit( &ul_layout->left_indent, g_curr_font );
+    nest_cb->right_indent = -1 * conv_hor_unit( &ul_layout->right_indent, g_curr_font );
+    nest_cb->xl_pre_skip = conv_vert_unit( &ul_layout->pre_skip, spacing, g_curr_font );
+    nest_cb->ul_layout = ul_layout;
 
     nest_cb->lm = t_page.cur_left;
     nest_cb->rm = t_page.max_width;
@@ -576,7 +574,7 @@ void    gml_edl( const gmltag * entry ) // not tested TBD
             g_err_tag_nest( str_tags[nest_cb->c_tag + 1] ); // exxx expected
         }
     } else {
-        set_skip_vars( NULL, NULL, &((dl_lay_level *)(nest_cb->lay_tag))->post_skip, 1, g_curr_font );
+        set_skip_vars( NULL, NULL, &nest_cb->dl_layout->post_skip, 1, g_curr_font );
         gml_exl_common( entry );
         if( dl_cur_level == 1 ) {
             dl_cur_level = layout_work.dl.max_level;
@@ -603,7 +601,7 @@ void    gml_egl( const gmltag * entry ) // not tested TBD
             g_err_tag_nest( str_tags[nest_cb->c_tag + 1] ); // exxx expected
         }
     } else {
-        set_skip_vars( NULL, NULL, &((gl_lay_level *)(nest_cb->lay_tag))->post_skip, 1, g_curr_font );
+        set_skip_vars( NULL, NULL, &nest_cb->gl_layout->post_skip, 1, g_curr_font );
         gml_exl_common( entry );
         if( gl_cur_level == 1 ) {
             gl_cur_level = layout_work.gl.max_level;
@@ -621,6 +619,7 @@ void    gml_eol( const gmltag * entry )
     scr_process_break();
     if( nest_cb->c_tag == t_LP ) {      // terminate :LP if active
         end_lp();
+        g_curr_font = nest_cb->font;    // restore font
     }
 
     if( nest_cb->c_tag != t_OL ) {      // unexpected exxx tag
@@ -630,7 +629,7 @@ void    gml_eol( const gmltag * entry )
             g_err_tag_nest( str_tags[nest_cb->c_tag + 1] ); // exxx expected
         }
     } else {
-        set_skip_vars( NULL, NULL, &((ol_lay_level *)(nest_cb->lay_tag))->post_skip, 1, g_curr_font );
+        set_skip_vars( NULL, NULL, &nest_cb->ol_layout->post_skip, 1, g_curr_font );
         gml_exl_common( entry );
         if( ol_cur_level == 1 ) {
             ol_cur_level = layout_work.ol.max_level;
@@ -648,6 +647,7 @@ void    gml_esl( const gmltag * entry )
     scr_process_break();
     if( nest_cb->c_tag == t_LP ) {      // terminate :LP if active
         end_lp();
+        g_curr_font = nest_cb->font;    // restore font
     }
 
     if( nest_cb->c_tag != t_SL ) {      // unexpected exxx tag
@@ -657,7 +657,7 @@ void    gml_esl( const gmltag * entry )
             g_err_tag_nest( str_tags[nest_cb->c_tag + 1] ); // exxx expected
         }
     } else {
-        set_skip_vars( NULL, NULL, &((sl_lay_level *)(nest_cb->lay_tag))->post_skip, 1, g_curr_font );
+        set_skip_vars( NULL, NULL, &nest_cb->sl_layout->post_skip, 1, g_curr_font );
         gml_exl_common( entry );
         if( sl_cur_level == 1 ) {
             sl_cur_level = layout_work.sl.max_level;
@@ -675,6 +675,7 @@ void    gml_eul( const gmltag * entry )
     scr_process_break();
     if( nest_cb->c_tag == t_LP ) {      // terminate :LP if active
         end_lp();
+        g_curr_font = nest_cb->font;    // restore font
     }
 
     if( nest_cb->c_tag != t_UL ) {      // unexpected exxx tag
@@ -684,7 +685,7 @@ void    gml_eul( const gmltag * entry )
             g_err_tag_nest( str_tags[nest_cb->c_tag + 1] ); // exxx expected
         }
     } else {
-        set_skip_vars( NULL, NULL, &((ul_lay_level *)(nest_cb->lay_tag))->post_skip, 1, g_curr_font );
+        set_skip_vars( NULL, NULL, &nest_cb->ul_layout->post_skip, 1, g_curr_font );
         gml_exl_common( entry );
         if( ul_cur_level == 1 ) {
             ul_cur_level = layout_work.ul.max_level;
@@ -719,11 +720,10 @@ static  void    gml_li_ol( const gmltag * entry )
         return;
     }
 
-    t_align = conv_hor_unit( &((ol_lay_level *)(nest_cb->lay_tag))->align, g_curr_font );
-
+    t_align = conv_hor_unit( &nest_cb->ol_layout->align, g_curr_font );
     nest_cb->li_number++;
     pn = format_num( nest_cb->li_number, charnumber, MAX_L_AS_STR,
-                     ((ol_lay_level *)(nest_cb->lay_tag))->number_style );
+                     nest_cb->ol_layout->number_style );
     if( pn != NULL ) {
         num_len = strlen( pn );
         *(pn + num_len) = ' ';          // trailing space like wgml4 does
@@ -738,13 +738,12 @@ static  void    gml_li_ol( const gmltag * entry )
 
     scr_process_break();
 
-    g_curr_font = ((ol_lay_level *)(nest_cb->lay_tag))->number_font;
+    g_curr_font = nest_cb->ol_layout->number_font;
 
     if( ProcFlags.need_li_lp ) {        // first :li for this list
-        set_skip_vars( &nest_cb->xl_pre_skip, NULL, NULL, 1, g_curr_font );
+        set_skip_vars( &nest_cb->ol_layout->pre_skip, NULL, NULL, 1, g_curr_font );
     } else if( !nest_cb->compact ) {
-        set_skip_vars( &((ol_lay_level *)(nest_cb->lay_tag))->skip, NULL,
-                       NULL, 1, g_curr_font );
+        set_skip_vars( &nest_cb->ol_layout->skip, NULL, NULL, 1, g_curr_font );
     } else {                            // compact
         set_skip_vars( NULL, NULL, NULL, 1, g_curr_font );
     }
@@ -754,14 +753,14 @@ static  void    gml_li_ol( const gmltag * entry )
     /* Use original indents, not values possibly modified by IN */
 
     if( g_indent > 0 ) {
-        t_left_indent_1 = conv_hor_unit( &((ol_lay_level *)(nest_cb->lay_tag))->left_indent, g_curr_font )
+        t_left_indent_1 = conv_hor_unit( &nest_cb->ol_layout->left_indent, g_curr_font )
                             + nest_cb->prev->left_indent + nest_cb->prev->align;
     } else {
-        t_left_indent_1 = conv_hor_unit( &((ol_lay_level *)(nest_cb->lay_tag))->left_indent, g_curr_font )
+        t_left_indent_1 = conv_hor_unit( &nest_cb->ol_layout->left_indent, g_curr_font )
                             + nest_cb->prev->left_indent;
     }
-    t_left_indent_2 = conv_hor_unit( &((ol_lay_level *)(nest_cb->lay_tag))->left_indent, g_curr_font );
-    t_right_indent = -1 * conv_hor_unit( &((ol_lay_level *)(nest_cb->lay_tag))->right_indent, g_curr_font )
+    t_left_indent_2 = conv_hor_unit( &nest_cb->ol_layout->left_indent, g_curr_font );
+    t_right_indent = -1 * conv_hor_unit( &nest_cb->ol_layout->right_indent, g_curr_font )
                             + nest_cb->prev->right_indent;
     t_page.cur_left = nest_cb->lm + t_left_indent_2;
     t_page.max_width = nest_cb->rm + t_right_indent;
@@ -784,7 +783,7 @@ static  void    gml_li_ol( const gmltag * entry )
     t_page.cur_width = t_page.cur_left;
     ju_x_start = t_page.cur_width;
 
-    g_curr_font = ((ol_lay_level *)(nest_cb->lay_tag))->font;
+    g_curr_font = nest_cb->ol_layout->font;
     if( *p == '.' ) p++;                // over '.'
     while( *p == ' ' ) p++;             // skip initial spaces
     ProcFlags.need_li_lp = false;       // 1. item in list processed
@@ -794,14 +793,6 @@ static  void    gml_li_ol( const gmltag * entry )
 
     nest_cb->align = t_align;
 
-    /* Set indents to their original values for the next LI */
-
-    if( g_indent > 0 ) {
-        nest_cb->left_indent = t_left_indent_1;
-    } else {
-        nest_cb->left_indent = t_left_indent_1 + nest_cb->prev->align;
-    }
-    nest_cb->right_indent = t_right_indent;
     scan_start = scan_stop + 1;
     return;
 }
@@ -830,10 +821,9 @@ static  void    gml_li_sl( const gmltag * entry )
     scr_process_break();
 
     if( ProcFlags.need_li_lp ) {        // first :li for this list
-        set_skip_vars( &nest_cb->xl_pre_skip, NULL, NULL, 1, g_curr_font );
+        set_skip_vars( &nest_cb->sl_layout->pre_skip, NULL, NULL, 1, g_curr_font );
     } else if( !nest_cb->compact ) {
-        set_skip_vars( &((sl_lay_level *)(nest_cb->lay_tag))->skip, NULL,
-                       NULL, 1, g_curr_font );
+        set_skip_vars( &nest_cb->sl_layout->skip, NULL, NULL, 1, g_curr_font );
     } else {                            // compact
         set_skip_vars( NULL, NULL, NULL, 1, g_curr_font );
     }
@@ -842,10 +832,10 @@ static  void    gml_li_sl( const gmltag * entry )
 
     /* Use original indents, not values possibly modified by IN */
 
-    t_left_indent_1 = conv_hor_unit( &((sl_lay_level *)(nest_cb->lay_tag))->left_indent, g_curr_font )
+    t_left_indent_1 = conv_hor_unit( &nest_cb->sl_layout->left_indent, g_curr_font )
                             + nest_cb->prev->left_indent + nest_cb->prev->align;
-    t_left_indent_2 = conv_hor_unit( &((sl_lay_level *)(nest_cb->lay_tag))->left_indent, g_curr_font );
-    t_right_indent = -1 * conv_hor_unit( &((sl_lay_level *)(nest_cb->lay_tag))->right_indent, g_curr_font )
+    t_left_indent_2 = conv_hor_unit( &nest_cb->sl_layout->left_indent, g_curr_font );
+    t_right_indent = -1 * conv_hor_unit( &nest_cb->sl_layout->right_indent, g_curr_font )
                             + nest_cb->prev->right_indent;
     t_page.cur_left = nest_cb->lm + t_left_indent_2;
     t_page.max_width = nest_cb->rm + t_right_indent;
@@ -854,18 +844,13 @@ static  void    gml_li_sl( const gmltag * entry )
     post_space = 0;
     ju_x_start = t_page.cur_width;
 
-    g_curr_font = ((sl_lay_level *)(nest_cb->lay_tag))->font;
+    g_curr_font = nest_cb->sl_layout->font;
     if( *p == '.' ) p++;                // over '.'
     while( *p == ' ' ) p++;             // skip initial spaces
     ProcFlags.need_li_lp = false;
     if( *p ) {
         process_text( p, g_curr_font ); // if text follows
     }
-
-    /* Set indents to their original values for the next LI */
-
-    nest_cb->left_indent  = t_left_indent_1;
-    nest_cb->right_indent = t_right_indent;
 
     scan_start = scan_stop + 1;
     return;
@@ -894,11 +879,10 @@ static  void    gml_li_ul( const gmltag * entry )
         return;
     }
 
-    if( ((ul_lay_level *)(nest_cb->lay_tag))->bullet_translate ) {
-        bullet[0] = cop_in_trans( ((ul_lay_level *)(nest_cb->lay_tag))->bullet,
-                            ((ul_lay_level *)(nest_cb->lay_tag))->bullet_font );
+    if( nest_cb->ul_layout->bullet_translate ) {
+        bullet[0] = cop_in_trans( nest_cb->ul_layout->bullet, nest_cb->ul_layout->bullet_font );
     } else {
-        bullet[0] = ((ul_lay_level *)(nest_cb->lay_tag))->bullet;
+        bullet[0] = nest_cb->ul_layout->bullet;
     }
     bullet[1] = ' ';                    // 1 trailing space as wgml4 does
     bullet[2] = 0;
@@ -906,28 +890,27 @@ static  void    gml_li_ul( const gmltag * entry )
     scr_process_break();
 
     if( ProcFlags.need_li_lp ) {        // first :li for this list
-        set_skip_vars( &nest_cb->xl_pre_skip, NULL, NULL, 1, g_curr_font );
+        set_skip_vars( &nest_cb->ul_layout->pre_skip, NULL, NULL, 1, g_curr_font );
     } else if( !nest_cb->compact ) {
-        set_skip_vars( &((ul_lay_level *)(nest_cb->lay_tag))->skip, NULL,
-                       NULL, 1, g_curr_font );
+        set_skip_vars( &nest_cb->ul_layout->skip, NULL, NULL, 1, g_curr_font );
     } else {                            // compact
         set_skip_vars( NULL, NULL, NULL, 1, g_curr_font );
     }
 
-    g_curr_font = ((ul_lay_level *)(nest_cb->lay_tag))->bullet_font;
+    g_curr_font = nest_cb->ul_layout->bullet_font;
     post_space = 0;
 
     /* Use original indents, not values possibly modified by IN */
 
     if( g_indent > 0 ) {
-        t_left_indent_1  = conv_hor_unit( &((ul_lay_level *)(nest_cb->lay_tag))->left_indent, g_curr_font )
+        t_left_indent_1  = conv_hor_unit( &nest_cb->ul_layout->left_indent, g_curr_font )
                             + nest_cb->prev->left_indent + nest_cb->prev->align;
     } else {
-        t_left_indent_1  = conv_hor_unit( &((ul_lay_level *)(nest_cb->lay_tag))->left_indent, g_curr_font )
+        t_left_indent_1  = conv_hor_unit( &nest_cb->ul_layout->left_indent, g_curr_font )
                             + nest_cb->prev->left_indent;
     }
-    t_left_indent_2  = conv_hor_unit( &((ul_lay_level *)(nest_cb->lay_tag))->left_indent, g_curr_font );
-    t_right_indent = -1 * conv_hor_unit( &((ul_lay_level *)(nest_cb->lay_tag))->right_indent, g_curr_font )
+    t_left_indent_2  = conv_hor_unit( &nest_cb->ul_layout->left_indent, g_curr_font );
+    t_right_indent = -1 * conv_hor_unit( &nest_cb->ul_layout->right_indent, g_curr_font )
                             + nest_cb->prev->right_indent;
     t_page.cur_left = nest_cb->lm + t_left_indent_2;
     t_page.max_width = nest_cb->rm + t_right_indent;
@@ -936,7 +919,7 @@ static  void    gml_li_ul( const gmltag * entry )
     ProcFlags.keep_left_margin = true;  // keep special Note indent
     start_line_with_string( bullet, g_curr_font, true );
 
-    t_align = conv_hor_unit( &((ul_lay_level *)(nest_cb->lay_tag))->align, g_curr_font );
+    t_align = conv_hor_unit( &nest_cb->ul_layout->align, g_curr_font );
     t_page.cur_width = t_page.cur_left + t_align;
 
     if( t_line != NULL ) {
@@ -951,7 +934,7 @@ static  void    gml_li_ul( const gmltag * entry )
     t_page.cur_width = t_page.cur_left;
     ju_x_start = t_page.cur_width;
 
-    g_curr_font = ((ul_lay_level *)(nest_cb->lay_tag))->font;
+    g_curr_font = nest_cb->ul_layout->font;
     if( *p == '.' ) p++;                // over '.'
     while( *p == ' ' ) p++;             // skip initial spaces
     ProcFlags.need_li_lp = false;
@@ -962,19 +945,9 @@ static  void    gml_li_ul( const gmltag * entry )
 
     t_page.cur_left = nest_cb->lm + t_left_indent_2 + nest_cb->align;
 
-    /* Set indents to their original values for the next LI */
-
-    if( g_indent > 0 ) {
-        nest_cb->left_indent = t_left_indent_1;
-    } else {
-        nest_cb->left_indent = t_left_indent_1 + nest_cb->prev->align;
-    }
-    nest_cb->right_indent = t_right_indent;
-
     scan_start = scan_stop + 1;
     return;
 }
-
 
 
 /*******************************************************************************************/
@@ -1008,14 +981,10 @@ void    gml_li( const gmltag * entry )
     case t_UL :
         gml_li_ul( entry );
         break;
-#if 0
     case t_DL :
-        gml_li_dl( entry );             // error message here
-        break;
     case t_GL :
-        gml_li_gl( entry );             // error message here
+        g_err_tag_nest( str_tags[nest_cb->c_tag + 1] ); // end tag expected
         break;
-#endif
     default:
         break;
     }
@@ -1033,9 +1002,6 @@ void    gml_li( const gmltag * entry )
 void    gml_lp( const gmltag * entry )
 {
     char        *   p;
-    su          *   list_skip_su;
-    su          *   lp_skip_su;
-    su          *   pre_skip_su;
 
     scan_err = false;
     p = scan_start;
@@ -1046,8 +1012,16 @@ void    gml_lp( const gmltag * entry )
         return;
     }
 
-    list_skip_su = &nest_cb->xl_pre_skip;   // nest_cb on entry, not LP nest_cb
-    lp_skip_su = &layout_work.lp.pre_skip;
+    if( nest_cb->c_tag == t_LP ) {          // restore margins saved by prior LP
+        t_page.cur_left = nest_cb->lm;
+        t_page.max_width = nest_cb->rm;
+    } else {
+        t_page.cur_left = nest_cb->lm;
+        t_page.max_width = nest_cb->rm;
+    }
+
+    nest_cb->font = g_curr_font;
+    g_curr_font = layout_work.defaults.font;    // matches wgml 4.0
 
     gml_xl_lp_common( t_LP );
 
@@ -1057,36 +1031,37 @@ void    gml_lp( const gmltag * entry )
     scr_process_break();
 
     nest_cb->compact = false;
+    nest_cb->font = g_curr_font;
+    g_curr_font = layout_work.defaults.font;    // matches wgml 4.0
 
     nest_cb->li_number    = 0;
     nest_cb->left_indent  = conv_hor_unit( &layout_work.lp.left_indent, g_curr_font );
     nest_cb->right_indent = -1 * conv_hor_unit( &layout_work.lp.right_indent, g_curr_font );
-    nest_cb->lay_tag      = &layout_work.lp;
 
-    nest_cb->lm = nest_cb->prev->lm + nest_cb->prev->left_indent;
-    nest_cb->rm = nest_cb->prev->rm + nest_cb->prev->right_indent;
+    nest_cb->lm = t_page.cur_left;
+    nest_cb->rm = t_page.max_width;
 
     spacing = (int8_t) layout_work.lp.spacing;
 
-    ProcFlags.keep_left_margin = true;  // keep special Note indent
+    ProcFlags.keep_left_margin = true;  // keep indent
     post_space = 0;
 
+    set_skip_vars( &layout_work.lp.pre_skip, NULL, &layout_work.lp.post_skip, spacing, g_curr_font );
     if( ProcFlags.need_li_lp ) {        // :LP first tag in list
-        pre_skip_su = greater_su( lp_skip_su, list_skip_su, spacing );
-    } else {
-        pre_skip_su = lp_skip_su;
+        if( nest_cb->prev->xl_pre_skip > g_subs_skip ) {
+            g_subs_skip = nest_cb->prev->xl_pre_skip;
+        }
     }
-    set_skip_vars( pre_skip_su, NULL, &layout_work.lp.post_skip, 1, g_curr_font );
 
-    t_page.cur_left = nest_cb->lm + nest_cb->left_indent;// left start
+    nest_cb->left_indent += nest_cb->prev->left_indent;
+    nest_cb->right_indent += nest_cb->prev->right_indent;
+
+    t_page.cur_left = nest_cb->lm + nest_cb->left_indent;   // left start
                                         // possibly indent first line
     g_line_indent = conv_hor_unit( &(layout_work.lp.line_indent), g_curr_font );
     t_page.cur_width = t_page.cur_left + g_line_indent;
 
     t_page.max_width = nest_cb->rm + nest_cb->right_indent;
-
-    nest_cb->left_indent += nest_cb->prev->left_indent;
-    nest_cb->right_indent += nest_cb->prev->right_indent;
 
     ju_x_start = t_page.cur_width;
 
@@ -1112,6 +1087,12 @@ void    gml_lp( const gmltag * entry )
 /* appear in a definition list.                                                             */
 /********************************************************************************************/
 
+void gml_dd( const gmltag * entry )
+{
+    return;
+}
+
+
 /*******************************************************************************************/
 /* Format: :DDHD.<text line>                                                               */
 /*                                                                                         */
@@ -1121,6 +1102,12 @@ void    gml_lp( const gmltag * entry )
 /* within a single definition list.                                                        */
 /*******************************************************************************************/
 
+void gml_ddhd( const gmltag * entry )
+{
+    return;
+}
+
+
 /************************************************************************************************/
 /* Format: :DT.<text line>                                                                      */
 /*                                                                                              */
@@ -1128,6 +1115,12 @@ void    gml_lp( const gmltag * entry )
 /* is always followed by a :dd tag, which specifies the start of the text to define the term,   */
 /* and may only appear in a definition list.                                                    */
 /************************************************************************************************/
+
+void gml_dt( const gmltag * entry )
+{
+    return;
+}
+
 
 /**********************************************************************************************/
 /* Format: :DTHD.<text line>                                                                  */
@@ -1138,6 +1131,12 @@ void    gml_lp( const gmltag * entry )
 /* list.                                                                                      */
 /**********************************************************************************************/
 
+void gml_dthd( const gmltag * entry )
+{
+    return;
+}
+
+
 /**********************************************************************************************/
 /* Format: :GD.<paragraph elements>                                                           */
 /*             <basic document elements>                                                      */
@@ -1147,6 +1146,12 @@ void    gml_lp( const gmltag * entry )
 /* appear in a glossary list.                                                                 */
 /**********************************************************************************************/
 
+void gml_gd( const gmltag * entry )
+{
+    return;
+}
+
+
 /**********************************************************************************************/
 /* Format: :GT.<text line>                                                                    */
 /*                                                                                            */
@@ -1155,4 +1160,8 @@ void    gml_lp( const gmltag * entry )
 /* and may only appear in a glossary list.                                                    */
 /**********************************************************************************************/
 
+void gml_gt( const gmltag * entry )
+{
+    return;
+}
 
