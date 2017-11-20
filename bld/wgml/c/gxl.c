@@ -136,7 +136,6 @@ void gml_dl( const gmltag * entry )
 {
     bool                compact;
     char            *   p;
-    dl_lay_level    *   dl_layout   = NULL;
 
     if( !ProcFlags.start_section ) {
         start_doc_sect();
@@ -156,12 +155,12 @@ void gml_dl( const gmltag * entry )
     }
     gml_xl_lp_common( t_DL );
 
-    dl_layout = layout_work.dl.first;
-    while( (dl_layout != NULL) && (dl_cur_level < dl_layout->level) ) {
-        dl_layout = dl_layout->next;
+    nest_cb->dl_layout = layout_work.dl.first;
+    while( (nest_cb->dl_layout != NULL) && (nest_cb->dl_layout->level < dl_cur_level) ) {
+        nest_cb->dl_layout = nest_cb->dl_layout->next;
     }
 
-    if( dl_layout == NULL ) {
+    if( nest_cb->dl_layout == NULL ) {
         internal_err( __FILE__, __LINE__ );
     }
 
@@ -175,16 +174,15 @@ void gml_dl( const gmltag * entry )
     nest_cb->font = g_curr_font;
 
     nest_cb->li_number = 0;
-    nest_cb->align = conv_hor_unit( &dl_layout->align, g_curr_font );
-    nest_cb->left_indent = conv_hor_unit( &dl_layout->left_indent, g_curr_font );
-    nest_cb->right_indent = -1 * conv_hor_unit( &dl_layout->right_indent, g_curr_font );
-    nest_cb->xl_pre_skip = conv_vert_unit( &dl_layout->pre_skip, spacing, g_curr_font );
-    nest_cb->dl_layout = dl_layout;
+    nest_cb->align = conv_hor_unit( &nest_cb->dl_layout->align, g_curr_font );
+    nest_cb->left_indent = conv_hor_unit( &nest_cb->dl_layout->left_indent, g_curr_font );
+    nest_cb->right_indent = -1 * conv_hor_unit( &nest_cb->dl_layout->right_indent, g_curr_font );
+    nest_cb->xl_pre_skip = conv_vert_unit( &nest_cb->dl_layout->pre_skip, spacing, g_curr_font );
 
     nest_cb->lm = t_page.cur_left;
     nest_cb->rm = t_page.max_width;
 
-    spacing = (int8_t) dl_layout->spacing;
+    spacing = (int8_t) nest_cb->dl_layout->spacing;
 
     scan_start = scan_stop + 1;
     return;
@@ -214,7 +212,6 @@ void gml_gl( const gmltag * entry )
 {
     bool                compact;
     char            *   p;
-    gl_lay_level    *   gl_layout   = NULL;
 
     if( !ProcFlags.start_section ) {
         start_doc_sect();
@@ -234,12 +231,12 @@ void gml_gl( const gmltag * entry )
     }
     gml_xl_lp_common( t_GL );
 
-    gl_layout = layout_work.gl.first;
-    while( (gl_layout != NULL) && (gl_cur_level < gl_layout->level) ) {
-        gl_layout = gl_layout->next;
+    nest_cb->gl_layout = layout_work.gl.first;
+    while( (nest_cb->gl_layout != NULL) && (nest_cb->gl_layout->level < gl_cur_level) ) {
+        nest_cb->gl_layout = nest_cb->gl_layout->next;
     }
 
-    if( gl_layout == NULL ) {
+    if( nest_cb->gl_layout == NULL ) {
         internal_err( __FILE__, __LINE__ );
     }
 
@@ -253,16 +250,15 @@ void gml_gl( const gmltag * entry )
     nest_cb->font = g_curr_font;
 
     nest_cb->li_number = 0;
-    nest_cb->align = conv_hor_unit( &gl_layout->align, g_curr_font );
-    nest_cb->left_indent = conv_hor_unit( &gl_layout->left_indent, g_curr_font );
-    nest_cb->right_indent = -1 * conv_hor_unit( &gl_layout->right_indent, g_curr_font );
-    nest_cb->xl_pre_skip = conv_vert_unit( &gl_layout->pre_skip, spacing, g_curr_font );
-    nest_cb->gl_layout = gl_layout;
+    nest_cb->align = conv_hor_unit( &nest_cb->gl_layout->align, g_curr_font );
+    nest_cb->left_indent = conv_hor_unit( &nest_cb->gl_layout->left_indent, g_curr_font );
+    nest_cb->right_indent = -1 * conv_hor_unit( &nest_cb->gl_layout->right_indent, g_curr_font );
+    nest_cb->xl_pre_skip = conv_vert_unit( &nest_cb->gl_layout->pre_skip, spacing, g_curr_font );
 
     nest_cb->lm = t_page.cur_left;
     nest_cb->rm = t_page.max_width;
 
-    spacing = (int8_t) gl_layout->spacing;
+    spacing = (int8_t) nest_cb->gl_layout->spacing;
 
     scan_start = scan_stop + 1;
     return;
@@ -288,7 +284,6 @@ void gml_ol( const gmltag * entry )
 {
     bool                compact;
     char            *   p;
-    ol_lay_level    *   ol_layout   = NULL;
 
     if( !ProcFlags.start_section ) {
         start_doc_sect();
@@ -310,12 +305,12 @@ void gml_ol( const gmltag * entry )
     }
     gml_xl_lp_common( t_OL );
 
-    ol_layout = layout_work.ol.first;
-    while( (ol_layout != NULL) && (ol_cur_level < ol_layout->level) ) {
-        ol_layout = ol_layout->next;
+    nest_cb->ol_layout = layout_work.ol.first;
+    while( (nest_cb->ol_layout != NULL) && (nest_cb->ol_layout->level < ol_cur_level) ) {
+        nest_cb->ol_layout = nest_cb->ol_layout->next;
     }
 
-    if( ol_layout == NULL ) {
+    if( nest_cb->ol_layout == NULL ) {
         internal_err( __FILE__, __LINE__ );
     }
 
@@ -327,18 +322,17 @@ void gml_ol( const gmltag * entry )
 
     nest_cb->compact = compact;
     nest_cb->font = g_curr_font;
-    g_curr_font = ol_layout->font;
+    g_curr_font = nest_cb->ol_layout->font;
 
     nest_cb->li_number = 0;
-    nest_cb->left_indent = conv_hor_unit( &ol_layout->left_indent, g_curr_font );
-    nest_cb->right_indent = -1 * conv_hor_unit( &ol_layout->right_indent, g_curr_font );
-    nest_cb->xl_pre_skip = conv_vert_unit( &ol_layout->pre_skip, spacing, g_curr_font );
-    nest_cb->ol_layout = ol_layout;
+    nest_cb->left_indent = conv_hor_unit( &nest_cb->ol_layout->left_indent, g_curr_font );
+    nest_cb->right_indent = -1 * conv_hor_unit( &nest_cb->ol_layout->right_indent, g_curr_font );
+    nest_cb->xl_pre_skip = conv_vert_unit( &nest_cb->ol_layout->pre_skip, spacing, g_curr_font );
 
     nest_cb->lm = t_page.cur_left;
     nest_cb->rm = t_page.max_width;
 
-    spacing = (int8_t) ol_layout->spacing;
+    spacing = (int8_t) nest_cb->ol_layout->spacing;
 
     scan_start = scan_stop + 1;
     return;
@@ -363,7 +357,6 @@ void gml_sl( const gmltag * entry )
 {
     bool                compact;
     char            *   p;
-    sl_lay_level    *   sl_layout   = NULL;
 
     if( !ProcFlags.start_section ) {
         start_doc_sect();
@@ -385,12 +378,12 @@ void gml_sl( const gmltag * entry )
     }
     gml_xl_lp_common( t_SL );
 
-    sl_layout = layout_work.sl.first;
-    while( (sl_layout != NULL) && (sl_cur_level < sl_layout->level) ) {
-        sl_layout = sl_layout->next;
+    nest_cb->sl_layout = layout_work.sl.first;
+    while( (nest_cb->sl_layout != NULL) && (nest_cb->sl_layout->level < sl_cur_level) ) {
+        nest_cb->sl_layout = nest_cb->sl_layout->next;
     }
 
-    if( sl_layout == NULL ) {
+    if( nest_cb->sl_layout == NULL ) {
         internal_err( __FILE__, __LINE__ );
     }
 
@@ -402,18 +395,17 @@ void gml_sl( const gmltag * entry )
 
     nest_cb->compact = compact;
     nest_cb->font = g_curr_font;
-    g_curr_font = sl_layout->font;
+    g_curr_font = nest_cb->sl_layout->font;
 
     nest_cb->li_number = 0;
-    nest_cb->left_indent = conv_hor_unit( &sl_layout->left_indent, g_curr_font );
-    nest_cb->right_indent = -1 * conv_hor_unit( &sl_layout->right_indent, g_curr_font );
-    nest_cb->xl_pre_skip = conv_vert_unit( &sl_layout->pre_skip, spacing, g_curr_font );
-    nest_cb->sl_layout = sl_layout;
+    nest_cb->left_indent = conv_hor_unit( &nest_cb->sl_layout->left_indent, g_curr_font );
+    nest_cb->right_indent = -1 * conv_hor_unit( &nest_cb->sl_layout->right_indent, g_curr_font );
+    nest_cb->xl_pre_skip = conv_vert_unit( &nest_cb->sl_layout->pre_skip, spacing, g_curr_font );
 
     nest_cb->lm = t_page.cur_left;
     nest_cb->rm = t_page.max_width;
 
-    spacing = (int8_t) sl_layout->spacing;
+    spacing = (int8_t) nest_cb->sl_layout->spacing;
 
     scan_start = scan_stop + 1;
     return;
@@ -438,7 +430,6 @@ void gml_ul( const gmltag * entry )
 {
     bool                compact;
     char            *   p;
-    ul_lay_level    *   ul_layout   = NULL;
 
     if( !ProcFlags.start_section ) {
         start_doc_sect();
@@ -460,12 +451,12 @@ void gml_ul( const gmltag * entry )
     }
     gml_xl_lp_common( t_UL );
 
-    ul_layout = layout_work.ul.first;
-    while( (ul_layout != NULL) && (ul_cur_level < ul_layout->level) ) {
-        ul_layout = ul_layout->next;
+    nest_cb->ul_layout = layout_work.ul.first;
+    while( (nest_cb->ul_layout != NULL) && (nest_cb->ul_layout->level < ul_cur_level) ) {
+        nest_cb->ul_layout = nest_cb->ul_layout->next;
     }
 
-    if( ul_layout == NULL ) {
+    if( nest_cb->ul_layout == NULL ) {
         internal_err( __FILE__, __LINE__ );
     }
 
@@ -477,18 +468,17 @@ void gml_ul( const gmltag * entry )
 
     nest_cb->compact = compact;
     nest_cb->font = g_curr_font;
-    g_curr_font = ul_layout->font;
+    g_curr_font = nest_cb->ul_layout->font;
 
     nest_cb->li_number = 0;
-    nest_cb->left_indent = conv_hor_unit( &ul_layout->left_indent, g_curr_font );
-    nest_cb->right_indent = -1 * conv_hor_unit( &ul_layout->right_indent, g_curr_font );
-    nest_cb->xl_pre_skip = conv_vert_unit( &ul_layout->pre_skip, spacing, g_curr_font );
-    nest_cb->ul_layout = ul_layout;
+    nest_cb->left_indent = conv_hor_unit( &nest_cb->ul_layout->left_indent, g_curr_font );
+    nest_cb->right_indent = -1 * conv_hor_unit( &nest_cb->ul_layout->right_indent, g_curr_font );
+    nest_cb->xl_pre_skip = conv_vert_unit( &nest_cb->ul_layout->pre_skip, spacing, g_curr_font );
 
     nest_cb->lm = t_page.cur_left;
     nest_cb->rm = t_page.max_width;
 
-    spacing = (int8_t) ul_layout->spacing;
+    spacing = (int8_t) nest_cb->ul_layout->spacing;
 
     scan_start = scan_stop + 1;
     return;
@@ -579,7 +569,7 @@ void    gml_edl( const gmltag * entry ) // not tested TBD
         if( dl_cur_level == 1 ) {
             dl_cur_level = layout_work.dl.max_level;
         } else {
-            dl_cur_level++;
+            dl_cur_level--;
         }
     }
 }
@@ -606,7 +596,7 @@ void    gml_egl( const gmltag * entry ) // not tested TBD
         if( gl_cur_level == 1 ) {
             gl_cur_level = layout_work.gl.max_level;
         } else {
-            gl_cur_level++;
+            gl_cur_level--;
         }
     }
 }
@@ -634,7 +624,7 @@ void    gml_eol( const gmltag * entry )
         if( ol_cur_level == 1 ) {
             ol_cur_level = layout_work.ol.max_level;
         } else {
-            ol_cur_level++;
+            ol_cur_level--;
         }
     }
 }
@@ -662,7 +652,7 @@ void    gml_esl( const gmltag * entry )
         if( sl_cur_level == 1 ) {
             sl_cur_level = layout_work.sl.max_level;
         } else {
-            sl_cur_level++;
+            sl_cur_level--;
         }
     }
 }
@@ -690,7 +680,7 @@ void    gml_eul( const gmltag * entry )
         if( ul_cur_level == 1 ) {
             ul_cur_level = layout_work.ul.max_level;
         } else {
-            ul_cur_level++;
+            ul_cur_level--;
         }
     }
 }
@@ -741,9 +731,9 @@ static  void    gml_li_ol( const gmltag * entry )
     g_curr_font = nest_cb->ol_layout->number_font;
 
     if( ProcFlags.need_li_lp ) {        // first :li for this list
-        set_skip_vars( &nest_cb->ol_layout->pre_skip, NULL, NULL, 1, g_curr_font );
+        set_skip_vars( &nest_cb->ol_layout->pre_skip, NULL, NULL, spacing, g_curr_font );
     } else if( !nest_cb->compact ) {
-        set_skip_vars( &nest_cb->ol_layout->skip, NULL, NULL, 1, g_curr_font );
+        set_skip_vars( &nest_cb->ol_layout->skip, NULL, NULL, spacing, g_curr_font );
     } else {                            // compact
         set_skip_vars( NULL, NULL, NULL, 1, g_curr_font );
     }
@@ -821,9 +811,9 @@ static  void    gml_li_sl( const gmltag * entry )
     scr_process_break();
 
     if( ProcFlags.need_li_lp ) {        // first :li for this list
-        set_skip_vars( &nest_cb->sl_layout->pre_skip, NULL, NULL, 1, g_curr_font );
+        set_skip_vars( &nest_cb->sl_layout->pre_skip, NULL, NULL, spacing, g_curr_font );
     } else if( !nest_cb->compact ) {
-        set_skip_vars( &nest_cb->sl_layout->skip, NULL, NULL, 1, g_curr_font );
+        set_skip_vars( &nest_cb->sl_layout->skip, NULL, NULL, spacing, g_curr_font );
     } else {                            // compact
         set_skip_vars( NULL, NULL, NULL, 1, g_curr_font );
     }
@@ -890,9 +880,9 @@ static  void    gml_li_ul( const gmltag * entry )
     scr_process_break();
 
     if( ProcFlags.need_li_lp ) {        // first :li for this list
-        set_skip_vars( &nest_cb->ul_layout->pre_skip, NULL, NULL, 1, g_curr_font );
+        set_skip_vars( &nest_cb->ul_layout->pre_skip, NULL, NULL, spacing, g_curr_font );
     } else if( !nest_cb->compact ) {
-        set_skip_vars( &nest_cb->ul_layout->skip, NULL, NULL, 1, g_curr_font );
+        set_skip_vars( &nest_cb->ul_layout->skip, NULL, NULL, spacing, g_curr_font );
     } else {                            // compact
         set_skip_vars( NULL, NULL, NULL, 1, g_curr_font );
     }

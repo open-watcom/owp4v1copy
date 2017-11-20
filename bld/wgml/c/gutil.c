@@ -288,7 +288,7 @@ const bool internal_to_su( su *in_su, bool tag, const char *base )
     }
     if( pd != NULL ) {                  // dec point found
         if( pu == NULL ) {              // need trailing unit
-            val_parse_err( base + (ps - s->su_txt), tag );
+            val_parse_err( base + (ps - s->su_txt - 1), tag );
             scan_start = scan_stop + 1;
             return( cvterr );
         }

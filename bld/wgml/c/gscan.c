@@ -780,15 +780,14 @@ void    scan_line( void )
         /*******************************************************************/
         /*  here we arrive if no script keyword / GML tag recognized       */
         /*  or for unprocessed text in the input record                    */
-        /*  or for attributes of LAYOUT tags                               */
         /*******************************************************************/
 
         if( (*scan_start != '\0') && (scan_start <= scan_stop) ) {
             if( input_cbs->fmflags & II_research && GlobalFlags.firstpass ) {
                 g_info_lm( inf_text_line, scan_start );
             }
-            if( ProcFlags.layout ) {    // LAYOUT active: process attributes
-                lay_tags[lay_ind].gmlproc( &lay_tags[lay_ind] );
+            if( ProcFlags.layout ) {    // LAYOUT active: should not happen
+                internal_err( __FILE__, __LINE__ );
             } else {
                 // processs (remaining) text
                 if( rs_loc > 0 ) {

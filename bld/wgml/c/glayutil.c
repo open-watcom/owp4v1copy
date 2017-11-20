@@ -165,79 +165,103 @@ condcode    get_lay_sub_and_value( att_args * args )
     args->len[0] = -1;                  // switch for scanning error
     args->len[1] = -1;                  // switch for scanning error
 
-    while( *p && is_lay_att_char( *p ) ) {
-        p++;
-    }
-    if( *p == '\0' ) {
-        if( p == args->start[0] ) {
-            rc = omit;                  // nothing found
-        }
-        return( rc );                   // or parsing error
-    }
-    args->len[0] = p - args->start[0];
-    if( args->len[0] < 4 ) {            // attribute name length
-        err_count++;
-        g_err( err_att_name_inv );
-        file_mac_info();
-        return( rc );
-    }
-
-    while( is_space_tab_char( *p ) ) {  // over WS to =
-        p++;
-    }
-
-    if(*p && *p == '=' ) {
-        p++;
-        while( is_space_tab_char( *p ) ) {  // over WS to attribute value
+    for(;;) {                           // loop until attribute/value pair or rescan line found
+        while( *p && is_lay_att_char( *p ) ) {
             p++;
         }
-    } else {
-        err_count++;
-        g_err( err_att_val_inv );
-        file_mac_info();
-        return( no );                   // parsing err '=' missing
+        if( *p == '\0' ) {              // end of line: get new line
+//        if( p == args->start[0] ) {
+//            rc = omit;                  // nothing found
+//        }
+//        return( rc );                   // or parsing error
+            if( !(input_cbs->fmflags & II_eof) ) {
+                if( get_line( true ) ) {// next line for missing attribute
+ 
+                    process_line();
+                    scan_start = buff2;
+                    scan_stop  = buff2 + buff2_lg;
+                    if( (*scan_start == SCR_char) ||    // cw found: end-of-tag
+                        (*scan_start == GML_char) ) {   // tag found: end-of-tag
+                        ProcFlags.reprocess_line = true; 
+                        break;          
+                    } else {
+                        p = scan_start; // new line is part of current tag
+                        while( is_space_tab_char( *p ) ) {  // over WS to start of alleged attribute
+                            p++;
+                        }
+                        args->start[0] = p;                 // set for new line
+                        continue;
+                    }
+                }
+            }
+        }
+        args->len[0] = p - args->start[0];
+        if( args->len[0] < 4 ) {            // attribute name length
+            err_count++;
+            g_err( err_att_name_inv );
+            file_mac_info();
+            return( rc );
+        }
+
+        while( is_space_tab_char( *p ) ) {  // over WS to =
+            p++;
+        }
+
+        if(*p && *p == '=' ) {
+            p++;
+            while( is_space_tab_char( *p ) ) {  // over WS to attribute value
+                p++;
+            }
+        } else {
+            err_count++;
+            g_err( err_att_val_inv );
+            file_mac_info();
+            return( no );                   // parsing err '=' missing
+        }
+
+        args->start[1] = p;                 // delimiters must be included for error checking
+
+        if( is_quote_char( *p ) ) {
+            quote = *p;
+            ++p;
+            args->quoted = true;
+        } else {
+            quote = ' ';
+            args->quoted = false;
+        }
+
+        while( *p && *p != quote ) {
+            ++p;
+        }
+
+        if( args->quoted && is_quote_char( *p ) ) {
+            p++;                            // over terminating quote
+        }
+
+        args->len[1] = p - args->start[1];
+
+        if( args->len[1] < 1 ) {            // attribute value length
+            err_count++;
+            g_err( err_att_val_inv );
+            file_mac_info();
+        } else {
+            rc = pos;
+        }
+
+        if( *(p - 1) == '.' ) {             // final "." is end of tag
+            ProcFlags.tag_end_found = true;
+            args->len[1]--;                 // remove final "." from value
+        }
+
+        val_start = args->start[1];
+        val_len = args->len[1];
+        if( args->quoted) {         // delimiters must be omitted for these externs
+            val_start++;
+            val_len -= 2;
+        }
+        break;                      // values found
     }
 
-    args->start[1] = p;                 // delimiters must be included for error checking
-
-    if( is_quote_char( *p ) ) {
-        quote = *p;
-        ++p;
-        args->quoted = true;
-    } else {
-        quote = ' ';
-        args->quoted = false;
-    }
-
-    while( *p && *p != quote ) {
-        ++p;
-    }
-
-    if( args->quoted && is_quote_char( *p ) ) {
-        p++;                            // over terminating quote
-    }
-
-    args->len[1] = p - args->start[1];
-
-    if( args->len[1] < 1 ) {            // attribute value length
-        err_count++;
-        g_err( err_att_val_inv );
-        file_mac_info();
-    } else {
-        rc = pos;
-    }
-
-    if( *p == '.' ) {
-        ProcFlags.tag_end_found = true;
-        p++;
-    }
-
-    val_start = args->start[1];
-    val_len = args->len[1];
-    if( args->quoted) {         // delimiters must be omitted for these externs
-        val_start++;
-        val_len -= 2;
-    }
     scan_start = p;
     return( rc );
 }
