@@ -1,113 +1,77 @@
-:cmt. test nested lists :ol, :sl, :ul
+:cmt. test nested lists :dl :gl :ol, :sl, :ul
 :cmt. item tags :LI and :LP
-:cmt. TBD  not yet :DL, :GL and subtags
 :LAYOUT.
-:P
-        line_indent = 0
-        pre_skip = 1
-        post_skip = 0
-:PC
-        line_indent = 6
-        pre_skip = 1
-        post_skip = 0
-:LP
-        left_indent = 4
-        right_indent = 3
-        line_indent = 2
-        pre_skip = 1
-        post_skip = 0
-        spacing = 1
-:DT
-        font = 2
-:GT
-        font = 2
-:DTHD
+    :PAGE
+        depth = '9.66i' left_margin = '1i' right_margin = '7i' top_margin = 0.
+    :DEFAULT
+        spacing = 1 font = 0 columns = 1 justify = no
+    :DL
+        align = '1i' left_indent = '0.5i' level = 1 line_break = no post_skip = 1
+        pre_skip = 1 right_indent = '0.5i' skip = 1 spacing = 1
+    :DL
+        align = '1i' left_indent = '0.25i' level = 2 line_break = no post_skip = 1
+        pre_skip = 1 right_indent = '0.25i' skip = 1 spacing = 1
+    :DD
+        line_left = '0.5i' font = 0
+    :DDHD
         font = 1
-:DD
-        line_left = '0.5i'
-        font = 0
-:GD
-        font = 0
-:DDHD
+    :DT
+        font = 2
+    :DTHD
         font = 1
-:SL
-        level = 1
-        left_indent = 2
-        right_indent = 0
-        pre_skip = 1
-        skip = 0
-        spacing = 1
-        post_skip = 0
+    :GL
+        align = 0 delim = ':' left_indent = '0.5i' level = 1 post_skip = 1 pre_skip = 1
+        right_indent = '0.5i' skip = 1 spacing = 1
+    :GL
+        align = 0 delim = ':' left_indent = '0.25i' level = 2 post_skip = 1 pre_skip = 1
+        right_indent = '0.25i' skip = 1 spacing = 1
+    :GD
         font = 0
-:OL
-        level = 1
-        left_indent = 2
-        right_indent = 15
-        pre_skip = 1
-        skip = 0
+    :GT
+        font = 2
+    :LP
+        left_indent = '0.25i' line_indent = 0 post_skip = 1 pre_skip = 1 right_indent = '0.25i'
         spacing = 1
-        post_skip = 0
-        font = 0
-        align = '0.4i'
-        number_style = hd
-        number_font = 0
-:UL
-        level = 1
-        left_indent = 2
-        right_indent = 0
-        pre_skip = 1
-        skip = 0
-        spacing = 1
-        post_skip = 0
-        font = 0
-        align = '0.4i'
-        bullet = '*'
-        bullet_translate = yes
-        bullet_font = 0
-:DL
-        level = 1
-        left_indent = 2
-        right_indent = 0
-        pre_skip = 0
-        skip = 0
-        spacing = 1
-        post_skip = 0
-        align = '1i'
-        line_break = no
-:GL
-        level = 1
-        left_indent = 2
-        right_indent = 0
-        pre_skip = 0
-        skip = 0
-        spacing = 1
-        post_skip = 0
-        align = 0
-        delim = ':'
-:BANNER
-        left_adjust = 0
-        right_adjust = 0
-        depth = 3
-        place = top
-        docsect = body
-:BANREGION
-        indent = 0
-        hoffset = left
-        width = extend
-        voffset = 2
-        depth = 1
-        font = 0
-        refnum = 1
-        region_position = left
-        pouring = last
-        script_format = yes
-        contents = '/&$amp.$htext1.// &$amp.$pgnuma./'
-:eBANREGION
-:eBANNER
-:convert file='txl.lay'.
+    :OL
+        align = '0.4i' font = 0 left_indent = '0.5i' level = 1 number_font = 0 number_style = rd
+        post_skip = 1 pre_skip = 1 right_indent = '0.5i' skip = 1 spacing = 1
+    :OL
+        align = '0.4i' font = 0 left_indent = '0.5i' level = 2 number_font = 0 number_style = ad
+        post_skip = 1 pre_skip = 1 right_indent = '0.5i' skip = 1 spacing = 1
+    :OL
+        align = '0.4i' font = 0 left_indent = '0.5i' level = 3 number_font = 0 
+        post_skip = 1 pre_skip = 1 right_indent = '0.5i' skip = 1 spacing = 1
+    :OL
+        align = '0.4i' font = 0 left_indent = '0.5i' level = 1 number_font = 0 number_style = hd
+        post_skip = 1 pre_skip = 1 right_indent = '0.5i' skip = 1 spacing = 1
+    :P
+        line_indent = 0 post_skip = 0 pre_skip = 1
+    :PC
+        line_indent = 0 post_skip = 0 pre_skip = 1
+    :SL
+        font = 0 left_indent = '0.5i' level = 1 post_skip = 1 pre_skip = 1 right_indent = '0.5i'
+        skip = 1 spacing = 1
+    :UL
+        align = '0.4i' bullet = '@' bullet_translate = yes bullet_font = 0 font = 0
+        left_indent = '0.5i' level = 1 post_skip = 1 pre_skip = 1 right_indent = '0.1i'
+        skip = 1 spacing = 1
+    :UL
+        align = '0.4i' bullet = '|' bullet_translate = yes bullet_font = 0 font = 0
+        left_indent = '0.5i' level = 2 post_skip = 1 pre_skip = 1 right_indent = '0.1i'
+        skip = 1 spacing = 1
+    :UL
+        align = '0.4i' bullet_translate = yes bullet_font = 0 font = 0
+        left_indent = '0.5i' level = 3 post_skip = 1 pre_skip = 1 right_indent = '0.1i'
+        skip = 1 spacing = 1
+    :UL
+        align = '0.4i' bullet = '*' bullet_translate = yes bullet_font = 0 font = 0
+        left_indent = '0.5i' level = 1 post_skip = 1 pre_skip = 1 right_indent = '0.1i'
+        skip = 1 spacing = 1
+    :convert file='txl.lay'.
 :eLAYOUT.
 :GDOC.
 :BODY.
+.im txl1.inc
 .ty body  in=&$in inr=&$inr ir=&$ir ll=&$ll lc=&$lc lst=&$lst pg=&$pgnuma
 :p.
 &gml.SL follows.
@@ -125,10 +89,8 @@
 to see how a multi line list item looks
 .ty li ol in=&$in inr=&$inr ir=&$ir ll=&$ll lc=&$lc lst=&$lst pg=&$pgnuma
         :li.ordered 2 no compact
-        :note. This is a note which extends over more than one line to see how it looks.
     :lp.list part
-still list part still list part still list part still list part still list part
-still list part still list part still list part still list part still list part
+still list part still list part still list part still list 
 .ty lp    in=&$in inr=&$inr ir=&$ir ll=&$ll lc=&$lc lst=&$lst pg=&$pgnuma
         :li.ordered 3 no compact
     :ul

@@ -32,8 +32,6 @@
 *
 * Note: :LIREF is not yet implemented; it might be better placed
 *       with :FIGREF, :FNREF, and :HDREF than here, depending on how it works
-*       This file was originally done very early; other features may not be
-*       fully implemented as well
 ****************************************************************************/
 #include    "wgml.h"
 #include    "gvars.h"
@@ -325,8 +323,10 @@ void gml_ol( const gmltag * entry )
     g_curr_font = nest_cb->ol_layout->font;
 
     nest_cb->li_number = 0;
+    nest_cb->align = conv_hor_unit( &nest_cb->ol_layout->align, g_curr_font );
     nest_cb->left_indent = conv_hor_unit( &nest_cb->ol_layout->left_indent, g_curr_font );
-    nest_cb->right_indent = -1 * conv_hor_unit( &nest_cb->ol_layout->right_indent, g_curr_font );
+    nest_cb->right_indent = -1 * conv_hor_unit( &nest_cb->ol_layout->right_indent, g_curr_font )
+                            + nest_cb->right_indent;
     nest_cb->xl_pre_skip = conv_vert_unit( &nest_cb->ol_layout->pre_skip, spacing, g_curr_font );
 
     nest_cb->lm = t_page.cur_left;
@@ -399,7 +399,8 @@ void gml_sl( const gmltag * entry )
 
     nest_cb->li_number = 0;
     nest_cb->left_indent = conv_hor_unit( &nest_cb->sl_layout->left_indent, g_curr_font );
-    nest_cb->right_indent = -1 * conv_hor_unit( &nest_cb->sl_layout->right_indent, g_curr_font );
+    nest_cb->right_indent = -1 * conv_hor_unit( &nest_cb->sl_layout->right_indent, g_curr_font )
+                            + nest_cb->right_indent;
     nest_cb->xl_pre_skip = conv_vert_unit( &nest_cb->sl_layout->pre_skip, spacing, g_curr_font );
 
     nest_cb->lm = t_page.cur_left;
@@ -471,8 +472,10 @@ void gml_ul( const gmltag * entry )
     g_curr_font = nest_cb->ul_layout->font;
 
     nest_cb->li_number = 0;
+    nest_cb->align = conv_hor_unit( &nest_cb->ul_layout->align, g_curr_font );
     nest_cb->left_indent = conv_hor_unit( &nest_cb->ul_layout->left_indent, g_curr_font );
-    nest_cb->right_indent = -1 * conv_hor_unit( &nest_cb->ul_layout->right_indent, g_curr_font );
+    nest_cb->right_indent = -1 * conv_hor_unit( &nest_cb->ul_layout->right_indent, g_curr_font )
+                            + nest_cb->right_indent;
     nest_cb->xl_pre_skip = conv_vert_unit( &nest_cb->ul_layout->pre_skip, spacing, g_curr_font );
 
     nest_cb->lm = t_page.cur_left;
@@ -695,10 +698,6 @@ static  void    gml_li_ol( const gmltag * entry )
     char            charnumber[MAX_L_AS_STR];
     char        *   p;
     char        *   pn;
-    int32_t         t_align         = 0;
-    int32_t         t_left_indent_1 = 0;
-    int32_t         t_left_indent_2 = 0;
-    int32_t         t_right_indent  = 0;
     uint32_t        num_len;
 
     scan_err = false;
@@ -710,7 +709,6 @@ static  void    gml_li_ol( const gmltag * entry )
         return;
     }
 
-    t_align = conv_hor_unit( &nest_cb->ol_layout->align, g_curr_font );
     nest_cb->li_number++;
     pn = format_num( nest_cb->li_number, charnumber, MAX_L_AS_STR,
                      nest_cb->ol_layout->number_style );
@@ -740,26 +738,14 @@ static  void    gml_li_ol( const gmltag * entry )
 
     post_space = 0;
 
-    /* Use original indents, not values possibly modified by IN */
-
-    if( g_indent > 0 ) {
-        t_left_indent_1 = conv_hor_unit( &nest_cb->ol_layout->left_indent, g_curr_font )
-                            + nest_cb->prev->left_indent + nest_cb->prev->align;
-    } else {
-        t_left_indent_1 = conv_hor_unit( &nest_cb->ol_layout->left_indent, g_curr_font )
-                            + nest_cb->prev->left_indent;
-    }
-    t_left_indent_2 = conv_hor_unit( &nest_cb->ol_layout->left_indent, g_curr_font );
-    t_right_indent = -1 * conv_hor_unit( &nest_cb->ol_layout->right_indent, g_curr_font )
-                            + nest_cb->prev->right_indent;
-    t_page.cur_left = nest_cb->lm + t_left_indent_2;
-    t_page.max_width = nest_cb->rm + t_right_indent;
+    t_page.cur_left = nest_cb->lm + nest_cb->left_indent;
+    t_page.max_width = nest_cb->rm + nest_cb->right_indent;
 
     t_page.cur_width = t_page.cur_left;
     ProcFlags.keep_left_margin = true;  // keep special Note indent
     start_line_with_string( charnumber, g_curr_font, true );
 
-    t_page.cur_width = t_page.cur_left + t_align;
+    t_page.cur_width = t_page.cur_left + nest_cb->align;
 
     if( t_line != NULL ) {
         if( t_line->last != NULL ) {
@@ -781,8 +767,6 @@ static  void    gml_li_ol( const gmltag * entry )
         process_text( p, g_curr_font ); // if text follows
     }
 
-    nest_cb->align = t_align;
-
     scan_start = scan_stop + 1;
     return;
 }
@@ -795,9 +779,6 @@ static  void    gml_li_ol( const gmltag * entry )
 static  void    gml_li_sl( const gmltag * entry )
 {
     char        *   p;
-    int32_t         t_left_indent_1 = 0;
-    int32_t         t_left_indent_2 = 0;
-    int32_t         t_right_indent  = 0;
 
     scan_err = false;
     p = scan_start;
@@ -820,15 +801,8 @@ static  void    gml_li_sl( const gmltag * entry )
 
     ProcFlags.keep_left_margin = true;  // keep special Note indent
 
-    /* Use original indents, not values possibly modified by IN */
-
-    t_left_indent_1 = conv_hor_unit( &nest_cb->sl_layout->left_indent, g_curr_font )
-                            + nest_cb->prev->left_indent + nest_cb->prev->align;
-    t_left_indent_2 = conv_hor_unit( &nest_cb->sl_layout->left_indent, g_curr_font );
-    t_right_indent = -1 * conv_hor_unit( &nest_cb->sl_layout->right_indent, g_curr_font )
-                            + nest_cb->prev->right_indent;
-    t_page.cur_left = nest_cb->lm + t_left_indent_2;
-    t_page.max_width = nest_cb->rm + t_right_indent;
+    t_page.cur_left = nest_cb->lm + nest_cb->left_indent;
+    t_page.max_width = nest_cb->rm + nest_cb->right_indent;
 
     t_page.cur_width = t_page.cur_left;
     post_space = 0;
@@ -855,10 +829,6 @@ static  void    gml_li_ul( const gmltag * entry )
 {
     char        *   p;
     char            bullet[3];
-    int32_t         t_align         = 0;
-    int32_t         t_left_indent_1 = 0;
-    int32_t         t_left_indent_2 = 0;
-    int32_t         t_right_indent  = 0;
 
     scan_err = false;
     p = scan_start;
@@ -890,27 +860,14 @@ static  void    gml_li_ul( const gmltag * entry )
     g_curr_font = nest_cb->ul_layout->bullet_font;
     post_space = 0;
 
-    /* Use original indents, not values possibly modified by IN */
-
-    if( g_indent > 0 ) {
-        t_left_indent_1  = conv_hor_unit( &nest_cb->ul_layout->left_indent, g_curr_font )
-                            + nest_cb->prev->left_indent + nest_cb->prev->align;
-    } else {
-        t_left_indent_1  = conv_hor_unit( &nest_cb->ul_layout->left_indent, g_curr_font )
-                            + nest_cb->prev->left_indent;
-    }
-    t_left_indent_2  = conv_hor_unit( &nest_cb->ul_layout->left_indent, g_curr_font );
-    t_right_indent = -1 * conv_hor_unit( &nest_cb->ul_layout->right_indent, g_curr_font )
-                            + nest_cb->prev->right_indent;
-    t_page.cur_left = nest_cb->lm + t_left_indent_2;
-    t_page.max_width = nest_cb->rm + t_right_indent;
+    t_page.cur_left = nest_cb->lm + nest_cb->left_indent;
+    t_page.max_width = nest_cb->rm + nest_cb->right_indent;
 
     t_page.cur_width = t_page.cur_left;
     ProcFlags.keep_left_margin = true;  // keep special Note indent
     start_line_with_string( bullet, g_curr_font, true );
 
-    t_align = conv_hor_unit( &nest_cb->ul_layout->align, g_curr_font );
-    t_page.cur_width = t_page.cur_left + t_align;
+    t_page.cur_width = t_page.cur_left + nest_cb->align;
 
     if( t_line != NULL ) {
         if( t_line->last != NULL ) {
@@ -931,9 +888,8 @@ static  void    gml_li_ul( const gmltag * entry )
     if( *p ) {
         process_text( p, g_curr_font ); // if text fullows
     }
-    nest_cb->align = t_align;
 
-    t_page.cur_left = nest_cb->lm + t_left_indent_2 + nest_cb->align;
+    t_page.cur_left = nest_cb->lm + nest_cb->left_indent + nest_cb->align;
 
     scan_start = scan_stop + 1;
     return;
@@ -1024,9 +980,11 @@ void    gml_lp( const gmltag * entry )
     nest_cb->font = g_curr_font;
     g_curr_font = layout_work.defaults.font;    // matches wgml 4.0
 
-    nest_cb->li_number    = 0;
-    nest_cb->left_indent  = conv_hor_unit( &layout_work.lp.left_indent, g_curr_font );
-    nest_cb->right_indent = -1 * conv_hor_unit( &layout_work.lp.right_indent, g_curr_font );
+    nest_cb->li_number = 0;
+    nest_cb->left_indent = conv_hor_unit( &layout_work.lp.left_indent, g_curr_font )
+                            + nest_cb->prev->left_indent;
+    nest_cb->right_indent = -1 * conv_hor_unit( &layout_work.lp.right_indent, g_curr_font )
+                            + nest_cb->prev->right_indent;
 
     nest_cb->lm = t_page.cur_left;
     nest_cb->rm = t_page.max_width;
@@ -1042,9 +1000,6 @@ void    gml_lp( const gmltag * entry )
             g_subs_skip = nest_cb->prev->xl_pre_skip;
         }
     }
-
-    nest_cb->left_indent += nest_cb->prev->left_indent;
-    nest_cb->right_indent += nest_cb->prev->right_indent;
 
     t_page.cur_left = nest_cb->lm + nest_cb->left_indent;   // left start
                                         // possibly indent first line
