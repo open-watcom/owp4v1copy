@@ -283,37 +283,37 @@ void gml_esf( const gmltag * entry )
 
 void gml_sf( const gmltag * entry )
 {
-    char    *   p;
-    char    *   pe;
-    long        font;
+    bool            font_seen   =   false;
+    char        *   p;
+    char        *   pa;
+    font_number     font;
 
     p = scan_start;
-    p++;
     while( *p == ' ' ) {
         p++;
     }
-    if( !strnicmp( "font", p, 4 ) ) {
-        p += 4;
-        while( (*p == ' ') || (*p == '=') ) {
-            p++;
-        }
-        pe = p;
-        while( (*pe >= '0') && (*pe <= '9') ) {
-            pe++;
-        }
-        if( *pe && ( (*pe != '.') && (*pe != ' ')) ) { // not properly formed
-            xx_err( ERR_NUM_TOO_LARGE );
-        } else {
-            font = strtol( p, &pe, 10 );
-            scan_start = pe;
-            gml_inline_common( entry, font, t_SF );
-        }
+    if( *p == '.' ) {
+        /* already at tag end */
     } else {
-        err_count++;
-        // AT-001 Required attribute not found
-        g_err( err_att_missing );
-        file_mac_info();
+        pa = get_att_start( p );
+        p = att_start;
+        if( !ProcFlags.reprocess_line ) {
+            if( !strnicmp( "font", p, 4 ) ) {
+                p += 4;
+                p = get_att_value( p );
+                if( val_start != NULL ) {
+                    font = get_font_number( val_start, val_len );
+                    font_seen = true;
+                    scan_start = p;
+                    gml_inline_common( entry, font, t_SF );
+                }
+            }
+        }
     }
+    if( !font_seen ) {          // font is a required attribute
+        xx_line_err( err_att_missing, val_start );
+    }
+
     scan_start = scan_stop + 1;
     return;
 }
@@ -354,6 +354,7 @@ void gml_cit( const gmltag * entry )
 void gml_ecit( const gmltag * entry )
 {
     gml_e_inlne_common( entry, t_CIT );
+    return;
 }
 
 
@@ -391,5 +392,6 @@ void gml_q( const gmltag * entry )
 void gml_eq( const gmltag * entry )
 {
     gml_e_inlne_common( entry, t_Q );
+    return;
 }
 

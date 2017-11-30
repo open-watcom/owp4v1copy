@@ -403,8 +403,9 @@ typedef enum {
     address_tag = 2,                    // tag allowed in ADDRESS section
     figcap_tag  = 4,                    // tag allowed after FIGCAP
     /*  special use tags */
-    ip_tag      = 8,                    // marks CIT, HP0, HP1, HP2, HP3, SF, Q
-    li_lp_tag   = 16,                   // marks LI and LP tags
+    def_tag     = 8,                    // marks DDHD, DD, GD
+    ip_tag      = 16,                   // marks CIT, HP0, HP1, HP2, HP3, SF, Q
+    li_lp_tag   = 32,                   // marks LI LP 
 } locflags;
 
 typedef struct gmltag {

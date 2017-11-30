@@ -170,10 +170,6 @@ condcode    get_lay_sub_and_value( att_args * args )
             p++;
         }
         if( *p == '\0' ) {              // end of line: get new line
-//        if( p == args->start[0] ) {
-//            rc = omit;                  // nothing found
-//        }
-//        return( rc );                   // or parsing error
             if( !(input_cbs->fmflags & II_eof) ) {
                 if( get_line( true ) ) {// next line for missing attribute
  
@@ -658,14 +654,16 @@ void    o_uint8( FILE * f, lay_att curr, uint8_t *tm )
 /***************************************************************************/
 bool    i_font_number( char *p, lay_att curr, font_number *tm )
 {
-    int wk;
+    char    *   pb;
+    size_t      len;
 
-    curr = curr;
-    wk = strtol( p, NULL, 10 );
-    if( wk < 0 || wk > 255 ) {
-        return( true );
+    pb = p;
+    len = 0;
+    while( *pb && !is_space_tab_char(*pb) && *pb != '.' ) {     // get length
+        len++;
+        pb++;
     }
-    *tm = wk;
+    *tm = get_font_number( p, len);
     return( false );
 }
 

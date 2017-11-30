@@ -132,33 +132,26 @@ static void gml_xl_lp_common( e_tags t )
 
 void gml_dl( const gmltag * entry )
 {
-    bool                compact;
+    bool                compact     =   false;
+    bool                dl_break    =   false;
     char            *   p;
+    char            *   pa;
+    dl_lay_level    *   dl_layout;
+    font_number         headhi;
+    font_number         termhi;
+    su                  cur_su;
+    uint32_t            tsize;
 
     if( !ProcFlags.start_section ) {
         start_doc_sect();
     }
 
-    p = scan_start;
-    p++;
-    while( *p == ' ' ) {
-        p++;
-    }
-    scan_start = p;                     // over spaces
-    if( !strnicmp( "compact", p, 7 ) ) {
-        compact = true;
-        scan_start = p + 7;
-    } else {
-        compact = false;
-    }
-    gml_xl_lp_common( t_DL );
-
-    nest_cb->dl_layout = layout_work.dl.first;
-    while( (nest_cb->dl_layout != NULL) && (nest_cb->dl_layout->level < dl_cur_level) ) {
-        nest_cb->dl_layout = nest_cb->dl_layout->next;
+    dl_layout = layout_work.dl.first;
+    while( (dl_layout != NULL) && (dl_layout->level < dl_cur_level) ) {
+        dl_layout = dl_layout->next;
     }
 
-    if( nest_cb->dl_layout == NULL ) {
+    if( dl_layout == NULL ) {
         internal_err( __FILE__, __LINE__ );
     }
 
@@ -168,6 +161,80 @@ void gml_dl( const gmltag * entry )
         dl_cur_level = 1;
     }
 
+    headhi = layout_work.dthd.font;
+    termhi = layout_work.dt.font;
+    tsize = conv_vert_unit( &dl_layout->align, spacing, g_curr_font );
+
+    p = scan_start;
+    while( *p == ' ' ) {                     // over spaces
+        p++;
+    }
+    if( *p == '.' ) {
+        /* already at tag end */
+    } else {
+        for( ;; ) {
+            pa = get_att_start( p );
+            p = att_start;
+            if( ProcFlags.reprocess_line ) {
+                break;
+            }
+
+            if( !strnicmp( "compact", p, 7 ) ) {
+                compact = true;
+                p += 7;
+                if( ProcFlags.tag_end_found ) {
+                    break;
+                }
+            } else if( !strnicmp( "break", p, 5 ) ) {
+                p += 5;
+                dl_break = true;
+                if( ProcFlags.tag_end_found ) {
+                    break;
+                }
+            } else if( !strnicmp( "headhi", p, 6 ) ) {
+                p += 6;
+                p = get_att_value( p );
+                if( val_start == NULL ) {
+                    break;
+                }
+                headhi = get_font_number( val_start, val_len );
+                if( ProcFlags.tag_end_found ) {
+                    break;
+                }
+            } else if( !strnicmp( "termhi", p, 6 ) ) {
+                p += 6;
+                p = get_att_value( p );
+                if( val_start == NULL ) {
+                    break;
+                }
+                termhi = get_font_number( val_start, val_len );
+                if( ProcFlags.tag_end_found ) {
+                    break;
+                }
+            } else if( !strnicmp( "tsize", p, 5 ) ) {
+                p += 5;
+                p = get_att_value( p );
+                if( val_start == NULL ) {
+                    break;
+                }
+                if( att_val_to_su( &cur_su, true ) ) {
+                    break;
+                }
+                tsize = conv_vert_unit( &cur_su, spacing, g_curr_font );
+                if( ProcFlags.tag_end_found ) {
+                    break;
+                }
+            } else {
+                p = pa; // restore any spaces before non-attribute value
+                break;
+            }
+        }
+    }
+    scan_start = p;
+
+    gml_xl_lp_common( t_DL );
+
+    nest_cb->dl_layout = layout_work.dl.first;
     nest_cb->compact = compact;
     nest_cb->font = g_curr_font;
 
@@ -176,6 +243,9 @@ void gml_dl( const gmltag * entry )
     nest_cb->left_indent = conv_hor_unit( &nest_cb->dl_layout->left_indent, g_curr_font );
     nest_cb->right_indent = -1 * conv_hor_unit( &nest_cb->dl_layout->right_indent, g_curr_font );
     nest_cb->xl_pre_skip = conv_vert_unit( &nest_cb->dl_layout->pre_skip, spacing, g_curr_font );
+    nest_cb->headhi = headhi;
+    nest_cb->termhi = termhi;
+    nest_cb->tsize = tsize;
 
     nest_cb->lm = t_page.cur_left;
     nest_cb->rm = t_page.max_width;
@@ -208,25 +278,50 @@ void gml_dl( const gmltag * entry )
 
 void gml_gl( const gmltag * entry )
 {
-    bool                compact;
-    char            *   p;
+    bool            compact =   false;
+    char        *   p;
+    char        *   pa;
+    font_number     termhi  =   0;
 
     if( !ProcFlags.start_section ) {
         start_doc_sect();
     }
 
     p = scan_start;
-    p++;
-    while( *p == ' ' ) {
+    while( *p == ' ' ) {                     // over spaces
         p++;
     }
-    scan_start = p;                     // over spaces
-    if( !strnicmp( "compact", p, 7 ) ) {
-        compact = true;
-        scan_start = p + 7;
+    if( *p == '.' ) {
+        /* already at tag end */
     } else {
-        compact = false;
+        for( ;; ) {
+            pa = get_att_start( p );
+            p = att_start;
+            if( ProcFlags.reprocess_line ) {
+                break;
+            }
+
+            if( !strnicmp( "compact", p, 7 ) ) {
+                compact = true;
+                scan_start = p + 7;
+            } else if( !strnicmp( "termhi", p, 6 ) ) {
+                p += 6;
+                p = get_att_value( p );
+                if( val_start == NULL ) {
+                    break;
+                }
+                termhi = get_font_number( val_start, val_len );
+                if( ProcFlags.tag_end_found ) {
+                    break;
+                }
+            } else {
+                p = pa; // restore any spaces before non-attribute value
+                break;
+            }
+        }
     }
+    scan_start = p;
+
     gml_xl_lp_common( t_GL );
 
     nest_cb->gl_layout = layout_work.gl.first;
@@ -1023,17 +1118,24 @@ void    gml_lp( const gmltag * entry )
     return;
 }
 
-/********************************************************************************************/
-/* Format: :DD.<paragraph elements>                                                         */
-/*             <basic document elements>                                                    */
-/*                                                                                          */
-/* This tag signals the start of the text for an item description in a definition list. The */
-/* definition description tag must be preceded by a corresponding :dt tag, and may only     */
-/* appear in a definition list.                                                             */
-/********************************************************************************************/
 
-void gml_dd( const gmltag * entry )
+/**********************************************************************************************/
+/* Format: :DTHD.<text line>                                                                  */
+/*                                                                                            */
+/* The definition term heading tag is used to specify a heading for the definition terms of a */
+/* definition list. It is always followed by a :ddhd tag, and may only appear in a            */
+/* definition list. The heading tag may be used more than once within a single definition     */
+/* list.                                                                                      */
+/**********************************************************************************************/
+
+void gml_dthd( const gmltag * entry )
 {
+    if( !ProcFlags.start_section ) {
+        start_doc_sect();
+    }
+    scr_process_break();
+
+    ProcFlags.need_ddhd = true;
     return;
 }
 
@@ -1045,10 +1147,26 @@ void gml_dd( const gmltag * entry )
 /* description of a definition list. It must be preceded by a corresponding :dthd tag, and */
 /* may only appear in a definition list. The heading tag may be used more than once        */
 /* within a single definition list.                                                        */
+/*                                                                                         */
+/* NOTE: the ProcFlags must be cleared to prevent generating an error per tag until        */
+/*       DDHD is encountered.                                                              */
 /*******************************************************************************************/
 
 void gml_ddhd( const gmltag * entry )
 {
+    if( ProcFlags.need_ddhd ) {
+        /// output ddhd
+        ProcFlags.need_ddhd = false;
+    } else if( ProcFlags.need_dd ) {
+        xx_tag_err( err_tag_expected, "DD");
+        ProcFlags.need_dd = false;
+    } else if( ProcFlags.need_gd ) {
+        xx_tag_err( err_tag_expected, "GD");
+        ProcFlags.need_gd = false;
+    } else {
+        xx_nest_err_cc( err_tag_preceding_2, "DTHD", "DDHD" );
+    } 
+
     return;
 }
 
@@ -1063,36 +1181,43 @@ void gml_ddhd( const gmltag * entry )
 
 void gml_dt( const gmltag * entry )
 {
+    if( !ProcFlags.start_section ) {
+        start_doc_sect();
+    }
+    scr_process_break();
+
+    ProcFlags.need_dd = true;
     return;
 }
 
 
-/**********************************************************************************************/
-/* Format: :DTHD.<text line>                                                                  */
-/*                                                                                            */
-/* The definition term heading tag is used to specify a heading for the definition terms of a */
-/* definition list. It is always followed by a :ddhd tag, and may only appear in a            */
-/* definition list. The heading tag may be used more than once within a single definition     */
-/* list.                                                                                      */
-/**********************************************************************************************/
+/********************************************************************************************/
+/* Format: :DD.<paragraph elements>                                                         */
+/*             <basic document elements>                                                    */
+/*                                                                                          */
+/* This tag signals the start of the text for an item description in a definition list. The */
+/* definition description tag must be preceded by a corresponding :dt tag, and may only     */
+/* appear in a definition list.                                                             */
+/*                                                                                          */
+/* NOTE: the ProcFlags must be cleared to prevent generating an error per tag until         */
+/*       DD is encountered.                                                                 */
+/********************************************************************************************/
 
-void gml_dthd( const gmltag * entry )
+void gml_dd( const gmltag * entry )
 {
-    return;
-}
+    if( ProcFlags.need_dd ) {
+        /// output dd
+        ProcFlags.need_dd = false;
+    } else if( ProcFlags.need_ddhd ) {
+        xx_tag_err( err_tag_expected, "DDHD");
+        ProcFlags.need_ddhd = false;
+    } else if( ProcFlags.need_gd ) {
+        xx_tag_err( err_tag_expected, "GD");
+        ProcFlags.need_gd = false;
+    } else {
+        xx_nest_err_cc( err_tag_preceding_2, "DT", "DD" );
+    } 
 
-
-/**********************************************************************************************/
-/* Format: :GD.<paragraph elements>                                                           */
-/*             <basic document elements>                                                      */
-/*                                                                                            */
-/* The glossary description tag signals the start of the text for an item in a glossary list. */
-/* The glossary description tag must be preceded by a corresponding :gt tag, and may only     */
-/* appear in a glossary list.                                                                 */
-/**********************************************************************************************/
-
-void gml_gd( const gmltag * entry )
-{
     return;
 }
 
@@ -1107,6 +1232,44 @@ void gml_gd( const gmltag * entry )
 
 void gml_gt( const gmltag * entry )
 {
+    if( !ProcFlags.start_section ) {
+        start_doc_sect();
+    }
+    scr_process_break();
+
+    ProcFlags.need_gd = true;
+    return;
+}
+
+
+/**********************************************************************************************/
+/* Format: :GD.<paragraph elements>                                                           */
+/*             <basic document elements>                                                      */
+/*                                                                                            */
+/* The glossary description tag signals the start of the text for an item in a glossary list. */
+/* The glossary description tag must be preceded by a corresponding :gt tag, and may only     */
+/* appear in a glossary list.                                                                 */
+/*                                                                                            */
+/* NOTE: the ProcFlags must be cleared to prevent generating an error per tag until           */
+/*       GD is encountered.                                                                   */
+/**********************************************************************************************/
+
+void gml_gd( const gmltag * entry )
+{
+    if( ProcFlags.need_gd ) {
+        /// output gd
+        ProcFlags.need_gd = false;
+    } else if( ProcFlags.need_ddhd ) {
+        xx_tag_err( err_tag_expected, "DDHD");
+        ProcFlags.need_ddhd = false;
+    } else if( ProcFlags.need_dd ) {
+        xx_tag_err( err_tag_expected, "DD");
+        ProcFlags.need_dd = false;
+    } else {
+        xx_nest_err_cc( err_tag_preceding_2, "GT", "GD" );
+        ProcFlags.need_gd = false;
+    } 
+
     return;
 }
 

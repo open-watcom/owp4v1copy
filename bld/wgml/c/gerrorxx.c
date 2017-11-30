@@ -319,6 +319,14 @@ void xx_nest_err( const msg_ids errid )
     return;
 }
 
+void xx_nest_err_cc( const msg_ids errid, const char * arg1, const char * arg2 )
+{
+    err_count++;
+    g_err( errid, arg1, arg2 );
+    file_mac_info_nest();
+    return;
+}
+
 void xx_opt_err( const char * cw, const char * pa )
 {
     err_count++;

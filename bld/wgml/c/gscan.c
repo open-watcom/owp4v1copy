@@ -291,12 +291,46 @@ static void scan_gml( void )
                             scr_style_end();        // cancel BD, BI, US
                         }
 
-                        if( (rs_loc == 0) && !ProcFlags.need_li_lp ) {
+                        /*******************************************************************/
+                        /*  The Procflags must be cleared to prevent the error from being  */
+                        /*  reported for every tag until the proper end tag is found.      */
+                        /*  If the number of errors reported is limited at some point,     */
+                        /*  then those lines can be removed.                               */
+                        /*******************************************************************/
+
+                        if( ProcFlags.need_ddhd ) {
+                            if( (gml_tags[k].taglocs & def_tag) != 0 ) {
+                                // tag is DD, DDHD or GD
+                                gml_tags[k].gmlproc( &gml_tags[k] );
+                            } else {
+                                xx_tag_err( err_tag_expected, "DDHD");
+                            }
+                            ProcFlags.need_ddhd = false;
+                        } else if( ProcFlags.need_dd ) {
+                            if( (gml_tags[k].taglocs & def_tag) != 0 ) {
+                                // tag is DD, DDHD or GD
+                                gml_tags[k].gmlproc( &gml_tags[k] );
+                            } else {
+                                xx_tag_err( err_tag_expected, "DD");
+                            }
+                            ProcFlags.need_dd = false;
+                        } else if( ProcFlags.need_gd ) {
+                            if( (gml_tags[k].taglocs & def_tag) != 0 ) {
+                                // tag is DD, DDHD or GD
+                                gml_tags[k].gmlproc( &gml_tags[k] );
+                            } else {
+                                xx_tag_err( err_tag_expected, "GD");
+                            }
+                            ProcFlags.need_gd = false;
+                        } else if( ProcFlags.need_li_lp ) {
+                            if( (gml_tags[k].taglocs & li_lp_tag) != 0 ) {
+                                // tag is LP or LI
+                                gml_tags[k].gmlproc( &gml_tags[k] );
+                            } else {
+                                xx_nest_err( err_no_li_lp );
+                            }
+                        } else if( rs_loc == 0 ) {
                             // no restrictions: do them all
-                            gml_tags[k].gmlproc( &gml_tags[k] );
-                        } else if( ProcFlags.need_li_lp &&
-                                ((gml_tags[k].taglocs & li_lp_tag) != 0) ) {
-                            // tag is LP or LI
                             gml_tags[k].gmlproc( &gml_tags[k] );
                         } else if( (gml_tags[k].taglocs & rs_loc) != 0 ) {
                             // tag allowed in this restricted location
@@ -306,11 +340,7 @@ static void scan_gml( void )
                             gml_tags[k].gmlproc( &gml_tags[k] );
                         } else {
                             start_doc_sect();   // if not already done
-                            if( ProcFlags.need_li_lp ) {
-                                xx_nest_err( err_no_li_lp );
-                            } else {            // rs_loc > 0
-                                g_err_tag_rsloc( rs_loc, tok_start );
-                            }
+                            g_err_tag_rsloc( rs_loc, tok_start );
                         }
                         processed = true;
                         if( *scan_start == '.' ) {

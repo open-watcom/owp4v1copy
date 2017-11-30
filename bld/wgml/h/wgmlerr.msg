@@ -487,6 +487,9 @@ pick( ERR_TAG_NOT_TEXT,         "Expecting a GML tag, found text",
 pick( ERR_TAG_PRECEDING,        "Missing preceding %s tag",
                                 "Missing preceding %s tag" )
 
+pick( ERR_TAG_PRECEDING_2,      "Missing %s tag to precede %s tag",
+                                "Missing %s tag to precede %s tag")
+
 pick( ERR_TAG_WRONG_SECT,       "'%s' tag only allowed in %s",
                                 "'%s' tag only allowed in %s" )
 

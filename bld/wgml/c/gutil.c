@@ -1006,6 +1006,34 @@ char * get_att_value( char * p )
 }
 
 /***************************************************************************/
+/* parse and return a font number value                                    */
+/***************************************************************************/
+
+font_number get_font_number( char * value, size_t len )
+{
+    char        *   p;
+    char        *   pb;
+    uint32_t        wk;
+
+    p = value;
+    pb = p + len;
+
+    while( (*p >= '0') && (*p <= '9') ) {   // ensure entire token consists of decimal digits
+        p++;
+    }
+
+    if( p != pb ) {                         // badly-formed token
+        xx_line_err( err_num_too_large, val_start );
+    }
+
+    wk = strtol( value, NULL, 10 );
+    if( wk > 255 ) {
+        wk = 0;
+    }
+    return( wk );
+}
+
+/***************************************************************************/
 /* get the tag value and report tag-end ('.') if found                     */
 /*     [<white space>]<value>                                              */
 /*     used by INCLUDE to capture file names without the "file" attribute  */

@@ -213,6 +213,9 @@ global struct ProcFlags {
     unsigned        vline_done      : 1;// determines if a vertical line was done
 
     unsigned        keep_left_margin: 1;// for indent NOTE tag paragraph
+    unsigned        need_dd         : 1;// DT seen; DD must be next tag
+    unsigned        need_ddhd       : 1;// DTHD seen; DDHD must be next tag
+    unsigned        need_gd         : 1;// GT seen; GD must be next tag
     unsigned        need_li_lp      : 1;// just list tag (:SL,...) seen
     unsigned        no_var_impl_err : 1;// suppress err_var_not_impl msg
     unsigned        tophead_done    : 1;// tophead symbol set
