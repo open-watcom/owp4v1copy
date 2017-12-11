@@ -216,7 +216,8 @@ global struct ProcFlags {
     unsigned        need_dd         : 1;// DT seen; DD must be next tag
     unsigned        need_ddhd       : 1;// DTHD seen; DDHD must be next tag
     unsigned        need_gd         : 1;// GT seen; GD must be next tag
-    unsigned        need_li_lp      : 1;// just list tag (:SL,...) seen
+    unsigned        need_li_lp      : 1;// top of list/need LI/LP (OL,SL,UL)
+    unsigned        need_tag        : 1;// need tag now, not text 
     unsigned        no_var_impl_err : 1;// suppress err_var_not_impl msg
     unsigned        tophead_done    : 1;// tophead symbol set
     unsigned        wrap_indent     : 1;// for index item/reference indent when line breaks

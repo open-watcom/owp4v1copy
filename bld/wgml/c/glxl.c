@@ -716,7 +716,7 @@ void    lay_gl( const gmltag * entry )
     gl_layout->post_skip = layout_work.gl.first->post_skip;
     gl_layout->align = layout_work.gl.first->align;
     gl_layout->spacing = layout_work.gl.first->spacing;
-    gl_layout->delim = layout_work.gl.first->delim;
+    strcpy_s( gl_layout->delim, 2, layout_work.gl.first->delim );
     gl_layout->level = layout_work.gl.first->level;         
 
     /* Get the GL LAYOUT settings */
@@ -819,8 +819,8 @@ void    lay_gl( const gmltag * entry )
         if( gl_layout->spacing != layout_work.gl.first->spacing ) {
             curr_level->spacing = gl_layout->spacing;
         }
-        if( gl_layout->delim != layout_work.gl.first->delim ) {
-            curr_level->delim = gl_layout->delim;
+        if( strcmp( gl_layout->delim, layout_work.gl.first->delim ) ) {
+            strcpy_s( curr_level->delim, 2, gl_layout->delim );
         }
         mem_free( gl_layout );
     } else if( curr_level->next == NULL ) {

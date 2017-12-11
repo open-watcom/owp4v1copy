@@ -133,7 +133,7 @@ static void gml_xl_lp_common( e_tags t )
 void gml_dl( const gmltag * entry )
 {
     bool                compact     =   false;
-    bool                dl_break    =   false;
+    bool                dl_break;
     char            *   p;
     char            *   pa;
     dl_lay_level    *   dl_layout;
@@ -161,9 +161,10 @@ void gml_dl( const gmltag * entry )
         dl_cur_level = 1;
     }
 
+    dl_break = dl_layout->line_break;
     headhi = layout_work.dthd.font;
     termhi = layout_work.dt.font;
-    tsize = conv_vert_unit( &dl_layout->align, spacing, g_curr_font );
+    tsize = conv_hor_unit( &dl_layout->align, g_curr_font );
 
     p = scan_start;
     while( *p == ' ' ) {                     // over spaces
@@ -220,7 +221,7 @@ void gml_dl( const gmltag * entry )
                 if( att_val_to_su( &cur_su, true ) ) {
                     break;
                 }
-                tsize = conv_vert_unit( &cur_su, spacing, g_curr_font );
+                tsize = conv_hor_unit( &cur_su, g_curr_font );
                 if( ProcFlags.tag_end_found ) {
                     break;
                 }
@@ -236,6 +237,7 @@ void gml_dl( const gmltag * entry )
 
     nest_cb->dl_layout = layout_work.dl.first;
     nest_cb->compact = compact;
+    nest_cb->dl_break = dl_break;
     nest_cb->font = g_curr_font;
 
     nest_cb->li_number = 0;
@@ -286,6 +288,8 @@ void gml_gl( const gmltag * entry )
     if( !ProcFlags.start_section ) {
         start_doc_sect();
     }
+
+    termhi = layout_work.gt.font;
 
     p = scan_start;
     while( *p == ' ' ) {                     // over spaces
@@ -347,6 +351,8 @@ void gml_gl( const gmltag * entry )
     nest_cb->left_indent = conv_hor_unit( &nest_cb->gl_layout->left_indent, g_curr_font );
     nest_cb->right_indent = -1 * conv_hor_unit( &nest_cb->gl_layout->right_indent, g_curr_font );
     nest_cb->xl_pre_skip = conv_vert_unit( &nest_cb->gl_layout->pre_skip, spacing, g_curr_font );
+    nest_cb->tsize = conv_hor_unit( &nest_cb->gl_layout->align, g_curr_font );
+    nest_cb->termhi = termhi;
 
     nest_cb->lm = t_page.cur_left;
     nest_cb->rm = t_page.max_width;
@@ -1061,10 +1067,10 @@ void    gml_lp( const gmltag * entry )
         t_page.max_width = nest_cb->rm;
     }
 
+    gml_xl_lp_common( t_LP );
+
     nest_cb->font = g_curr_font;
     g_curr_font = layout_work.defaults.font;    // matches wgml 4.0
-
-    gml_xl_lp_common( t_LP );
 
     if( g_line_indent == 0 ) {
         ProcFlags.para_starting = false;    // clear for this tag's first break
@@ -1130,12 +1136,50 @@ void    gml_lp( const gmltag * entry )
 
 void gml_dthd( const gmltag * entry )
 {
+    char    *   p;
+
     if( !ProcFlags.start_section ) {
         start_doc_sect();
     }
     scr_process_break();
 
+    p = scan_start;
+
+    if( nest_cb == NULL ) {
+        xx_nest_err( err_li_lp_no_list );   // tag must be in a list
+        scan_start = scan_stop + 1;
+        return;
+    }
+
+    if( nest_cb->c_tag == t_LP ) {      // terminate :LP if active
+        end_lp();
+    }
+
+    g_curr_font = nest_cb->headhi;
+    t_page.cur_left = nest_cb->lm + nest_cb->left_indent;   // left start
+    t_page.cur_width = t_page.cur_left;
+    t_page.max_width = nest_cb->rm + nest_cb->right_indent;
+
+    if( ProcFlags.need_li_lp ) {        // first :dthd for this list
+        set_skip_vars( &nest_cb->ul_layout->pre_skip, NULL, NULL, spacing, g_curr_font );
+    } else if( !nest_cb->compact ) {
+        set_skip_vars( &nest_cb->ul_layout->skip, NULL, NULL, spacing, g_curr_font );
+    } else {                            // compact
+        set_skip_vars( NULL, NULL, NULL, 1, g_curr_font );
+    }
+
+    ProcFlags.keep_left_margin = true;  // keep special Note indent
+    ju_x_start = t_page.cur_width;
+
+    if( *p == '.' ) p++;                // possible tag end
+    while( *p == ' ' ) p++;             // skip initial spaces
+    if( *p ) {
+        process_text( p, g_curr_font ); // if text follows
+    }
+
     ProcFlags.need_ddhd = true;
+    ProcFlags.need_tag = true;
+    scan_start = scan_stop + 1;
     return;
 }
 
@@ -1154,8 +1198,9 @@ void gml_dthd( const gmltag * entry )
 
 void gml_ddhd( const gmltag * entry )
 {
+    char    *   p;
+
     if( ProcFlags.need_ddhd ) {
-        /// output ddhd
         ProcFlags.need_ddhd = false;
     } else if( ProcFlags.need_dd ) {
         xx_tag_err( err_tag_expected, "DD");
@@ -1167,6 +1212,25 @@ void gml_ddhd( const gmltag * entry )
         xx_nest_err_cc( err_tag_preceding_2, "DTHD", "DDHD" );
     } 
 
+    p = scan_start;
+
+    t_page.cur_left = nest_cb->lm + nest_cb->left_indent + nest_cb->tsize;   // left start
+    if( t_page.cur_width < t_page.cur_left ) {  // set for current line
+        t_page.cur_width = t_page.cur_left;
+        post_space = 0;
+    }
+    t_page.max_width = nest_cb->rm + nest_cb->right_indent;
+
+    ju_x_start = t_page.cur_width;
+
+    if( *p == '.' ) p++;                // possible tag end
+    while( *p == ' ' ) p++;             // skip initial spaces
+    if( *p ) {
+        process_text( p, g_curr_font ); // if text follows
+    }
+
+    ProcFlags.need_tag = true;
+    scan_start = scan_stop + 1;
     return;
 }
 
@@ -1181,12 +1245,50 @@ void gml_ddhd( const gmltag * entry )
 
 void gml_dt( const gmltag * entry )
 {
+    char    *   p;
+
     if( !ProcFlags.start_section ) {
         start_doc_sect();
     }
     scr_process_break();
 
+    p = scan_start;
+
+    if( nest_cb == NULL ) {
+        xx_nest_err( err_li_lp_no_list );   // tag must be in a list
+        scan_start = scan_stop + 1;
+        return;
+    }
+
+    if( nest_cb->c_tag == t_LP ) {      // terminate :LP if active
+        end_lp();
+    }
+
+    g_curr_font = nest_cb->termhi;
+    t_page.cur_left = nest_cb->lm + nest_cb->left_indent;   // left start
+    t_page.cur_width = t_page.cur_left;
+    t_page.max_width = nest_cb->rm + nest_cb->right_indent;
+
+    if( ProcFlags.need_li_lp ) {        // first :dd for this list
+        set_skip_vars( &nest_cb->ul_layout->pre_skip, NULL, NULL, spacing, g_curr_font );
+    } else if( !nest_cb->compact ) {
+        set_skip_vars( &nest_cb->ul_layout->skip, NULL, NULL, spacing, g_curr_font );
+    } else {                            // compact
+        set_skip_vars( NULL, NULL, NULL, 1, g_curr_font );
+    }
+
+    ProcFlags.keep_left_margin = true;  // keep special Note indent
+    ju_x_start = t_page.cur_width;
+
+    if( *p == '.' ) p++;                // possible tag end
+    while( *p == ' ' ) p++;             // skip initial spaces
+    if( *p ) {
+        process_text( p, g_curr_font ); // if text follows
+    }
+
     ProcFlags.need_dd = true;
+    ProcFlags.need_tag = true;
+    scan_start = scan_stop + 1;
     return;
 }
 
@@ -1205,8 +1307,9 @@ void gml_dt( const gmltag * entry )
 
 void gml_dd( const gmltag * entry )
 {
+    char    *   p;
+
     if( ProcFlags.need_dd ) {
-        /// output dd
         ProcFlags.need_dd = false;
     } else if( ProcFlags.need_ddhd ) {
         xx_tag_err( err_tag_expected, "DDHD");
@@ -1218,6 +1321,29 @@ void gml_dd( const gmltag * entry )
         xx_nest_err_cc( err_tag_preceding_2, "DT", "DD" );
     } 
 
+    p = scan_start;
+
+    g_curr_font = layout_work.dd.font;
+    t_page.cur_left = nest_cb->lm + nest_cb->left_indent + nest_cb->tsize;   // left start
+    if( t_page.cur_width < t_page.cur_left ) {  // set for current line
+        t_page.cur_width = t_page.cur_left;
+        post_space = 0;
+    } else if( nest_cb->dl_break ) {
+        scr_process_break();
+        t_page.cur_width = t_page.cur_left;
+        post_space = 0;
+    }
+    t_page.max_width = nest_cb->rm + nest_cb->right_indent;
+
+    ju_x_start = t_page.cur_width;
+
+    if( *p == '.' ) p++;                // possible tag end
+    while( *p == ' ' ) p++;             // skip initial spaces
+    if( *p ) {
+        process_text( p, g_curr_font ); // if text follows
+    }
+
+    scan_start = scan_stop + 1;
     return;
 }
 
@@ -1232,12 +1358,49 @@ void gml_dd( const gmltag * entry )
 
 void gml_gt( const gmltag * entry )
 {
+    char    *   p;
+
     if( !ProcFlags.start_section ) {
         start_doc_sect();
     }
     scr_process_break();
 
+    p = scan_start;
+
+    if( nest_cb == NULL ) {
+        xx_nest_err( err_li_lp_no_list );   // tag must be in a list
+        scan_start = scan_stop + 1;
+        return;
+    }
+
+    if( nest_cb->c_tag == t_LP ) {      // terminate :LP if active
+        end_lp();
+    }
+
+    g_curr_font = nest_cb->termhi;
+    t_page.cur_left = nest_cb->lm + nest_cb->left_indent;   // left start
+    t_page.cur_width = t_page.cur_left;
+    t_page.max_width = nest_cb->rm + nest_cb->right_indent;
+
+    ju_x_start = t_page.cur_width;
+
+    if( ProcFlags.need_li_lp ) {        // first :gt for this list
+        set_skip_vars( &nest_cb->ul_layout->pre_skip, NULL, NULL, spacing, g_curr_font );
+    } else if( !nest_cb->compact ) {
+        set_skip_vars( &nest_cb->ul_layout->skip, NULL, NULL, spacing, g_curr_font );
+    } else {                            // compact
+        set_skip_vars( NULL, NULL, NULL, 1, g_curr_font );
+    }
+
+    if( *p == '.' ) p++;                // possible tag end
+    while( *p == ' ' ) p++;             // skip initial spaces
+    if( *p ) {
+        process_text( p, g_curr_font ); // if text follows
+    }
+
     ProcFlags.need_gd = true;
+    ProcFlags.need_tag = true;
+    scan_start = scan_stop + 1;
     return;
 }
 
@@ -1256,8 +1419,9 @@ void gml_gt( const gmltag * entry )
 
 void gml_gd( const gmltag * entry )
 {
+    char    *   p;
+
     if( ProcFlags.need_gd ) {
-        /// output gd
         ProcFlags.need_gd = false;
     } else if( ProcFlags.need_ddhd ) {
         xx_tag_err( err_tag_expected, "DDHD");
@@ -1270,6 +1434,30 @@ void gml_gd( const gmltag * entry )
         ProcFlags.need_gd = false;
     } 
 
+    p = scan_start;
+
+    ProcFlags.ct = true;
+    post_space = 0;
+    process_text( &nest_cb->gl_layout->delim, g_curr_font );
+
+    g_curr_font = layout_work.gd.font;
+
+    t_page.cur_left = nest_cb->lm + nest_cb->left_indent + nest_cb->tsize;   // left start
+    if( t_page.cur_width < t_page.cur_left ) {  // set for current line
+        t_page.cur_width = t_page.cur_left;
+        post_space = 0;
+    }
+    t_page.max_width = nest_cb->rm + nest_cb->right_indent;
+
+    ju_x_start = t_page.cur_width;
+
+    if( *p == '.' ) p++;                // possible tag end
+    while( *p == ' ' ) p++;             // skip initial spaces
+    if( *p ) {
+        process_text( p, g_curr_font ); // if text follows
+    }
+
+    scan_start = scan_stop + 1;
     return;
 }
 

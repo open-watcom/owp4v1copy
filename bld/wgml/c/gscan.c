@@ -291,6 +291,8 @@ static void scan_gml( void )
                             scr_style_end();        // cancel BD, BI, US
                         }
 
+                        ProcFlags.need_tag = false;
+
                         /*******************************************************************/
                         /*  The Procflags must be cleared to prevent the error from being  */
                         /*  reported for every tag until the proper end tag is found.      */

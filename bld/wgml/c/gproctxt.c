@@ -2040,8 +2040,12 @@ void process_text( const char *text, font_number font )
                         if( count == 0 ) { // n_chars fits entirely
                             break;
                         }
-                        // if count == o_count, there is nothing to do
-                        if( count != o_count ) { // split n_chars with hyphenation
+                        if( count == o_count ) {
+                            if( t_line->first == NULL ) {    // prevents loop
+                                xx_err( err_page_width_too_small );
+                                g_suicide();
+                            }
+                        } else {                 // split n_chars with hyphenation
                             // first attach n_chars to tline
                             if( t_line->first == NULL ) {
                                 t_line->first = n_chars;
@@ -2331,7 +2335,7 @@ void process_text( const char *text, font_number font )
     }
 
     if( t_line->first != NULL ) {           // something in the line
-        if( ProcFlags.need_li_lp ) {        // no text allowed!
+        if( ProcFlags.need_li_lp || ProcFlags.need_tag) {   // no text allowed!
             xx_err( err_tag_not_text );
         }
 

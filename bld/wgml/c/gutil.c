@@ -883,12 +883,17 @@ char * format_num( uint32_t n, char * r, size_t rsize, num_style ns )
 /* returns the start of the part of the line on which that potential       */
 /*   attribute was found, thus preserving any preceding spaces in case it  */
 /*   turns out that it is not an attribute at all but rather text          */
+/* NOTE: ProcFlags.tag_end_found is cleared here rather than in            */
+/*       get_att_value() to accomodate attributes "compact" and "break"    */
+/*       which have no "value" but which must not return tag_end_found     */
+/*       unless, of course, it is                                          */
 /***************************************************************************/
 
 char * get_att_start( char * p )
 {
     char    * pa;
 
+    ProcFlags.tag_end_found = false;
     for(;;) {                           // loop until potential attribute/rescan line found
         pa = p;                         // save initial location
         while( *p == ' ' ) {            // over WS to attribute
@@ -897,6 +902,7 @@ char * get_att_start( char * p )
         if( *p == '.' ) {   // end-of-tag
             p++;
             pa = p;         // return next char after end-of-tag
+            ProcFlags.tag_end_found = true;
             break;
         }        
         if( *p == '\0' ) {              // end of line: get new line
@@ -933,7 +939,6 @@ char * get_att_value( char * p )
 {
     char        quote;
 
-    ProcFlags.tag_end_found = false;
     quote_char = '\0';
     val_start = NULL;
     val_len = 0;

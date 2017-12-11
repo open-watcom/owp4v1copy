@@ -615,6 +615,9 @@ pick( ERR_PAGE_DEPTH_TOO_SMALL, "The page depth is too small when adjusted for t
 pick( ERR_PAGE_DEPTH_TOO_BIG,   "The page depth is larger than the printable area of the device page",
                                 "The page depth is larger than the printable area of the device page" )
 
+pick( ERR_PAGE_WIDTH_TOO_SMALL, "Left and right margins are too close together",
+                                "Left and right margins are too close together" )
+
 pick( ERR_RIGHT_MARGIN_TOO_BIG, "The layout right margin is greater than the device page width",
                                 "The layout right margin is greater than the device page width" )
 
