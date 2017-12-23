@@ -1437,16 +1437,20 @@ void gml_gd( const gmltag * entry )
     p = scan_start;
 
     ProcFlags.ct = true;
+    ProcFlags.stop_xspc = true;
     post_space = 0;
     process_text( &nest_cb->gl_layout->delim, g_curr_font );
 
     g_curr_font = layout_work.gd.font;
 
     t_page.cur_left = nest_cb->lm + nest_cb->left_indent + nest_cb->tsize;   // left start
-    if( t_page.cur_width < t_page.cur_left ) {  // set for current line
+
+    post_space = 2 * wgml_fonts[g_curr_font].spc_width;
+    if( (t_page.cur_width + post_space) < t_page.cur_left ) {  // set for current line
         t_page.cur_width = t_page.cur_left;
         post_space = 0;
     }
+
     t_page.max_width = nest_cb->rm + nest_cb->right_indent;
 
     ju_x_start = t_page.cur_width;

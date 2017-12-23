@@ -2220,20 +2220,22 @@ void set_skip_vars( su * pre_skip, su * pre_top_skip, su * post_skip,
 /*  split one doc_element into two                                         */
 /*  the first doc_element returned will fit in the depth specified         */
 /*  the return value will be false if the doc_element could not be split   */
+/*                                                                         */
+/*  NOTE: this should only be called if the element will not fit in the    */
+/*        available space.                                                 */
+/*  NOTE: only text elements are actually split here; boxes and figures    */
+/*        that are split are handled elsewhere and should always fit       */
 /***************************************************************************/
 
 bool split_element( doc_element * a_element, uint32_t req_depth )
 {
-    bool            splittable;
+    bool            splittable  =   true;
     doc_element *   split_el;
     text_line   *   cur_line;
-    text_line   *   last;
-    uint32_t        count;
-    uint32_t        cur_depth;
-
-    count = 0;
-    cur_depth = 0;
-    splittable = true;
+    text_line   *   last        =   NULL;
+    uint32_t        cur_count   =   0;
+    uint32_t        tot_count   =   0;
+    uint32_t        cur_depth   =   0;
 
     switch( a_element->type ) {
     // add code for other element types as appropriate
@@ -2246,27 +2248,74 @@ bool split_element( doc_element * a_element, uint32_t req_depth )
         splittable = false;     
         break;
     case el_text :
+
         cur_line = a_element->element.text.first;
+
         /* Error if first line will not fit on any page */
+
         if( (cur_line->line_height + cur_line->spacing) > old_max_depth ) {
             xx_err( err_text_line_too_deep );
             break;
         }
-        while( cur_line != NULL ) {
-            if( (cur_depth + cur_line->line_height + cur_line->spacing) > req_depth ) {
+
+        if( g_cur_threshold == 1 ) {                // simplest case
+
+            while( cur_line != NULL ) {
+                if( (cur_depth + cur_line->line_height + cur_line->spacing) > req_depth ) {
+                    break;
+                }
+                cur_depth += cur_line->line_height + cur_line->spacing;
+                last = cur_line;
+                cur_line = cur_line->next;
+            }
+
+            if( cur_line == NULL ) {                // all lines fit; unlikely, but seen
                 break;
             }
-            count++;
-            cur_depth += cur_line->line_height + cur_line->spacing;
-            last = cur_line;
-            cur_line = cur_line->next;
-        }
 
-        if( cur_line != NULL ) {        // at least one more line
-            if( count < g_cur_threshold ) {
-                splittable = false;     // widow criteria failed
-                a_element->blank_lines = 0;
-                break;
+        } else {                                    // not so simple
+
+            /* compute tot_count, the total number of lines in the paragraph */
+
+            while( cur_line != NULL ) {
+                tot_count++;
+                cur_line = cur_line->next;
+            }
+
+            /* compute cur_depth, the depth of the first g_cur_threshold lines */
+
+            cur_line = a_element->element.text.first;
+            while( cur_line != NULL ) {
+                if( cur_count < g_cur_threshold ) {
+                    cur_depth += cur_line->line_height + cur_line->spacing;
+                } else {
+                    break;
+                }
+                cur_count++;
+                last = cur_line;
+                cur_line = cur_line->next;
+            }
+
+            /****************************************************************/
+            /* if there is not enough room for the first g_cur_threshold    */
+            /* lines or if there are not enough lines to put at least       */
+            /* g_cur_threshold lines on BOTH pages, then the paragraph      */
+            /* cannot be split but must be placed on the next page.         */
+            /****************************************************************/
+
+            if( (tot_count < (2 * g_cur_threshold)) || (cur_depth > req_depth) ) {
+                last = NULL;
+            } else {
+                while( cur_line != NULL ) {
+                    if( (cur_count >= (tot_count - g_cur_threshold)) || ((cur_line->next != NULL) &&
+                        (cur_depth + (cur_line->line_height + cur_line->spacing)) > req_depth) ) {
+                        break;
+                    }
+                    cur_count++;
+                    cur_depth += (cur_line->line_height + cur_line->spacing);
+                    last = cur_line;
+                    cur_line = cur_line->next;
+                }
             }
         }
 
@@ -2274,9 +2323,20 @@ bool split_element( doc_element * a_element, uint32_t req_depth )
             break;
         }
 
+        if( last == NULL ) {
+
+            /* nothing to split; cur_line is the first line in a_element */
+
+            splittable = false;     // widow criteria failed
+            break;
+
+        }
+
+        /************************************************************/
         /*  if we get here, a_element is splittable, cur_line is    */
         /*  the first line of the new element, and last is the last */
         /*  line that can be left in the original element           */
+        /************************************************************/
 
         split_el = alloc_doc_el( el_text ); // most defaults are correct
 
@@ -2290,7 +2350,6 @@ bool split_element( doc_element * a_element, uint32_t req_depth )
             split_el->next = a_element->next;
             a_element->next = split_el;
         }
-        
         break;
     default :
         internal_err( __FILE__, __LINE__ );
