@@ -36,6 +36,8 @@
 #include    "wgml.h"
 #include    "gvars.h"
 
+static  bool        dl_gl_starting  = false;
+static  bool        dl_gl_first     = false;
 static  uint8_t     dl_cur_level    = 1;    // current DL list level
 static  uint8_t     gl_cur_level    = 1;    // current GL list level
 static  uint8_t     ol_cur_level    = 1;    // current OL list level
@@ -80,6 +82,9 @@ static void gml_xl_lp_common( e_tags t )
     if( t != t_LP ) {                       // text only allowed for :LP
         if( t != t_DL && t != t_GL ) {      // DL/GL don't require LI/LP
             ProcFlags.need_li_lp = true;    // :LI or :LP  next
+        } else {
+            dl_gl_starting = true;
+            dl_gl_first = true;
         }
         start_doc_sect();                   // if not already done
         if( g_line_indent == 0 ) {
@@ -235,7 +240,7 @@ void gml_dl( const gmltag * entry )
 
     gml_xl_lp_common( t_DL );
 
-    nest_cb->dl_layout = layout_work.dl.first;
+    nest_cb->dl_layout = dl_layout;
     nest_cb->compact = compact;
     nest_cb->dl_break = dl_break;
     nest_cb->font = g_curr_font;
@@ -616,6 +621,7 @@ void    gml_exl_common( const gmltag * entry )
     }
 
     ProcFlags.need_li_lp = false;       // :LI or :LP no longer needed
+    dl_gl_starting = false;
     scan_start = scan_stop + 1;
 }
 
@@ -1096,7 +1102,7 @@ void    gml_lp( const gmltag * entry )
     post_space = 0;
 
     set_skip_vars( &layout_work.lp.pre_skip, NULL, &layout_work.lp.post_skip, spacing, g_curr_font );
-    if( ProcFlags.need_li_lp ) {        // :LP first tag in list
+    if( ProcFlags.need_li_lp || dl_gl_starting ) {  // :LP first tag in list
         if( nest_cb->prev->xl_pre_skip > g_subs_skip ) {
             g_subs_skip = nest_cb->prev->xl_pre_skip;
         }
@@ -1113,6 +1119,7 @@ void    gml_lp( const gmltag * entry )
 
     ProcFlags.need_li_lp = false;       // :LI or :LP seen
     ProcFlags.para_starting = true;     // for next break, not this tag's break
+    dl_gl_starting = false;
 
     if( *p == '.' ) p++;                // possible tag end
     while( *p == ' ' ) p++;             // skip initial spaces
@@ -1160,10 +1167,10 @@ void gml_dthd( const gmltag * entry )
     t_page.cur_width = t_page.cur_left;
     t_page.max_width = nest_cb->rm + nest_cb->right_indent;
 
-    if( ProcFlags.need_li_lp ) {        // first :dthd for this list
-        set_skip_vars( &nest_cb->ul_layout->pre_skip, NULL, NULL, spacing, g_curr_font );
-    } else if( !nest_cb->compact ) {
-        set_skip_vars( &nest_cb->ul_layout->skip, NULL, NULL, spacing, g_curr_font );
+    if( dl_gl_starting ) {              // first :dthd for this list
+        set_skip_vars( &nest_cb->dl_layout->pre_skip, NULL, NULL, spacing, g_curr_font );
+    } else if( !nest_cb->compact && !dl_gl_first ) {
+        set_skip_vars( &nest_cb->dl_layout->skip, NULL, NULL, spacing, g_curr_font );
     } else {                            // compact
         set_skip_vars( NULL, NULL, NULL, 1, g_curr_font );
     }
@@ -1179,6 +1186,9 @@ void gml_dthd( const gmltag * entry )
 
     ProcFlags.need_ddhd = true;
     ProcFlags.need_tag = true;
+    dl_gl_starting = false;
+    dl_gl_first = false;
+
     scan_start = scan_stop + 1;
     return;
 }
@@ -1269,10 +1279,10 @@ void gml_dt( const gmltag * entry )
     t_page.cur_width = t_page.cur_left;
     t_page.max_width = nest_cb->rm + nest_cb->right_indent;
 
-    if( ProcFlags.need_li_lp ) {        // first :dd for this list
-        set_skip_vars( &nest_cb->ul_layout->pre_skip, NULL, NULL, spacing, g_curr_font );
-    } else if( !nest_cb->compact ) {
-        set_skip_vars( &nest_cb->ul_layout->skip, NULL, NULL, spacing, g_curr_font );
+    if( dl_gl_starting ) {              // first :dd for this list
+        set_skip_vars( &nest_cb->dl_layout->pre_skip, NULL, NULL, spacing, g_curr_font );
+    } else if( !nest_cb->compact && !dl_gl_first ) {
+        set_skip_vars( &nest_cb->dl_layout->skip, NULL, NULL, spacing, g_curr_font );
     } else {                            // compact
         set_skip_vars( NULL, NULL, NULL, 1, g_curr_font );
     }
@@ -1288,6 +1298,9 @@ void gml_dt( const gmltag * entry )
 
     ProcFlags.need_dd = true;
     ProcFlags.need_tag = true;
+    dl_gl_starting = false;
+    dl_gl_first = false;
+
     scan_start = scan_stop + 1;
     return;
 }
@@ -1384,10 +1397,10 @@ void gml_gt( const gmltag * entry )
 
     ju_x_start = t_page.cur_width;
 
-    if( ProcFlags.need_li_lp ) {        // first :gt for this list
-        set_skip_vars( &nest_cb->ul_layout->pre_skip, NULL, NULL, spacing, g_curr_font );
-    } else if( !nest_cb->compact ) {
-        set_skip_vars( &nest_cb->ul_layout->skip, NULL, NULL, spacing, g_curr_font );
+    if( dl_gl_starting ) {              // first :gt for this list
+        set_skip_vars( &nest_cb->gl_layout->pre_skip, NULL, NULL, spacing, g_curr_font );
+    } else if( !nest_cb->compact && !dl_gl_first ) {
+        set_skip_vars( &nest_cb->gl_layout->skip, NULL, NULL, spacing, g_curr_font );
     } else {                            // compact
         set_skip_vars( NULL, NULL, NULL, 1, g_curr_font );
     }
@@ -1400,6 +1413,9 @@ void gml_gt( const gmltag * entry )
 
     ProcFlags.need_gd = true;
     ProcFlags.need_tag = true;
+    dl_gl_starting = false;
+    dl_gl_first = false;
+
     scan_start = scan_stop + 1;
     return;
 }
