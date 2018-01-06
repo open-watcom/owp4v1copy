@@ -192,6 +192,10 @@ condcode    get_lay_sub_and_value( att_args * args )
             }
         }
         args->len[0] = p - args->start[0];
+        if( *p == '.' ) {   // end of tag
+            ProcFlags.tag_end_found = true;
+            return( omit );            
+        }
         if( args->len[0] < 4 ) {            // attribute name length
             err_count++;
             g_err( err_att_name_inv );
