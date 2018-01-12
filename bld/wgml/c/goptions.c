@@ -859,11 +859,13 @@ static void set_font( option * opt )
             }
             f->nxt = new_font;
         }
-        out_msg( "Font: %i %s ", new_font->font, new_font->name );
-        if( new_font->style != NULL ) {
-            out_msg( "%s ", new_font->style ); // can't use NULL here
+        if( GlobalFlags.research ) {    // only if -r is specified
+            out_msg( "Font: %i %s ", new_font->font, new_font->name );
+            if( new_font->style != NULL ) {
+                out_msg( "%s ", new_font->style ); // can't use NULL here
+            }
+            out_msg( "%i %i\n", new_font->space, new_font->height );
         }
-        out_msg( "%i %i\n", new_font->space, new_font->height );
     } else {
         if( new_font->name !=NULL ) {
             mem_free( new_font->name );
