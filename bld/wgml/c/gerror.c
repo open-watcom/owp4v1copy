@@ -225,3 +225,22 @@ void g_info_lm( const msg_ids num, ... )
     va_end( args );
 }
 
+/***************************************************************************/
+/*  info about options, controlled by GlobalFlags.research                 */
+/***************************************************************************/
+
+void g_info_opt( const msg_ids num, ... )
+{
+    va_list args;
+
+    if( GlobalFlags.research ) {
+        va_start( args, num );
+        msg_indent = 0;
+        g_msg_var( num, SEV_INFO, args );
+        va_end( args );
+    }
+    return;
+}
+
+
+

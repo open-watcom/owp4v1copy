@@ -145,6 +145,7 @@ extern  void    g_err( const msg_ids err, ... );
 extern  void    g_warn( const msg_ids err, ... );
 extern  void    g_info( const msg_ids err, ... );
 extern  void    g_info_lm( const msg_ids err, ... );
+extern  void    g_info_opt( const msg_ids num, ... );
 extern  void    g_suicide( void );
 
 
