@@ -58,7 +58,7 @@
   pickg( CIT,      3,      gml_cit,        tag_out_txt, ip_tag )
   pickg( ECIT,     4,      gml_ecit,       tag_out_txt, 0 )
 
-  pickg( CMT,      3,      gml_cmt,        tag_only | tag_is_general,   0 )
+  pickg( CMT,      3,      gml_cmt,        tag_only | tag_is_general, 0 )
   pickg( DATE,     4,      gml_date,       tag_out_txt, titlep_tag )
   pickg( DD,       2,      gml_dd,         tag_out_txt, def_tag )
   pickg( DDHD,     4,      gml_ddhd,       tag_out_txt, def_tag )
@@ -147,7 +147,7 @@
   pickg( Q,        1,      gml_q,          tag_out_txt, ip_tag )
   pickg( EQ,       2,      gml_eq,         tag_out_txt, 0 )
 
-  pickg( SET,      3,      gml_set,        tag_is_general, 0 )
+  pickg( SET,      3,      gml_set,        tag_is_general, li_lp_tag )
 
   pickg( SF,       2,      gml_sf,         tag_out_txt, ip_tag )
   pickg( ESF,      3,      gml_esf,        tag_out_txt, 0 )

@@ -807,7 +807,7 @@ int main( int argc, char * argv[] )
     cmdline = mem_alloc( cmdlen );
     _bgetcmd( cmdline, cmdlen );
 
-    g_info_lm( INF_CMDLINE, cmdline );
+    g_info_research( inf_cmdline, cmdline );
 
     tok_count = proc_options( cmdline );
     init_sysparm( cmdline, banner1w( "Script/GML", _WGML_VERSION_ ) );

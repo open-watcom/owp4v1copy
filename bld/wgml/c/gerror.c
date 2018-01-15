@@ -226,10 +226,10 @@ void g_info_lm( const msg_ids num, ... )
 }
 
 /***************************************************************************/
-/*  info about options, controlled by GlobalFlags.research                 */
+/*  info that needs to be controlled by GlobalFlags.research               */
 /***************************************************************************/
 
-void g_info_opt( const msg_ids num, ... )
+void g_info_research( const msg_ids num, ... )
 {
     va_list args;
 
