@@ -890,8 +890,6 @@ static void set_layout( option * opt )
     int     len;
     char    attrwork[MAX_FILE_ATTR];
     struct  laystack    * laywk;
-    struct  laystack    * laywork;
-
 
     if( tokennext == NULL || tokennext->bol || is_option() == true ) {
         g_err( err_miss_inv_opt_value, opt->option, "" );
@@ -911,12 +909,9 @@ static void set_layout( option * opt )
         }
         if( lay_files == NULL ) {       // first file
             lay_files = laywk;
-        } else {
-            for( laywork = lay_files; laywork->next != NULL;
-                 laywork = laywork->next ) {
-                /*empty */;
-            }
-            laywork->next = laywk;
+        } else {                        // stack, not queue
+            laywk->next = lay_files;
+            lay_files = laywk;
         }
         tokennext = tokennext->nxt;
     }
