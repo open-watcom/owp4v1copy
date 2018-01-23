@@ -497,6 +497,8 @@ void g_err_tag_nest( const char * tag )
     return;
 }
 
+/* Various special-purpose functions */
+
 void g_err_tag_rsloc( locflags inloc, const char * pa )
 {
     const char  *   tag_name    = NULL;
@@ -576,4 +578,12 @@ void g_keep_nest( const char * cw_tag ) {
         file_mac_info();
         err_count++;
     }
+}
+
+void g_wng_hlevel( hdsrc hd_found, hdsrc hd_expected )
+{
+        g_warn( wng_heading_level );
+        g_info( inf_heading_level, hd_nums[hd_found].tag, hd_nums[hd_expected].tag );
+        file_mac_info();
+        wng_count++;
 }

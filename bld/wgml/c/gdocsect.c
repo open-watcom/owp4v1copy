@@ -1171,6 +1171,7 @@ void start_doc_sect( void )
         nest_cb->p_stack->lineno = titlep_lineno; // correct line number
         break;
     case   doc_sect_abstract :
+        hd_level = hds_h1;                      // H0 and H1 treated as already present
         page_c = layout_work.abstract.columns;
         page_e = layout_work.abstract.page_eject;
         page_r = layout_work.abstract.page_reset;
@@ -1183,6 +1184,7 @@ void start_doc_sect( void )
         lvl_reset = false;
         break;
     case   doc_sect_preface :
+        hd_level = hds_h1;                      // H0 and H1 treated as already present
         page_c = layout_work.preface.columns;
         page_e = layout_work.preface.page_eject;
         page_r = layout_work.preface.page_reset;
@@ -1195,6 +1197,7 @@ void start_doc_sect( void )
         lvl_reset = false;
         break;
     case   doc_sect_body :
+        hd_level = -1;                          // force H0 to be used
         page_c = layout_work.body.columns;
         page_e = layout_work.body.page_eject;
         page_r = layout_work.body.page_reset;
@@ -1207,6 +1210,7 @@ void start_doc_sect( void )
         lvl_reset = true;
         break;
     case   doc_sect_appendix :
+        hd_level = hds_h0;                      // H0 treated as already present
         page_c = layout_work.appendix.columns;
         page_e = layout_work.appendix.section_eject;
         page_r = layout_work.appendix.page_reset;
@@ -1218,6 +1222,7 @@ void start_doc_sect( void )
         lvl_reset = true;
         break;
     case   doc_sect_backm :
+        hd_level = hds_h0;                      // H0 treated as already present
         page_c = layout_work.backm.columns;
         page_e = layout_work.backm.page_eject;
         page_r = layout_work.backm.page_reset;

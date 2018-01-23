@@ -548,6 +548,8 @@ static void gml_hx_common( const gmltag * entry, hdsrc hn_lvl )
             g_err( err_tag_wrong_sect, hxstr, ":BODY section" );
             err_count++;
             file_mac_info();
+        } else {
+            hd_level = hn_lvl;              // H0 always valid in BODY
         }
         break;
     case  hds_h1:
@@ -557,6 +559,28 @@ static void gml_hx_common( const gmltag * entry, hdsrc hn_lvl )
             g_err( err_tag_wrong_sect, hxstr, ":BODY :APPENDIX :BACKM sections" );
             err_count++;
             file_mac_info();
+        } else if( !((ProcFlags.doc_sect == doc_sect_body) ||
+            (ProcFlags.doc_sect_nxt == doc_sect_body)) ) {  // APPENDIX or BACKM
+            hd_level = hn_lvl;              // H1 valid at this point
+        } else {                                            // BODY
+            if( hd_level < hn_lvl - 1 ) {
+                g_wng_hlevel( hn_lvl, hd_level + 1 );
+                hd_level = hn_lvl;          // H2 to H6 will be valid if none are skipped
+            } else {
+                hd_level = hn_lvl;          // H1 valid at this point
+            }
+        }
+        break;
+    case  hds_h2:
+    case  hds_h3:
+    case  hds_h4:
+    case  hds_h5:
+    case  hds_h6:
+        if( hd_level < hn_lvl - 1 ) {
+            g_wng_hlevel( hn_lvl, hd_level + 1 );
+            hd_level = hn_lvl;          // hn_lvl + 1 to H6 will be valid if none are skipped
+        } else {
+            hd_level = hn_lvl;          // hn_lvl valid at this point
         }
         break;
     default:

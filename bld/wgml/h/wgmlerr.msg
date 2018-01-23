@@ -604,6 +604,12 @@ pick( ERR_DOC_SEC_EXPECTED_2,   "Expecting an ABSTRACT, PREFACE, BODY, APPENDIX 
 pick( ERR_EOF_EXPECTED,         "Expecting the end of the file",
                                 "Expecting the end of the file" )
 
+pick( WNG_HEADING_LEVEL,        "Heading level(s) omitted:",
+                                "Heading level(s) omitted:" )
+
+pick( INF_HEADING_LEVEL,        "Encountered %s, expecting %s",
+                                "Encountered %s, expecting %s" )
+
 /* Page Geometry error messages. */
 
 pick( ERR_MARGINS_INVERTED,     "The right margin must be greater than the left margin",

@@ -290,6 +290,7 @@ global  ffh_entry   *   fn_list;        // list of footnotes in order encountere
 // heading support
 global  ffh_entry   *   hd_entry;       // current hd_list entry
 global  fwd_ref     *   hd_fwd_refs;    // forward reference/undefined id/page change
+global  hdsrc           hd_level;       // current heading level
 global  ref_entry   *   hd_ref_dict;    // reference dictionary :Hx tags
 global  ffh_entry   *   hd_list;        // list of headings in order encountered
 global  hd_num_data     hd_nums[hds_appendix];  // heading hierarchy numbering

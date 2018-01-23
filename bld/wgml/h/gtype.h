@@ -1342,6 +1342,7 @@ typedef struct {
     symsub      *   headsub;            // ptr to $HEADx symvar entry
     symsub      *   hnumsub;            // ptr to $HNUMx symvar entry
     symsub      *   htextsub;           // ptr to $HTEXTx symvar entry
+    char            tag[3];             // "H0" ... "H6", used for Hx tags only
 } hd_num_data;
 
 typedef enum page_pos {         // needed here to avoid gtypelay.h circularity

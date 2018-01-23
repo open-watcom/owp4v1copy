@@ -359,6 +359,17 @@ void init_pass_data( void )
                                                         &hd_nums[hds_h5].htextsub );
         add_symvar_addr( &global_dict, "$htext6", "", no_subscript, 0,
                                                         &hd_nums[hds_h6].htextsub );
+
+        /* These never change, so can be done on the first pass only */
+
+        strcpy_s( hd_nums[hds_h0].tag, 3, "H0");
+        strcpy_s( hd_nums[hds_h1].tag, 3, "H1");
+        strcpy_s( hd_nums[hds_h2].tag, 3, "H2");
+        strcpy_s( hd_nums[hds_h3].tag, 3, "H3");
+        strcpy_s( hd_nums[hds_h4].tag, 3, "H4");
+        strcpy_s( hd_nums[hds_h5].tag, 3, "H5");
+        strcpy_s( hd_nums[hds_h6].tag, 3, "H6");
+
     } else {
 
         /* Second pass: set the heading variables to an empty string */

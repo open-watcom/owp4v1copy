@@ -195,6 +195,7 @@ extern  void    g_err_tag_rsloc( locflags inloc, const char * pa );
 extern  void    g_err_tag_no( const char * tagname );
 extern  void    g_err_tag_prec( const char * tagname );
 extern  void    g_keep_nest( const char * cw_tag );
+extern  void    g_wng_hlevel( hdsrc hd_found, hdsrc hd_expected );
 
 /* getnum.c                             */
 extern  condcode    getnum( getnum_block * gn );
