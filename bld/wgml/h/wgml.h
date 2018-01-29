@@ -141,6 +141,7 @@ extern  void    start_doc_sect( void );
 
 /* gerror.c                             */
 extern  void    out_msg( const char * fmt, ... );
+extern  void    out_msg_research( const char *msg, ... );
 extern  void    g_err( const msg_ids err, ... );
 extern  void    g_warn( const msg_ids err, ... );
 extern  void    g_info( const msg_ids err, ... );

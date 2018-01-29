@@ -363,7 +363,7 @@ static void set_bind( option * opt )
         } else {
             memcpy_s( &bind_odd, sizeof( bind_odd), &bindwork, sizeof( bindwork ) );
 
-            out_msg( "\tbind odd  value %lii (%limm) '%s' %li %li \n",
+            out_msg_research( "\tbind odd  value %lii (%limm) '%s' %li %li \n",
                      bind_odd.su_inch, bind_odd.su_mm, bind_odd.su_txt,
                      bind_odd.su_whole, bind_odd.su_dec );
 
@@ -383,7 +383,7 @@ static void set_bind( option * opt )
                     err_count++;
                 } else {
                     memcpy( &bind_even, &bindwork, sizeof( bindwork ) );
-                    out_msg( "\tbind even value %lii (%limm) '%s' %li %li \n",
+                    out_msg_research( "\tbind even value %lii (%limm) '%s' %li %li \n",
                              bind_even.su_inch,bind_even.su_mm, bind_even.su_txt,
                              bind_even.su_whole, bind_even.su_dec );
                 }
@@ -859,13 +859,11 @@ static void set_font( option * opt )
             }
             f->nxt = new_font;
         }
-        if( GlobalFlags.research ) {    // only if -r is specified
-            out_msg( "Font: %i %s ", new_font->font, new_font->name );
-            if( new_font->style != NULL ) {
-                out_msg( "%s ", new_font->style ); // can't use NULL here
-            }
-            out_msg( "%i %i\n", new_font->space, new_font->height );
+        out_msg_research( "Font: %i %s ", new_font->font, new_font->name );
+        if( new_font->style != NULL ) {
+            out_msg_research( "%s ", new_font->style ); // can't use NULL here
         }
+        out_msg_research( "%i %i\n", new_font->space, new_font->height );
     } else {
         if( new_font->name !=NULL ) {
             mem_free( new_font->name );

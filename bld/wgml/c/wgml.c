@@ -838,9 +838,9 @@ int main( int argc, char * argv[] )
 
             laystack *lwk = lay_files;
 
-            out_msg( "\nLAYOUT file(s) specified on cmdline:\n" );
+            out_msg_research( "\nLAYOUT file(s) specified on cmdline:\n" );
             while( lwk != NULL ) {
-                out_msg( "\t%s\n", lwk->layfn );
+                out_msg_research( "\t%s\n", lwk->layfn );
                 lwk = lwk->next;
             }
         }

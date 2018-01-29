@@ -226,7 +226,7 @@ void g_info_lm( const msg_ids num, ... )
 }
 
 /***************************************************************************/
-/*  info that needs to be controlled by GlobalFlags.research               */
+/*  these functions do output that is controlled by GlobalFlags.research   */
 /***************************************************************************/
 
 void g_info_research( const msg_ids num, ... )
@@ -237,6 +237,19 @@ void g_info_research( const msg_ids num, ... )
         va_start( args, num );
         msg_indent = 0;
         g_msg_var( num, SEV_INFO, args );
+        va_end( args );
+    }
+    return;
+}
+
+
+void out_msg_research( const char *msg, ... )
+{
+    va_list args;
+
+    if( GlobalFlags.research ) {
+        va_start( args, msg );
+        vprintf_s( msg, args );
         va_end( args );
     }
     return;
