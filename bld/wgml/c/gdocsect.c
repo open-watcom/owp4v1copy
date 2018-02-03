@@ -1670,8 +1670,8 @@ extern void gml_egdoc( const gmltag * entry )
                 xx_simple_warn( wng_pass_many );// at least one more pass needed
             }
         }
-        if( !GlobalFlags.index ) {          // index option not active
-            xx_simple_warn( wng_index_opt );// give hint to activate index
+        if( !GlobalFlags.index && ProcFlags.index_tag_cw_seen ) {   // index option needed
+            xx_simple_warn( wng_index_opt );                // give hint to activate index
         }
     }
 

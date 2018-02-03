@@ -175,7 +175,8 @@ void scr_ix( void )
     static char     cwcurr[4] = {" ix"};// control word string for errmsg
 
     if( !GlobalFlags.index ) {
-         return;                         // no need to process .ix
+        ProcFlags.index_tag_cw_seen = true;
+        return;                         // no need to process .ix
     }
 
     start_doc_sect();                   // if not already done

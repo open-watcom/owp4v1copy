@@ -79,6 +79,7 @@ static void gml_ixxx_common( const gmltag * entry, int hx_lvl )
     size_t          txtlen;                 // val_len for entry value 
 
     if( !GlobalFlags.index ) {          // index option not active
+        ProcFlags.index_tag_cw_seen = true;
         scan_start = scan_stop + 1;     // ignore tag
         return;
     }

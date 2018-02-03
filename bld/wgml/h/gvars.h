@@ -159,80 +159,81 @@ global struct ProcFlags {
 
     unsigned        researchfile   : 1;// research for one file ( -r filename )
 
-    unsigned        fb_document_done : 1;// true if fb_document() called
-    unsigned        fb_position_done : 1;// first positioning on new page done
-    unsigned        page_ejected    : 1;// a page was deliberately ejected (headings)
-    unsigned        page_started    : 1;// we have something for the curr page
-    unsigned        col_started     : 1;// we have something for the curr page
-    unsigned        line_started    : 1;// we have something for current line
-    unsigned        just_override   : 1;// current line is to be justified
+    unsigned        fb_document_done    : 1;// true if fb_document() called
+    unsigned        fb_position_done    : 1;// first positioning on new page done
+    unsigned        page_ejected        : 1;// a page was deliberately ejected (headings)
+    unsigned        page_started        : 1;// we have something for the curr page
+    unsigned        col_started         : 1;// we have something for the curr page
+    unsigned        line_started        : 1;// we have something for current line
+    unsigned        just_override       : 1;// current line is to be justified
 
-    unsigned        author_tag_seen : 1;// remember first :AUTHOR tag
-    unsigned        date_tag_seen   : 1;// :DATE is allowed only once
-    unsigned        docnum_tag_seen : 1;// :DOCNUM is allowed only once
-    unsigned        stitle_seen     : 1;// remember first stitle value
-    unsigned        title_tag_top   : 1;// :TITLE pre_top_skip used
-    unsigned        title_text_seen : 1;// remember first :TITLE tag text
-    unsigned        heading_banner  : 1;// banner replaced for heading (Hn)
-    unsigned        para_starting   : 1;// :LP, :P or :PC first line/blank line
-    unsigned        goto_active     : 1;// processing .go label
-    unsigned        newLevelFile    : 1;// start new include Level (file)
-    unsigned        gml_tag         : 1;// input buf starts with GML_char
-    unsigned        scr_cw          : 1;// input buf starts with SCR_char
-    unsigned        macro_ignore    : 1;// .. in col 1-2
-    unsigned        CW_indented     : 1;// scr cw line was indented
-    unsigned        CW_sep_ignore   : 1;// ignore scr cw separator
-    unsigned        in_macro_define : 1;// macro definition active
-    unsigned        in_fb_fk_block  : 1;// inside FB/FK block     
-    unsigned        suppress_msg    : 1;// suppress error msg (during scanning)
-    unsigned        blanks_allowed  : 1;// blanks allowed (during scanning)
-    unsigned        keep_ifstate    : 1;// leave ifstack unchanged for next line
-    unsigned        substituted     : 1;// variable substituted in current line
-    unsigned        unresolved      : 1;// variable found, but not yet resolved
-    unsigned        literal         : 1;// .li is active
-    unsigned        concat          : 1;// .co ON if set
-    unsigned        ct              : 1;// .ct continue text is active
-    unsigned        fsp             : 1;// force space in spite of .ct
-    unsigned        stop_xspc       : 1;// suppress 2nd space after stop char (FIG, Hn, FIGLIST, TOC)
-    unsigned        utc             : 1;// user tag with "continue" is active
-    unsigned        in_trans        : 1;// esc char is specified (.ti set x)
-    unsigned        reprocess_line  : 1;// unget for current input line
-    unsigned        sk_2nd          : 1;// .sk follows blank lines of .sp
-    unsigned        overprint       : 1;// .sk -1 active or not
-    unsigned        tag_end_found   : 1;// '.' ending tag found
-    unsigned        skips_valid     : 1;// controls set_skip_vars() useage
-    unsigned        new_pagenr      : 1;// FIG/heading page number changed
-    unsigned        first_hdr       : 1;// first header done
-    unsigned        box_cols_cur    : 1;// current BX line had column list
-    unsigned        bx_set_done     : 1;// BX SET was done last before current BX line
-    unsigned        draw_v_line     : 1;// vertical lines are to be drawn for this BX line
-    unsigned        force_op        : 1;// force overprint (used with BX CAN/BX DEL)
-    unsigned        in_bx_box       : 1;// identifies first BX line
-    unsigned        no_bx_hline     : 1;// determines if a horizontal line is to be emitted or not
-    unsigned        top_line        : 1;// determines if current line is at top of page
-    unsigned        vline_done      : 1;// determines if a vertical line was done
+    unsigned        author_tag_seen     : 1;// remember first :AUTHOR tag
+    unsigned        date_tag_seen       : 1;// :DATE is allowed only once
+    unsigned        docnum_tag_seen     : 1;// :DOCNUM is allowed only once
+    unsigned        index_tag_cw_seen   : 1;// .IX, :I1-3, :IH1-3, :IREF seen
+    unsigned        stitle_seen         : 1;// remember first stitle value
+    unsigned        title_tag_top       : 1;// :TITLE pre_top_skip used
+    unsigned        title_text_seen     : 1;// remember first :TITLE tag text
+    unsigned        heading_banner      : 1;// banner replaced for heading (Hn)
+    unsigned        para_starting       : 1;// :LP, :P or :PC first line/blank line
+    unsigned        goto_active         : 1;// processing .go label
+    unsigned        newLevelFile        : 1;// start new include Level (file)
+    unsigned        gml_tag             : 1;// input buf starts with GML_char
+    unsigned        scr_cw              : 1;// input buf starts with SCR_char
+    unsigned        macro_ignore        : 1;// .. in col 1-2
+    unsigned        CW_indented         : 1;// scr cw line was indented
+    unsigned        CW_sep_ignore       : 1;// ignore scr cw separator
+    unsigned        in_macro_define     : 1;// macro definition active
+    unsigned        in_fb_fk_block      : 1;// inside FB/FK block     
+    unsigned        suppress_msg        : 1;// suppress error msg (during scanning)
+    unsigned        blanks_allowed      : 1;// blanks allowed (during scanning)
+    unsigned        keep_ifstate        : 1;// leave ifstack unchanged for next line
+    unsigned        substituted         : 1;// variable substituted in current line
+    unsigned        unresolved          : 1;// variable found, but not yet resolved
+    unsigned        literal             : 1;// .li is active
+    unsigned        concat              : 1;// .co ON if set
+    unsigned        ct                  : 1;// .ct continue text is active
+    unsigned        fsp                 : 1;// force space in spite of .ct
+    unsigned        stop_xspc           : 1;// suppress 2nd space after stop char (FIG, Hn, FIGLIST, TOC)
+    unsigned        utc                 : 1;// user tag with "continue" is active
+    unsigned        in_trans            : 1;// esc char is specified (.ti set x)
+    unsigned        reprocess_line      : 1;// unget for current input line
+    unsigned        sk_2nd              : 1;// .sk follows blank lines of .sp
+    unsigned        overprint           : 1;// .sk -1 active or not
+    unsigned        tag_end_found       : 1;// '.' ending tag found
+    unsigned        skips_valid         : 1;// controls set_skip_vars() useage
+    unsigned        new_pagenr          : 1;// FIG/heading page number changed
+    unsigned        first_hdr           : 1;// first header done
+    unsigned        box_cols_cur        : 1;// current BX line had column list
+    unsigned        bx_set_done         : 1;// BX SET was done last before current BX line
+    unsigned        draw_v_line         : 1;// vertical lines are to be drawn for this BX line
+    unsigned        force_op            : 1;// force overprint (used with BX CAN/BX DEL)
+    unsigned        in_bx_box           : 1;// identifies first BX line
+    unsigned        no_bx_hline         : 1;// determines if a horizontal line is to be emitted or not
+    unsigned        top_line            : 1;// determines if current line is at top of page
+    unsigned        vline_done          : 1;// determines if a vertical line was done
 
-    unsigned        keep_left_margin: 1;// for indent NOTE tag paragraph
-    unsigned        need_dd         : 1;// DT seen; DD must be next tag
-    unsigned        need_ddhd       : 1;// DTHD seen; DDHD must be next tag
-    unsigned        need_gd         : 1;// GT seen; GD must be next tag
-    unsigned        need_li_lp      : 1;// top of list/need LI/LP (OL,SL,UL)
-    unsigned        need_tag        : 1;// need tag now, not text 
-    unsigned        no_var_impl_err : 1;// suppress err_var_not_impl msg
-    unsigned        tophead_done    : 1;// tophead symbol set
-    unsigned        wrap_indent     : 1;// for index item/reference indent when line breaks
+    unsigned        keep_left_margin    : 1;// for indent NOTE tag paragraph
+    unsigned        need_dd             : 1;// DT seen; DD must be next tag
+    unsigned        need_ddhd           : 1;// DTHD seen; DDHD must be next tag
+    unsigned        need_gd             : 1;// GT seen; GD must be next tag
+    unsigned        need_li_lp          : 1;// top of list/need LI/LP (OL,SL,UL)
+    unsigned        need_tag            : 1;// need tag now, not text 
+    unsigned        no_var_impl_err     : 1;// suppress err_var_not_impl msg
+    unsigned        tophead_done        : 1;// tophead symbol set
+    unsigned        wrap_indent         : 1;// for index item/reference indent when line breaks
 
-    unsigned        has_aa_block    : 1;// true if device defined :ABSOLUTEADDRESS
-    unsigned        ps_device       : 1;// true if device is PostScript
+    unsigned        has_aa_block        : 1;// true if device defined :ABSOLUTEADDRESS
+    unsigned        ps_device           : 1;// true if device is PostScript
 
-    unsigned        layout          : 1;// within :layout tag and sub tags
-    unsigned        lay_specified   : 1;// LAYOUT option or :LAYOUT tag seen
-    unsigned        banner          : 1;// within layout banner definition
-    unsigned        banregion       : 1;// within layout banregion definition
-    unsigned        hx_level        : 3;// 0 - 6  active Hx :layout sub tag
-    lay_sub         lay_xxx         : 8;// active :layout sub tag
+    unsigned        layout              : 1;// within :layout tag and sub tags
+    unsigned        lay_specified       : 1;// LAYOUT option or :LAYOUT tag seen
+    unsigned        banner              : 1;// within layout banner definition
+    unsigned        banregion           : 1;// within layout banregion definition
+    unsigned        hx_level            : 3;// 0 - 6  active Hx :layout sub tag
+    lay_sub         lay_xxx             : 8;// active :layout sub tag
 
-    ju_enum         justify         : 8;// .ju on half off ...
+    ju_enum         justify             : 8;// .ju on half off ...
 
 } ProcFlags;                            // processing flags
 
