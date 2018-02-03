@@ -527,7 +527,11 @@ static void sysinfun( symvar * e )      // .in indent value
 {
     int32_t t_indent;
 
-    t_indent = ((g_indent + nest_cb->left_indent + nest_cb->align) * CPI) / g_resh;
+    if( nest_cb == NULL ) {
+        t_indent = (g_indent * CPI) / g_resh;
+    } else {
+        t_indent = ((g_indent + nest_cb->left_indent + nest_cb->align) * CPI) / g_resh;
+    }
     if( t_indent < 0 ) {
         t_indent++;                     // to match wmgl 4.0
     }
@@ -537,7 +541,11 @@ static void sysinfun( symvar * e )      // .in indent value
 
 static void sysinrfun( symvar * e )     // .in indentr indent right value
 {
-    ltoa( g_ll + (((g_indentr + nest_cb->right_indent) * CPI) / g_resh), sysinrstr, 10 );
+    if( nest_cb == NULL ) {
+        ltoa( g_ll + ((g_indentr * CPI) / g_resh), sysinrstr, 10 );
+    } else {
+        ltoa( g_ll + (((g_indentr + nest_cb->right_indent) * CPI) / g_resh), sysinrstr, 10 );
+    }
     return;
 };
 
