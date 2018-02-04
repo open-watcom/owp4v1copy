@@ -6,7 +6,7 @@ all : .SYMBOLIC
 clean : .SYMBOLIC
     cd debug
     wmake -h clean
-    cd miftest
+    cd ../miftest
     wmake -h clean
     cd ../validate
     wmake -h clean
