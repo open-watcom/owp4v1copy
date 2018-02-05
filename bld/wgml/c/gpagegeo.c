@@ -427,7 +427,7 @@ void    do_layout_end_processing( void )
         /*  This is a good place to start document processing.             */
         /*******************************************************************/
 
-        out_msg( "Formatting document\n" );
+        g_info_lm( inf_fmt_start );
 
         fb_document();                  // DOCUMENT :PAUSE & :INIT processing.
 

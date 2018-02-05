@@ -164,5 +164,16 @@ pick( INF_USE_END,     " ", " " )
 
 /* usage msgs start with INF_USE_START and continue thru INF_USE_END */
 
-pick( INF_PROC_START,   "Processing device information\n",
-                        "Processing device information\n")
+pick( INF_FMT_END,     "Formatting complete",
+                       "Formatting complete")
+
+pick( INF_FMT_START,   "Formatting document",
+                       "Formatting document")
+
+pick( INF_PROC_DEV,    "Processing device information",
+                       "Processing device information")
+
+pick( INF_PROC_LAY,    "Processing layout",
+                       "Processing layout")
+
+

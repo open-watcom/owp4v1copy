@@ -734,7 +734,7 @@ void cop_setup( void )
 
     /* Emit the expected message. */
 
-    g_info_lm( inf_proc_start );
+    g_info_lm( inf_proc_dev );
 
     /* Process the device. */
 

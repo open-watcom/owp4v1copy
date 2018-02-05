@@ -83,7 +83,7 @@ void    gml_layout( const gmltag * entry )
  
     if( !ProcFlags.lay_specified ) {
         ProcFlags.lay_specified = true;
-        out_msg( "Processing layout\n" );
+        g_info_lm( inf_proc_lay );
     }
  
     if( *p == '\0' || *p == '.' ) {

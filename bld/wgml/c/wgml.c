@@ -888,6 +888,10 @@ int main( int argc, char * argv[] )
         err_count++;
         usage();
     }
+
+    g_info_lm( inf_fmt_end );
+
+
     if( GlobalFlags.research ) {
         print_GML_tags_research();
         free_GML_tags_research();
@@ -927,7 +931,10 @@ int main( int argc, char * argv[] )
 
     end_time = clock();                 // get end time
     pass = passcount;
-    print_stats( end_time - start_time );
+
+    if( GlobalFlags.research ) {        // not the same as wgml stats
+        print_stats( end_time - start_time );
+    }
 
     fini_msgs();                        // end of msg resources, no more msgs built from
                                         // resources possible after this point
