@@ -1010,65 +1010,62 @@ void cop_tr_table( const char *p )
 
 /* Function ob_binclude().
  * This function implements the action of BINCLUDE.
+ * NOTE: BINCLUDE produces a doc_element only if the file has been found.
  */
 
 void ob_binclude( binclude_element * in_el )
 {
     uint32_t    count;
 
-    if( search_file_in_dirs( in_el->file, "", "", ds_doc_spec ) ) {
-        fb_binclude_support( in_el );
-        if( fwrite( buffout.text, sizeof( uint8_t ), buffout.current, out_file_fp )
-                < buffout.current ) {
-            xx_simple_err_c( err_write_out_file, out_file );
-        }
-        buffout.current = 0;
+    fb_binclude_support( in_el );
+    if( fwrite( buffout.text, sizeof( uint8_t ), buffout.current, out_file_fp )
+            < buffout.current ) {
+        xx_simple_err_c( err_write_out_file, out_file );
+    }
+    buffout.current = 0;
 
-        if( in_el->has_rec_type ) {
-            count = fread( buffout.text, sizeof( uint8_t ), buffout.length, try_fp );
-            while( count == buffout.length ) {
-                buffout.current = count;
-                if( fwrite( buffout.text, sizeof( uint8_t ), buffout.current, out_file_fp )
-                        < buffout.current ) {
-                    xx_simple_err_c( err_write_out_file, out_file );
-                    count = 0;
-                    break;
-                }
-                count = fread( buffout.text, sizeof( uint8_t ), buffout.length, try_fp );
-            }
+    if( in_el->has_rec_type ) {
+        count = fread( buffout.text, sizeof( uint8_t ), buffout.length, in_el->fp );
+        while( count == buffout.length ) {
             buffout.current = count;
             if( fwrite( buffout.text, sizeof( uint8_t ), buffout.current, out_file_fp )
                     < buffout.current ) {
                 xx_simple_err_c( err_write_out_file, out_file );
+                count = 0;
+                break;
             }
-            if( ferror( try_fp ) ) {
-                xx_simple_err_cc( err_in_file, "BINCLUDE", try_file_name );
-            }
-            buffout.current = 0;
-        } else {
-            count = fread( binc_buff.text, sizeof( uint8_t ), binc_buff.length, try_fp );
-            while( count == binc_buff.length ) {
-                binc_buff.current = count;
-                if( fwrite( binc_buff.text, sizeof( uint8_t ), binc_buff.current, out_file_fp )
-                        < binc_buff.current ) {
-                    xx_simple_err_c( err_write_out_file, out_file );
-                    count = 0;
-                    break;
-                }
-                ob_flush();
-                count = fread( binc_buff.text, sizeof( uint8_t ), binc_buff.length, try_fp );
-            }
+            count = fread( buffout.text, sizeof( uint8_t ), buffout.length, in_el->fp );
+        }
+        buffout.current = count;
+        if( fwrite( buffout.text, sizeof( uint8_t ), buffout.current, out_file_fp )
+                < buffout.current ) {
+            xx_simple_err_c( err_write_out_file, out_file );
+        }
+        if( ferror( in_el->fp ) ) {
+            xx_simple_err_cc( err_in_file, "BINCLUDE", in_el->file );
+        }
+        buffout.current = 0;
+    } else {
+        count = fread( binc_buff.text, sizeof( uint8_t ), binc_buff.length, in_el->fp );
+        while( count == binc_buff.length ) {
             binc_buff.current = count;
             if( fwrite( binc_buff.text, sizeof( uint8_t ), binc_buff.current, out_file_fp )
                     < binc_buff.current ) {
                 xx_simple_err_c( err_write_out_file, out_file );
+                count = 0;
+                break;
             }
-            if( ferror( try_fp ) ) {
-                xx_simple_err_cc( err_in_file, "BINCLUDE", try_file_name );
-            }
+            ob_flush();
+            count = fread( binc_buff.text, sizeof( uint8_t ), binc_buff.length, in_el->fp );
         }
-    } else {
-        xx_tag_err( err_file_not_found, in_el->file );
+        binc_buff.current = count;
+        if( fwrite( binc_buff.text, sizeof( uint8_t ), binc_buff.current, out_file_fp )
+                < binc_buff.current ) {
+            xx_simple_err_c( err_write_out_file, out_file );
+        }
+        if( ferror( in_el->fp ) ) {
+            xx_simple_err_cc( err_in_file, "BINCLUDE", in_el->file );
+        }
     }
 
     return;
@@ -1130,6 +1127,7 @@ void ob_flush( void )
 
 /* Function ob_graphic().
  * This function implements the action of GRAPHIC for the PS device.
+ * NOTE: GRAPHIC produces a doc_element only if the file has been found.
  */
 
 void ob_graphic( graphic_element * in_el )
@@ -1141,62 +1139,57 @@ void ob_graphic( graphic_element * in_el )
     size_t      ps_size;
     uint32_t    count;
 
-    if( search_file_in_dirs( in_el->file, "", "", ds_doc_spec ) ) {
-        fb_graphic_support( in_el );
-        ob_flush();
+    fb_graphic_support( in_el );
+    ob_flush();
 
-        ps_size = strlen( graphobj );
-        strcpy_s( buffout.text, buffout.length, graphobj );
-        buffout.current = ps_size;
-        ob_flush();
+    ps_size = strlen( graphobj );
+    strcpy_s( buffout.text, buffout.length, graphobj );
+    buffout.current = ps_size;
+    ob_flush();
 
-        memset( buffout.text, buffout.length, '\0' );
-        ps_size = sprintf_s( buffout.text, buffout.length,
-                  "%d %d %d %d %d %d %d graphhead",
-                  in_el->cur_left, in_el->y_address, in_el->width, in_el->depth,
-                  in_el->xoff, -1 * (in_el->depth + in_el->yoff), in_el->scale );
-        buffout.current = strlen( buffout.text );
-        ob_flush();
+    memset( buffout.text, buffout.length, '\0' );
+    ps_size = sprintf_s( buffout.text, buffout.length, "%d %d %d %d %d %d %d graphhead",
+                         in_el->cur_left, in_el->y_address, in_el->width, in_el->depth,
+                         in_el->xoff, -1 * (in_el->depth + in_el->yoff), in_el->scale );
+    buffout.current = strlen( buffout.text );
+    ob_flush();
 
-        ps_size = strlen( begindoc );
-        strcpy_s( buffout.text, buffout.length, begindoc );
-        buffout.current = ps_size;
-        strcpy_s( buffout.text + ps_size, buffout.length - ps_size, in_el->file );
-        buffout.current = strlen( buffout.text );
-        ob_flush();
+    ps_size = strlen( begindoc );
+    strcpy_s( buffout.text, buffout.length, begindoc );
+    buffout.current = ps_size;
+    strcpy_s( buffout.text + ps_size, buffout.length - ps_size, in_el->short_name );
+    buffout.current = strlen( buffout.text );
+    ob_flush();
 
-        count = fread( buffout.text, sizeof( uint8_t ), buffout.length, try_fp );
-        while( count == buffout.length ) {
-            buffout.current = count;
-            if( fwrite( buffout.text, sizeof( uint8_t ), buffout.current, out_file_fp )
-                    < buffout.current ) {
-                xx_simple_err_c( err_write_out_file, out_file );
-                return;
-            }
-            count = fread( buffout.text, sizeof( uint8_t ), buffout.length, try_fp );
-        }
+    count = fread( buffout.text, sizeof( uint8_t ), buffout.length, in_el->fp );
+    while( count == buffout.length ) {
         buffout.current = count;
         if( fwrite( buffout.text, sizeof( uint8_t ), buffout.current, out_file_fp )
                 < buffout.current ) {
             xx_simple_err_c( err_write_out_file, out_file );
             return;
         }
-        buffout.current = 0;
+        count = fread( buffout.text, sizeof( uint8_t ), buffout.length, in_el->fp );
+    }
+    buffout.current = count;
+    if( fwrite( buffout.text, sizeof( uint8_t ), buffout.current, out_file_fp )
+            < buffout.current ) {
+        xx_simple_err_c( err_write_out_file, out_file );
+        return;
+    }
+    buffout.current = 0;
 
-        ps_size = strlen( enddoc );
-        strcpy_s( buffout.text, buffout.length, enddoc );
-        buffout.current = ps_size;
-        ob_flush();
+    ps_size = strlen( enddoc );
+    strcpy_s( buffout.text, buffout.length, enddoc );
+    buffout.current = ps_size;
+    ob_flush();
 
-        ps_size = strlen( restore );
-        strcpy_s( buffout.text, buffout.length, restore );
-        buffout.current = ps_size;
-        ob_flush();
-        if( ferror( try_fp ) ) {
-            xx_simple_err_cc( err_in_file, "GRAPHIC", try_file_name );
-        }
-    } else {
-        xx_tag_err( err_file_not_found, in_el->file );
+    ps_size = strlen( restore );
+    strcpy_s( buffout.text, buffout.length, restore );
+    buffout.current = ps_size;
+    ob_flush();
+    if( ferror( in_el->fp ) ) {
+        xx_simple_err_cc( err_in_file, "GRAPHIC", in_el->file );
     }
 
     return;

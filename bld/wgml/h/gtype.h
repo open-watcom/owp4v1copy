@@ -1010,15 +1010,16 @@ typedef enum {
     el_vspace,      // vertical space element (blank lines and SP)
 } element_type;
 
-// struct oc_element; // Forward declaration (uncomment when needed)
+// struct doc_element;    // Forward declaration (uncomment if ever needed)
 
 typedef struct {
-    uint32_t    cur_left;
-    uint32_t    depth;
-    uint32_t    y_address;
-    bool        at_top;
-    bool        has_rec_type;
-    char        file[FILENAME_MAX];     // placement avoids padding warning
+    uint32_t        cur_left;
+    uint32_t        depth;
+    uint32_t        y_address;
+    bool            at_top;
+    bool            has_rec_type;
+    FILE        *   fp;
+    char            file[FILENAME_MAX];
 } binclude_element;
 
 typedef struct {
@@ -1029,15 +1030,17 @@ typedef struct {
 } dbox_element;
 
 typedef struct {
-    uint32_t    cur_left;
-    uint32_t    depth;
-    uint32_t    scale;
-    uint32_t    width;
-    uint32_t    y_address;
-    int32_t     xoff;
-    int32_t     yoff;
-    bool        at_top;
-    char        file[FILENAME_MAX];     // placement avoids padding warning
+    uint32_t        cur_left;
+    uint32_t        depth;
+    uint32_t        scale;
+    uint32_t        width;
+    uint32_t        y_address;
+    int32_t         xoff;
+    int32_t         yoff;
+    bool            at_top;
+    FILE        *   fp;
+    char            short_name[FILENAME_MAX];
+    char            file[FILENAME_MAX];
 } graphic_element;
 
 typedef struct {

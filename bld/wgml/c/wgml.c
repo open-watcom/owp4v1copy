@@ -432,6 +432,8 @@ static  void    proc_input( char * filename )
     laystack    *   cur_lay_file;
     laystack    *   tmp_lay_file;
 
+    static  inputcb *   save_cb;        // former input_cbs top entry
+
     ProcFlags.newLevelFile = 1;
     strcpy_s( token_buf, buf_size, filename );
 
@@ -478,8 +480,9 @@ static  void    proc_input( char * filename )
                 cb->fileattr[0] = '\0';
             }
             if( GlobalFlags.inclist ) {
-                g_info_lm( inf_curr_input, "file", cb->filename );
+                g_info_lm( inf_curr_file, cb->filename );
             }
+            save_cb = input_cbs;
 
             /****************************************************************/
             /*  If ( LAYOUT file option specified, then process             */
@@ -649,16 +652,14 @@ static  void    proc_input( char * filename )
             continue;                   // with cmdline layout option file
         }
         if( input_cbs->fmflags & II_file ) {
-            if( GlobalFlags.inclist ) {
-                char    linestr[MAX_L_AS_STR];
-
-                cb = input_cbs->s.f;
-                utoa( cb->lineno, linestr, 10 );
-                g_info_lm( inf_curr_line, cb->filename, linestr );
+            if( GlobalFlags.inclist && (save_cb != input_cbs) ) {
+                g_info_lm( inf_curr_file, input_cbs->s.f->filename );
+                save_cb = input_cbs;
             }
         } else {
-            if( GlobalFlags.inclist ) {
-                g_info_lm( inf_curr_input, "macro", input_cbs->s.m->mac->name );
+            if( GlobalFlags.inclist && GlobalFlags.research ) {     // only when -r specified
+                g_info_lm( inf_curr_macro, input_cbs->s.m->mac->name,
+                                           input_cbs->s.m->mac->mac_file_name  );
             }
         }
     }                                   // for loop

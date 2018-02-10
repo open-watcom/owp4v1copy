@@ -31,6 +31,7 @@
 #include <string.h>
 
 #include    "wgml.h"
+#include    "findfile.h"
 #include    "gvars.h"
 
 
@@ -50,6 +51,7 @@ void    gml_binclude( const gmltag * entry )
     char        *   p;
     char        *   pa;
     doc_element *   cur_el;
+    inputcb     *   cb                      = input_cbs;
     su              depth_su;
     uint32_t        depth;
 
@@ -144,22 +146,37 @@ void    gml_binclude( const gmltag * entry )
         xx_err( err_att_missing );
     }
 
-    if( depth == 0 ) {
-        cur_el = alloc_doc_el(  el_binc );
-    } else {
-        set_skip_vars( NULL, NULL, NULL, 1, g_curr_font );
-        if( reposition && depth ) {                 // otherwise, element depth will be "0"
-            cur_el = init_doc_el( el_binc, depth ); 
+    // only set up the doc_element if the file exists
+    if( search_file_in_dirs( file, "", "", ds_doc_spec ) ) {
+        if( depth == 0 ) {
+            cur_el = alloc_doc_el(  el_binc );
         } else {
-            cur_el = init_doc_el( el_binc, 0 );
+            set_skip_vars( NULL, NULL, NULL, 1, g_curr_font );
+            if( reposition && depth ) {                 // otherwise, element depth will be "0"
+                cur_el = init_doc_el( el_binc, depth ); 
+            } else {
+                cur_el = init_doc_el( el_binc, 0 );
+            }
         }
-    }
-    cur_el->element.binc.depth = depth;
-    cur_el->element.binc.cur_left = t_page.cur_width;
-    cur_el->element.binc.has_rec_type = has_rec_type;
-    strncpy_s( cur_el->element.binc.file, FILENAME_MAX, file, FILENAME_MAX );
+        cur_el->element.binc.depth = depth;
+        cur_el->element.binc.cur_left = t_page.cur_width;
+        cur_el->element.binc.has_rec_type = has_rec_type;
+        cur_el->element.binc.fp = try_fp;
+        strncpy_s( cur_el->element.binc.file, FILENAME_MAX, try_file_name, FILENAME_MAX );
 
-    insert_col_main( cur_el );
+        if( GlobalFlags.inclist ) {
+            g_info_lm( inf_curr_file, cur_el->element.binc.file );
+            while( cb->fmflags & II_macro ) {                 // find prior file
+                 cb = cb->prev;
+            }
+            g_info_lm( inf_curr_file, cb->s.f->filename );
+        }
+
+        insert_col_main( cur_el );
+
+    } else {
+        xx_tag_err( err_file_not_found, file );
+    }
 
     scan_start = scan_stop + 1;         // skip following text
     return;

@@ -373,13 +373,18 @@ static int try_open( char * prefix, char * filename )
 
     for( ;; ) {
         erc = fopen_s( &fp, buff, "rb" );
+#if defined( __UNIX__ )
         if( erc == 0 ) {
             break;
         }
-#if defined( __UNIX__ )
         strlwr( buff );                 // for the sake of linux try again with lower case filename
         erc = fopen_s( &fp, buff, "rb" );
         if( erc == 0 ) {
+            break;
+        }
+#else       // DOS, OS/2, Windows        
+        if( erc == 0 ) {
+            strlwr( buff );             // to match wgml 4.0
             break;
         }
 #endif

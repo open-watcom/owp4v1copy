@@ -49,11 +49,11 @@ pick( ERR_MAX_INPUT_NESTING,    "Max input nesting exceeded %s",
 pick( ERR_INPUT_FILE_NOT_FOUND, "Input file not found %s",
                                 "Input file not found %s" )
 
-pick( INF_CURR_INPUT,           "Current %s is '%s'",
-                                "Current %s is '%s'" )
+pick( INF_CURR_FILE,            "Current file is '%s'",
+                                "Current file is '%s'" )
 
-pick( INF_CURR_LINE,            "Current file is '%s'(%s)",
-                                "Current file is '%s'(%s)" )
+pick( INF_CURR_MACRO,           "Current macro is '%s'(%s)",
+                                "Current macro is '%s'(%s)" )
 
 pick( ERR_GOTO,                 "Goto label '%s' not found",
                                 "Goto label '%s' not found" )

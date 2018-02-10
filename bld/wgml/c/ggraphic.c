@@ -30,6 +30,7 @@
 #define __STDC_WANT_LIB_EXT1__  1
 #include <string.h>
 #include    "wgml.h"
+#include    "findfile.h"
 #include    "gvars.h"
 
 /***************************************************************************/
@@ -46,6 +47,7 @@ void    gml_graphic( const gmltag * entry )
     char        *   pa;
     char        *   pb;
     doc_element *   cur_el;
+    inputcb     *   cb                      = input_cbs;
     su              cur_su;
     uint32_t        depth;
     uint32_t        scale                   = 100;
@@ -214,16 +216,33 @@ void    gml_graphic( const gmltag * entry )
         g_post_skip = 0;
     }
     set_skip_vars( NULL, NULL, NULL, 1, g_curr_font );
-    cur_el = init_doc_el( el_graph, depth );
-    cur_el->element.graph.cur_left = t_page.cur_width;
-    cur_el->element.graph.depth = depth;
-    cur_el->element.graph.scale = scale;
-    cur_el->element.graph.width = width;
-    cur_el->element.graph.xoff = xoff;
-    cur_el->element.graph.yoff = yoff;
-    strncpy_s( cur_el->element.graph.file, FILENAME_MAX, file, FILENAME_MAX );
 
-    insert_col_main( cur_el );
+   // only set up the doc_element if the file exists
+    if( search_file_in_dirs( file, "", "", ds_doc_spec ) ) {
+        cur_el = init_doc_el( el_graph, depth );
+        cur_el->element.graph.cur_left = t_page.cur_width;
+        cur_el->element.graph.depth = depth;
+        cur_el->element.graph.scale = scale;
+        cur_el->element.graph.width = width;
+        cur_el->element.graph.xoff = xoff;
+        cur_el->element.graph.yoff = yoff;
+        cur_el->element.graph.fp = try_fp;
+        strncpy_s( cur_el->element.graph.short_name, FILENAME_MAX, file, FILENAME_MAX );
+        strncpy_s( cur_el->element.graph.file, FILENAME_MAX, try_file_name, FILENAME_MAX );
+
+        if( GlobalFlags.inclist ) {
+            g_info_lm( inf_curr_file, cur_el->element.graph.file );
+            while( cb->fmflags & II_macro ) {                 // find prior file
+                 cb = cb->prev;
+            }
+            g_info_lm( inf_curr_file, cb->s.f->filename );
+        }
+
+        insert_col_main( cur_el );
+
+    } else {
+        xx_tag_err( err_file_not_found, file );
+    }
 
     if( !ProcFlags.reprocess_line && *p ) {
         if( *p == '.' ) p++;                // possible tag end
