@@ -261,85 +261,6 @@ void set_pgnum_style( void )
 
 
 /***************************************************************************/
-/*  substitute a variable in ban region text                               */
-/***************************************************************************/
-
-static char * subst_1var( char * pout, char * pvar, size_t len )
-{
-    sub_index           var_ind;
-    symvar              symvar_entry;
-    symsub          *   symsubval;
-    int                 rc;
-    char            *   pchar;
-
-    ProcFlags.suppress_msg = true;
-    scan_err = false;
-
-    pchar = scan_sym( pvar, &symvar_entry, &var_ind );
-    ProcFlags.suppress_msg = false;
-    if( !scan_err ) {
-        if( symvar_entry.flags & local_var ) {  // lookup var in dict
-            rc = find_symvar_l( &input_cbs->local_dict, symvar_entry.name,
-                              var_ind, &symsubval );
-        } else {
-            rc = find_symvar( &global_dict, symvar_entry.name, var_ind,
-                              &symsubval );
-        }
-        if( rc == 2 ) {
-            pchar = symsubval->value;
-            while( *pchar ) {
-                *pout++ = *pchar++;
-            }
-        }
-    }
-    *pout = '\0';
-    return( pout );
-}
-
-/***************************************************************************/
-/*  substitute vars in ban region buffer                                   */
-/***************************************************************************/
-
-static void substitute_vars( char * pbuf, char * pin, size_t length )
-{
-    char    *   p;
-    char    *   pvar;
-    char    *   pout;
-    int         k;
-    int         len;
-
-    p = pin;
-    pout = pbuf;
-    for( len = 0; len < length; ++len ) {
-        if( *p != '&' ) {
-            *pout++ = *p++;
-        } else {
-            pvar = p + 1;
-            for( k = len; k < length; ++k ) {
-                if( *p == '.' ) {
-                    break;          // var end found
-                } else {
-                    p++;
-                }
-            }
-            len = k;
-            if( *p == '.' ) {
-                *p = '\0';
-                pout = subst_1var( pout, pvar, p - pvar );
-                *p++ = '.';         // restore .
-            } else {
-                p = pvar - 1;       // no variable treat as text
-                *pout++ = *p++;
-                continue;
-            }
-        }
-    }
-    *pout = '\0';
-    return;
-}
-
-
-/***************************************************************************/
 /*  prepare 1 or more text_chars with region content                       */
 /*                                                                         */
 /*  More than 1 ban_region may be specified for a banner in :LAYOUT        */
@@ -365,8 +286,9 @@ static void content_reg( banner_lay_tag * ban )
             for( k = 0; k < 3; ++k ) {
 
                 if( ban->region->script_region[k].string != NULL ) {
-                    substitute_vars( pbuf, ban->region->script_region[k].string,
-                                     ban->region->script_region[k].len );
+                    strcpy_s( pbuf, strlen(ban->region->contents.string) + 1, ban->region->contents.string );
+                    resolve_symvar_functions( pbuf );
+                    resolve_symvar_functions( pbuf );
                     if( *pbuf ) {
                         curr_t = alloc_text_chars( pbuf, strlen( pbuf ), ban->region->font );
                         /***************************************************/
@@ -381,8 +303,10 @@ static void content_reg( banner_lay_tag * ban )
                 }
             }
         } else {    // no script format only normal string with perhaps vars
-            substitute_vars( pbuf, ban->region->contents.string,
-                             strlen( ban->region->contents.string ) );
+
+            strcpy_s( pbuf, strlen(ban->region->contents.string) + 1, ban->region->contents.string );
+            resolve_symvar_functions( pbuf );
+            resolve_symvar_functions( pbuf );
             if( *pbuf ) {
                 curr_t = alloc_text_chars( pbuf, strlen( pbuf ), ban->region->font );
                 /***********************************************************/
