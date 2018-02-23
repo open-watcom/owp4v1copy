@@ -786,25 +786,18 @@ static void set_positions( doc_element * list, uint32_t h_start, uint32_t v_star
 
 /***************************************************************************/
 /*  output the ban_column                                                  */
-/*  this version only supports on BANREGION per BANNER                     */
-/*  NOTE: it is not clear how banners with more than one region are to be  */
-/*        processed                                                        */
+/*  currently, each doc_element is a BANREGION                             */
+/*  NOTE: it is not clear how multiple columns are to be used, or even if  */
+/*        they are needed                                                  */
 /***************************************************************************/
 
 static void do_ban_column_out( ban_column * a_column, uint32_t v_start )
 {
-    ban_column  *   cur_col;
-    doc_element *   cur_el;
-
-    cur_col = a_column;
-    cur_el = NULL;
-    if( cur_col->first != NULL ) {
-        set_positions( cur_col->first, t_page.page_left, v_start );
-        cur_el = cur_col->first;
-        cur_col->first = NULL;
+    if( a_column->first == NULL ) {          // nothing to output
+        return;
     }
-
-    do_el_list_out( cur_el );
+    set_positions( a_column->first, t_page.page_left, v_start );
+    do_el_list_out( a_column->first );
 
     return;
 }

@@ -1133,6 +1133,7 @@ typedef struct doc_el_group {
 typedef struct ban_column {
     struct  ban_column  *   next;
             doc_element *   first;
+            doc_element *   last;
 } ban_column;
 
 typedef struct {

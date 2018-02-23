@@ -41,57 +41,6 @@ static  banner_lay_tag  *   ban_bot[max_ban][2];
 
 
 /***************************************************************************/
-/*  Split banregion into left middle right part if region is script format */
-/***************************************************************************/
-static  void    preprocess_script_region( banner_lay_tag * ban )
-{
-    char    *   pl;
-    char        sep;
-    int         k;
-
-    if( ban->region != NULL ) {
-    if( (ban->region->contents.content_type == string_content)
-        && ban->region->script_format ) {
-
-            /***************************************************************/
-            /*  script format is a 3 part region: left middle right        */
-            /*  first char is separator char                               */
-            /*  /left//right/  empty middle part in this case              */
-            /***************************************************************/
-
-
-            /***************************************************************/
-            /*  preprocess script format banner region for speed           */
-            /***************************************************************/
-        pl = ban->region->contents.string;
-        sep = *pl;                      // first char is separator
-                                        // isolate region parts
-        for( k = 0; k < 3; ++k ) {      // left, center, right
-            pl++;
-            if( k == 2 ) {// special hack for right part without success
-                while( *pl == ' ' ) {
-                    pl++;               // remove leading spaces
-                }           // still not quite the same result as wgml4   TBD
-            }
-            ban->region->script_region[k].string = pl;
-            while( *pl &&  *pl != sep ) {
-                pl++;
-            }
-            ban->region->script_region[k].len =  pl -
-                ban->region->script_region[k].string ;
-
-            if( ban->region->script_region[k].len == 0 ) {
-                ban->region->script_region[k].string = NULL;
-            } else {
-                *pl = '\0';             // null terminate
-            }
-        }
-    }
-    }
-}
-
-
-/***************************************************************************/
 /*  set banner pointers for head x heading                                 */
 /*  NOTE: this ignores differences in line height ant their effect on page */
 /*        top and page depth and so on pagination                          */
@@ -182,7 +131,6 @@ void set_banners( void )
                     default:
                         break;
                     }
-                    preprocess_script_region( ban );
                     break;              // tag for banner found
                 }
             }
@@ -263,11 +211,9 @@ void set_pgnum_style( void )
 /***************************************************************************/
 /*  prepare 1 or more text_chars with region content                       */
 /*                                                                         */
-/*  More than 1 ban_region may be specified for a banner in :LAYOUT        */
-/*  but only the first is processed                   TBD if really needed */
 /***************************************************************************/
 
-static void content_reg( banner_lay_tag * ban )
+static void content_reg( region_lay_tag * region )
 {
     text_chars  *   curr_t;
     char        *   pbuf;
@@ -275,49 +221,49 @@ static void content_reg( banner_lay_tag * ban )
     int             k;
     int             rc;
 
-    switch( ban->region->contents.content_type ) {
+    switch( region->contents.content_type ) {
     case   string_content:
         pbuf = mem_alloc( buf_size );
         *pbuf = '\0';
-        if( ban->region->script_format ) {
+        if( region->script_format ) {
             /***************************************************************/
             /*  substitute variables and create text_chars instances       */
             /***************************************************************/
             for( k = 0; k < 3; ++k ) {
 
-                if( ban->region->script_region[k].string != NULL ) {
-                    strcpy_s( pbuf, strlen(ban->region->contents.string) + 1, ban->region->contents.string );
+                if( region->script_region[k].string != NULL ) {
+                    strcpy_s( pbuf, strlen(region->contents.string) + 1, region->contents.string );
                     resolve_symvar_functions( pbuf );
                     resolve_symvar_functions( pbuf );
                     if( *pbuf ) {
-                        curr_t = alloc_text_chars( pbuf, strlen( pbuf ), ban->region->font );
+                        curr_t = alloc_text_chars( pbuf, strlen( pbuf ), region->font );
                         /***************************************************/
                         /* use current font for width calculation          */
                         /* even if another font is used for banregion      */
                         /* to get the same result as wgml4                 */
                         /***************************************************/
                         curr_t->width = cop_text_width( curr_t->text, curr_t->count, g_curr_font );
-                                                       //   ban->region->font );
+                                                       //   region->font );
                         reg_text[k] = curr_t;
                     }
                 }
             }
         } else {    // no script format only normal string with perhaps vars
 
-            strcpy_s( pbuf, strlen(ban->region->contents.string) + 1, ban->region->contents.string );
+            strcpy_s( pbuf, strlen(region->contents.string) + 1, region->contents.string );
             resolve_symvar_functions( pbuf );
             resolve_symvar_functions( pbuf );
             if( *pbuf ) {
-                curr_t = alloc_text_chars( pbuf, strlen( pbuf ), ban->region->font );
+                curr_t = alloc_text_chars( pbuf, strlen( pbuf ), region->font );
                 /***********************************************************/
                 /*  is font 0 used for width calc?                    TBD  */
                 /***********************************************************/
-                curr_t->width = cop_text_width( curr_t->text, curr_t->count, ban->region->font );
-                if( ban->region->region_position == pos_left ) {
+                curr_t->width = cop_text_width( curr_t->text, curr_t->count, region->font );
+                if( region->region_position == pos_left ) {
                     reg_text[0] = curr_t;
-                } else if( ban->region->region_position == pos_center ) {
+                } else if( region->region_position == pos_center ) {
                     reg_text[1] = curr_t;
-                } else if( ban->region->region_position == pos_right ) {
+                } else if( region->region_position == pos_right ) {
                     reg_text[2] = curr_t;
                 } else {
                     reg_text[0] = curr_t;   // position left if unknown
@@ -330,314 +276,314 @@ static void content_reg( banner_lay_tag * ban )
     case author_content :
         rc = find_symvar( &global_dict, "$author", no_subscript, &symsubval );
         if( rc == 2 ) {
-            curr_t = alloc_text_chars( symsubval->value, strlen( symsubval->value ), ban->region->font );
+            curr_t = alloc_text_chars( symsubval->value, strlen( symsubval->value ), region->font );
         } else {
-            curr_t = alloc_text_chars( "author", 6, ban->region->font );
+            curr_t = alloc_text_chars( "author", 6, region->font );
         }
         break;
     case bothead_content :
         rc = find_symvar( &global_dict, "$bothead", no_subscript, &symsubval );
         if( rc == 2 ) {
-            curr_t = alloc_text_chars( symsubval->value, strlen( symsubval->value ), ban->region->font );
+            curr_t = alloc_text_chars( symsubval->value, strlen( symsubval->value ), region->font );
         } else {
-            curr_t = alloc_text_chars( "bothead", 7, ban->region->font );
+            curr_t = alloc_text_chars( "bothead", 7, region->font );
         }
         break;
     case date_content :
         rc = find_symvar( &global_dict, "$date", no_subscript, &symsubval );
         if( rc == 2 ) {
-            curr_t = alloc_text_chars( symsubval->value, strlen( symsubval->value ), ban->region->font );
+            curr_t = alloc_text_chars( symsubval->value, strlen( symsubval->value ), region->font );
         } else {
-            curr_t = alloc_text_chars( "date", 4, ban->region->font );
+            curr_t = alloc_text_chars( "date", 4, region->font );
         }
         break;
     case docnum_content :
         rc = find_symvar( &global_dict, "$docnum", no_subscript, &symsubval );
         if( rc == 2 ) {
-            curr_t = alloc_text_chars( symsubval->value, strlen( symsubval->value ), ban->region->font );
+            curr_t = alloc_text_chars( symsubval->value, strlen( symsubval->value ), region->font );
         } else {
-            curr_t = alloc_text_chars( "docnum", 6, ban->region->font );
+            curr_t = alloc_text_chars( "docnum", 6, region->font );
         }
         break;
     case head0_content :
         rc = find_symvar( &global_dict, "$head0", no_subscript, &symsubval );
         if( rc == 2 ) {
-            curr_t = alloc_text_chars( symsubval->value, strlen( symsubval->value ), ban->region->font );
+            curr_t = alloc_text_chars( symsubval->value, strlen( symsubval->value ), region->font );
         } else {
-            curr_t = alloc_text_chars( "head0", 5, ban->region->font );
+            curr_t = alloc_text_chars( "head0", 5, region->font );
         }
         break;
     case head1_content :
         rc = find_symvar( &global_dict, "$head1", no_subscript, &symsubval );
         if( rc == 2 ) {
-            curr_t = alloc_text_chars( symsubval->value, strlen( symsubval->value ), ban->region->font );
+            curr_t = alloc_text_chars( symsubval->value, strlen( symsubval->value ), region->font );
         } else {
-            curr_t = alloc_text_chars( "head1", 5, ban->region->font );
+            curr_t = alloc_text_chars( "head1", 5, region->font );
         }
         break;
     case head2_content :
         rc = find_symvar( &global_dict, "$head2", no_subscript, &symsubval );
         if( rc == 2 ) {
-            curr_t = alloc_text_chars( symsubval->value, strlen( symsubval->value ), ban->region->font );
+            curr_t = alloc_text_chars( symsubval->value, strlen( symsubval->value ), region->font );
         } else {
-            curr_t = alloc_text_chars( "head2", 5, ban->region->font );
+            curr_t = alloc_text_chars( "head2", 5, region->font );
         }
         break;
     case head3_content :
         rc = find_symvar( &global_dict, "$head3", no_subscript, &symsubval );
         if( rc == 2 ) {
-            curr_t = alloc_text_chars( symsubval->value, strlen( symsubval->value ), ban->region->font );
+            curr_t = alloc_text_chars( symsubval->value, strlen( symsubval->value ), region->font );
         } else {
-            curr_t = alloc_text_chars( "head3", 5, ban->region->font );
+            curr_t = alloc_text_chars( "head3", 5, region->font );
         }
         break;
     case head4_content :
         rc = find_symvar( &global_dict, "$head4", no_subscript, &symsubval );
         if( rc == 2 ) {
-            curr_t = alloc_text_chars( symsubval->value, strlen( symsubval->value ), ban->region->font );
+            curr_t = alloc_text_chars( symsubval->value, strlen( symsubval->value ), region->font );
         } else {
-            curr_t = alloc_text_chars( "head4", 5, ban->region->font );
+            curr_t = alloc_text_chars( "head4", 5, region->font );
         }
         break;
     case head5_content :
         rc = find_symvar( &global_dict, "$head5", no_subscript, &symsubval );
         if( rc == 2 ) {
-            curr_t = alloc_text_chars( symsubval->value, strlen( symsubval->value ), ban->region->font );
+            curr_t = alloc_text_chars( symsubval->value, strlen( symsubval->value ), region->font );
         } else {
-            curr_t = alloc_text_chars( "head5", 5, ban->region->font );
+            curr_t = alloc_text_chars( "head5", 5, region->font );
         }
         break;
     case head6_content :
         rc = find_symvar( &global_dict, "$head6", no_subscript, &symsubval );
         if( rc == 2 ) {
-            curr_t = alloc_text_chars( symsubval->value, strlen( symsubval->value ), ban->region->font );
+            curr_t = alloc_text_chars( symsubval->value, strlen( symsubval->value ), region->font );
         } else {
-            curr_t = alloc_text_chars( "head6", 5, ban->region->font );
+            curr_t = alloc_text_chars( "head6", 5, region->font );
         }
         break;
     case headnum0_content :
         rc = find_symvar( &global_dict, "$hnum0", no_subscript, &symsubval );
         if( rc == 2 ) {
-            curr_t = alloc_text_chars( symsubval->value, strlen( symsubval->value ), ban->region->font );
+            curr_t = alloc_text_chars( symsubval->value, strlen( symsubval->value ), region->font );
         } else {
-            curr_t = alloc_text_chars( "hnum0", 5, ban->region->font );
+            curr_t = alloc_text_chars( "hnum0", 5, region->font );
         }
         break;
     case headnum1_content :
         rc = find_symvar( &global_dict, "$hnum1", no_subscript, &symsubval );
         if( rc == 2 ) {
-            curr_t = alloc_text_chars( symsubval->value, strlen( symsubval->value ), ban->region->font );
+            curr_t = alloc_text_chars( symsubval->value, strlen( symsubval->value ), region->font );
         } else {
-            curr_t = alloc_text_chars( "hnum1", 5, ban->region->font );
+            curr_t = alloc_text_chars( "hnum1", 5, region->font );
         }
         break;
     case headnum2_content :
         rc = find_symvar( &global_dict, "$hnum2", no_subscript, &symsubval );
         if( rc == 2 ) {
-            curr_t = alloc_text_chars( symsubval->value, strlen( symsubval->value ), ban->region->font );
+            curr_t = alloc_text_chars( symsubval->value, strlen( symsubval->value ), region->font );
         } else {
-            curr_t = alloc_text_chars( "hnum2", 5, ban->region->font );
+            curr_t = alloc_text_chars( "hnum2", 5, region->font );
         }
         break;
     case headnum3_content :
         rc = find_symvar( &global_dict, "$hnum3", no_subscript, &symsubval );
         if( rc == 2 ) {
-            curr_t = alloc_text_chars( symsubval->value, strlen( symsubval->value ), ban->region->font );
+            curr_t = alloc_text_chars( symsubval->value, strlen( symsubval->value ), region->font );
         } else {
-            curr_t = alloc_text_chars( "hnum3", 5, ban->region->font );
+            curr_t = alloc_text_chars( "hnum3", 5, region->font );
         }
         break;
     case headnum4_content :
         rc = find_symvar( &global_dict, "$hnum4", no_subscript, &symsubval );
         if( rc == 2 ) {
-            curr_t = alloc_text_chars( symsubval->value, strlen( symsubval->value ), ban->region->font );
+            curr_t = alloc_text_chars( symsubval->value, strlen( symsubval->value ), region->font );
         } else {
-            curr_t = alloc_text_chars( "hnum4", 5, ban->region->font );
+            curr_t = alloc_text_chars( "hnum4", 5, region->font );
         }
         break;
     case headnum5_content :
         rc = find_symvar( &global_dict, "$hnum5", no_subscript, &symsubval );
         if( rc == 2 ) {
-            curr_t = alloc_text_chars( symsubval->value, strlen( symsubval->value ), ban->region->font );
+            curr_t = alloc_text_chars( symsubval->value, strlen( symsubval->value ), region->font );
         } else {
-            curr_t = alloc_text_chars( "hnum5", 5, ban->region->font );
+            curr_t = alloc_text_chars( "hnum5", 5, region->font );
         }
         break;
     case headnum6_content :
         rc = find_symvar( &global_dict, "$hnum6", no_subscript, &symsubval );
         if( rc == 2 ) {
-            curr_t = alloc_text_chars( symsubval->value, strlen( symsubval->value ), ban->region->font );
+            curr_t = alloc_text_chars( symsubval->value, strlen( symsubval->value ), region->font );
         } else {
-            curr_t = alloc_text_chars( "hnum6", 5, ban->region->font );
+            curr_t = alloc_text_chars( "hnum6", 5, region->font );
         }
         break;
     case headtext0_content :
         rc = find_symvar( &global_dict, "$htext0", no_subscript, &symsubval );
         if( rc == 2 ) {
-            curr_t = alloc_text_chars( symsubval->value, strlen( symsubval->value ), ban->region->font );
+            curr_t = alloc_text_chars( symsubval->value, strlen( symsubval->value ), region->font );
         } else {
-            curr_t = alloc_text_chars( "htext0", 5, ban->region->font );
+            curr_t = alloc_text_chars( "htext0", 5, region->font );
         }
         break;
     case headtext1_content :
         rc = find_symvar( &global_dict, "$htext1", no_subscript, &symsubval );
         if( rc == 2 ) {
-            curr_t = alloc_text_chars( symsubval->value, strlen( symsubval->value ), ban->region->font );
+            curr_t = alloc_text_chars( symsubval->value, strlen( symsubval->value ), region->font );
         } else {
-            curr_t = alloc_text_chars( "htext1", 5, ban->region->font );
+            curr_t = alloc_text_chars( "htext1", 5, region->font );
         }
         break;
     case headtext2_content :
         rc = find_symvar( &global_dict, "$htext2", no_subscript, &symsubval );
         if( rc == 2 ) {
-            curr_t = alloc_text_chars( symsubval->value, strlen( symsubval->value ), ban->region->font );
+            curr_t = alloc_text_chars( symsubval->value, strlen( symsubval->value ), region->font );
         } else {
-            curr_t = alloc_text_chars( "htext2", 5, ban->region->font );
+            curr_t = alloc_text_chars( "htext2", 5, region->font );
         }
         break;
     case headtext3_content :
         rc = find_symvar( &global_dict, "$htext3", no_subscript, &symsubval );
         if( rc == 2 ) {
-            curr_t = alloc_text_chars( symsubval->value, strlen( symsubval->value ), ban->region->font );
+            curr_t = alloc_text_chars( symsubval->value, strlen( symsubval->value ), region->font );
         } else {
-            curr_t = alloc_text_chars( "htext3", 5, ban->region->font );
+            curr_t = alloc_text_chars( "htext3", 5, region->font );
         }
         break;
     case headtext4_content :
         rc = find_symvar( &global_dict, "$htext4", no_subscript, &symsubval );
         if( rc == 2 ) {
-            curr_t = alloc_text_chars( symsubval->value, strlen( symsubval->value ), ban->region->font );
+            curr_t = alloc_text_chars( symsubval->value, strlen( symsubval->value ), region->font );
         } else {
-            curr_t = alloc_text_chars( "htext4", 5, ban->region->font );
+            curr_t = alloc_text_chars( "htext4", 5, region->font );
         }
         break;
     case headtext5_content :
         rc = find_symvar( &global_dict, "$htext5", no_subscript, &symsubval );
         if( rc == 2 ) {
-            curr_t = alloc_text_chars( symsubval->value, strlen( symsubval->value ), ban->region->font );
+            curr_t = alloc_text_chars( symsubval->value, strlen( symsubval->value ), region->font );
         } else {
-            curr_t = alloc_text_chars( "htext5", 5, ban->region->font );
+            curr_t = alloc_text_chars( "htext5", 5, region->font );
         }
         break;
     case headtext6_content :
         rc = find_symvar( &global_dict, "$htext6", no_subscript, &symsubval );
         if( rc == 2 ) {
-            curr_t = alloc_text_chars( symsubval->value, strlen( symsubval->value ), ban->region->font );
+            curr_t = alloc_text_chars( symsubval->value, strlen( symsubval->value ), region->font );
         } else {
-            curr_t = alloc_text_chars( "htext6", 5, ban->region->font );
+            curr_t = alloc_text_chars( "htext6", 5, region->font );
         }
         break;
     case pgnuma_content :
         rc = find_symvar( &global_dict, "$pgnuma", no_subscript, &symsubval );
         if( rc == 2 ) {
-            curr_t = alloc_text_chars( symsubval->value, strlen( symsubval->value ), ban->region->font );
+            curr_t = alloc_text_chars( symsubval->value, strlen( symsubval->value ), region->font );
         } else {
-            curr_t = alloc_text_chars( "pgnuma", 6, ban->region->font );
+            curr_t = alloc_text_chars( "pgnuma", 6, region->font );
         }
         break;
     case pgnumad_content :
         rc = find_symvar( &global_dict, "$pgnumad", no_subscript, &symsubval );
         if( rc == 2 ) {
-            curr_t = alloc_text_chars( symsubval->value, strlen( symsubval->value ), ban->region->font );
+            curr_t = alloc_text_chars( symsubval->value, strlen( symsubval->value ), region->font );
         } else {
-            curr_t = alloc_text_chars( "pgnumad", 7, ban->region->font );
+            curr_t = alloc_text_chars( "pgnumad", 7, region->font );
         }
         break;
     case pgnumc_content :
         rc = find_symvar( &global_dict, "$pgnumc", no_subscript, &symsubval );
         if( rc == 2 ) {
-            curr_t = alloc_text_chars( symsubval->value, strlen( symsubval->value ), ban->region->font );
+            curr_t = alloc_text_chars( symsubval->value, strlen( symsubval->value ), region->font );
         } else {
-            curr_t = alloc_text_chars( "pgnumc", 6, ban->region->font );
+            curr_t = alloc_text_chars( "pgnumc", 6, region->font );
         }
         break;
     case pgnumcd_content :
         rc = find_symvar( &global_dict, "$pgnumcd", no_subscript, &symsubval );
         if( rc == 2 ) {
-            curr_t = alloc_text_chars( symsubval->value, strlen( symsubval->value ), ban->region->font );
+            curr_t = alloc_text_chars( symsubval->value, strlen( symsubval->value ), region->font );
         } else {
-            curr_t = alloc_text_chars( "pgnumcd", 7, ban->region->font );
+            curr_t = alloc_text_chars( "pgnumcd", 7, region->font );
         }
         break;
     case pgnumr_content :
         rc = find_symvar( &global_dict, "$pgnumr", no_subscript, &symsubval );
         if( rc == 2 ) {
-            curr_t = alloc_text_chars( symsubval->value, strlen( symsubval->value ), ban->region->font );
+            curr_t = alloc_text_chars( symsubval->value, strlen( symsubval->value ), region->font );
         } else {
-            curr_t = alloc_text_chars( "pgnumr", 6, ban->region->font );
+            curr_t = alloc_text_chars( "pgnumr", 6, region->font );
         }
         break;
     case pgnumrd_content :
         rc = find_symvar( &global_dict, "$pgnumrd", no_subscript, &symsubval );
         if( rc == 2 ) {
-            curr_t = alloc_text_chars( symsubval->value, strlen( symsubval->value ), ban->region->font );
+            curr_t = alloc_text_chars( symsubval->value, strlen( symsubval->value ), region->font );
         } else {
-            curr_t = alloc_text_chars( "pgnumrd", 7, ban->region->font );
+            curr_t = alloc_text_chars( "pgnumrd", 7, region->font );
         }
         break;
     case sec_content :
         rc = find_symvar( &global_dict, "$sec", no_subscript, &symsubval );
         if( rc == 2 ) {
-            curr_t = alloc_text_chars( symsubval->value, strlen( symsubval->value ), ban->region->font );
+            curr_t = alloc_text_chars( symsubval->value, strlen( symsubval->value ), region->font );
         } else {
-            curr_t = alloc_text_chars( "sec", 3, ban->region->font );
+            curr_t = alloc_text_chars( "sec", 3, region->font );
         }
         break;
     case stitle_content :
         rc = find_symvar( &global_dict, "$stitle", no_subscript, &symsubval );
         if( rc == 2 ) {
-            curr_t = alloc_text_chars( symsubval->value, strlen( symsubval->value ), ban->region->font );
+            curr_t = alloc_text_chars( symsubval->value, strlen( symsubval->value ), region->font );
         } else {
-            curr_t = alloc_text_chars( "stitle", 6, ban->region->font );
+            curr_t = alloc_text_chars( "stitle", 6, region->font );
         }
         break;
     case title_content :
         rc = find_symvar( &global_dict, "$title", no_subscript, &symsubval );
         if( rc == 2 ) {
-            curr_t = alloc_text_chars( symsubval->value, strlen( symsubval->value ), ban->region->font );
+            curr_t = alloc_text_chars( symsubval->value, strlen( symsubval->value ), region->font );
         } else {
-            curr_t = alloc_text_chars( "title", 6, ban->region->font );
+            curr_t = alloc_text_chars( "title", 6, region->font );
         }
         break;
     case time_content :
         rc = find_symvar( &global_dict, "$time", no_subscript, &symsubval );
         if( rc == 2 ) {
-            curr_t = alloc_text_chars( symsubval->value, strlen( symsubval->value ), ban->region->font );
+            curr_t = alloc_text_chars( symsubval->value, strlen( symsubval->value ), region->font );
         } else {
-            curr_t = alloc_text_chars( "time", 4, ban->region->font );
+            curr_t = alloc_text_chars( "time", 4, region->font );
         }
         break;
     case tophead_content :
         rc = find_symvar( &global_dict, "$tophead", no_subscript, &symsubval );
         if( rc == 2 ) {
-            curr_t = alloc_text_chars( symsubval->value, strlen( symsubval->value ), ban->region->font );
+            curr_t = alloc_text_chars( symsubval->value, strlen( symsubval->value ), region->font );
         } else {
-            curr_t = alloc_text_chars( "tophead", 7, ban->region->font );
+            curr_t = alloc_text_chars( "tophead", 7, region->font );
         }
         break;
     case no_content :                   // empty region
         curr_t = NULL;
-//        curr_t = alloc_text_chars( "no content", 10, ban->region->font );
+//        curr_t = alloc_text_chars( "no content", 10, region->font );
         break;
     default:
         // the other possible banner region values are TBD
 
-        curr_t = alloc_text_chars( "Dummy region", 12, ban->region->font );
+        curr_t = alloc_text_chars( "Dummy region", 12, region->font );
         break;
     }
     if( curr_t == NULL ) {
         /* do nothing                                              */
     } else {
-        if( ban->region->contents.content_type != string_content ) {
+        if( region->contents.content_type != string_content ) {
             /***********************************************************/
             /*  is font 0 used for width calc?                    TBD  */
             /***********************************************************/
-            curr_t->width = cop_text_width( curr_t->text, curr_t->count, ban->region->font );
-            if( ban->region->region_position == pos_left ) {
+            curr_t->width = cop_text_width( curr_t->text, curr_t->count, region->font );
+            if( region->region_position == pos_left ) {
                 reg_text[0] = curr_t;
-            } else if( ban->region->region_position == pos_center ) {
+            } else if( region->region_position == pos_center ) {
                 reg_text[1] = curr_t;
-            } else if( ban->region->region_position == pos_right ) {
+            } else if( region->region_position == pos_right ) {
                 reg_text[2] = curr_t;
             } else {
                 reg_text[0] = curr_t;  // position left if invalid
@@ -649,12 +595,15 @@ static void content_reg( banner_lay_tag * ban )
 
 
 /***************************************************************************/
-/*  output top / bottom banner      incomplete    TBD                      */
-/*  only the first banregion is output                                     */
+/*  output top / bottom banner                                             */
+/*  multiple columns not supported, as it is not clear if they are needed  */
 /***************************************************************************/
+
 static  void    out_ban_common( banner_lay_tag * ban, bool top )
 {
-    ban_column      *   last;
+    doc_element     *   cur_doc_el;
+    int                 k;
+    region_lay_tag  *   cur_region;
     text_chars      *   curr_t;
     text_chars      *   curr_p;
     uint32_t            ban_left;
@@ -663,11 +612,6 @@ static  void    out_ban_common( banner_lay_tag * ban, bool top )
     uint32_t            h_right;
     uint32_t            reg_indent;
     uint32_t            curr_x;
-    int                 k;
-
-    reg_text[0] = NULL;
-    reg_text[1] = NULL;
-    reg_text[2] = NULL;
 
     ban_line.first = NULL;
 
@@ -675,119 +619,135 @@ static  void    out_ban_common( banner_lay_tag * ban, bool top )
     ban_left  = ban->ban_left_adjust;
     ban_right = t_page.page_width - ban->ban_right_adjust;  // banners are not placed in page columns
 
-    content_reg( ban );
-    curr_x = 0;
+    /* This is the simplest way to process multiple BANREGIONs -- more may be needed */
 
-    for( k = 0; k < 3; ++k ) {          // for all region parts
-        if( reg_text[k] == NULL ) {
-            continue;                   // skip empty part
-        }
-        if( top ) {
-            g_prev_font = reg_text[k]->font;
-        }
-        if( ban_line.first == NULL ) {
-            ban_line.first = reg_text[k];
-            ban_line.line_height = wgml_fonts[reg_text[k]->font].line_height;
-        } else {
-            ban_line.last->next = reg_text[k];
-            reg_text[k]->prev = ban_line.last;
-        }
-        if( ban_line.line_height < wgml_fonts[reg_text[k]->font].line_height ) {
-            ban_line.line_height = wgml_fonts[reg_text[k]->font].line_height;
-        }
-        curr_t = reg_text[k];
-        ban_line.last  = reg_text[k];
+    cur_region = ban->region;
+    while( cur_region != NULL ) {
 
-        h_left  = ban_left;
-        h_right = ban_right;
-        reg_indent = ban->region->reg_indent;
-        if( ban->region->hoffset.su_u >= SU_lay_left  ) {   // symbolic
-            if( ban->region->hoffset.su_u == SU_lay_left ) {
-                h_left += reg_indent;
-            } else if( ban->region->hoffset.su_u == SU_lay_right ) {
-                h_right -= reg_indent;
-            } else if( ban->region->hoffset.su_u == SU_lay_centre ) {
-                h_left += reg_indent;
+        reg_text[0] = NULL;
+        reg_text[1] = NULL;
+        reg_text[2] = NULL;
+
+        content_reg( cur_region );
+        curr_x = 0;
+
+        for( k = 0; k < 3; ++k ) {          // for all region parts
+            if( reg_text[k] == NULL ) {
+                continue;                   // skip empty part
             }
-        } else {                            // in horiz space units
-            h_left += reg_indent + ban->region->reg_hoffset;
-        }
+            if( top ) {
+                g_prev_font = reg_text[k]->font;
+            }
+            if( ban_line.first == NULL ) {
+                ban_line.first = reg_text[k];
+                ban_line.line_height = wgml_fonts[reg_text[k]->font].line_height;
+            } else {
+                ban_line.last->next = reg_text[k];
+                reg_text[k]->prev = ban_line.last;
+            }
+            if( ban_line.line_height < wgml_fonts[reg_text[k]->font].line_height ) {
+                ban_line.line_height = wgml_fonts[reg_text[k]->font].line_height;
+            }
+            curr_t = reg_text[k];
+            ban_line.last  = reg_text[k];
 
-        if( ban->region->region_position == pos_center || k == 1) {
-            if( h_left + curr_t->width < h_right ) {
-                h_left += (h_right - h_left - curr_t->width) / 2;
+            h_left  = ban_left;
+            h_right = ban_right;
+            reg_indent = cur_region->reg_indent;
+            if( cur_region->hoffset.su_u >= SU_lay_left  ) {   // symbolic
+                if( cur_region->hoffset.su_u == SU_lay_left ) {
+                    h_left += reg_indent;
+                } else if( cur_region->hoffset.su_u == SU_lay_right ) {
+                    h_right -= reg_indent;
+                } else if( cur_region->hoffset.su_u == SU_lay_centre ) {
+                    h_left += reg_indent;
+                }
+            } else {                            // in horiz space units
+                h_left += reg_indent + cur_region->reg_hoffset;
+            }
+
+            if( cur_region->region_position == pos_center || k == 1) {
+                if( h_left + curr_t->width < h_right ) {
+                    h_left += (h_right - h_left - curr_t->width) / 2;
+                    curr_x = h_left;
+                }
+            } else if( cur_region->region_position == pos_right || k == 2) {
+                h_left = h_right - curr_t->width;
                 curr_x = h_left;
             }
-        } else if( ban->region->region_position == pos_right || k == 2) {
-            h_left = h_right - curr_t->width;
-            curr_x = h_left;
-        }
-        if( curr_x == 0 ) {
-            curr_x = h_left;
-        }
-        curr_t->x_address = curr_x;
-        curr_x += curr_t->width;
+            if( curr_x == 0 ) {
+                curr_x = h_left;
+            }
+            curr_t->x_address = curr_x;
+            curr_x += curr_t->width;
 
-    }
-    if( ban_line.first != NULL) {
-        if( input_cbs->fmflags & II_research ) {
-            test_out_t_line( &ban_line );
         }
+        if( ban_line.first != NULL) {
+            if( input_cbs->fmflags & II_research ) {
+                test_out_t_line( &ban_line );
+            }
 
-        /*******************************************************************/
-        /*  truncate the left part(s) in case of overlap                   */
-        /*******************************************************************/
-        curr_p = ban_line.first;
+            /*******************************************************************/
+            /*  truncate the left part(s) in case of overlap                   */
+            /*******************************************************************/
+            curr_p = ban_line.first;
 
-        for( curr_t = curr_p->next; curr_t != NULL; curr_t = curr_t->next ) {
-            while( (curr_p->x_address + curr_p->width) > curr_t->x_address ) {
-                if( curr_p->count < 2) {// sanity check
-                   break;
+            for( curr_t = curr_p->next; curr_t != NULL; curr_t = curr_t->next ) {
+                while( (curr_p->x_address + curr_p->width) > curr_t->x_address ) {
+                    if( curr_p->count < 2) {// sanity check
+                       break;
+                    }
+                    curr_p->count -= 1;     // truncate text, adjust width
+                    curr_p->width -= wgml_fonts[curr_p->font].width_table[(unsigned char)curr_p->text[curr_p->count]];
                 }
-                curr_p->count -= 1;     // truncate text, adjust width
-                curr_p->width -= wgml_fonts[curr_p->font].width_table[(unsigned char)curr_p->text[curr_p->count]];
+                curr_p = curr_t;
             }
-            curr_p = curr_t;
-        }
 
-        /*  insert ban_line into t_page                                 */
-        /*  this will do multiple columns, but not in sorted order      */
-        /*  ban_line is taken to be a linked list of text_lines when    */
-        /*  a banregion has depth > 1 and enough text to fill the       */
-        /*  first line                                                  */
-        /*  this will need adjustment as banner output is enhanced      */
+            /*  insert ban_line into t_page                                 */
+            /*  ban_line is taken to be a linked list of text_lines when    */
+            /*  a banregion has depth > 1 and enough text to fill the       */
+            /*  first line                                                  */
+            /*  this will need adjustment as banner output is enhanced      */
+            /*  in particular, vline will need to be handled differently    */
 
-        if( top ) {
-            if( t_page.top_ban == NULL ) {
-                t_page.top_ban = alloc_ban_col();
-                last = t_page.top_ban;
+            cur_doc_el = alloc_doc_el( el_text );
+            if( top ) {
+                if( t_page.top_ban == NULL ) {
+                    t_page.top_ban = alloc_ban_col();
+                }
+                if( t_page.top_ban->first == NULL ){
+                    t_page.top_ban->first = cur_doc_el;
+                    t_page.top_ban->last = t_page.top_ban->first;
+                } else {
+                    t_page.top_ban->last->next = cur_doc_el;
+                    t_page.top_ban->last = t_page.top_ban->last->next;
+                }
             } else {
-                for( ; last->next != NULL; last = last->next );
-                last->next = alloc_ban_col();
-                last = last->next;
+                if( t_page.bot_ban == NULL ) {
+                    t_page.bot_ban = alloc_ban_col();
+                }
+                if( t_page.bot_ban->first == NULL ){
+                    t_page.bot_ban->first = cur_doc_el;
+                    t_page.bot_ban->last = t_page.bot_ban->first;
+                } else {
+                    t_page.bot_ban->last->next = cur_doc_el;
+                    t_page.bot_ban->last = t_page.bot_ban->last->next;
+                }
             }
-        } else {
-            if( t_page.bot_ban == NULL ) {
-                t_page.bot_ban = alloc_ban_col();
-                last = t_page.bot_ban;
-            } else {
-                for( ; last->next != NULL; last = last->next );
-                last->next = alloc_ban_col();
-                last = last->next;
-            }
-        }
-        last->first = alloc_doc_el( el_text );
-        last->first->top_skip = ban->top_line->reg_voffset;
-        last->first->subs_skip = ban->top_line->reg_voffset;
-        last->first->element.text.first = alloc_text_line();
 
-        last->first->element.text.first->next = ban_line.next;
-        last->first->element.text.first->line_height = ban_line.line_height;
-        last->first->element.text.first->spacing = 0;   // hbus; banners are always single-spaced
-        last->first->element.text.first->y_address = ban_line.y_address;
-        last->first->element.text.first->first = ban_line.first;
-        last->first->element.text.first->last = ban_line.last;
-        ban_line.first = NULL;
+            cur_doc_el->top_skip = ban->top_line->reg_voffset;
+            cur_doc_el->subs_skip = ban->top_line->reg_voffset;
+            cur_doc_el->element.text.first = alloc_text_line();
+
+            cur_doc_el->element.text.first->next = ban_line.next;
+            cur_doc_el->element.text.first->line_height = ban_line.line_height;
+            cur_doc_el->element.text.first->spacing = 0;   // hbus; banners are always single-spaced
+            cur_doc_el->element.text.first->y_address = ban_line.y_address;
+            cur_doc_el->element.text.first->first = ban_line.first;
+            cur_doc_el->element.text.first->last = ban_line.last;
+            ban_line.first = NULL;
+        }
+        cur_region = cur_region->next;
     }
 }
 

@@ -311,6 +311,57 @@ static void finish_lists( void )
 }
 
 /***************************************************************************/
+/*  Split banregion into left middle right part if region is script format */
+/***************************************************************************/
+
+static void preprocess_script_region( region_lay_tag * reg )
+{
+    
+    char    *   pl;
+    char        sep;
+    int         k;
+
+    if( reg != NULL ) {
+        if( (reg->contents.content_type == string_content)
+            && reg->script_format ) {
+
+            /***************************************************************/
+            /*  script format is a 3 part region: left middle right        */
+            /*  first char is separator char                               */
+            /*  /left//right/  empty middle part in this case              */
+            /***************************************************************/
+
+            /***************************************************************/
+            /*  preprocess script format banner region for speed           */
+            /***************************************************************/
+            pl = reg->contents.string;
+            sep = *pl;                      // first char is separator
+                                            // isolate region parts
+            for( k = 0; k < 3; ++k ) {      // left, center, right
+                pl++;
+                if( k == 2 ) {// special hack for right part without success
+                    while( *pl == ' ' ) {
+                        pl++;               // remove leading spaces
+                    }           // still not quite the same result as wgml4   TBD
+                }
+                reg->script_region[k].string = pl;
+                while( *pl &&  *pl != sep ) {
+                    pl++;
+                }
+                reg->script_region[k].len =  pl -
+                reg->script_region[k].string ;
+
+                if( reg->script_region[k].len == 0 ) {
+                    reg->script_region[k].string = NULL;
+                } else {
+                    *pl = '\0';             // null terminate
+                }
+            }
+        }
+    }
+}
+
+/***************************************************************************/
 /*  Computes non-attribute fields, checks for one logic error              */
 /*  Not finished: unchecked errors exist                                   */
 /***************************************************************************/
@@ -354,6 +405,7 @@ static void finish_banners( void )
                 min_top_line = cur_reg->reg_voffset + cur_reg->reg_depth;
                 top_line_reg = cur_reg;
             }
+            preprocess_script_region( cur_reg );
         }
         g_curr_font = font_save;       // horizontal attributes use default font
         cur_ban->ban_left_adjust = conv_hor_unit( &cur_ban->left_adjust, g_curr_font );
