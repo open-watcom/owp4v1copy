@@ -193,6 +193,7 @@
 %type <diagctrllist>    diag-control-stmts
 %type <diagctrl>        diag-control-stmt
 %type <diagctrl>        dialog-stmt
+%type <diagctrl>        window-stmt
 %type <diagctrlopts>    cntl-text-options
 %type <diagctrlopts>    cntl-options
 %type <diagctrlopts>    icon-parms
@@ -1199,6 +1200,7 @@ diag-control-stmt
     | spinbutton-stmt
     | valueset-stmt
     | control-stmt
+    | window-stmt
     | dialog-stmt
     ;
 
@@ -1398,6 +1400,41 @@ cntl-text
             ErrorHasOccured = TRUE;
         }
     ;
+    
+window-stmt
+    : Y_WINDOW cntl-text comma-opt cntl-id comma-opt size-info comma-opt
+                ctl-class-name presparam-list
+        {
+            IntMask mask = {0};
+            $$ = SemOS2SetWndData( $2, $4, $6, $8, mask, mask, $9, NULL );
+	}
+    | Y_WINDOW cntl-text comma-opt cntl-id comma-opt size-info comma-opt
+                ctl-class-name presparam-list diag-control-section
+        {
+	    IntMask mask = {0};
+	    IntMask mask2 = {0};
+	    $$ = SemOS2SetWndData( $2, $4, $6, $8, mask, mask2, $9, $10 );
+        }
+    | Y_WINDOW cntl-text comma-opt cntl-id comma-opt size-info comma-opt
+                ctl-class-name comma-opt cntl-style presparam-list
+        {
+	    IntMask mask = {0};
+            $$ = SemOS2SetWndData( $2, $4, $6, $8, $10, mask, $11, NULL );
+	}
+    | Y_WINDOW cntl-text comma-opt cntl-id comma-opt size-info comma-opt
+                ctl-class-name comma-opt cntl-style presparam-list
+                diag-control-section
+        {
+	    IntMask mask = {0};
+            $$ = SemOS2SetWndData( $2, $4, $6, $8, $10, mask, $11, $12 );
+	}   
+    | Y_WINDOW cntl-text comma-opt cntl-id comma-opt size-info comma-opt
+      ctl-class-name comma-opt cntl-style comma-opt frame-style
+      presparam-list diag-control-section
+      {
+	$$ = SemOS2SetWndData( $2, $4, $6, $8, $10, $12, $13, $14 );
+      }
+    ;    
 
 dialog-or-frame
     : Y_DIALOG
