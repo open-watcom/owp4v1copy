@@ -58,6 +58,9 @@ static  const   ban_sections    doc_sections[max_ban] = {
     { "backm",    5, backm_ban     },
     { "body",     4, body_ban      },
     { "figlist",  7, figlist_ban   },
+    { "index",    5, index_ban     },
+    { "preface",  7, preface_ban   },
+    { "toc",      3, toc_ban       },
     { "head0",    5, head0_ban     },
     { "head1",    5, head1_ban     },
     { "head2",    5, head2_ban     },
@@ -68,9 +71,6 @@ static  const   ban_sections    doc_sections[max_ban] = {
     { "letfirst", 8, letfirst_ban  },
     { "letlast",  7, letlast_ban   },
     { "letter",   6, letter_ban    },
-    { "index",    5, index_ban     },
-    { "preface",  7, preface_ban   },
-    { "toc",      3, toc_ban       }
 };
 
 typedef struct  content_names {
