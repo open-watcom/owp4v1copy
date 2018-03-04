@@ -139,8 +139,10 @@ static  char    *os2_obj_msg[] = {
     NULL
 };
 
+// 2018-03-04 SHL Decode 0..8
 static  char    *map_flgs[] = {
-    "Valid", "Iterated", "Invalid", "Zeroed", "Range", "Compressed"
+    "Valid", "Iterated", "Invalid", "Zeroed", "Range", "Compressed",
+    "Unknown", "Unknown", "M3-packed"
 };
 
 
@@ -359,9 +361,10 @@ static void dmp_obj_page( object_record obj )
             Wdputs( "H size = " );
             Puthex( map.lx.data_size, 4 );
             Wdputs( "H flgs = " );
-            Puthex( map.le.flags, 2 );
+            Puthex( map.lx.flags, 2 );  // 2018-03-04 SHL was map.le.flags typo
             Wdputs( "H " );
-            Wdputs( map_flgs[ map.lx.flags ] );
+            // 2018-03-04 SHL Display unknown flag values sanely
+            Wdputs( map.lx.flags <= 8 ? map_flgs[ map.lx.flags ] : "Unknown");
             if( Options_dmp & OS2_SEG_DMP ) {
                 Dmp_lx_page_seg( map );
             }
