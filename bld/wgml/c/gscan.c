@@ -38,7 +38,7 @@
 /*    GML tags                                                             */
 /***************************************************************************/
 
-#define pickg( name, length, routine, gmlflags, locflags) { #name, length, routine, gmlflags, locflags },
+#define pickg( name, length, routine, gmlflags, locflags ) { #name, length, routine, gmlflags, locflags },
 
 static  const   gmltag  gml_tags[] = {
 
@@ -56,7 +56,7 @@ static  const   gmltag  gml_tags[] = {
 /*    GML layout tags                                                      */
 /***************************************************************************/
 
-#define pick( name, length, routine, flags) { #name, length, routine, flags },
+#define pick( name, length, routine, gmlflags, locflags ) { #name, length, routine, gmlflags, locflags },
 
 static  const   gmltag  lay_tags[] = {
 
@@ -245,8 +245,20 @@ static void scan_gml( void )
                         *p = csave;
                         lay_ind = -1;   // process tag not attribute
 
-                        lay_tags[k].gmlproc( &lay_tags[k] );
-
+                        if( rs_loc == 0 ) {
+                            // no restrictions: do them all
+                            lay_tags[k].gmlproc( &lay_tags[k] );
+                        } else if( (lay_tags[k].taglocs & rs_loc) != 0 ) {
+                            // tag allowed in this restricted location
+                            lay_tags[k].gmlproc( &lay_tags[k] );
+                        } else if( (lay_tags[k].tagflags & tag_is_general) != 0 ) {
+                            // tag allowed everywhere
+                            lay_tags[k].gmlproc( &lay_tags[k] );
+                        } else if( rs_loc == banner_tag ) {
+                            xx_tag_err( err_tag_expected, "eBANNER" );
+                        } else {    // rs_loc == banreg_tag    
+                            xx_tag_err( err_tag_expected, "eBANREGION" );
+                        }
                         processed = true;
                         lay_ind = k;    // now process attributes if any
                         if( *scan_start == '.' ) {

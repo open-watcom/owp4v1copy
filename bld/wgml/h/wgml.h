@@ -501,7 +501,7 @@ extern  void    show_include_stack( void );
  * prototypes for the layout tag processing routines
  */
 
-#define pick( name, length, routine, flags )  extern void routine( const gmltag * entry );
+#define pick( name, length, routine, gmlflags, locflags )  extern void routine( const gmltag * entry );
 
 #include "gtagslay.h"
 

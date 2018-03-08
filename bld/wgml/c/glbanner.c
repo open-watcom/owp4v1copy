@@ -214,6 +214,7 @@ void    lay_banner( const gmltag * entry )
  
     p = scan_start;
     cvterr = false;
+    rs_loc = banner_tag;
  
     if( !GlobalFlags.firstpass ) {
         scan_start = scan_stop + 1;
@@ -224,20 +225,8 @@ void    lay_banner( const gmltag * entry )
         ProcFlags.lay_xxx = el_banner;
         ProcFlags.banner = true;
         init_banner_wk( &wk );
-    } else {
-        if( !strnicmp( ":banner", buff2, sizeof( ":banner" ) ) ) {
-            err_count++;                // nested :banner
-            g_err( err_nested_tag, entry->tagname );
-            file_mac_info();
- 
-            while( !ProcFlags.reprocess_line  ) {
-                eat_lay_sub_tag();
-                if( strnicmp( ":ebanner", buff2, sizeof( ":ebanner" ) ) ) {
-                    ProcFlags.reprocess_line = false;  // not :ebanner, go on
-                }
-            }
-            return;
-        }
+    } else {                            // should not happen
+        internal_err( __FILE__, __LINE__ );        
     }
     cc = get_lay_sub_and_value( &l_args );  // get att with value
     while( cc == pos ) {
@@ -397,6 +386,7 @@ void    lay_ebanner( const gmltag * entry )
     region_lay_tag  *   reg;
  
     ProcFlags.lay_xxx = el_zero;        // banner no longer active
+    rs_loc = 0;
  
     if( !GlobalFlags.firstpass ) {
         scan_start = scan_stop + 1;

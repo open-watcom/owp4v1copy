@@ -271,6 +271,7 @@ void    lay_banregion( const gmltag * entry )
 
     p = scan_start;
     cvterr = false;
+    rs_loc = banreg_tag;
 
     if( !GlobalFlags.firstpass ) {
         scan_start = scan_stop + 1;
@@ -278,7 +279,9 @@ void    lay_banregion( const gmltag * entry )
         return;                         // process during first pass only
     }
     if( ProcFlags.lay_xxx != el_banregion ) {
-        if( ProcFlags.lay_xxx == el_banner ) {
+        if( !ProcFlags.banner ) {               // not in BANNER/eBANNER block
+            xx_tag_err( err_tag_expected, "BANNER" );
+        } else if( ProcFlags.lay_xxx == el_banner ) {
             lay_banner_end_prepare();
         }
         ProcFlags.lay_xxx = el_banregion;
@@ -406,6 +409,7 @@ void    lay_ebanregion( const gmltag * entry )
     int                 k;
     bool                region_deleted;
 
+    rs_loc = banner_tag;
     if( !GlobalFlags.firstpass ) {
         scan_start = scan_stop + 1;
         eat_lay_sub_tag();
