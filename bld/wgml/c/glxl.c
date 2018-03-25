@@ -530,11 +530,9 @@ void    lay_dl( const gmltag * entry )
     dl_lay_level    *   curr_level  = NULL;
     dl_lay_level    *   dl_layout   = NULL;
     int                 k;
-    int                 cvterr;
     lay_att             curr;
 
     p = scan_start;
-    cvterr = false;
 
     if( !GlobalFlags.firstpass ) {
         scan_start = scan_stop + 1;
@@ -563,7 +561,6 @@ void    lay_dl( const gmltag * entry )
 
     cc = get_lay_sub_and_value( &l_args );  // get att with value
     while( cc == pos ) {
-        cvterr = -1;
         for( k = 0, curr = dl_att[k]; curr > 0; k++, curr = dl_att[k] ) {
 
             if( !strnicmp( att_names[curr], l_args.start[0], l_args.len[0] ) ) {
@@ -571,49 +568,38 @@ void    lay_dl( const gmltag * entry )
 
                 switch( curr ) {
                 case   e_level:
-                    cvterr = i_int8( p, curr, &dl_layout->level );
+                    i_int8( p, curr, &dl_layout->level );
                     break;
                 case   e_left_indent:
-                    cvterr = i_space_unit( p, curr, &dl_layout->left_indent );
+                    i_space_unit( p, curr, &dl_layout->left_indent );
                     break;
                 case   e_right_indent:
-                    cvterr = i_space_unit( p, curr, &dl_layout->right_indent );
+                    i_space_unit( p, curr, &dl_layout->right_indent );
                     break;
                 case   e_pre_skip:
-                    cvterr = i_space_unit( p, curr, &dl_layout->pre_skip );
+                    i_space_unit( p, curr, &dl_layout->pre_skip );
                     break;
                 case   e_skip:
-                    cvterr = i_space_unit( p, curr, &dl_layout->skip );
+                    i_space_unit( p, curr, &dl_layout->skip );
                     break;
                 case   e_spacing:
-                    cvterr = i_int8( p, curr, &dl_layout->spacing );
+                    i_int8( p, curr, &dl_layout->spacing );
                     break;
                 case   e_post_skip:
-                    cvterr = i_space_unit( p, curr, &dl_layout->post_skip );
+                    i_space_unit( p, curr, &dl_layout->post_skip );
                     break;
                 case   e_align:
-                    cvterr = i_space_unit( p, curr, &dl_layout->align );
+                    i_space_unit( p, curr, &dl_layout->align );
                     break;
                 case   e_line_break:
-                    cvterr = i_yes_no( p, curr, &dl_layout->line_break );
+                    i_yes_no( p, curr, &dl_layout->line_break );
                     break;
                 default:
                     internal_err( __FILE__, __LINE__ );
-                    cvterr = true;
                     break;
-                }
-                if( cvterr ) {          // there was an error
-                    err_count++;
-                    g_err( err_att_val_inv );
-                    file_mac_info();
                 }
                 break;                  // break out of for loop
             }
-        }
-        if( cvterr < 0 ) {
-            err_count++;
-            g_err( err_att_name_inv );
-            file_mac_info();
         }
         cc = get_lay_sub_and_value( &l_args );  // get att with value
     }
@@ -690,11 +676,9 @@ void    lay_gl( const gmltag * entry )
     gl_lay_level    *   curr_level  = NULL;
     gl_lay_level    *   gl_layout   = NULL;
     int                 k;
-    int                 cvterr;
     lay_att             curr;
 
     p = scan_start;
-    cvterr = false;
 
     if( !GlobalFlags.firstpass ) {
         scan_start = scan_stop + 1;
@@ -723,7 +707,6 @@ void    lay_gl( const gmltag * entry )
     
     cc = get_lay_sub_and_value( &l_args );  // get att with value
     while( cc == pos ) {
-        cvterr = -1;
         for( k = 0, curr = gl_att[k]; curr > 0; k++, curr = gl_att[k] ) {
 
             if( !strnicmp( att_names[curr], l_args.start[0], l_args.len[0] ) ) {
@@ -731,49 +714,38 @@ void    lay_gl( const gmltag * entry )
 
                 switch( curr ) {
                 case   e_level:
-                    cvterr = i_int8( p, curr, &gl_layout->level );
+                    i_int8( p, curr, &gl_layout->level );
                     break;
                 case   e_left_indent:
-                    cvterr = i_space_unit( p, curr, &gl_layout->left_indent );
+                    i_space_unit( p, curr, &gl_layout->left_indent );
                     break;
                 case   e_right_indent:
-                    cvterr = i_space_unit( p, curr, &gl_layout->right_indent );
+                    i_space_unit( p, curr, &gl_layout->right_indent );
                     break;
                 case   e_pre_skip:
-                    cvterr = i_space_unit( p, curr, &gl_layout->pre_skip );
+                    i_space_unit( p, curr, &gl_layout->pre_skip );
                     break;
                 case   e_skip:
-                    cvterr = i_space_unit( p, curr, &gl_layout->skip );
+                    i_space_unit( p, curr, &gl_layout->skip );
                     break;
                 case   e_spacing:
-                    cvterr = i_int8( p, curr, &gl_layout->spacing );
+                    i_int8( p, curr, &gl_layout->spacing );
                     break;
                 case   e_post_skip:
-                    cvterr = i_space_unit( p, curr, &gl_layout->post_skip );
+                    i_space_unit( p, curr, &gl_layout->post_skip );
                     break;
                 case   e_align:
-                    cvterr = i_space_unit( p, curr, &gl_layout->align );
+                    i_space_unit( p, curr, &gl_layout->align );
                     break;
                 case   e_delim:
-                    cvterr = i_char( p, curr, &gl_layout->delim );
+                    i_char( p, curr, &gl_layout->delim );
                     break;
                 default:
                     internal_err( __FILE__, __LINE__ );
-                    cvterr = true;
                     break;
-                }
-                if( cvterr ) {          // there was an error
-                    err_count++;
-                    g_err( err_att_val_inv );
-                    file_mac_info();
                 }
                 break;                  // break out of for loop
             }
-        }
-        if( cvterr < 0 ) {
-            err_count++;
-            g_err( err_att_name_inv );
-            file_mac_info();
         }
         cc = get_lay_sub_and_value( &l_args );  // get att with value
     }
@@ -848,13 +820,11 @@ void    lay_ol( const gmltag * entry )
     char            *   p;
     condcode            cc;
     int                 k;
-    int                 cvterr;
     lay_att             curr;
     ol_lay_level    *   curr_level  = NULL;
     ol_lay_level    *   ol_layout   = NULL;
 
     p = scan_start;
-    cvterr = false;
 
     if( !GlobalFlags.firstpass ) {
         scan_start = scan_stop + 1;
@@ -885,7 +855,6 @@ void    lay_ol( const gmltag * entry )
     
     cc = get_lay_sub_and_value( &l_args );  // get att with value
     while( cc == pos ) {
-        cvterr = -1;
         for( k = 0, curr = ol_att[k]; curr > 0; k++, curr = ol_att[k] ) {
 
             if( !strnicmp( att_names[curr], l_args.start[0], l_args.len[0] ) ) {
@@ -893,61 +862,50 @@ void    lay_ol( const gmltag * entry )
 
                 switch( curr ) {
                 case   e_level:
-                    cvterr = i_int8( p, curr, &ol_layout->level );
+                    i_int8( p, curr, &ol_layout->level );
                     break;
                 case   e_left_indent:
-                    cvterr = i_space_unit( p, curr, &ol_layout->left_indent );
+                    i_space_unit( p, curr, &ol_layout->left_indent );
                     break;
                 case   e_right_indent:
-                    cvterr = i_space_unit( p, curr, &ol_layout->right_indent );
+                    i_space_unit( p, curr, &ol_layout->right_indent );
                     break;
                 case   e_pre_skip:
-                    cvterr = i_space_unit( p, curr, &ol_layout->pre_skip );
+                    i_space_unit( p, curr, &ol_layout->pre_skip );
                     break;
                 case   e_skip:
-                    cvterr = i_space_unit( p, curr, &ol_layout->skip );
+                    i_space_unit( p, curr, &ol_layout->skip );
                     break;
                 case   e_spacing:
-                    cvterr = i_int8( p, curr, &ol_layout->spacing );
+                    i_int8( p, curr, &ol_layout->spacing );
                     break;
                 case   e_post_skip:
-                    cvterr = i_space_unit( p, curr, &ol_layout->post_skip );
+                    i_space_unit( p, curr, &ol_layout->post_skip );
                     break;
                 case   e_font:
-                    cvterr = i_font_number( p, curr, &ol_layout->font );
+                    i_font_number( p, curr, &ol_layout->font );
                     if( ol_layout->font >= wgml_font_cnt ) {
                         ol_layout->font = 0;
                     }
                     break;
                 case   e_align:
-                    cvterr = i_space_unit( p, curr, &ol_layout->align );
+                    i_space_unit( p, curr, &ol_layout->align );
                     break;
                 case   e_number_style:
-                    cvterr = i_number_style( p, curr, &ol_layout->number_style );
+                    i_number_style( p, curr, &ol_layout->number_style );
                     break;
                 case   e_number_font:
-                    cvterr = i_font_number( p, curr, &ol_layout->number_font );
+                    i_font_number( p, curr, &ol_layout->number_font );
                     if( ol_layout->number_font >= wgml_font_cnt ) {
                         ol_layout->number_font = 0;
                     }
                     break;
                 default:
                     internal_err( __FILE__, __LINE__ );
-                    cvterr = true;
                     break;
-                }
-                if( cvterr ) {          // there was an error
-                    err_count++;
-                    g_err( err_att_val_inv );
-                    file_mac_info();
                 }
                 break;                  // break out of for loop
             }
-        }
-        if( cvterr < 0 ) {
-            err_count++;
-            g_err( err_att_name_inv );
-            file_mac_info();
         }
         cc = get_lay_sub_and_value( &l_args );  // get att with value
     }
@@ -1028,13 +986,11 @@ void    lay_sl( const gmltag * entry )
     char            *   p;
     condcode            cc;
     int                 k;
-    int                 cvterr;
     lay_att             curr;
     sl_lay_level    *   curr_level  = NULL;
     sl_lay_level    *   sl_layout   = NULL;
 
     p = scan_start;
-    cvterr = false;
 
     if( !GlobalFlags.firstpass ) {
         scan_start = scan_stop + 1;
@@ -1062,7 +1018,6 @@ void    lay_sl( const gmltag * entry )
     
     cc = get_lay_sub_and_value( &l_args );  // get att with value
     while( cc == pos ) {
-        cvterr = -1;
         for( k = 0, curr = sl_att[k]; curr > 0; k++, curr = sl_att[k] ) {
 
             if( !strnicmp( att_names[curr], l_args.start[0], l_args.len[0] ) ) {
@@ -1070,49 +1025,38 @@ void    lay_sl( const gmltag * entry )
 
                 switch( curr ) {
                 case   e_level:
-                    cvterr = i_int8( p, curr, &sl_layout->level );
+                    i_int8( p, curr, &sl_layout->level );
                     break;
                 case   e_left_indent:
-                    cvterr = i_space_unit( p, curr, &sl_layout->left_indent );
+                    i_space_unit( p, curr, &sl_layout->left_indent );
                     break;
                 case   e_right_indent:
-                    cvterr = i_space_unit( p, curr, &sl_layout->right_indent );
+                    i_space_unit( p, curr, &sl_layout->right_indent );
                     break;
                 case   e_pre_skip:
-                    cvterr = i_space_unit( p, curr, &sl_layout->pre_skip );
+                    i_space_unit( p, curr, &sl_layout->pre_skip );
                     break;
                 case   e_skip:
-                    cvterr = i_space_unit( p, curr, &sl_layout->skip );
+                    i_space_unit( p, curr, &sl_layout->skip );
                     break;
                 case   e_spacing:
-                    cvterr = i_int8( p, curr, &sl_layout->spacing );
+                    i_int8( p, curr, &sl_layout->spacing );
                     break;
                 case   e_post_skip:
-                    cvterr = i_space_unit( p, curr, &sl_layout->post_skip );
+                    i_space_unit( p, curr, &sl_layout->post_skip );
                     break;
                 case   e_font:
-                    cvterr = i_font_number( p, curr, &sl_layout->font );
+                    i_font_number( p, curr, &sl_layout->font );
                     if( sl_layout->font >= wgml_font_cnt ) {
                         sl_layout->font = 0;
                     }
                     break;
                 default:
                     internal_err( __FILE__, __LINE__ );
-                    cvterr = true;
                     break;
-                }
-                if( cvterr ) {          // there was an error
-                    err_count++;
-                    g_err( err_att_val_inv );
-                    file_mac_info();
                 }
                 break;                  // break out of for loop
             }
-        }
-        if( cvterr < 0 ) {
-            err_count++;
-            g_err( err_att_name_inv );
-            file_mac_info();
         }
         cc = get_lay_sub_and_value( &l_args );  // get att with value
     }
@@ -1183,13 +1127,11 @@ void    lay_ul( const gmltag * entry )
     char            *   p;
     condcode            cc;
     int                 k;
-    int                 cvterr;
     lay_att             curr;
     ul_lay_level    *   curr_level  = NULL;
     ul_lay_level    *   ul_layout   = NULL;
 
     p = scan_start;
-    cvterr = false;
 
     if( !GlobalFlags.firstpass ) {
         scan_start = scan_stop + 1;
@@ -1221,7 +1163,6 @@ void    lay_ul( const gmltag * entry )
     
     cc = get_lay_sub_and_value( &l_args );  // get att with value
     while( cc == pos ) {
-        cvterr = -1;
         for( k = 0, curr = ul_att[k]; curr > 0; k++, curr = ul_att[k] ) {
 
             if( !strnicmp( att_names[curr], l_args.start[0], l_args.len[0] ) ) {
@@ -1229,64 +1170,53 @@ void    lay_ul( const gmltag * entry )
 
                 switch( curr ) {
                 case   e_level:
-                    cvterr = i_int8( p, curr, &ul_layout->level );
+                    i_int8( p, curr, &ul_layout->level );
                     break;
                 case   e_left_indent:
-                    cvterr = i_space_unit( p, curr, &ul_layout->left_indent );
+                    i_space_unit( p, curr, &ul_layout->left_indent );
                     break;
                 case   e_right_indent:
-                    cvterr = i_space_unit( p, curr, &ul_layout->right_indent );
+                    i_space_unit( p, curr, &ul_layout->right_indent );
                     break;
                 case   e_pre_skip:
-                    cvterr = i_space_unit( p, curr, &ul_layout->pre_skip );
+                    i_space_unit( p, curr, &ul_layout->pre_skip );
                     break;
                 case   e_skip:
-                    cvterr = i_space_unit( p, curr, &ul_layout->skip );
+                    i_space_unit( p, curr, &ul_layout->skip );
                     break;
                 case   e_spacing:
-                    cvterr = i_int8( p, curr, &ul_layout->spacing );
+                    i_int8( p, curr, &ul_layout->spacing );
                     break;
                 case   e_post_skip:
-                    cvterr = i_space_unit( p, curr, &ul_layout->post_skip );
+                    i_space_unit( p, curr, &ul_layout->post_skip );
                     break;
                 case   e_font:
-                    cvterr = i_font_number( p, curr, &ul_layout->font );
+                    i_font_number( p, curr, &ul_layout->font );
                     if( ul_layout->font >= wgml_font_cnt ) {
                         ul_layout->font = 0;
                     }
                     break;
                 case   e_align:
-                    cvterr = i_space_unit( p, curr, &ul_layout->align );
+                    i_space_unit( p, curr, &ul_layout->align );
                     break;
                 case   e_bullet:
-                    cvterr = i_char( p, curr, &ul_layout->bullet );
+                    i_char( p, curr, &ul_layout->bullet );
                     break;
                 case   e_bullet_translate:
-                    cvterr = i_yes_no( p, curr, &ul_layout->bullet_translate );
+                    i_yes_no( p, curr, &ul_layout->bullet_translate );
                     break;
                 case   e_bullet_font:
-                    cvterr = i_font_number( p, curr, &ul_layout->bullet_font );
+                    i_font_number( p, curr, &ul_layout->bullet_font );
                     if( ul_layout->bullet_font >= wgml_font_cnt ) {
                         ul_layout->bullet_font = 0;
                     }
                     break;
                 default:
                     internal_err( __FILE__, __LINE__ );
-                    cvterr = true;
                     break;
-                }
-                if( cvterr ) {          // there was an error
-                    err_count++;
-                    g_err( err_att_val_inv );
-                    file_mac_info();
                 }
                 break;                  // break out of for loop
             }
-        }
-        if( cvterr < 0 ) {
-            err_count++;
-            g_err( err_att_name_inv );
-            file_mac_info();
         }
         cc = get_lay_sub_and_value( &l_args );  // get att with value
     }

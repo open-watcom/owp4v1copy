@@ -197,10 +197,7 @@ condcode    get_lay_sub_and_value( att_args * args )
             return( omit );            
         }
         if( args->len[0] < 4 ) {            // attribute name length
-            err_count++;
-            g_err( err_att_name_inv );
-            file_mac_info();
-            return( rc );
+            xx_err( err_att_name_inv );
         }
 
         while( is_space_tab_char( *p ) ) {  // over WS to =
@@ -212,11 +209,11 @@ condcode    get_lay_sub_and_value( att_args * args )
             while( is_space_tab_char( *p ) ) {  // over WS to attribute value
                 p++;
             }
-        } else {
-            err_count++;
-            g_err( err_att_val_inv );
-            file_mac_info();
-            return( no );                   // parsing err '=' missing
+            if( *p == '.' ) {                   // final "." is end of tag
+                xx_err( err_att_val_missing );
+            }
+        } else {                                // equals sign is required
+            xx_err( err_eq_missing );
         }
 
         args->start[1] = p;                 // delimiters must be included for error checking
@@ -241,9 +238,7 @@ condcode    get_lay_sub_and_value( att_args * args )
         args->len[1] = p - args->start[1];
 
         if( args->len[1] < 1 ) {            // attribute value length
-            err_count++;
-            g_err( err_att_val_inv );
-            file_mac_info();
+            xx_err( err_att_val_missing );
         } else {
             rc = pos;
         }
@@ -341,10 +336,7 @@ bool    i_case( char * p, lay_att curr, case_t * tm )
     } else if( !strnicmp( "upper", p, 5 ) ) {
         *tm = case_upper;
     } else {
-        err_count++;
-        g_err( err_att_val_inv );
-        file_mac_info();
-        cvterr = true;
+        xx_err( err_inv_att_val );
     }
     return( cvterr );
 }
@@ -410,10 +402,7 @@ bool    i_content( char * p, lay_att curr, content * tm )
         }
     }
     if( k >= max_content ) {
-        err_count++;
-        g_err( err_att_val_inv );
-        file_mac_info();
-        cvterr = true;
+        xx_err( err_inv_att_val );
     }
     if( tm->content_type == string_content ) {  // unquoted single word
         pa = p;
@@ -478,16 +467,12 @@ bool    i_default_frame( char * p, lay_att curr, def_frame * tm )
         if( val_len == 0 ) {        // empty string entered
             tm->type = none;        // should work for both FIG and IXHEAD
         } else {                    // string value entered
-            cvterr = i_xx_string( p, curr, tm->string );
-            if( !cvterr ) {
-                tm->type = char_frame;
-            }
+            i_xx_string( p, curr, tm->string );
+            tm->type = char_frame;
         }
     }
     if( cvterr ) {
-        err_count++;
-        g_err( err_att_val_inv );
-        file_mac_info();
+        xx_err( err_inv_att_val );
     }
     return( cvterr );
 
@@ -536,10 +521,7 @@ bool    i_docsect( char * p, lay_att curr, ban_docsect * tm )
         }
     }
     if( *tm == no_ban ) {
-        err_count++;
-        g_err( err_att_val_inv );
-        file_mac_info();
-        cvterr = true;
+        xx_err( err_inv_att_val );
     }
     return( cvterr );
 }
@@ -571,10 +553,7 @@ bool    i_frame( char * p, lay_att curr, bool * tm )
     } else if( !strnicmp( "rule", p, 4 ) ) {
         *tm = true;
     } else {
-        err_count++;
-        g_err( err_att_val_inv );
-        file_mac_info();
-        cvterr = true;
+        xx_err( err_inv_att_val );
     }
     return( cvterr );
 
@@ -617,7 +596,7 @@ bool    i_int8( char * p, lay_att curr, int8_t * tm )
 
     wk = strtol( p, NULL, 10 );
     if( abs( wk ) > 255 ) {
-        return( true );
+        xx_err(err_i_8);
     }
     *tm = wk;
     return( false );
@@ -638,7 +617,7 @@ bool    i_uint8( char *p, lay_att curr, uint8_t *tm )
     curr = curr;
     wk = strtol( p, NULL, 10 );
     if( wk < 0 || wk > 255 ) {
-        return( true );
+        xx_err(err_ui_8);
     }
     *tm = wk;
     return( false );
@@ -692,10 +671,7 @@ bool    i_number_form( char * p, lay_att curr, num_form * tm )
     } else if( !strnicmp( "new", p, 3 ) ) {
         *tm = num_new;
     } else {
-        err_count++;
-        g_err( err_att_val_inv );
-        file_mac_info();
-        cvterr = true;
+        xx_err( err_inv_att_val );
     }
     return( cvterr );
 }
@@ -784,9 +760,7 @@ bool    i_number_style( char * p, lay_att curr, num_style * tm )
     if( !cvterr ) {
         *tm = wk;
     } else {
-        err_count++;
-        g_err( err_att_val_inv );
-        file_mac_info();
+        xx_err( err_inv_att_val );
     }
     return( cvterr );
 }
@@ -855,10 +829,7 @@ bool    i_page_eject( char * p, lay_att curr, page_ej * tm )
     } else if( !strnicmp( "even", p, 4 ) ) {
         *tm = ej_even;
     } else {
-        err_count++;
-        g_err( err_att_val_inv );
-        file_mac_info();
-        cvterr = true;
+        xx_err( err_inv_att_val );
     }
     return( cvterr );
 }
@@ -898,10 +869,7 @@ bool    i_page_position( char * p, lay_att curr, page_pos * tm )
     } else if( !(strnicmp( "centre", p, 6 ) && strnicmp( "center", p, 6 )) ) {
         *tm = pos_center;
     } else {
-        err_count++;
-        g_err( err_att_val_inv );
-        file_mac_info();
-        cvterr = true;
+        xx_err( err_inv_att_val );
     }
     return( cvterr );
 }
@@ -947,10 +915,7 @@ bool    i_place( char * p, lay_att curr, bf_place * tm )
     } else if( !strnicmp( "boteven", p, 7 ) ) {
         *tm = boteven_place;
     } else {
-        err_count++;
-        g_err( err_att_val_inv );
-        file_mac_info();
-        cvterr = true;
+        xx_err( err_inv_att_val );
     }
     return( cvterr );
 }
@@ -1008,10 +973,7 @@ bool    i_pouring( char * p, lay_att curr, reg_pour * tm )
     } else if( !strnicmp( "head6", p, 5 ) ) {
         *tm = head6_pour;
     } else {
-        err_count++;
-        g_err( err_att_val_inv );
-        file_mac_info();
-        cvterr = true;
+        xx_err( err_inv_att_val );
     }
     return( cvterr );
 }
@@ -1081,7 +1043,7 @@ bool    i_xx_string( char * p, lay_att curr, xx_str * tm )
         memcpy_s( tm, str_size, val_start, val_len );
         *(tm + val_len) = '\0';
     } else {
-        cvterr = true;
+        xx_err( err_xx_string );
     }
     return( cvterr );
 }
@@ -1119,10 +1081,7 @@ bool    i_yes_no( char * p, lay_att curr, bool * tm )
     } else if( !strnicmp( stryes, p, 3 ) ) {
         *tm = true;
     } else {
-        err_count++;
-        g_err( err_att_val_inv );
-        file_mac_info();
-        cvterr = true;
+        xx_err( err_inv_att_val );
     }
     return( cvterr );
 }

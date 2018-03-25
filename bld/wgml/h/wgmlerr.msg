@@ -223,6 +223,9 @@ pick( ERR_EQ_MISSING,           "Missing required equals sign",
 pick( ERR_ATT_MISSING,          "Required attribute not found",
                                 "Required attribute not found" )
 
+pick( ERR_ATT_DUP,              "Attribute already found",
+                                "Attribute already found" )
+
 pick( ERR_ATT_VAL_MISSING,      "Missing attribute value",
                                 "Missing attribute value" )
 
@@ -459,6 +462,9 @@ pick( INF_NESTED_BLOCKS2,       "cannot nest in one another",
 
 pick( ERR_NO_LAY,               "No %s active for '%s'",
                                 "No %s active for '%s'" )
+
+pick( ERR_LAY_TEXT,             "Expecting a layout tag or attribute, found text",
+                                "Expecting a layout tag or attribute, found text" )
 
 pick( ERR_GML_IN_LAY,           "GML tag '%s' not allowed in LAYOUT",
                                 "GML tag '%s' not allowed in LAYOUT" )
@@ -789,5 +795,27 @@ pick( ERR_STRUCT_RANGE,         "The ix attribute has a range of 1 through 9",
 
 pick( WNG_INDEX_OPT,            "Index option must be specified to process index tags",
                                 "Index option must be specified to process index tags" )
+
+/* Banner/region Messages */
+
+pick( ERR_BOTH_REFS,            "If one of refdoc or refplace is specified both are required",
+                                "If one of refdoc or refplace is specified both are required" )
+
+pick( ERR_ILLEGAL_REF,          "Illegal banner reference, banner does not exist",
+                                "Illegal banner reference, banner does not exist" )
+
+pick( ERR_SELF_REF,             "Cannot reference banner currently being defined",
+                                "Cannot reference banner currently being defined" )
+
+/* Value Parsing Messages */
+
+pick( ERR_I_8,                  "The value entered must be in the range [-255, 255]",
+                                "The value entered must be in the range [-255, 255]" )
+
+pick( ERR_XX_STRING,            "The string given is too long",
+                                "The string given is too long" )
+
+pick( ERR_UI_8,                 "The value entered must be in the range [0, 255]",
+                                "The value entered must be in the range [0, 255]" )
 
 

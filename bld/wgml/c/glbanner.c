@@ -45,8 +45,8 @@ const   lay_att     banner_att[8] =
     { e_left_adjust, e_right_adjust, e_depth, e_place, e_refplace,
       e_docsect, e_refdoc, e_dummy_zero };
  
-static  int             att_count = sizeof( banner_att );
-static  int             count[sizeof( banner_att )];
+static  int             att_count = sizeof( banner_att ) - 1;   // omit e_dummy_zero from count
+static  bool            count[sizeof( banner_att ) - 1];
 static  int             sum_count;
 static  banner_lay_tag  wk;          // for temp storage of banner attributes
 static  bf_place        refplace;
@@ -191,7 +191,7 @@ static  void    init_banner_wk( banner_lay_tag * ban )
     del_ban = NULL;
  
     for( k = 0; k < att_count; k++ ) {
-        count[k] = 0;
+        count[k] = false;
     }
     sum_count = 0;
     banner_end_prepared = false;
@@ -210,10 +210,8 @@ void    lay_banner( const gmltag * entry )
     int             k;
     lay_att         curr;
     att_args        l_args;
-    bool            cvterr;
  
     p = scan_start;
-    cvterr = false;
     rs_loc = banner_tag;
  
     if( !GlobalFlags.firstpass ) {
@@ -225,12 +223,9 @@ void    lay_banner( const gmltag * entry )
         ProcFlags.lay_xxx = el_banner;
         ProcFlags.banner = true;
         init_banner_wk( &wk );
-    } else {                            // should not happen
-        internal_err( __FILE__, __LINE__ );        
     }
     cc = get_lay_sub_and_value( &l_args );  // get att with value
     while( cc == pos ) {
-        cvterr = true;
         for( k = 0; k < att_count; k++ ) {
             curr = banner_att[k];
  
@@ -238,45 +233,43 @@ void    lay_banner( const gmltag * entry )
                 p = l_args.start[1];
  
                 if( count[k] ) {
-                    cvterr = 1;         // attribute specified twice
+                    if( sum_count == att_count ) {  // all attributes found
+                        xx_err( err_lay_text );  // per wgml 4.0: treat as text
+                    } else {
+                        xx_err( err_att_dup );      // per wgml 4.0: treat as duplicated attribute
+                    }
                 } else {
-                    count[k] += 1;
+                    count[k] = true;
                     sum_count++;
                     switch( curr ) {
                     case   e_left_adjust:
-                        cvterr = i_space_unit( p, curr, &wk.left_adjust );
+                        i_space_unit( p, curr, &wk.left_adjust );
                         break;
                     case   e_right_adjust:
-                        cvterr = i_space_unit( p, curr, &wk.right_adjust );
+                        i_space_unit( p, curr, &wk.right_adjust );
                         break;
                     case   e_depth:
-                        cvterr = i_space_unit( p, curr, &wk.depth );
+                        i_space_unit( p, curr, &wk.depth );
                         break;
                     case   e_place:
-                        cvterr = i_place( p, curr, &wk.place );
+                        i_place( p, curr, &wk.place );
                         break;
                     case   e_docsect:
-                        cvterr = i_docsect( p, curr, &wk.docsect );
+                        i_docsect( p, curr, &wk.docsect );
                         break;
                     case   e_refplace:  // not stored in banner struct
-                        cvterr = i_place( p, curr, &refplace );
+                        i_place( p, curr, &refplace );
                         break;
                     case   e_refdoc:    // not stored in banner struct
-                        cvterr = i_docsect( p, curr, &refdoc );
+                        i_docsect( p, curr, &refdoc );
                         break;
                     default:
-                        out_msg( "WGML logic error.\n");
-                        cvterr = true;
+                        internal_err( __FILE__, __LINE__ );
                         break;
                     }
                 }
                 break;                  // break out of for loop
             }
-        }
-        if( cvterr ) {                  // there was an error
-            err_count++;
-            g_err( err_att_val_inv );
-            file_mac_info();
         }
         cc = get_lay_sub_and_value( &l_args );  // get att with value
     }
@@ -296,7 +289,6 @@ void    lay_banner_end_prepare( void )
     region_lay_tag  *   regwkold;
     int                 k;
  
- 
     if( banner_end_prepared ) {
         return;                         // once is enough
     }
@@ -305,50 +297,59 @@ void    lay_banner_end_prepare( void )
     curr_ban = &wk;
     banwk = layout_work.banner;
     ref_ban = NULL;
-    if( (refdoc != no_ban) && (refplace != no_place) ) {// search banner
-        while( banwk != NULL ) {
-            if( (banwk->place == refplace) && (banwk->docsect == refdoc) ) {
-                ref_ban = banwk;
-                break;
-            } else {
-                banwk = banwk->next;
+    if( !((refdoc == no_ban) && (refplace == no_place)) ) { // at least one was used
+        if( ((refdoc == no_ban) && (refplace != no_place)) || 
+                ((refdoc != no_ban) && (refplace == no_place)) ) {
+            xx_err( err_both_refs );                        // both are required if either is used
+        } else if( (refdoc == wk.docsect) && (refplace == wk.place) ) { // can't reference current banner
+            xx_err( err_self_ref );
+        } else if( (refdoc != no_ban) && (refplace != no_place) ) { // find referenced banner
+            while( banwk != NULL ) {
+                if( (banwk->place == refplace) && (banwk->docsect == refdoc) ) {
+                    ref_ban = banwk;
+                    break;
+                } else {
+                    banwk = banwk->next;
+                }
             }
-        }
-        if( ref_ban != NULL ) {         // copy from referenced banner
-            for( k = 0; k < att_count; ++k ) {
-                if( count[k] == 0) {    // copy only unchanged values
-                    switch( banner_att[k] ) {
-                    case   e_left_adjust:
-                        memcpy( &(wk.left_adjust), &(ref_ban->left_adjust),
-                                sizeof( wk.left_adjust ) );
-                        break;
-                    case   e_right_adjust:
-                        memcpy( &(wk.right_adjust), &(ref_ban->right_adjust),
-                                sizeof( wk.right_adjust ) );
-                        break;
-                    case   e_depth:
-                        memcpy( &(wk.depth), &(ref_ban->depth),
-                                sizeof( wk.depth ) );
-                        break;
-                    default:            // refdoc and refplace are not stored
-                        break;          // docsect and place must be specified
+            if( ref_ban == NULL ) {                 // referenced banner not found
+                xx_err( err_illegal_ref );
+            } else {                                // copy from referenced banner
+                for( k = 0; k < att_count; ++k ) {
+                    if( !count[k] ) {       // copy only unchanged values
+                        switch( banner_att[k] ) {
+                        case   e_left_adjust:
+                            memcpy( &(wk.left_adjust), &(ref_ban->left_adjust),
+                                    sizeof( wk.left_adjust ) );
+                            break;
+                        case   e_right_adjust:
+                            memcpy( &(wk.right_adjust), &(ref_ban->right_adjust),
+                                    sizeof( wk.right_adjust ) );
+                            break;
+                        case   e_depth:
+                            memcpy( &(wk.depth), &(ref_ban->depth),
+                                    sizeof( wk.depth ) );
+                            break;
+                        default:            // refdoc and refplace are not stored
+                            break;          // docsect and place must be specified
+                        }
                     }
                 }
-            }
-            // copy banregions too
-            regwkold = ref_ban->region;
+                // copy banregions too
+                regwkold = ref_ban->region;
  
-            while( regwkold != NULL ) { // allocate + copy banregions
-                regwknew = mem_alloc( sizeof( region_lay_tag ) );
-                memcpy( regwknew, regwkold, sizeof( region_lay_tag ) );
-                if( wk.region == NULL ) {   // forward chain
-                    wk.region = regwknew;
-                } else {
-                    regwknew2->next = regwknew;
+                while( regwkold != NULL ) { // allocate + copy banregions
+                    regwknew = mem_alloc( sizeof( region_lay_tag ) );
+                    memcpy( regwknew, regwkold, sizeof( region_lay_tag ) );
+                    if( wk.region == NULL ) {   // forward chain
+                        wk.region = regwknew;
+                    } else {
+                        regwknew2->next = regwknew;
+                    }
+                    regwknew2 = regwknew;
+
+                    regwkold = regwkold->next;
                 }
-                regwknew2 = regwknew;
- 
-                regwkold = regwkold->next;
             }
         }
     }

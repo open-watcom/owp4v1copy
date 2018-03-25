@@ -47,8 +47,8 @@ const   lay_att     banregion_att[12] =
     { e_indent, e_hoffset, e_width, e_voffset, e_depth, e_font, e_refnum,
       e_region_position, e_pouring, e_script_format, e_contents, e_dummy_zero };
 
-static  const   int att_count = sizeof( banregion_att );
-static  int         count[sizeof( banregion_att )];
+static  const   int att_count = sizeof( banregion_att ) - 1;    // omit e_dummy_zero from count
+static  bool        count[sizeof( banregion_att ) - 1];
 static  int         sum_count;
 
 /**************************************************************************************/
@@ -249,7 +249,7 @@ static  void    init_banregion_wk( region_lay_tag * reg )
     reg->script_format = false;
     reg->contents.string[0] = '\0';
     for( k = 0; k < att_count; k++ ) {
-        count[k] = 0;
+        count[k] = false;
     }
     sum_count = 0;
 
@@ -267,10 +267,8 @@ void    lay_banregion( const gmltag * entry )
     int             k;
     lay_att         curr;
     att_args        l_args;
-    bool            cvterr;
 
     p = scan_start;
-    cvterr = false;
     rs_loc = banreg_tag;
 
     if( !GlobalFlags.firstpass ) {
@@ -305,7 +303,6 @@ void    lay_banregion( const gmltag * entry )
     }
     cc = get_lay_sub_and_value( &l_args );              // get att with value
     while( cc == pos ) {
-        cvterr = true;
         for( k = 0; k < att_count; k++ ) {
             curr = banregion_att[k];
 
@@ -313,60 +310,58 @@ void    lay_banregion( const gmltag * entry )
                 p = l_args.start[1];
 
                 if( count[k] ) {
-                    cvterr = 1;                  // attribute specified twice
+                    if( sum_count == att_count ) {  // all attributes found
+                        xx_err( err_lay_text );     // per wgml 4.0: treat as text
+                    } else {
+                        xx_err( err_att_dup );      // per wgml 4.0: treat as duplicated attribute
+                    }
                 } else {
-                    count[k] += 1;
+                    count[k] = true;
                     sum_count++;
                     switch( curr ) {
                     case   e_indent:
-                        cvterr = i_space_unit( p, curr, &wk.indent );
+                        i_space_unit( p, curr, &wk.indent );
                         break;
                     case   e_hoffset:
-                        cvterr = i_space_unit( p, curr, &wk.hoffset );
+                        i_space_unit( p, curr, &wk.hoffset );
                         break;
                     case   e_width:
-                        cvterr = i_space_unit( p, curr, &wk.width );
+                        i_space_unit( p, curr, &wk.width );
                         break;
                     case   e_voffset:
-                        cvterr = i_space_unit( p, curr, &wk.voffset );
+                        i_space_unit( p, curr, &wk.voffset );
                         break;
                     case   e_depth:
-                        cvterr = i_space_unit( p, curr, &wk.depth );
+                        i_space_unit( p, curr, &wk.depth );
                         break;
                     case   e_font:
-                        cvterr = i_font_number( p, curr, &wk.font );
+                        i_font_number( p, curr, &wk.font );
                         if( wk.font >= wgml_font_cnt ) wk.font = 0;
                         break;
                     case   e_refnum:
-                        cvterr = i_int8( p, curr, &wk.refnum );
+                        i_int8( p, curr, &wk.refnum );
                         break;
                     case   e_region_position:
-                        cvterr = i_page_position( p, curr, &wk.region_position );
+                        i_page_position( p, curr, &wk.region_position );
                         break;
                     case   e_pouring:
-                        cvterr = i_pouring( p, curr, &wk.pouring );
+                        i_pouring( p, curr, &wk.pouring );
                         break;
                     case   e_script_format:
-                        cvterr = i_yes_no( p, curr, &wk.script_format );
+                        i_yes_no( p, curr, &wk.script_format );
                         break;
                     case   e_contents:
                         if( l_args.quoted ) {
                             wk.contents.content_type = string_content;
-                            cvterr = i_xx_string( p, curr, &wk.contents.string );
+                            i_xx_string( p, curr, &wk.contents.string );
                         } else {
-                            cvterr = i_content( p, curr, &wk.contents );
+                            i_content( p, curr, &wk.contents );
                         }
                         break;
                     default:
-                        out_msg( "WGML logic error.\n");
-                        cvterr = true;
+                        internal_err( __FILE__, __LINE__ );
                         break;
                     }
-                }
-                if( cvterr ) {          // there was an error
-                    err_count++;
-                    g_err( err_att_val_inv );
-                    file_mac_info();
                 }
                 break;                  // break out of for loop
             }
