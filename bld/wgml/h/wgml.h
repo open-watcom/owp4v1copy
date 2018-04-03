@@ -174,6 +174,7 @@ extern  void    tag_text_req_err( const char * tagname );
 extern  void    undef_id_warn( const char * id, const char * context );
 extern  void    undef_id_warn_info( const char * id, const char * context );
 extern  void    xx_err( const msg_ids errid );
+extern  void    xx_err_cc( const msg_ids errid, const char * arg1, const char * arg2 );
 extern  void    xx_line_err( const msg_ids errid, const char * pa );
 extern  void    xx_line_err_len( const msg_ids errid, const char * pa, size_t len );
 extern  void    xx_nest_err( const msg_ids errid );
@@ -219,15 +220,11 @@ extern  void        free_layout( void );
 extern  condcode    get_lay_sub_and_value( struct att_args * l_args );
 
 
-/* glbanner.c                           */
-extern void         lay_banner_end_prepare( void );
-
-
 /* glbandef.c                           */
 extern void         banner_defaults( void );
 
 
-
+/* gmacdict.c                           */
 extern  void        add_macro_entry( mac_entry * * dict, mac_entry * me );
 extern  void        init_macro_dict( mac_entry * * dict );
 extern  void        free_macro_dict( mac_entry * * dict );

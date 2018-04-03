@@ -151,10 +151,12 @@ void    eat_lay_sub_tag( void )
 condcode    get_lay_sub_and_value( att_args * args )
 {
     char        *   p;
+    char        *   pa;
     char            quote;
     condcode        rc;
 
     p = scan_start;
+    pa = p;
     rc = no;
 
     while( is_space_tab_char( *p ) ) {  // over WS to start of name
@@ -197,7 +199,7 @@ condcode    get_lay_sub_and_value( att_args * args )
             return( omit );            
         }
         if( args->len[0] < 4 ) {            // attribute name length
-            xx_err( err_att_name_inv );
+            xx_line_err( err_att_name_inv, pa );
         }
 
         while( is_space_tab_char( *p ) ) {  // over WS to =
@@ -210,13 +212,14 @@ condcode    get_lay_sub_and_value( att_args * args )
                 p++;
             }
             if( *p == '.' ) {                   // final "." is end of tag
-                xx_err( err_att_val_missing );
+                xx_line_err( err_att_val_missing, p );
             }
         } else {                                // equals sign is required
-            xx_err( err_eq_missing );
+            xx_line_err( err_eq_missing, p );
         }
 
         args->start[1] = p;                 // delimiters must be included for error checking
+        pa = p;
 
         if( is_quote_char( *p ) ) {
             quote = *p;
@@ -238,7 +241,7 @@ condcode    get_lay_sub_and_value( att_args * args )
         args->len[1] = p - args->start[1];
 
         if( args->len[1] < 1 ) {            // attribute value length
-            xx_err( err_att_val_missing );
+            xx_line_err( err_att_val_missing, pa );
         } else {
             rc = pos;
         }
@@ -336,7 +339,7 @@ bool    i_case( char * p, lay_att curr, case_t * tm )
     } else if( !strnicmp( "upper", p, 5 ) ) {
         *tm = case_upper;
     } else {
-        xx_err( err_inv_att_val );
+        xx_line_err( err_inv_att_val, p );
     }
     return( cvterr );
 }
@@ -400,9 +403,6 @@ bool    i_content( char * p, lay_att curr, content * tm )
             strcpy( tm->string, content_text[k].name );
             break;
         }
-    }
-    if( k >= max_content ) {
-        xx_err( err_inv_att_val );
     }
     if( tm->content_type == string_content ) {  // unquoted single word
         pa = p;
@@ -472,7 +472,7 @@ bool    i_default_frame( char * p, lay_att curr, def_frame * tm )
         }
     }
     if( cvterr ) {
-        xx_err( err_inv_att_val );
+        xx_line_err( err_inv_att_val, p );
     }
     return( cvterr );
 
@@ -521,7 +521,7 @@ bool    i_docsect( char * p, lay_att curr, ban_docsect * tm )
         }
     }
     if( *tm == no_ban ) {
-        xx_err( err_inv_att_val );
+        xx_line_err( err_inv_att_val, p );
     }
     return( cvterr );
 }
@@ -553,7 +553,7 @@ bool    i_frame( char * p, lay_att curr, bool * tm )
     } else if( !strnicmp( "rule", p, 4 ) ) {
         *tm = true;
     } else {
-        xx_err( err_inv_att_val );
+        xx_line_err( err_inv_att_val, p );
     }
     return( cvterr );
 
@@ -596,7 +596,7 @@ bool    i_int8( char * p, lay_att curr, int8_t * tm )
 
     wk = strtol( p, NULL, 10 );
     if( abs( wk ) > 255 ) {
-        xx_err(err_i_8);
+        xx_line_err( err_i_8, p );
     }
     *tm = wk;
     return( false );
@@ -617,7 +617,7 @@ bool    i_uint8( char *p, lay_att curr, uint8_t *tm )
     curr = curr;
     wk = strtol( p, NULL, 10 );
     if( wk < 0 || wk > 255 ) {
-        xx_err(err_ui_8);
+        xx_line_err( err_ui_8, p );
     }
     *tm = wk;
     return( false );
@@ -671,7 +671,7 @@ bool    i_number_form( char * p, lay_att curr, num_form * tm )
     } else if( !strnicmp( "new", p, 3 ) ) {
         *tm = num_new;
     } else {
-        xx_err( err_inv_att_val );
+        xx_line_err( err_inv_att_val, p );
     }
     return( cvterr );
 }
@@ -760,7 +760,7 @@ bool    i_number_style( char * p, lay_att curr, num_style * tm )
     if( !cvterr ) {
         *tm = wk;
     } else {
-        xx_err( err_inv_att_val );
+        xx_line_err( err_inv_att_val, p );
     }
     return( cvterr );
 }
@@ -829,7 +829,7 @@ bool    i_page_eject( char * p, lay_att curr, page_ej * tm )
     } else if( !strnicmp( "even", p, 4 ) ) {
         *tm = ej_even;
     } else {
-        xx_err( err_inv_att_val );
+        xx_line_err( err_inv_att_val, p );
     }
     return( cvterr );
 }
@@ -869,7 +869,7 @@ bool    i_page_position( char * p, lay_att curr, page_pos * tm )
     } else if( !(strnicmp( "centre", p, 6 ) && strnicmp( "center", p, 6 )) ) {
         *tm = pos_center;
     } else {
-        xx_err( err_inv_att_val );
+        xx_line_err( err_inv_att_val, p );
     }
     return( cvterr );
 }
@@ -915,7 +915,7 @@ bool    i_place( char * p, lay_att curr, bf_place * tm )
     } else if( !strnicmp( "boteven", p, 7 ) ) {
         *tm = boteven_place;
     } else {
-        xx_err( err_inv_att_val );
+        xx_line_err( err_inv_att_val, p );
     }
     return( cvterr );
 }
@@ -973,7 +973,7 @@ bool    i_pouring( char * p, lay_att curr, reg_pour * tm )
     } else if( !strnicmp( "head6", p, 5 ) ) {
         *tm = head6_pour;
     } else {
-        xx_err( err_inv_att_val );
+        xx_line_err( err_inv_att_val, p );
     }
     return( cvterr );
 }
@@ -1043,7 +1043,7 @@ bool    i_xx_string( char * p, lay_att curr, xx_str * tm )
         memcpy_s( tm, str_size, val_start, val_len );
         *(tm + val_len) = '\0';
     } else {
-        xx_err( err_xx_string );
+        xx_line_err( err_xx_string, p );
     }
     return( cvterr );
 }
@@ -1081,7 +1081,7 @@ bool    i_yes_no( char * p, lay_att curr, bool * tm )
     } else if( !strnicmp( stryes, p, 3 ) ) {
         *tm = true;
     } else {
-        xx_err( err_inv_att_val );
+        xx_line_err( err_inv_att_val, p );
     }
     return( cvterr );
 }

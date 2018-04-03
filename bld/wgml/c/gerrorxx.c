@@ -399,6 +399,14 @@ void xx_err( const msg_ids errid )
     return;
 }
 
+void xx_err_cc( const msg_ids errid, const char * arg1, const char * arg2 )
+{
+    err_count++;
+    g_err( errid, arg1, arg2 );
+    file_mac_info();
+    return;
+}
+
 void xx_warn( const msg_ids errid )
 {
     wng_count++;

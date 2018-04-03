@@ -51,7 +51,6 @@ static  int             sum_count;
 static  banner_lay_tag  wk;          // for temp storage of banner attributes
 static  bf_place        refplace;
 static  ban_docsect     refdoc;
-static  bool            banner_end_prepared = false;
 static  bool            banner_delete_req   = false;
  
 static  banner_lay_tag  *   prev_ban;
@@ -194,7 +193,6 @@ static  void    init_banner_wk( banner_lay_tag * ban )
         count[k] = false;
     }
     sum_count = 0;
-    banner_end_prepared = false;
     banner_delete_req   = false;
 }
  
@@ -205,11 +203,17 @@ static  void    init_banner_wk( banner_lay_tag * ban )
  
 void    lay_banner( const gmltag * entry )
 {
-    char        *   p;
-    condcode        cc;
-    int             k;
-    lay_att         curr;
-    att_args        l_args;
+    att_args            l_args;
+    banner_lay_tag  *   banwk;
+    bf_place            match_place;
+    bf_place            new_place;
+    char            *   p;
+    condcode            cc;
+    int                 k;
+    lay_att             curr;
+    region_lay_tag  *   regwknew;
+    region_lay_tag  *   regwknew2;
+    region_lay_tag  *   regwkold;
  
     p = scan_start;
     rs_loc = banner_tag;
@@ -273,86 +277,23 @@ void    lay_banner( const gmltag * entry )
         }
         cc = get_lay_sub_and_value( &l_args );  // get att with value
     }
-    scan_start = scan_stop + 1;
-    return;
-}
  
-/***************************************************************************/
-/*  banner end processing (different from :eBANNER processing)             */
-/*  triggered by next tag following :BANNER tag                            */
-/***************************************************************************/
-void    lay_banner_end_prepare( void )
-{
-    banner_lay_tag  *   banwk;
-    region_lay_tag  *   regwknew;
-    region_lay_tag  *   regwknew2;
-    region_lay_tag  *   regwkold;
-    int                 k;
- 
-    if( banner_end_prepared ) {
-        return;                         // once is enough
-    }
-    banner_end_prepared = true;
- 
-    curr_ban = &wk;
-    banwk = layout_work.banner;
-    ref_ban = NULL;
-    if( !((refdoc == no_ban) && (refplace == no_place)) ) { // at least one was used
-        if( ((refdoc == no_ban) && (refplace != no_place)) || 
-                ((refdoc != no_ban) && (refplace == no_place)) ) {
-            xx_err( err_both_refs );                        // both are required if either is used
-        } else if( (refdoc == wk.docsect) && (refplace == wk.place) ) { // can't reference current banner
-            xx_err( err_self_ref );
-        } else if( (refdoc != no_ban) && (refplace != no_place) ) { // find referenced banner
-            while( banwk != NULL ) {
-                if( (banwk->place == refplace) && (banwk->docsect == refdoc) ) {
-                    ref_ban = banwk;
-                    break;
-                } else {
-                    banwk = banwk->next;
-                }
-            }
-            if( ref_ban == NULL ) {                 // referenced banner not found
-                xx_err( err_illegal_ref );
-            } else {                                // copy from referenced banner
-                for( k = 0; k < att_count; ++k ) {
-                    if( !count[k] ) {       // copy only unchanged values
-                        switch( banner_att[k] ) {
-                        case   e_left_adjust:
-                            memcpy( &(wk.left_adjust), &(ref_ban->left_adjust),
-                                    sizeof( wk.left_adjust ) );
-                            break;
-                        case   e_right_adjust:
-                            memcpy( &(wk.right_adjust), &(ref_ban->right_adjust),
-                                    sizeof( wk.right_adjust ) );
-                            break;
-                        case   e_depth:
-                            memcpy( &(wk.depth), &(ref_ban->depth),
-                                    sizeof( wk.depth ) );
-                            break;
-                        default:            // refdoc and refplace are not stored
-                            break;          // docsect and place must be specified
-                        }
-                    }
-                }
-                // copy banregions too
-                regwkold = ref_ban->region;
- 
-                while( regwkold != NULL ) { // allocate + copy banregions
-                    regwknew = mem_alloc( sizeof( region_lay_tag ) );
-                    memcpy( regwknew, regwkold, sizeof( region_lay_tag ) );
-                    if( wk.region == NULL ) {   // forward chain
-                        wk.region = regwknew;
-                    } else {
-                        regwknew2->next = regwknew;
-                    }
-                    regwknew2 = regwknew;
+    /*******************************************************/
+    /* At this point, end-of-tag has been reached and all  */
+    /* attributes provided have been found and processed.  */
+    /* First ensure the required attributes are present.   */
+    /*******************************************************/
 
-                    regwkold = regwkold->next;
-                }
-            }
-        }
+    if( (wk.place == no_place) || (wk.docsect == no_ban) ) {    // both must be specified
+        xx_err( err_att_missing );
     }
+
+    /*******************************************************/
+    /* Now trap a delete request and identify the target.  */
+    /* NOTE: a non-existent banner cannot be deleted but   */
+    /*       must instead be processed as a new banner.    */
+    /*******************************************************/
+
     del_ban = NULL;
     if( (sum_count == 2) && (wk.place != no_place) && (wk.docsect != no_ban) ) {
                                         // banner delete request
@@ -364,16 +305,179 @@ void    lay_banner_end_prepare( void )
                 prev_ban = banwk;
             }
         }
-        banner_delete_req = true;     // remember delete request
-    }
-    if( !banner_delete_req ) {          // no delete request
-        if( (ref_ban == NULL && sum_count != 5) ||  // not all atts specified
-            (wk.place == no_place || wk.docsect == no_ban) ) {
-            err_count++;
-            g_err( err_att_missing );
-            file_mac_info();
+        if( del_ban != NULL ) {
+            banner_delete_req = true;   // remember delete request
         }
     }
+
+    /*******************************************************/
+    /* If the banner is not being deleted, then there are  */
+    /* three possibilities:                                */
+    /*   it is a new banner based on a reference banner    */
+    /*   it is modifying an existing banner                */
+    /*   it is a new banner                                */
+    /*******************************************************/
+
+    if( !banner_delete_req ) {
+        if( (refdoc != no_ban) || (refplace != no_place) ) {    // at least one was used
+            if( ((refdoc == no_ban) && (refplace != no_place)) || 
+                    ((refdoc != no_ban) && (refplace == no_place)) ) {
+                xx_err( err_both_refs );                        // both are required if either is used
+            } else if( (refdoc == wk.docsect) && (refplace == wk.place) ) { // can't reference current banner
+                xx_err( err_self_ref );
+            } else if( (refdoc != no_ban) && (refplace != no_place) ) { // find referenced banner
+                banwk = layout_work.banner;
+                ref_ban = NULL;
+                while( banwk != NULL ) {
+                    if( (banwk->place == refplace) && (banwk->docsect == refdoc) ) {
+                        ref_ban = banwk;
+                        break;
+                    } else {
+                        banwk = banwk->next;
+                    }
+                }
+                if( ref_ban == NULL ) {                 // referenced banner not found
+                    xx_err( err_illegal_ref );
+                } else {                                // copy from referenced banner
+                    for( k = 0; k < att_count; ++k ) {
+                        if( !count[k] ) {       // copy only unchanged values
+                            switch( banner_att[k] ) {
+                            case   e_left_adjust:
+                                memcpy( &(wk.left_adjust), &(ref_ban->left_adjust),
+                                        sizeof( wk.left_adjust ) );
+                                break;
+                            case   e_right_adjust:
+                                memcpy( &(wk.right_adjust), &(ref_ban->right_adjust),
+                                        sizeof( wk.right_adjust ) );
+                                break;
+                            case   e_depth:
+                                memcpy( &(wk.depth), &(ref_ban->depth),
+                                        sizeof( wk.depth ) );
+                                break;
+                            default:            // refdoc and refplace are not stored
+                                break;          // docsect and place must be specified
+                            }
+                        }
+                    }
+                    // copy banregions too
+                    regwkold = ref_ban->region;
+ 
+                    while( regwkold != NULL ) { // allocate + copy banregions
+                        regwknew = mem_alloc( sizeof( region_lay_tag ) );
+                        memcpy( regwknew, regwkold, sizeof( region_lay_tag ) );
+                        if( wk.region == NULL ) {   // forward chain
+                            wk.region = regwknew;
+                        } else {
+                            regwknew2->next = regwknew;
+                        }
+                        regwknew2 = regwknew;
+                        regwkold = regwkold->next;
+                    }
+                    sum_count = 5;              // process as if all attributes for new banner found
+                }
+            }
+        }
+
+        /* Start by seeing if there is a banner to update. */
+
+        banwk = layout_work.banner;
+        while( banwk != NULL ) {
+            if( (banwk->place == wk.place) && (banwk->docsect == wk.docsect) ) {
+                curr_ban = banwk;
+                break;
+            } else {
+                banwk = banwk->next;
+            }
+        }
+        if( curr_ban != NULL ) {                // update banner
+            for( k = 0; k < att_count; ++k ) {
+                if( count[k] ) {                // copy only changed values
+                    switch( banner_att[k] ) {
+                    case   e_left_adjust:
+                        memcpy( &(curr_ban->left_adjust), &(wk.left_adjust),
+                                sizeof( wk.left_adjust ) );
+                        break;
+                    case   e_right_adjust:
+                        memcpy( &(curr_ban->right_adjust), &(wk.right_adjust),
+                                sizeof( wk.right_adjust ) );
+                        break;
+                    case   e_depth:
+                        memcpy( &(curr_ban->depth), &(wk.depth), sizeof( wk.depth ) );
+                        break;
+                    default:                // refdoc and refplace are not stored
+                        break;              // docsect and place must be specified
+                    }
+                }
+            }
+        } else {                                // if no existing banner
+            if( sum_count != 5 ) {              // now we need all 5 non-ref attributes
+                xx_err( err_all_ban_att_rqrd );
+            } else {
+                banwk = mem_alloc( sizeof( banner_lay_tag ) );
+                memcpy( banwk, &wk, sizeof( banner_lay_tag ) );
+ 
+                if( layout_work.banner == NULL ) {      // First banner initializes the list
+                    layout_work.banner = banwk;
+                } else {
+
+                    /************************************************************************/
+                    /*  New banners can affect existing banners in the manner shown.        */
+                    /*  The effect is that, if topeven or topodd exists, top itself cannot, */
+                    /*  and similarly for bottom.                                           */
+                    /************************************************************************/
+
+                    match_place = no_place;
+                    new_place = no_place;
+                    switch( banwk->place ) {
+                    case boteven_place :
+                        match_place = bottom_place;
+                        new_place = botodd_place;
+                        break;
+                    case botodd_place :
+                        match_place = bottom_place;
+                        new_place = boteven_place;
+                        break;
+                    case topeven_place :
+                        match_place = top_place;
+                        new_place = topodd_place;
+                        break;
+                    case topodd_place :
+                        match_place = top_place;
+                        new_place = topeven_place;
+                        break;
+                    }
+
+                    if( match_place != no_place ) {
+                        curr_ban = layout_work.banner;
+                        while( curr_ban->next != NULL ) {   // add at end of chain
+                            if( (curr_ban->docsect == banwk->docsect) && (curr_ban->place == match_place) ) {
+                                curr_ban->place = new_place;
+                                break;
+                            }
+                            curr_ban = curr_ban->next;
+                        }
+                    }
+
+                    /************************************************************************/
+                    /*  New banners are added to the bottom of the list.                    */
+                    /*  However, wgml 4.0 does something else in some circumstances         */
+                    /*  This code is focused on having our wgml end up with the same set of */
+                    /*  banners as wgml 4.0 does, even if CONVERT does not output them in   */
+                    /*  the same order for our wgml as it does for wgml 4.0.                */
+                    /************************************************************************/
+
+                    curr_ban = layout_work.banner;
+                    while( curr_ban->next != NULL ) {   // add at end of chain
+                        curr_ban = curr_ban->next;
+                    }
+                    curr_ban->next = banwk;
+                    curr_ban = curr_ban->next;
+                }
+            }
+        }
+    }
+    scan_start = scan_stop + 1;
+    return;
 }
  
  
@@ -383,7 +487,6 @@ void    lay_banner_end_prepare( void )
  
 void    lay_ebanner( const gmltag * entry )
 {
-    banner_lay_tag  *   banwk;
     region_lay_tag  *   reg;
  
     ProcFlags.lay_xxx = el_zero;        // banner no longer active
@@ -397,7 +500,6 @@ void    lay_ebanner( const gmltag * entry )
     if( ProcFlags.banner ) {            // are we inside banner
         ProcFlags.banner = false;
  
-        lay_banner_end_prepare();       // if not yet done
         if( banner_delete_req ) {       // delete request
             /* While the documentation requires the banner regions to be
              * deleted first, wgml 4.0 does not. It will delete a banner even
@@ -446,42 +548,12 @@ void    lay_ebanner( const gmltag * entry )
                 case pgnumc_content :
                 case pgnumcd_content :
                     curr_ban->style = curr_ban->region->contents.content_type;
-//                default :
-                    /* keep the default value, no_content, for all other content tags */
                 }
-//            default :
-                /* keep the default value, no_content, for all other banners */
             }
-
-            banwk = mem_alloc( sizeof( banner_lay_tag ) );
-            memcpy( banwk, curr_ban, sizeof( banner_lay_tag ) );
- 
-/***************************************************************************/
-/*  Adding banner to the existing banners either as first or last in chain */
-/*  Both give different order than wgml 4.0                                */
-/*  This can be seen by :CONVERT output, sooooooo ...                 TBD  */
-/*  If it really matters, more research has to be done                     */
-/***************************************************************************/
-#if 1
-            if( layout_work.banner == NULL ) {
-                layout_work.banner = banwk;
-            } else {
-                curr_ban = layout_work.banner;
-                while( curr_ban->next != NULL ) {   // add at end of chain
-                    curr_ban = curr_ban->next;
-                }
-                curr_ban->next = banwk;
-            }
-#else
-            banwk->next = layout_work.banner;   // add as first element
-            layout_work.banner = banwk;
-#endif
             curr_ban = NULL;
         }
     } else {
-        g_err( err_no_lay, &(entry->tagname[1]), entry->tagname );
-        err_count++;
-        file_mac_info();
+        xx_err_cc( err_no_lay, &(entry->tagname[1]), entry->tagname );
     }
     scan_start = scan_stop + 1;
     return;

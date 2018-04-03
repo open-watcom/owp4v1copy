@@ -798,6 +798,12 @@ pick( WNG_INDEX_OPT,            "Index option must be specified to process index
 
 /* Banner/region Messages */
 
+pick( ERR_ALL_BAN_ATT_RQRD,     "All attributes required when defining new banner",
+                                "All attributes required when defining new banner" )
+
+pick( ERR_ALL_REG_ATT_RQRD,     "All attributes required when defining new banner region",
+                                "All attributes required when defining new banner region" )
+
 pick( ERR_BOTH_REFS,            "If one of refdoc or refplace is specified both are required",
                                 "If one of refdoc or refplace is specified both are required" )
 

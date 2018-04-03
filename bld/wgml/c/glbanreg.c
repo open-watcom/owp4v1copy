@@ -279,9 +279,7 @@ void    lay_banregion( const gmltag * entry )
     if( ProcFlags.lay_xxx != el_banregion ) {
         if( !ProcFlags.banner ) {               // not in BANNER/eBANNER block
             xx_tag_err( err_tag_expected, "BANNER" );
-        } else if( ProcFlags.lay_xxx == el_banner ) {
-            lay_banner_end_prepare();
-        }
+       }
         ProcFlags.lay_xxx = el_banregion;
 
         init_banregion_wk( &wk );
