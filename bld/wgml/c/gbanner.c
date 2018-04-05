@@ -735,8 +735,8 @@ static  void    out_ban_common( banner_lay_tag * ban, bool top )
                 }
             }
 
-            cur_doc_el->top_skip = ban->top_line->reg_voffset;
-            cur_doc_el->subs_skip = ban->top_line->reg_voffset;
+            cur_doc_el->top_skip = ban->top_line->first->reg_voffset;
+            cur_doc_el->subs_skip = ban->top_line->first->reg_voffset;
             cur_doc_el->element.text.first = alloc_text_line();
 
             cur_doc_el->element.text.first->next = ban_line.next;

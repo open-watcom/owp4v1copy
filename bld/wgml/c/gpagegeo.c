@@ -34,7 +34,7 @@
 #include "gvars.h"
 
 /***************************************************************************/
-/*   The page geometry and margins are set up here to match the wgml 4     */
+/*  The page geometry and margins are set up here to match the wgml 4.0    */
 /*  behaviour. Some values are guesswork and some are hardcoded, if no     */
 /*  formula is found for computing the value                               */
 /*  The values used are from the device and the layout :page and :default  */
@@ -379,6 +379,34 @@ static void finish_banners( void )
 
     font_save = g_curr_font;
     for( cur_ban = layout_work.banner; cur_ban != NULL; cur_ban = cur_ban->next ) {
+
+        /****************************************************************/
+        /* Set curr_ban->style to the number style, if any              */
+        /* This works for one region only; if multiple regions are      */
+        /* implemented, testing for the correct order of checking them  */
+        /* and then implementation of that order will be needed         */
+        /****************************************************************/
+                                                                            
+        switch( cur_ban->docsect ) {
+        case abstract_ban :
+        case appendix_ban :
+        case backm_ban :
+        case body_ban :
+        case preface_ban :
+
+        /* update curr_ban->style if the region content_type is "pgnumX" */
+
+            switch( cur_ban->region->contents.content_type ) {
+            case pgnuma_content :
+            case pgnumad_content :
+            case pgnumr_content :
+            case pgnumrd_content :
+            case pgnumc_content :
+            case pgnumcd_content :
+                cur_ban->style = cur_ban->region->contents.content_type;
+            }
+        }
+
         ban_line = 0;
         max_reg_depth = 0;
         max_reg_font = 0;
@@ -414,7 +442,8 @@ static void finish_banners( void )
         g_curr_font = max_reg_font; // vertical attribute uses the largest banregion font
         cur_ban->ban_depth = conv_vert_unit( &cur_ban->depth, 1, g_curr_font );
 
-        cur_ban->top_line = top_line_reg;
+        cur_ban->top_line = mem_alloc( sizeof( ban_reg_group ) );
+        cur_ban->top_line->first = top_line_reg;
 
         if( cur_ban->ban_depth < max_reg_depth ) {
             xx_err( err_banreg_too_deep );

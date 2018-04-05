@@ -1055,7 +1055,7 @@ static void document_new_position( void )
      */
 
     if( sect_ban_top[page & 1] != NULL ) {
-        top_reg = sect_ban_top[page & 1]->top_line;
+        top_reg = sect_ban_top[page & 1]->top_line->first;
         if( bin_driver->y_positive == 0x00 ) {
             top_pos = t_page.page_top - top_reg->reg_depth;
         } else {

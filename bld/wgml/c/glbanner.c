@@ -523,33 +523,6 @@ void    lay_ebanner( const gmltag * entry )
                 del_ban = NULL;
             }
         } else {
-
-            /****************************************************************/
-            /* Set curr_ban->style to the number style, if any              */
-            /* This works for one region only; if multiple regions are      */
-            /* implemented, testing for the correct order of checking them  */
-            /* and then implementation of that order will be needed         */
-            /****************************************************************/
-                                                                            
-            switch( curr_ban->docsect ) {
-            case abstract_ban :
-            case appendix_ban :
-            case backm_ban :
-            case body_ban :
-            case preface_ban :
-
-            /* upage curr_ban->style if the region content_type is "pgnumX" */
-
-                switch( curr_ban->region->contents.content_type ) {
-                case pgnuma_content :
-                case pgnumad_content :
-                case pgnumr_content :
-                case pgnumrd_content :
-                case pgnumc_content :
-                case pgnumcd_content :
-                    curr_ban->style = curr_ban->region->contents.content_type;
-                }
-            }
             curr_ban = NULL;
         }
     } else {

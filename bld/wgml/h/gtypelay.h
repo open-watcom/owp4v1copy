@@ -747,26 +747,38 @@ typedef struct region_lay_tag {
     content         contents;           // what is in the region
     bool            script_format;      // yes no -> bool
 } region_lay_tag;
- 
+
+/***************************************************************************/
+/*  banner region group                                                    */
+/*                                                                         */
+/*  Note: each group corresponds to one vertical position in the banner    */
+/***************************************************************************/
+
+typedef struct ban_reg_group {
+    struct ban_reg_group        *   next;   // next banner region group
+    struct region_lay_tag       *   first;  // first BANREGION
+} ban_reg_group;
+
 /***************************************************************************/
 /*  :BANNER         Layout tag data                                        */
 /***************************************************************************/
  
 typedef struct banner_lay_tag {
-    struct banner_lay_tag   *   next;   // next banner
-    region_lay_tag          *   region; // banner region
-    region_lay_tag          *   top_line;// region containing top line in banner
-    uint32_t        ban_left_adjust;    // value of 'left_adjust' in base units
-    uint32_t        ban_right_adjust;   // value of 'right_adjust' in base units
-    uint32_t        ban_depth;          // value of 'depth' in base units
-    su              left_adjust;        // horizontal space unit
-    su              right_adjust;       // horizontal space unit
-    su              depth;              // vertical space unit
-    bf_place        place;              // special enum
-    ban_docsect     docsect;            // special enum
-    content_enum    style;              // page number style defined by banner, if any
-//  bf_place        refplace;           // special enum no need to store
-//  ban_docsect     refdoc;             // special enum no need to store
+    struct banner_lay_tag   *   next;       // next banner
+    region_lay_tag          *   region;     // region list (in refnum order)
+    ban_reg_group           *   top_line;   // group list (in vertical position order) 
+    uint32_t        ban_left_adjust;        // value of 'left_adjust' in base units
+    uint32_t        ban_right_adjust;       // value of 'right_adjust' in base units
+    uint32_t        ban_depth;              // value of 'depth' in base units
+    uint32_t        next_refnum;            // next expected refnum value
+    su              left_adjust;            // horizontal space unit
+    su              right_adjust;           // horizontal space unit
+    su              depth;                  // vertical space unit
+    bf_place        place;                  // special enum
+    ban_docsect     docsect;                // special enum
+    content_enum    style;                  // page number style defined by banner, if any
+//  bf_place        refplace;               // special enum no need to store
+//  ban_docsect     refdoc;                 // special enum no need to store
 } banner_lay_tag;
  
  
