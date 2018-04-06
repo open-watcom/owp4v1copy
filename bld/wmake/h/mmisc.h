@@ -52,4 +52,9 @@ extern int          PutEnvSafe( ENV_TRACKER *env );
 extern void         PutEnvFini( void );
 #endif
 
+#ifdef __OS2__
+extern char *Os2GetEnv( char *str );
+extern int Os2PutEnv( char *str );
+#endif
+
 #endif

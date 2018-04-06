@@ -48,6 +48,51 @@
 
 static ENV_TRACKER  *envList;
 
+#ifdef __OS2__
+
+/* Fix for setting BEGINLIBPATH and ENDLIBPATH on OS/2.
+ * 2014-Aug-04 By David Azarewicz <david@88watts.net>
+ * COMMENT defined in make.h conflicts with a #define in os2.h. Undefine it
+ * here since it is not used in this file.
+ */
+#undef COMMENT
+#define INCL_DOSMISC
+#include <os2.h>
+
+char *Os2GetEnv( char *str )
+{
+    static char achOs2BegLibPath[512];
+    static char achOs2EndLibPath[512];
+    int rc;
+
+    if( strcmp( str, "BEGINLIBPATH" ) == 0 ) {
+        achOs2BegLibPath[0] = 0;
+        rc = DosQueryExtLIBPATH( achOs2BegLibPath, BEGIN_LIBPATH );
+        if( rc || achOs2BegLibPath[0] == 0 ) return NULL;
+        return achOs2BegLibPath;
+    }
+    if( strcmp( str, "ENDLIBPATH" ) == 0 ) {
+        achOs2EndLibPath[0] = 0;
+        rc = DosQueryExtLIBPATH( achOs2EndLibPath, END_LIBPATH );
+        if( rc || achOs2EndLibPath[0] == 0 ) return NULL;
+        return achOs2EndLibPath;
+    }
+    return getenv( str );
+}
+
+
+int Os2PutEnv( char *str )
+{
+    if( strncmp( str, "BEGINLIBPATH=", 13 ) == 0 ) {
+        return DosSetExtLIBPATH( str + 13, BEGIN_LIBPATH );
+    }
+    if( strncmp( str, "ENDLIBPATH=", 11 ) == 0 ) {
+        return DosSetExtLIBPATH( str + 11, END_LIBPATH );
+    }
+    return putenv( str );
+}
+#endif
+
 char *SkipWS( char *p )
 /*****************************
  * p is not const because the return value is usually used to write data.
@@ -479,7 +524,11 @@ int PutEnvSafe( ENV_TRACKER *env )
         *p = toupper( *p );
         ++p;
     }
+#ifdef __OS2__
+    rc = Os2PutEnv( env->value ); // put into environment
+#else
     rc = putenv( env->value );  // put into environment
+#endif
     if( p[0] == '=' && p[1] == '\0' ) {
         rc = 0;                 // we are deleting the envvar, ignore errors
     }

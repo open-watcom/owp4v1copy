@@ -339,7 +339,11 @@ STATIC const char *GetMacroValueProcess( const char *name )
     makeMacroName( macro, name ); // Does assert( IsMacroName( name ) );
 
     if( *macro == ENVVAR ) {
+#ifdef __OS2__
+        env = Os2GetEnv( macro + 1 );
+#else
         env = getenv( macro + 1 );
+#endif
         if( env != NULL ) {
             return( env );
         }
