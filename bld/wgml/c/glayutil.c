@@ -272,6 +272,7 @@ void    free_layout( void )
 {
     banner_lay_tag  * ban;
     banner_lay_tag  * ban1;
+    ban_reg_group   * br_gp;
     dl_lay_level    * dl_layout;
     gl_lay_level    * gl_layout;
     ol_lay_level    * ol_layout;
@@ -316,6 +317,19 @@ void    free_layout( void )
             ban->region = reg->next;
             mem_free( reg );
             reg = ban->region;
+        }
+
+        br_gp = ban->top_line;
+        while( br_gp != NULL ) {
+//            reg = br_gp->first;
+//            while( reg != NULL ) {
+//                br_gp->first = reg->next;
+//                mem_free( reg );
+//                reg = br_gp->first;
+//            }
+            ban->top_line = br_gp->next;
+            mem_free( br_gp );
+            br_gp = ban->top_line;
         }
         ban1 = ban->next;
         mem_free( ban );

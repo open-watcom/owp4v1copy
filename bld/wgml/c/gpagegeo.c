@@ -443,6 +443,7 @@ static void finish_banners( void )
         cur_ban->ban_depth = conv_vert_unit( &cur_ban->depth, 1, g_curr_font );
 
         cur_ban->top_line = mem_alloc( sizeof( ban_reg_group ) );
+        cur_ban->top_line->next = NULL;
         cur_ban->top_line->first = top_line_reg;
 
         if( cur_ban->ban_depth < max_reg_depth ) {

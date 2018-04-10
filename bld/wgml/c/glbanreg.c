@@ -276,6 +276,12 @@ void    lay_banregion( const gmltag * entry )
         eat_lay_sub_tag();
         return;                         // process during first pass only
     }
+
+    if( del_ban != NULL ) {             // BANREGION cancels deleteable status
+        curr_ban = del_ban;
+        del_ban = NULL;
+    }
+
     if( ProcFlags.lay_xxx != el_banregion ) {
         if( !ProcFlags.banner ) {               // not in BANNER/eBANNER block
             xx_tag_err( err_tag_expected, "BANNER" );
