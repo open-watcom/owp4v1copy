@@ -873,6 +873,25 @@ static  int  Parse( int argc, char **argv )
         if( Word == NULL || Word[0] == '\0' )
             /* HBB 20060217: argument was used up */
             continue;
+#ifndef __LINUX__
+        /* FB 20180416: remove ./ from Word start (curdir) */
+        p = Word;
+        if( *p == '.' && *( p+1 ) == '/' ) {
+            while( *( p+2 ) != '\0' ) {
+               *p = *( p+2 );
+               p++;
+            }
+            *p = '\0';
+        }
+        /* FB 20180416: allow forward slash as path seperator */
+        p = Word;
+        while( *p != '\0' ) {
+            if( *p == '/' ) {
+                *p = '\\';
+            }
+            p++;
+        }
+#endif
         new_item = MemAlloc( sizeof( list ) );
         new_item->next = NULL;
         new_item->item = MemStrDup( Word );
