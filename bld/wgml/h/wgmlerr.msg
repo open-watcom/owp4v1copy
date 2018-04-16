@@ -554,6 +554,9 @@ pick( ERR_INV_CW_OP_VAL,        "Invalid control word operand value",
 pick( ERR_NUM_TOO_LARGE,        "Number is too large or contains invalid characters",
                                 "Number is too large or contains invalid characters" )
 
+pick( ERR_NUM_ZERO,             "Number value must be greater than zero",
+                                "Number value must be greater than zero" )
+
 pick( ERR_VAL_NEG,              "Value cannot be negative",
                                 "Value cannot be negative" )
 
@@ -807,8 +810,11 @@ pick( ERR_ALL_REG_ATT_RQRD,     "All attributes required when defining new banne
 pick( ERR_BOTH_REFS,            "If one of refdoc or refplace is specified both are required",
                                 "If one of refdoc or refplace is specified both are required" )
 
-pick( ERR_ILLEGAL_REF,          "Illegal banner reference, banner does not exist",
+pick( ERR_ILLEGAL_BAN_REF,      "Illegal banner reference, banner does not exist",
                                 "Illegal banner reference, banner does not exist" )
+
+pick( ERR_ILLEGAL_REG_REF,      "Illegal banner region reference",
+                                "Illegal banner region reference" )
 
 pick( ERR_SELF_REF,             "Cannot reference banner currently being defined",
                                 "Cannot reference banner currently being defined" )

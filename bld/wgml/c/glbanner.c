@@ -173,6 +173,7 @@ static  void    init_banner_wk( banner_lay_tag * ban )
     ban->ban_left_adjust = 0;
     ban->ban_right_adjust = 0;
     ban->ban_depth = 0;
+    ban->next_refnum = 1;
     ban->style = no_content;
  
     lay_init_su( &z0, &(ban->left_adjust) );
@@ -244,25 +245,25 @@ void    lay_banner( const gmltag * entry )
                     count[k] = true;
                     sum_count++;
                     switch( curr ) {
-                    case   e_left_adjust:
+                    case e_left_adjust:
                         i_space_unit( p, curr, &wk.left_adjust );
                         break;
-                    case   e_right_adjust:
+                    case e_right_adjust:
                         i_space_unit( p, curr, &wk.right_adjust );
                         break;
-                    case   e_depth:
+                    case e_depth:
                         i_space_unit( p, curr, &wk.depth );
                         break;
-                    case   e_place:
+                    case e_place:
                         i_place( p, curr, &wk.place );
                         break;
-                    case   e_docsect:
+                    case e_docsect:
                         i_docsect( p, curr, &wk.docsect );
                         break;
-                    case   e_refplace:  // not stored in banner struct
+                    case e_refplace:  // not stored in banner struct
                         i_place( p, curr, &refplace );
                         break;
-                    case   e_refdoc:    // not stored in banner struct
+                    case e_refdoc:    // not stored in banner struct
                         i_docsect( p, curr, &refdoc );
                         break;
                     default:
@@ -312,7 +313,7 @@ void    lay_banner( const gmltag * entry )
                 }
             }
             if( ref_ban == NULL ) {                 // referenced banner not found
-                xx_err( err_illegal_ref );
+                xx_err( err_illegal_ban_ref );
             } else {                                // copy from referenced banner
                 for( k = 0; k < att_count; ++k ) {
                     if( !count[k] ) {               // copy only unchanged values
@@ -335,6 +336,7 @@ void    lay_banner( const gmltag * entry )
                     }
                 }
                 // copy banregions too
+                wk.next_refnum = ref_ban->next_refnum;
                 regwkold = ref_ban->region;
                 while( regwkold != NULL ) { // allocate + copy banregions
                     regwknew = mem_alloc( sizeof( region_lay_tag ) );
@@ -376,6 +378,26 @@ void    lay_banner( const gmltag * entry )
                         break;              // docsect and place must be specified
                     }
                 }
+            }
+            if( wk.region != NULL ) {
+
+                /*******************************************************/
+                /* This is a copy of a reference banner.               */
+                /* The found banner's regions must be deleted and this */
+                /* banners regions moved over.                         */
+                /*******************************************************/
+
+                banwk->next_refnum = wk.next_refnum;
+                regwkold = NULL;
+                regwknew = banwk->region;
+                while( regwknew != NULL ) { // allocate + copy banregions
+                    regwkold = regwknew;
+                    regwknew = regwknew->next;
+                    mem_free( regwkold );
+                }
+                banwk->region = wk.region;
+                wk.region = NULL;
+                wk.next_refnum = 1;
             }
             if( prev_ban == NULL ) {                // first banner
                 layout_work.banner = banwk->next;   // detach banner
@@ -483,7 +505,7 @@ void    lay_ebanner( const gmltag * entry )
 
         if( (curr_ban != NULL) && (curr_ban->region == NULL) ) {  // flip if has no regions
             del_ban = curr_ban;
-            del_ban = NULL;
+            curr_ban = NULL;
         }
 
         if( del_ban != NULL) {              // delete request

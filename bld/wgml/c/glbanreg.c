@@ -244,15 +244,23 @@ static  void    init_banregion_wk( region_lay_tag * reg )
     lay_init_su( &z0, &(reg->width) );
     lay_init_su( &z0, &(reg->depth) );
     reg->font = 0;
-    reg->refnum = -1;
+    reg->refnum = 0;
+    reg->region_position = pos_left;
     reg->pouring = no_pour;
     reg->script_format = false;
+    reg->contents.content_type = string_content;
     reg->contents.string[0] = '\0';
+    reg->script_region[0].len = 0;
+    reg->script_region[1].len = 0;
+    reg->script_region[2].len = 0;
+    reg->script_region[0].string = NULL;
+    reg->script_region[1].string = NULL;
+    reg->script_region[2].string = NULL;
+
     for( k = 0; k < att_count; k++ ) {
         count[k] = false;
     }
     sum_count = 0;
-
 }
 
 
@@ -262,11 +270,14 @@ static  void    init_banregion_wk( region_lay_tag * reg )
 
 void    lay_banregion( const gmltag * entry )
 {
-    char        *   p;
-    condcode        cc;
-    int             k;
-    lay_att         curr;
-    att_args        l_args;
+    att_args            l_args;
+    bool                refnum_found;
+    bool                script_format_found;
+    char            *   p;
+    condcode            cc;
+    int                 k;
+    lay_att             curr;
+    region_lay_tag  *   reg;
 
     p = scan_start;
     rs_loc = banreg_tag;
@@ -285,26 +296,13 @@ void    lay_banregion( const gmltag * entry )
     if( ProcFlags.lay_xxx != el_banregion ) {
         if( !ProcFlags.banner ) {               // not in BANNER/eBANNER block
             xx_tag_err( err_tag_expected, "BANNER" );
-       }
-        ProcFlags.lay_xxx = el_banregion;
-
-        init_banregion_wk( &wk );
-
-    } else {
-        if( !strnicmp( ":banregion", buff2, sizeof( ":banregion" ) ) ) {
-            err_count++;
-            g_err( err_nested_tag, entry->tagname );
-            file_mac_info();
-
-            while( !ProcFlags.reprocess_line  ) {
-                eat_lay_sub_tag();
-                if( strnicmp( ":ebanregion", buff2, sizeof( ":ebanregion" ) ) ) {
-                    ProcFlags.reprocess_line = false;// not :ebanregion, go on
-                }
-            }
-            return;
         }
+        ProcFlags.lay_xxx = el_banregion;
+        init_banregion_wk( &wk );
     }
+
+    refnum_found = false;
+    script_format_found = false;
     cc = get_lay_sub_and_value( &l_args );              // get att with value
     while( cc == pos ) {
         for( k = 0; k < att_count; k++ ) {
@@ -343,7 +341,13 @@ void    lay_banregion( const gmltag * entry )
                         if( wk.font >= wgml_font_cnt ) wk.font = 0;
                         break;
                     case   e_refnum:
+                        refnum_found = true;
                         i_int8( p, curr, &wk.refnum );
+                        if( wk.refnum < 0 ) {           // refnum cannot be negative
+                            xx_line_err( err_num_too_large, p );
+                        } else if( wk.refnum == 0 ) {   // refnum must be greater than zero
+                            xx_line_err( err_num_zero, p );
+                        }
                         break;
                     case   e_region_position:
                         i_page_position( p, curr, &wk.region_position );
@@ -353,6 +357,7 @@ void    lay_banregion( const gmltag * entry )
                         break;
                     case   e_script_format:
                         i_yes_no( p, curr, &wk.script_format );
+                        script_format_found = true;
                         break;
                     case   e_contents:
                         if( l_args.quoted ) {
@@ -372,20 +377,25 @@ void    lay_banregion( const gmltag * entry )
         }
         cc = get_lay_sub_and_value( &l_args );  // get att with value
     }
-    scan_start = scan_stop + 1;
-    return;
-}
 
-/***************************************************************************/
-/*  search region in banner                                                */
-/***************************************************************************/
+    /*******************************************************/
+    /* At this point, end-of-tag has been reached and all  */
+    /* attributes provided have been found and processed.  */
+    /* First ensure the required attribute is present.     */
+    /*******************************************************/
 
-static region_lay_tag * find_region( banner_lay_tag * ban )
-{
-    region_lay_tag  *   reg;
+    if( !refnum_found ) {                               // refnum was missing
+        xx_err( err_att_missing ); 
+    } else if( wk.refnum > curr_ban->next_refnum ) {    // refnum must be, at most, the next value
+        xx_err( err_illegal_reg_ref );
+    }
 
-    reg = ban->region;
+    /*******************************************************/
+    /* Find the region.                                    */
+    /*******************************************************/
+
     prev_reg = NULL;
+    reg = curr_ban->region;
     while( reg != NULL ) {
         if( reg->refnum == wk.refnum ) {// found correct region
             break;
@@ -394,8 +404,94 @@ static region_lay_tag * find_region( banner_lay_tag * ban )
             reg = reg->next;
         }
     }
-    return( reg );
+
+    /*******************************************************/
+    /* Process the region.                                 */
+    /*******************************************************/
+
+    if( reg != NULL ) {                 // region found
+        if( sum_count == 1 ) {          // banregion delete request
+            if( prev_reg == NULL ) {
+                curr_ban->region = reg->next;
+            } else {
+                prev_reg->next = reg->next;
+            }
+            mem_free( reg );
+            reg = NULL;
+        } else {                        // modify existing banregion
+            for( k = 0; k < att_count; ++k ) {
+                if( count[k] ) {        // change specified attribute
+                    switch( banregion_att[k] ) {
+                    case e_indent:
+                        memcpy( &(reg->indent), &(wk.indent), sizeof( wk.indent ) );
+                        break;
+                    case e_hoffset:
+                        memcpy( &(reg->hoffset), &(wk.hoffset), sizeof( wk.hoffset ) );
+                        break;
+                    case e_width:
+                        memcpy( &(reg->width), &(wk.width), sizeof( wk.width ) );
+                        break;
+                    case e_voffset:
+                        memcpy( &(reg->voffset), &(wk.voffset), sizeof( wk.voffset ) );
+                        break;
+                    case e_depth:
+                        memcpy( &(reg->depth), &(wk.depth), sizeof( wk.depth ) );
+                        break;
+                    case e_font:
+                        reg->font = wk.font;
+                        break;
+                    case e_refnum:
+                        reg->refnum = wk.refnum;
+                        break;
+                    case e_region_position:
+                        reg->region_position = wk.region_position;
+                        break;
+                    case e_pouring:
+                        reg->pouring = wk.pouring;
+                        break;
+                    case e_script_format:
+                        reg->script_format = wk.script_format;
+                        break;
+                    case e_contents:
+                        memcpy( &(reg->contents), &(wk.contents), sizeof( wk.contents ) );
+                        break;
+                    default:
+                        break;
+                    }
+                }
+            }
+        }
+    } else {                            // new region
+        if( sum_count == 1 ) {          // banregion delete request
+
+            /*******************************************************/
+            /* If a non-existent region is supposed to be deleted, */
+            /* then there is nothing to do.                        */
+            /*******************************************************/
+
+        } else if( (sum_count != 11) && (script_format_found && (sum_count == 10)) ) {
+
+            /*******************************************************/
+            /* A new region must have values for all attributes    */
+            /* except script_format.                               */
+            /*******************************************************/
+
+            xx_err( err_all_reg_att_rqrd ); 
+        }
+        reg = mem_alloc( sizeof( region_lay_tag ) );
+        memcpy( reg, &wk, sizeof( region_lay_tag ) );
+        if( prev_reg == NULL ) {    // first region in banner
+            curr_ban->region = reg;
+        } else {
+            prev_reg->next = reg;
+        }
+        curr_ban->next_refnum++;    // next expected refnum value
+    }
+
+    scan_start = scan_stop + 1;
+    return;
 }
+
 
 /***************************************************************************/
 /*  lay_ebanregion                                                         */
@@ -403,11 +499,6 @@ static region_lay_tag * find_region( banner_lay_tag * ban )
 
 void    lay_ebanregion( const gmltag * entry )
 {
-    region_lay_tag  *   reg;
-    banner_lay_tag  *   reg_ban;
-    int                 k;
-    bool                region_deleted;
-
     rs_loc = banner_tag;
     if( !GlobalFlags.firstpass ) {
         scan_start = scan_stop + 1;
@@ -416,96 +507,6 @@ void    lay_ebanregion( const gmltag * entry )
     }
     if( ProcFlags.lay_xxx == el_banregion ) {   // :banregion was last tag
         ProcFlags.lay_xxx = el_ebanregion;
-
-        prev_reg = NULL;
-        reg_ban = NULL;
-        region_deleted = false;
-        if( sum_count == 1 && wk.refnum > 0  ) {// banregion delete request
-            if( del_ban != NULL ) {     // banner delete request, too
-                reg_ban = del_ban;
-            } else {
-                reg_ban = curr_ban;
-            }
-            reg = find_region( reg_ban );
-
-            if( reg != NULL) {          // banregion delete
-               if( prev_reg == NULL ) {
-                   reg_ban->region = reg->next;
-               } else {
-                   prev_reg->next = reg->next;
-               }
-               mem_free( reg );
-               reg = NULL;
-               region_deleted = true;   // processing complete
-            }
-        }
-        if( !region_deleted ) {         // no region delete request, or
-            prev_reg = NULL;            // region not found
-            if( del_ban != NULL ) {
-                reg_ban = del_ban;
-            } else {
-                reg_ban = curr_ban;
-            }
-            reg = find_region( reg_ban );
-            if( reg == NULL ) {         // not found, new region
-                reg = mem_alloc( sizeof( region_lay_tag ) );
-                memcpy( reg, &wk, sizeof( region_lay_tag ) );
-                if( prev_reg == NULL ) {// first region in banner
-                    reg_ban->region = reg;
-                } else {
-                    prev_reg->next = reg;
-                }
-            } else {                    // modify existing banregion
-                for( k = 0; k < att_count; ++k ) {
-                    if( count[k] ) {// change specified attribute
-                        switch( banregion_att[k] ) {
-                        case   e_indent:
-                            memcpy( &(reg->indent), &(wk.indent),
-                                    sizeof( wk.indent ) );
-                            break;
-                        case   e_hoffset:
-                            memcpy( &(reg->hoffset), &(wk.hoffset),
-                                    sizeof( wk.hoffset ) );
-                            break;
-                        case   e_width:
-                            memcpy( &(reg->width), &(wk.width),
-                                    sizeof( wk.width ) );
-                            break;
-                        case   e_voffset:
-                            memcpy( &(reg->voffset), &(wk.voffset),
-                                    sizeof( wk.voffset ) );
-                            break;
-                        case   e_depth:
-                            memcpy( &(reg->depth), &(wk.depth),
-                                    sizeof( wk.depth ) );
-                            break;
-                        case   e_font:
-                            reg->font = wk.font;
-                            break;
-                        case   e_refnum:
-                            reg->refnum = wk.refnum;
-                            break;
-                        case   e_region_position:
-                            reg->region_position = wk.region_position;
-                            break;
-                        case   e_pouring:
-                            reg->pouring = wk.pouring;
-                            break;
-                        case   e_script_format:
-                            reg->script_format = wk.script_format;
-                            break;
-                        case   e_contents:
-                            memcpy( &(reg->contents), &(wk.contents),
-                                    sizeof( wk.contents ) );
-                            break;
-                        default:
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-
     } else {
         g_err( err_no_lay, &(entry->tagname[1]), entry->tagname );
         err_count++;

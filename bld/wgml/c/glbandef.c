@@ -64,11 +64,20 @@ void    banner_defaults( void )
     lay_init_su( &n3, &(ban->depth) );
     ban->place = bottom_place;
     ban->docsect = head0_ban;
+    ban->ban_left_adjust = 0;
+    ban->ban_right_adjust = 0;
+    ban->ban_depth = 0;
+    ban->next_refnum = 2;
     ban->style = no_content;
 
     reg = mem_alloc( sizeof( region_lay_tag ) );
     ban->region = reg;
     reg->next = NULL;
+    reg->reg_indent = 0;
+    reg->reg_hoffset = 0;
+    reg->reg_width = 0;
+    reg->reg_voffset = 0;
+    reg->reg_depth = 0;
     lay_init_su( &z0, &(reg->indent) );
     lay_init_su( &leftc, &(reg->hoffset) );
     lay_init_su( &extendc, &(reg->width) );
@@ -76,7 +85,7 @@ void    banner_defaults( void )
     lay_init_su( &n1, &(reg->depth) );
     reg->font = 0;
     reg->refnum = 1;
-    reg->region_position  = pos_left;
+    reg->region_position = pos_left;
     reg->pouring = last_pour;
     reg->script_format = true;
     reg->contents.content_type = string_content;
