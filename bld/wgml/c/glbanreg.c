@@ -488,6 +488,16 @@ void    lay_banregion( const gmltag * entry )
         curr_ban->next_refnum++;    // next expected refnum value
     }
 
+    /*******************************************************/
+    /* Check for attribute inconsistency.                  */
+    /*******************************************************/
+
+    if( reg != NULL ) {             // region not deleted
+        if( reg->script_format && (reg->contents.content_type != string_content) ) {
+            xx_err( err_scr_fmt );
+        }
+    }
+
     scan_start = scan_stop + 1;
     return;
 }

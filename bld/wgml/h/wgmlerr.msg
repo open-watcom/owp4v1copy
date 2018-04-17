@@ -816,6 +816,9 @@ pick( ERR_ILLEGAL_BAN_REF,      "Illegal banner reference, banner does not exist
 pick( ERR_ILLEGAL_REG_REF,      "Illegal banner region reference",
                                 "Illegal banner region reference" )
 
+pick( ERR_SCR_FMT,              "The script_format attribute has been set to NO for the banner region with a keyword content value",
+                                "The script_format attribute has been set to NO for the banner region with a keyword content value" )
+
 pick( ERR_SELF_REF,             "Cannot reference banner currently being defined",
                                 "Cannot reference banner currently being defined" )
 
