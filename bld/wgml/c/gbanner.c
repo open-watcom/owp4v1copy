@@ -601,6 +601,7 @@ static void content_reg( region_lay_tag * region )
 
 static  void    out_ban_common( banner_lay_tag * ban, bool top )
 {
+    ban_reg_group   *   cur_grp;
     doc_element     *   cur_doc_el;
     int                 k;
     region_lay_tag  *   cur_region;
@@ -621,133 +622,136 @@ static  void    out_ban_common( banner_lay_tag * ban, bool top )
 
     /* This is the simplest way to process multiple BANREGIONs -- more may be needed */
 
-    cur_region = ban->region;
-    while( cur_region != NULL ) {
+    cur_grp = ban->by_line;
+    while( cur_grp != NULL ) {
+        cur_region = cur_grp ->first;
+        while( cur_region != NULL ) {
 
-        reg_text[0] = NULL;
-        reg_text[1] = NULL;
-        reg_text[2] = NULL;
+            reg_text[0] = NULL;
+            reg_text[1] = NULL;
+            reg_text[2] = NULL;
 
-        content_reg( cur_region );
-        curr_x = 0;
+            content_reg( cur_region );
+            curr_x = 0;
 
-        for( k = 0; k < 3; ++k ) {          // for all region parts
-            if( reg_text[k] == NULL ) {
-                continue;                   // skip empty part
-            }
-            if( top ) {
-                g_prev_font = reg_text[k]->font;
-            }
-            if( ban_line.first == NULL ) {
-                ban_line.first = reg_text[k];
-                ban_line.line_height = wgml_fonts[reg_text[k]->font].line_height;
-            } else {
-                ban_line.last->next = reg_text[k];
-                reg_text[k]->prev = ban_line.last;
-            }
-            if( ban_line.line_height < wgml_fonts[reg_text[k]->font].line_height ) {
-                ban_line.line_height = wgml_fonts[reg_text[k]->font].line_height;
-            }
-            curr_t = reg_text[k];
-            ban_line.last  = reg_text[k];
-
-            h_left  = ban_left;
-            h_right = ban_right;
-            reg_indent = cur_region->reg_indent;
-            if( cur_region->hoffset.su_u >= SU_lay_left  ) {   // symbolic
-                if( cur_region->hoffset.su_u == SU_lay_left ) {
-                    h_left += reg_indent;
-                } else if( cur_region->hoffset.su_u == SU_lay_right ) {
-                    h_right -= reg_indent;
-                } else if( cur_region->hoffset.su_u == SU_lay_centre ) {
-                    h_left += reg_indent;
+            for( k = 0; k < 3; ++k ) {          // for all region parts
+                if( reg_text[k] == NULL ) {
+                    continue;                   // skip empty part
                 }
-            } else {                            // in horiz space units
-                h_left += reg_indent + cur_region->reg_hoffset;
-            }
+                if( top ) {
+                    g_prev_font = reg_text[k]->font;
+                }
+                if( ban_line.first == NULL ) {
+                    ban_line.first = reg_text[k];
+                    ban_line.line_height = wgml_fonts[reg_text[k]->font].line_height;
+                } else {
+                    ban_line.last->next = reg_text[k];
+                    reg_text[k]->prev = ban_line.last;
+                }
+                if( ban_line.line_height < wgml_fonts[reg_text[k]->font].line_height ) {
+                    ban_line.line_height = wgml_fonts[reg_text[k]->font].line_height;
+                }
+                curr_t = reg_text[k];
+                ban_line.last  = reg_text[k];
 
-            if( cur_region->region_position == pos_center || k == 1) {
-                if( h_left + curr_t->width < h_right ) {
-                    h_left += (h_right - h_left - curr_t->width) / 2;
+                h_left  = ban_left;
+                h_right = ban_right;
+                reg_indent = cur_region->reg_indent;
+                if( cur_region->hoffset.su_u >= SU_lay_left  ) {   // symbolic
+                    if( cur_region->hoffset.su_u == SU_lay_left ) {
+                        h_left += reg_indent;
+                    } else if( cur_region->hoffset.su_u == SU_lay_right ) {
+                        h_right -= reg_indent;
+                    } else if( cur_region->hoffset.su_u == SU_lay_centre ) {
+                        h_left += reg_indent;
+                    }
+                } else {                            // in horiz space units
+                    h_left += reg_indent + cur_region->reg_hoffset;
+                }
+
+                if( cur_region->region_position == pos_center || k == 1) {
+                    if( h_left + curr_t->width < h_right ) {
+                        h_left += (h_right - h_left - curr_t->width) / 2;
+                        curr_x = h_left;
+                    }
+                } else if( cur_region->region_position == pos_right || k == 2) {
+                    h_left = h_right - curr_t->width;
                     curr_x = h_left;
                 }
-            } else if( cur_region->region_position == pos_right || k == 2) {
-                h_left = h_right - curr_t->width;
-                curr_x = h_left;
+                if( curr_x == 0 ) {
+                    curr_x = h_left;
+                }
+                curr_t->x_address = curr_x;
+                curr_x += curr_t->width;
             }
-            if( curr_x == 0 ) {
-                curr_x = h_left;
-            }
-            curr_t->x_address = curr_x;
-            curr_x += curr_t->width;
+            if( ban_line.first != NULL) {
+                if( input_cbs->fmflags & II_research ) {
+                    test_out_t_line( &ban_line );
+                }
 
-        }
-        if( ban_line.first != NULL) {
-            if( input_cbs->fmflags & II_research ) {
-                test_out_t_line( &ban_line );
-            }
+                /*******************************************************************/
+                /*  truncate the left part(s) in case of overlap                   */
+                /*******************************************************************/
+                curr_p = ban_line.first;
 
-            /*******************************************************************/
-            /*  truncate the left part(s) in case of overlap                   */
-            /*******************************************************************/
-            curr_p = ban_line.first;
-
-            for( curr_t = curr_p->next; curr_t != NULL; curr_t = curr_t->next ) {
-                while( (curr_p->x_address + curr_p->width) > curr_t->x_address ) {
-                    if( curr_p->count < 2) {// sanity check
-                       break;
+                for( curr_t = curr_p->next; curr_t != NULL; curr_t = curr_t->next ) {
+                    while( (curr_p->x_address + curr_p->width) > curr_t->x_address ) {
+                        if( curr_p->count < 2) {// sanity check
+                           break;
+                        }
+                        curr_p->count -= 1;     // truncate text, adjust width
+                        curr_p->width -= wgml_fonts[curr_p->font].width_table[(unsigned char)curr_p->text[curr_p->count]];
                     }
-                    curr_p->count -= 1;     // truncate text, adjust width
-                    curr_p->width -= wgml_fonts[curr_p->font].width_table[(unsigned char)curr_p->text[curr_p->count]];
+                    curr_p = curr_t;
                 }
-                curr_p = curr_t;
-            }
 
-            /*  insert ban_line into t_page                                 */
-            /*  ban_line is taken to be a linked list of text_lines when    */
-            /*  a banregion has depth > 1 and enough text to fill the       */
-            /*  first line                                                  */
-            /*  this will need adjustment as banner output is enhanced      */
-            /*  in particular, vline will need to be handled differently    */
+                /*  insert ban_line into t_page                                 */
+                /*  ban_line is taken to be a linked list of text_lines when    */
+                /*  a banregion has depth > 1 and enough text to fill the       */
+                /*  first line                                                  */
+                /*  this will need adjustment as banner output is enhanced      */
+                /*  in particular, vline will need to be handled differently    */
 
-            cur_doc_el = alloc_doc_el( el_text );
-            if( top ) {
-                if( t_page.top_ban == NULL ) {
-                    t_page.top_ban = alloc_ban_col();
-                }
-                if( t_page.top_ban->first == NULL ){
-                    t_page.top_ban->first = cur_doc_el;
-                    t_page.top_ban->last = t_page.top_ban->first;
+                cur_doc_el = alloc_doc_el( el_text );
+                if( top ) {
+                    if( t_page.top_ban == NULL ) {
+                        t_page.top_ban = alloc_ban_col();
+                    }
+                    if( t_page.top_ban->first == NULL ){
+                        t_page.top_ban->first = cur_doc_el;
+                        t_page.top_ban->last = t_page.top_ban->first;
+                    } else {
+                        t_page.top_ban->last->next = cur_doc_el;
+                        t_page.top_ban->last = t_page.top_ban->last->next;
+                    }
                 } else {
-                    t_page.top_ban->last->next = cur_doc_el;
-                    t_page.top_ban->last = t_page.top_ban->last->next;
+                    if( t_page.bot_ban == NULL ) {
+                        t_page.bot_ban = alloc_ban_col();
+                    }
+                    if( t_page.bot_ban->first == NULL ){
+                        t_page.bot_ban->first = cur_doc_el;
+                        t_page.bot_ban->last = t_page.bot_ban->first;
+                    } else {
+                        t_page.bot_ban->last->next = cur_doc_el;
+                        t_page.bot_ban->last = t_page.bot_ban->last->next;
+                    }
                 }
-            } else {
-                if( t_page.bot_ban == NULL ) {
-                    t_page.bot_ban = alloc_ban_col();
-                }
-                if( t_page.bot_ban->first == NULL ){
-                    t_page.bot_ban->first = cur_doc_el;
-                    t_page.bot_ban->last = t_page.bot_ban->first;
-                } else {
-                    t_page.bot_ban->last->next = cur_doc_el;
-                    t_page.bot_ban->last = t_page.bot_ban->last->next;
-                }
+
+                cur_doc_el->top_skip = ban->by_line->voffset;
+                cur_doc_el->subs_skip = ban->by_line->voffset;
+                cur_doc_el->element.text.first = alloc_text_line();
+
+                cur_doc_el->element.text.first->next = ban_line.next;
+                cur_doc_el->element.text.first->line_height = ban_line.line_height;
+                cur_doc_el->element.text.first->spacing = 0;   // hbus; banners are always single-spaced
+                cur_doc_el->element.text.first->y_address = ban_line.y_address;
+                cur_doc_el->element.text.first->first = ban_line.first;
+                cur_doc_el->element.text.first->last = ban_line.last;
+                ban_line.first = NULL;
             }
-
-            cur_doc_el->top_skip = ban->top_line->first->reg_voffset;
-            cur_doc_el->subs_skip = ban->top_line->first->reg_voffset;
-            cur_doc_el->element.text.first = alloc_text_line();
-
-            cur_doc_el->element.text.first->next = ban_line.next;
-            cur_doc_el->element.text.first->line_height = ban_line.line_height;
-            cur_doc_el->element.text.first->spacing = 0;   // hbus; banners are always single-spaced
-            cur_doc_el->element.text.first->y_address = ban_line.y_address;
-            cur_doc_el->element.text.first->first = ban_line.first;
-            cur_doc_el->element.text.first->last = ban_line.last;
-            ban_line.first = NULL;
+            cur_region = cur_region->next;
         }
-        cur_region = cur_region->next;
+        cur_grp = cur_grp->next;
     }
 }
 

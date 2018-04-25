@@ -169,7 +169,7 @@ static  void    init_banner_wk( banner_lay_tag * ban )
  
     ban->next = NULL;
     ban->region = NULL;
-    ban->top_line = NULL;
+    ban->by_line = NULL;
     ban->ban_left_adjust = 0;
     ban->ban_right_adjust = 0;
     ban->ban_depth = 0;

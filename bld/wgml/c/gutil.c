@@ -684,7 +684,6 @@ bool lay_init_su( char * p, su * in_su )
 
 /***************************************************************************/
 /*  convert internal space units to device space units                     */
-/*   use font 0 or current font???                              TBD        */
 /*  return value is signed as space unit can be relative (+ -)             */
 /***************************************************************************/
 
@@ -1235,9 +1234,9 @@ void start_line_with_string( const char *text, font_number font, bool leave_1spa
 /* used with both ff_entry and ix_e_blk                                     */
 /****************************************************************************/
 
-content_enum find_pgnum_style( void )
+num_style find_pgnum_style( void )
 {
-    content_enum    retval;
+    num_style   retval;
     
     /****************************************************/
     /* first restrict processing to those document      */

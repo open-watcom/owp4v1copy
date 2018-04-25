@@ -1260,6 +1260,24 @@ typedef enum content_enum {
 } content_enum;
  
 /***************************************************************************/
+/*  definitions for number style                                           */
+/*  moved from gtypelay.h to avoid inclusion circularity                   */
+/***************************************************************************/
+ 
+typedef enum num_style {
+    h_style     = 0x0001,               // hindu-arabic
+    a_style     = 0x0002,               // lowercase alphabetic
+    b_style     = 0x0004,               // uppercase alphabetic
+    c_style     = 0x0080,               // uppercase roman
+    r_style     = 0x0010,               // lowercase roman
+    char1_style = a_style | b_style | c_style | h_style | r_style,
+    xd_style    = 0x0100,               // decimal point follows
+    xp_style    = 0x0600,               // in parenthesis
+    xpa_style   = 0x0200,               // only left parenthesis
+    xpb_style   = 0x0400                // only right parenthesis
+} num_style;
+ 
+/***************************************************************************/
 /*  Structures for storing index information from IX control word          */
 /*  and In IHn IREF tags                                                   */
 /***************************************************************************/
@@ -1285,7 +1303,7 @@ typedef struct ix_e_blk {                   // index entry for pagenos / text
         };
         struct {
             uint32_t        page_no;        // pageno is number
-            content_enum    style;          // page number style defined by banner, if any
+            num_style       style;          // page number style defined by banner, if any
         };
     };
             ereftyp          entry_typ;     // selects page_no or page_text (IX, In), or no reference (IHn)
@@ -1358,24 +1376,6 @@ typedef enum page_pos {         // needed here to avoid gtypelay.h circularity
     pos_center,
     pos_centre = pos_center
 } page_pos;
- 
-/***************************************************************************/
-/*  definitions for number style                                           */
-/*  moved from gtypelay.h to avoid inclusion circularity                   */
-/***************************************************************************/
- 
-typedef enum num_style {
-    h_style     = 0x0001,               // hindu-arabic
-    a_style     = 0x0002,               // lowercase alphabetic
-    b_style     = 0x0004,               // uppercase alphabetic
-    c_style     = 0x0080,               // uppercase roman
-    r_style     = 0x0010,               // lowercase roman
-    char1_style = a_style | b_style | c_style | h_style | r_style,
-    xd_style    = 0x0100,               // decimal point follows
-    xp_style    = 0x0600,               // in parenthesis
-    xpa_style   = 0x0200,               // only left parenthesis
-    xpb_style   = 0x0400                // only right parenthesis
-} num_style;
  
 /***************************************************************************/
 /*  Structure for storing figure/heading information from :FIG, :FIGCAP,   */

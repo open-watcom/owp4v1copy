@@ -59,6 +59,7 @@ void    banner_defaults( void )
 
     ban->next = NULL;
     ban->region = NULL;
+    ban->by_line = NULL;
     lay_init_su( &z0, &(ban->left_adjust) );
     lay_init_su( &z0, &(ban->right_adjust) );
     lay_init_su( &n3, &(ban->depth) );

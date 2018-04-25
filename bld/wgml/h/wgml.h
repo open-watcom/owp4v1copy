@@ -81,21 +81,20 @@ extern void         fb_position( uint32_t h_start, uint32_t v_start );
 
 
 /* gargutil.c                           */
-extern  content_enum    find_pgnum_style( void );
-extern  void            garginit( void );
-extern  void            garginitdot( void );
-extern  condcode        getarg( void );
-extern  condcode        getqst( void );
-extern  bool            is_quote_char( char c );
-extern  bool            is_function_char( char c );
-extern  bool            is_lay_att_char( char c );
-extern  bool            is_id_char( char c );
-extern  bool            is_macro_char( char c );
-extern  bool            is_space_tab_char( char c );
-extern  bool            is_stop_char( char c );
-extern  bool            is_symbol_char( char c );
-extern  char            parse_char( const char *pa, size_t len );
-extern  void            unquote_if_quoted( char **a, char **z );
+extern  void        garginit( void );
+extern  void        garginitdot( void );
+extern  condcode    getarg( void );
+extern  condcode    getqst( void );
+extern  bool        is_quote_char( char c );
+extern  bool        is_function_char( char c );
+extern  bool        is_lay_att_char( char c );
+extern  bool        is_id_char( char c );
+extern  bool        is_macro_char( char c );
+extern  bool        is_space_tab_char( char c );
+extern  bool        is_stop_char( char c );
+extern  bool        is_symbol_char( char c );
+extern  char        parse_char( const char *pa, size_t len );
+extern  void        unquote_if_quoted( char **a, char **z );
 
 
 /* gbanner.c                            */
@@ -438,6 +437,7 @@ extern  bool            att_val_to_su( su * spaceunit, bool pos );
 extern  int32_t         conv_hor_unit( su * spaceunit, font_number font );
 extern  int32_t         conv_vert_unit( su * spaceunit, uint32_t spacing, font_number font );
 extern  bool            cw_val_to_su( char * * scaninput, su * spaceunit );
+extern  num_style       find_pgnum_style( void );
 extern  char        *   format_num( uint32_t n, char * r, size_t rsize, num_style ns );
 extern  void            free_ffh_list( ffh_entry * ffh_list );
 extern  void            free_fwd_refs( fwd_ref * fwd_refs );

@@ -106,12 +106,13 @@ static  const   content_names   content_text[max_content] =  {
     { "headtext4", 9, headtext4_content },
     { "headtext5", 9, headtext5_content },
     { "headtext6", 9, headtext6_content },
-    { "pgnuma",    6, pgnuma_content    },
+    /* The "d" forms must be first or they will never be found */
     { "pgnumad",   7, pgnumad_content   },
-    { "pgnumr",    6, pgnumr_content    },
+    { "pgnuma",    6, pgnuma_content    },
     { "pgnumrd",   7, pgnumrd_content   },
-    { "pgnumc",    6, pgnumc_content    },
+    { "pgnumr",    6, pgnumr_content    },
     { "pgnumcd",   7, pgnumcd_content   },
+    { "pgnumc",    6, pgnumc_content    },
     { "rule",      4, rule_content      },
     { "sec",       3, sec_content       },
     { "stitle",    6, stitle_content    },
@@ -319,17 +320,17 @@ void    free_layout( void )
             reg = ban->region;
         }
 
-        br_gp = ban->top_line;
+        br_gp = ban->by_line;
         while( br_gp != NULL ) {
-//            reg = br_gp->first;
-//            while( reg != NULL ) {
-//                br_gp->first = reg->next;
-//                mem_free( reg );
-//                reg = br_gp->first;
-//            }
-            ban->top_line = br_gp->next;
+            reg = br_gp->first;
+            while( reg != NULL ) {
+                br_gp->first = reg->next;
+                mem_free( reg );
+                reg = br_gp->first;
+            }
+            ban->by_line = br_gp->next;
             mem_free( br_gp );
-            br_gp = ban->top_line;
+            br_gp = ban->by_line;
         }
         ban1 = ban->next;
         mem_free( ban );

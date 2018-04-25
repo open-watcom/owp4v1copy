@@ -369,58 +369,36 @@ static void preprocess_script_region( region_lay_tag * reg )
 static void finish_banners( void )
 {
     banner_lay_tag  *   cur_ban;
+    ban_reg_group   *   cur_grp;
+    ban_reg_group   *   old_grp;
     region_lay_tag  *   cur_reg;
+    region_lay_tag  *   prev_reg;
+    region_lay_tag  *   sav_reg;
     region_lay_tag  *   top_line_reg;
-    font_number         font_save;
     uint32_t            ban_line;
     uint32_t            max_reg_depth;
     font_number         max_reg_font;
     uint32_t            min_top_line;
 
-    font_save = g_curr_font;
     for( cur_ban = layout_work.banner; cur_ban != NULL; cur_ban = cur_ban->next ) {
-
-        /****************************************************************/
-        /* Set curr_ban->style to the number style, if any              */
-        /* This works for one region only; if multiple regions are      */
-        /* implemented, testing for the correct order of checking them  */
-        /* and then implementation of that order will be needed         */
-        /****************************************************************/
-                                                                            
-        switch( cur_ban->docsect ) {
-        case abstract_ban :
-        case appendix_ban :
-        case backm_ban :
-        case body_ban :
-        case preface_ban :
-
-        /* update curr_ban->style if the region content_type is "pgnumX" */
-
-            switch( cur_ban->region->contents.content_type ) {
-            case pgnuma_content :
-            case pgnumad_content :
-            case pgnumr_content :
-            case pgnumrd_content :
-            case pgnumc_content :
-            case pgnumcd_content :
-                cur_ban->style = cur_ban->region->contents.content_type;
-            }
-        }
-
         ban_line = 0;
         max_reg_depth = 0;
         max_reg_font = 0;
         min_top_line = UINT32_MAX;      // start at very large positive number
         top_line_reg = NULL;
-        for( cur_reg = cur_ban->region; cur_reg != NULL; cur_reg = cur_reg->next ) {
-            g_curr_font = font_save;   // horizontal attributes use default font
+
+        cur_reg = cur_ban->region;
+        prev_reg = NULL;
+        
+        while(  cur_reg != NULL ) {
+            /* horizontal attributes use default font */
             cur_reg->reg_indent = conv_hor_unit( &cur_reg->indent, g_curr_font );
             cur_reg->reg_hoffset = conv_hor_unit( &cur_reg->hoffset, g_curr_font );
             cur_reg->reg_width = conv_hor_unit( &cur_reg->width, g_curr_font );
 
-            g_curr_font = cur_reg->font; // vertical attributes use the banregion font
-            cur_reg->reg_voffset = conv_vert_unit( &cur_reg->voffset, 1, g_curr_font );
-            cur_reg->reg_depth = conv_vert_unit( &cur_reg->depth, 1, g_curr_font );
+            /* vertical attributes use the banregion font */
+            cur_reg->reg_voffset = conv_vert_unit( &cur_reg->voffset, 1, cur_reg->font );
+            cur_reg->reg_depth = conv_vert_unit( &cur_reg->depth, 1, cur_reg->font );
 
             if( max_reg_depth < cur_reg->reg_voffset + cur_reg->reg_depth ) {
                 max_reg_depth = cur_reg->reg_voffset + cur_reg->reg_depth;
@@ -434,24 +412,96 @@ static void finish_banners( void )
                 top_line_reg = cur_reg;
             }
             preprocess_script_region( cur_reg );
+
+            /****************************************************************/
+            /* Re-sort the regions by voffset                               */
+            /* Regiions with the same voffset are linked in refnum order    */
+            /****************************************************************/
+
+            sav_reg = cur_reg;                  // detach current region
+            cur_ban->region = cur_reg->next;    // from start of list
+            cur_reg = cur_ban->region;
+            sav_reg->next = NULL;
+
+            if( cur_ban->by_line == NULL ) {    // first region
+                cur_ban->by_line = mem_alloc( sizeof(ban_reg_group) );
+                cur_ban->by_line->next = NULL;
+                cur_ban->by_line->first = sav_reg;
+                cur_ban->by_line->last = sav_reg;
+                cur_ban->by_line->voffset = sav_reg->reg_voffset;
+            } else {
+                old_grp = NULL;
+                for( cur_grp = cur_ban->by_line; cur_grp != NULL; cur_grp = cur_grp->next ) {
+                    if( cur_grp->voffset == sav_reg->reg_voffset ) {    // add to group
+                        cur_grp->last->next = sav_reg;
+                        cur_grp->last = sav_reg;
+                    } else if( cur_grp->voffset > sav_reg->reg_voffset ) {  // insert/add new group
+                        if( cur_grp = cur_ban->by_line ) {                  // insert before first group
+                            cur_grp->next = cur_ban->by_line;
+                            cur_ban->by_line = cur_grp;
+                        } else {                                            // insert after existing group or add at end
+                            cur_grp->next = mem_alloc( sizeof(ban_reg_group) );
+                            cur_grp = cur_grp->next;
+                            cur_grp->next = old_grp->next;
+                        }
+                        cur_grp->last->next = sav_reg;
+                        cur_grp->last = sav_reg;
+                        cur_grp->voffset = sav_reg->reg_voffset;
+                    } else {
+                        old_grp = cur_grp;
+                        continue;
+                    }
+                    break;
+                }
+            }
         }
-        g_curr_font = font_save;       // horizontal attributes use default font
+        /* horizontal attributes use default font */
         cur_ban->ban_left_adjust = conv_hor_unit( &cur_ban->left_adjust, g_curr_font );
         cur_ban->ban_right_adjust = conv_hor_unit( &cur_ban->right_adjust, g_curr_font );
 
-        g_curr_font = max_reg_font; // vertical attribute uses the largest banregion font
-        cur_ban->ban_depth = conv_vert_unit( &cur_ban->depth, 1, g_curr_font );
-
-        cur_ban->top_line = mem_alloc( sizeof( ban_reg_group ) );
-        cur_ban->top_line->next = NULL;
-        cur_ban->top_line->first = top_line_reg;
+        /* vertical attribute uses the largest banregion font */
+        cur_ban->ban_depth = conv_vert_unit( &cur_ban->depth, 1, max_reg_font );
 
         if( cur_ban->ban_depth < max_reg_depth ) {
             xx_err( err_banreg_too_deep );
             cur_ban->ban_depth = max_reg_depth;
         }
+
+        /****************************************************************/
+        /* Set curr_ban->style to the number style, if any              */
+        /* The search order is: first in vline order, then in refnum    */
+        /* order                                                        */
+        /* The first number style found is used                         */
+        /****************************************************************/
+
+        if( cur_ban->style == no_content ) {    // only update if not already changed
+                                                                            
+            switch( cur_ban->docsect ) {
+            case abstract_ban :
+            case appendix_ban :
+            case backm_ban :
+            case body_ban :
+            case preface_ban :
+
+                for( cur_grp = cur_ban->by_line; cur_grp != NULL; cur_grp = cur_grp->next ) {
+                    for( cur_reg = cur_grp->first; cur_reg != NULL; cur_reg = cur_reg->next ) {
+
+                        /* update curr_ban->style if the region content_type is "pgnumX" */
+
+                        switch( cur_reg->contents.content_type ) {
+                        case pgnuma_content :
+                        case pgnumad_content :
+                        case pgnumr_content :
+                        case pgnumrd_content :
+                        case pgnumc_content :
+                        case pgnumcd_content :
+                            cur_ban->style = cur_reg->contents.content_type;
+                        }
+                    }
+                }
+            }
+        }
     }
-    g_curr_font = font_save;
     return;
 }
 
