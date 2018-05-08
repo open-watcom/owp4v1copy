@@ -413,7 +413,12 @@ global char str_tags[t_MAX + 1][10]
 #undef xmystr
 #undef mystr
 
+/***************************************************************************/
+/* The tab lists.                                                          */
+/***************************************************************************/
 
+global  tab_list        def_tabs;   // tabs at columns 6, 11, 16, ..., 81
+global  tab_list        user_tabs;  // for tabs defined by control word TB
 
 /***************************************************************************/
 /*  :LAYOUT  data                                                          */
@@ -423,13 +428,17 @@ global  int32_t         lay_ind;        // index into lay_tab for attribute proc
 global  layout_data     layout_work;    // layout used for formatting
 global  laystack    *   lay_files;      // layout file(s) specified on cmdline
 
+/***************************************************************************/
+/*  document sections for banner definition                                */
+/***************************************************************************/
+
+extern  const   ban_sections    doc_sections[max_ban];
 
 /***************************************************************************/
-/* The tab lists.                                                          */
+/*  place names for fig and banner definition                              */
 /***************************************************************************/
 
-global  tab_list        def_tabs;   // tabs at columns 6, 11, 16, ..., 81
-global  tab_list        user_tabs;  // for tabs defined by control word TB
+extern  const   ban_places    bf_places[max_place];
 
 /***************************************************************************/
 /* Layout attribute names as character strings                             */
@@ -438,7 +447,6 @@ global  tab_list        user_tabs;  // for tabs defined by control word TB
 /*                            ....+....1....+..                            */
 /***************************************************************************/
 extern  const   char    att_names[e_dummy_max + 1][18];
-
 
 /***************************************************************************/
 /*   declarations for the sequence of LAYOUT attribute values              */

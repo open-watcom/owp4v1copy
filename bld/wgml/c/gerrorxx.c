@@ -187,6 +187,34 @@ void auto_att_err( void )
     return;
 }
 
+void ban_reg_err( msg_ids num, banner_lay_tag * in_ban1, banner_lay_tag * in_ban2,
+                  region_lay_tag * in_reg1, region_lay_tag * in_reg2 )
+// various vertical and horizontal spacing errors of banners and regions
+{
+    if( in_ban1 != NULL ) {
+        g_err( inf_ban_id, doc_sections[in_ban1->docsect].name, bf_places[in_ban1->place].name );
+        if( in_ban2 != NULL ) {
+            g_info( inf_ban_id, doc_sections[in_ban2->docsect].name, bf_places[in_ban2->place].name );
+        }
+    } else if( in_ban2 != NULL ) {
+        g_err( inf_ban_id, doc_sections[in_ban2->docsect].name, bf_places[in_ban2->place].name );
+    } else {
+        internal_err( __FILE__, __LINE__ );
+    }
+
+    if( in_reg1 != NULL ) {
+        g_info( inf_reg_id, in_reg1->reg_hoffset, in_reg1->reg_voffset, in_reg1->reg_indent );
+    }
+
+    if( in_reg2 != NULL ) {
+        g_info( inf_reg_id, in_reg2->reg_hoffset, in_reg2->reg_voffset, in_reg2->reg_indent );
+    }
+
+    g_info( num );
+    file_mac_info();
+    return;
+}
+
 void cw_err( void )
 {
 // SC--006: Unrecognized control word

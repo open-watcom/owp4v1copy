@@ -57,7 +57,8 @@ typedef enum bf_place {
     topodd_place,                       // topodd and following only :BANNER
     topeven_place,
     botodd_place,
-    boteven_place
+    boteven_place,
+    max_place
 } bf_place;
  
 /***************************************************************************/
@@ -88,6 +89,26 @@ typedef enum ban_docsect {
     max_ban                             // has to be last defined value
 } ban_docsect;
  
+/***************************************************************************/
+/*  document sections for banner definition                                */
+/***************************************************************************/
+
+typedef struct  ban_sections {
+    char            name[12];
+    size_t          len;
+    ban_docsect     type;
+} ban_sections;
+
+/***************************************************************************/
+/*  place names for banner definition                                      */
+/***************************************************************************/
+
+typedef struct  ban_places {
+    char            name[12];
+    size_t          len;
+    bf_place        type;
+} ban_places;
+
 /***************************************************************************/
 /*  definitions for frame   :FIG tag and others                            */
 /***************************************************************************/

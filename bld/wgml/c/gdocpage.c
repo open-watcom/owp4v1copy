@@ -1383,7 +1383,7 @@ void do_page_out( void )
     }
     t_page.cur_width = 0;
 
-    if( (t_page.top_banner != NULL) && (t_page.top_banner->region != NULL) ) {
+    if( (t_page.top_banner != NULL) && (t_page.top_banner->by_line != NULL) ) {
         save_prev = g_prev_font;            // will be reset for top banner
         out_ban_top();
 
@@ -1450,7 +1450,7 @@ void do_page_out( void )
         t_page.cur_width = sav_hs;
     }
 
-    if( (t_page.bottom_banner != NULL) && (t_page.bottom_banner->region != NULL) ) {
+    if( (t_page.bottom_banner != NULL) && (t_page.bottom_banner->by_line != NULL) ) {
         out_ban_bot();
     }
 

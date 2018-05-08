@@ -641,9 +641,6 @@ pick( ERR_RIGHT_MARGIN_2_SMALL, "The right margin is too small when adjusted for
 
 /* element can't be split and won't fit on any page */
 
-pick( ERR_BANREG_TOO_DEEP,      "Banner region exceeds banner depth",
-                                "Banner region exceeds banner depth" )
-
 pick( ERR_HEADING_TOO_DEEP,     "Heading is too large for the output page",
                                 "Heading is too large for the output page")
 
@@ -799,13 +796,34 @@ pick( ERR_STRUCT_RANGE,         "The ix attribute has a range of 1 through 9",
 pick( WNG_INDEX_OPT,            "Index option must be specified to process index tags",
                                 "Index option must be specified to process index tags" )
 
-/* Banner/region Messages */
+/* Banner and Region Messages */
 
 pick( ERR_ALL_BAN_ATT_RQRD,     "All attributes required when defining new banner",
                                 "All attributes required when defining new banner" )
 
 pick( ERR_ALL_REG_ATT_RQRD,     "All attributes required when defining new banner region",
                                 "All attributes required when defining new banner region" )
+
+pick( ERR_BAN_DEPTH1,           "Banner depth is too small",
+                                "Banner depth is too small" )
+
+pick( ERR_BAN_DEPTH2,           "Depth of banner(s) too large for a page",
+                                "Depth of banner(s) too large for a page" )
+
+pick( ERR_BAN_WIDTH,            "Banner width is too small",
+                                "Banner width is too small" )
+
+pick( ERR_BANREG_EXTEND,        "Cannot extend two regions into each other",
+                                "Cannot extend two regions into each other" )
+
+pick( ERR_BANREG_OVERLAP,       "Banner regions overlap",
+                                "Banner regions overlap" )
+
+pick( ERR_BANREG_DEPTH,         "Banner region exceeds banner depth",
+                                "Banner region exceeds banner depth" )
+
+pick( ERR_BANREG_WIDTH,         "Banner region exceeds banner width",
+                                "Banner region exceeds banner width" )
 
 pick( ERR_BOTH_REFS,            "If one of refdoc or refplace is specified both are required",
                                 "If one of refdoc or refplace is specified both are required" )
@@ -821,6 +839,12 @@ pick( ERR_SCR_FMT,              "The script_format attribute has been set to NO 
 
 pick( ERR_SELF_REF,             "Cannot reference banner currently being defined",
                                 "Cannot reference banner currently being defined" )
+
+pick( INF_BAN_ID,               "For banner with docsect = %s and place = %s",
+                                "For banner with docsect = %s and place = %s" )
+
+pick( INF_REG_ID,               "For region with hoffset = %i, voffset = %i, and indent = %i",
+                                "For region with hoffset = %i, voffset = %i, and indent = %i" )
 
 /* Value Parsing Messages */
 

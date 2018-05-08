@@ -368,18 +368,26 @@ static void preprocess_script_region( region_lay_tag * reg )
 
 static void finish_banners( void )
 {
+    banner_lay_tag  *   bot_ban;
     banner_lay_tag  *   cur_ban;
+    banner_lay_tag  *   top_ban;
     ban_reg_group   *   cur_grp;
     ban_reg_group   *   old_grp;
+    font_number         max_reg_font;
     region_lay_tag  *   cur_reg;
     region_lay_tag  *   prev_reg;
     region_lay_tag  *   sav_reg;
     region_lay_tag  *   top_line_reg;
     uint32_t            ban_line;
+    uint32_t            ban_bot_depth;
+    uint32_t            ban_top_depth;
     uint32_t            max_reg_depth;
-    font_number         max_reg_font;
     uint32_t            min_top_line;
 
+    ban_bot_depth = 0;
+    ban_top_depth = 0;
+    bot_ban = NULL;
+    top_ban = NULL;
     for( cur_ban = layout_work.banner; cur_ban != NULL; cur_ban = cur_ban->next ) {
         ban_line = 0;
         max_reg_depth = 0;
@@ -387,9 +395,39 @@ static void finish_banners( void )
         min_top_line = UINT32_MAX;      // start at very large positive number
         top_line_reg = NULL;
 
+        /****************************************************************/
+        /* Set curr_ban->style to the number style, if any              */
+        /* The search order is the refnum order                         */
+        /* The first number style found is used                         */
+        /****************************************************************/
+
+        switch( cur_ban->docsect ) {
+        case abstract_ban :
+        case appendix_ban :
+        case backm_ban :
+        case body_ban :
+        case preface_ban :
+            for( cur_reg = cur_ban->region; cur_reg != NULL; cur_reg = cur_reg->next ) {
+
+                /* update curr_ban->style if the region content_type is "pgnumX" */
+
+                switch( cur_reg->contents.content_type ) {
+                case pgnuma_content :
+                case pgnumad_content :
+                case pgnumr_content :
+                case pgnumrd_content :
+                case pgnumc_content :
+                case pgnumcd_content :
+                    cur_ban->style = cur_reg->contents.content_type;
+                }
+                if( cur_ban->style != no_content ) {    // exit when first style found
+                    break;
+                }
+            }
+        }
+
         cur_reg = cur_ban->region;
         prev_reg = NULL;
-        
         while(  cur_reg != NULL ) {
             /* horizontal attributes use default font */
             cur_reg->reg_indent = conv_hor_unit( &cur_reg->indent, g_curr_font );
@@ -435,6 +473,7 @@ static void finish_banners( void )
                     if( cur_grp->voffset == sav_reg->reg_voffset ) {    // add to group
                         cur_grp->last->next = sav_reg;
                         cur_grp->last = sav_reg;
+                        sav_reg = NULL;
                     } else if( cur_grp->voffset > sav_reg->reg_voffset ) {  // insert/add new group
                         if( cur_grp = cur_ban->by_line ) {                  // insert before first group
                             cur_grp->next = cur_ban->by_line;
@@ -447,11 +486,21 @@ static void finish_banners( void )
                         cur_grp->last->next = sav_reg;
                         cur_grp->last = sav_reg;
                         cur_grp->voffset = sav_reg->reg_voffset;
+                        sav_reg = NULL;
                     } else {
                         old_grp = cur_grp;
                         continue;
                     }
                     break;
+                }
+                if( sav_reg != NULL ) {                                     // add new group at end
+                    old_grp->next = mem_alloc( sizeof(ban_reg_group) );
+                    old_grp = old_grp->next;
+                    old_grp->next = NULL;
+                    old_grp->first = sav_reg;
+                    old_grp->last = sav_reg;
+                    old_grp->voffset = sav_reg->reg_voffset;
+                    sav_reg = NULL;
                 }
             }
         }
@@ -462,46 +511,53 @@ static void finish_banners( void )
         /* vertical attribute uses the largest banregion font */
         cur_ban->ban_depth = conv_vert_unit( &cur_ban->depth, 1, max_reg_font );
 
+        /* per-banner error checks -- may be moved */
+        if( cur_ban->ban_depth == 0 ) {
+            ban_reg_err( err_ban_depth1, cur_ban, NULL, NULL, NULL );
+        }
+
+        if( cur_ban->ban_depth > g_page_depth ) {
+            ban_reg_err( err_ban_depth2, cur_ban, NULL, NULL, NULL );
+        }
+
+        if( (cur_ban->ban_left_adjust + cur_ban->ban_right_adjust) >= g_net_page_width ) {
+            ban_reg_err( err_ban_width, cur_ban, NULL, NULL, NULL );
+        }
+
+        /* the original error check, will be adjusted in future */
         if( cur_ban->ban_depth < max_reg_depth ) {
-            xx_err( err_banreg_too_deep );
+            xx_err( err_banreg_depth );
             cur_ban->ban_depth = max_reg_depth;
         }
 
-        /****************************************************************/
-        /* Set curr_ban->style to the number style, if any              */
-        /* The search order is: first in vline order, then in refnum    */
-        /* order                                                        */
-        /* The first number style found is used                         */
-        /****************************************************************/
-
-        if( cur_ban->style == no_content ) {    // only update if not already changed
-                                                                            
-            switch( cur_ban->docsect ) {
-            case abstract_ban :
-            case appendix_ban :
-            case backm_ban :
-            case body_ban :
-            case preface_ban :
-
-                for( cur_grp = cur_ban->by_line; cur_grp != NULL; cur_grp = cur_grp->next ) {
-                    for( cur_reg = cur_grp->first; cur_reg != NULL; cur_reg = cur_reg->next ) {
-
-                        /* update curr_ban->style if the region content_type is "pgnumX" */
-
-                        switch( cur_reg->contents.content_type ) {
-                        case pgnuma_content :
-                        case pgnumad_content :
-                        case pgnumr_content :
-                        case pgnumrd_content :
-                        case pgnumc_content :
-                        case pgnumcd_content :
-                            cur_ban->style = cur_reg->contents.content_type;
-                        }
-                    }
-                }
+        switch( cur_ban->place ) {
+        case bottom_place :
+        case boteven_place :
+        case botodd_place :
+            if( cur_ban->ban_depth > ban_bot_depth ) {
+                ban_bot_depth = cur_ban->ban_depth;
+                bot_ban = cur_ban;
             }
+            break;
+        case top_place :
+        case topeven_place :
+        case topodd_place :
+            if( cur_ban->ban_depth > ban_top_depth ) {
+                ban_top_depth = cur_ban->ban_depth;
+                top_ban = cur_ban;
+            }
+            break;
+        default:
+            internal_err( __FILE__, __LINE__ );
+            break;
         }
     }
+
+    /* overall banner error checks */
+    if( (ban_bot_depth + ban_top_depth) > g_page_depth ) {
+        ban_reg_err( err_ban_depth2, bot_ban, top_ban, NULL, NULL );
+    }
+
     return;
 }
 

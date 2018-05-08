@@ -41,38 +41,6 @@
 static char  const      stryes[] =  { "yes" };
 static char  const      strno[]  =  { "no" };
 
-/***************************************************************************/
-/*  document sections for banner definition                                */
-/***************************************************************************/
-
-typedef struct  ban_sections {
-    char            name[12];
-    size_t          len;
-    ban_docsect     type;
-} ban_sections;
-
-static  const   ban_sections    doc_sections[max_ban] = {
-    { "???",      3, no_ban        },
-    { "abstract", 8, abstract_ban  },
-    { "appendix", 8, appendix_ban  },
-    { "backm",    5, backm_ban     },
-    { "body",     4, body_ban      },
-    { "figlist",  7, figlist_ban   },
-    { "index",    5, index_ban     },
-    { "preface",  7, preface_ban   },
-    { "toc",      3, toc_ban       },
-    { "head0",    5, head0_ban     },
-    { "head1",    5, head1_ban     },
-    { "head2",    5, head2_ban     },
-    { "head3",    5, head3_ban     },
-    { "head4",    5, head4_ban     },
-    { "head5",    5, head5_ban     },
-    { "head6",    5, head6_ban     },
-    { "letfirst", 8, letfirst_ban  },
-    { "letlast",  7, letlast_ban   },
-    { "letter",   6, letter_ban    },
-};
-
 typedef struct  content_names {
     char                name[12];
     size_t              len;
@@ -121,6 +89,48 @@ static  const   content_names   content_text[max_content] =  {
     { "tophead",   7, tophead_content   },
     /* Must be last: will match any following entries */
     { "",          0, string_content    },  // special
+};
+
+/***************************************************************************/
+/*  document sections for banner definition                                */
+/***************************************************************************/
+
+const   ban_sections    doc_sections[max_ban] = {
+    { "???",      3, no_ban        },
+    { "abstract", 8, abstract_ban  },
+    { "appendix", 8, appendix_ban  },
+    { "backm",    5, backm_ban     },
+    { "body",     4, body_ban      },
+    { "figlist",  7, figlist_ban   },
+    { "index",    5, index_ban     },
+    { "preface",  7, preface_ban   },
+    { "toc",      3, toc_ban       },
+    { "head0",    5, head0_ban     },
+    { "head1",    5, head1_ban     },
+    { "head2",    5, head2_ban     },
+    { "head3",    5, head3_ban     },
+    { "head4",    5, head4_ban     },
+    { "head5",    5, head5_ban     },
+    { "head6",    5, head6_ban     },
+    { "letfirst", 8, letfirst_ban  },
+    { "letlast",  7, letlast_ban   },
+    { "letter",   6, letter_ban    },
+};
+
+
+/***************************************************************************/
+/*  place names for fig and banner definition                              */
+/***************************************************************************/
+
+const   ban_places    bf_places[max_place] = {
+    { "???",      3, no_place      },
+    { "inline",   6, inline_place  },
+    { "top",      3, top_place     },
+    { "bottom",   6, bottom_place  },
+    { "topodd",   6, topodd_place  },
+    { "topeven",  7, topeven_place },
+    { "botodd",   6, botodd_place  },
+    { "boteven",  7, boteven_place },
 };
 
 
@@ -913,23 +923,17 @@ void    o_page_position( FILE * f, lay_att curr, page_pos * tm )
 bool    i_place( char * p, lay_att curr, bf_place * tm )
 {
     bool        cvterr;
+    int         k;
 
     cvterr = false;
-    if( !strnicmp( "topeven", p, 7 ) ) {
-        *tm = topeven_place;
-    } else if( !strnicmp( "bottom", p, 6 ) ) {
-        *tm = bottom_place;
-    } else if( !strnicmp( "inline", p, 6 ) ) {
-        *tm = inline_place;
-    } else if( !strnicmp( "topodd", p, 6 ) ) {
-        *tm = topodd_place;
-    } else if( !strnicmp( "top", p, 3 ) ) {// check for top later than topXXX
-        *tm = top_place;
-    } else if( !strnicmp( "botodd", p, 6 ) ) {
-        *tm = botodd_place;
-    } else if( !strnicmp( "boteven", p, 7 ) ) {
-        *tm = boteven_place;
-    } else {
+    *tm = no_place;
+    for( k = no_place; k < max_place; ++k ) {
+        if( !strnicmp( bf_places[k].name, p, bf_places[k].len ) ) {
+            *tm = bf_places[k].type;
+            break;
+        }
+    }
+    if( *tm == no_place ) {
         xx_line_err( err_inv_att_val, p );
     }
     return( cvterr );
@@ -937,22 +941,10 @@ bool    i_place( char * p, lay_att curr, bf_place * tm )
 
 void    o_place( FILE * f, lay_att curr, bf_place * tm )
 {
-    char    * p;
+    const   char    * p;
 
-    if( *tm == top_place ) {
-        p = "top";
-    } else if( *tm == bottom_place ) {
-        p = "bottom";
-    } else if( *tm == inline_place ) {
-        p = "inline";
-    } else if( *tm == topodd_place ) {
-        p = "topodd";
-    } else if( *tm == topeven_place ) {
-        p = "topeven";
-    } else if( *tm == botodd_place ) {
-        p = "botodd";
-    } else if( *tm == boteven_place ) {
-        p = "boteven";
+    if( *tm >= no_place && *tm < max_place ) {
+        p = bf_places[*tm].name;
     } else {
         p = "???";
     }

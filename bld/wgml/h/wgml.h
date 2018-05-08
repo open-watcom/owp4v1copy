@@ -152,6 +152,7 @@ extern  void    g_suicide( void );
 /* gerrorxx.c                           */
 extern  void    att_val_err( const char * attname );
 extern  void    auto_att_err( void );
+extern  void    ban_reg_err( msg_ids num, banner_lay_tag * in_ban1, banner_lay_tag * in_ban2, region_lay_tag * in_reg1, region_lay_tag * in_reg2 );
 extern  void    cw_err( void );
 extern  void    dc_opt_err( const msg_ids num, const char * pa );
 extern  void    dc_opt_warn( const char * pa );
