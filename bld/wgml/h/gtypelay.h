@@ -771,15 +771,14 @@ typedef struct region_lay_tag {
 
 /***************************************************************************/
 /*  banner region group                                                    */
-/*                                                                         */
 /*  Note: each group corresponds to one vertical position in the banner    */
 /***************************************************************************/
 
 typedef struct ban_reg_group {
     struct  ban_reg_group       *   next;       // next banner region group
             region_lay_tag      *   first;      // first BANREGION
-            region_lay_tag      *   last;       // attachment point within voffset value
             uint32_t                voffset;    // value of 'voffset' in base units
+            uint32_t                max_depth;  // largest value of 'depth' in base units
 } ban_reg_group;
 
 /***************************************************************************/
