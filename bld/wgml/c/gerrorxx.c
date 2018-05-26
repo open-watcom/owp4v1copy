@@ -203,11 +203,13 @@ void ban_reg_err( msg_ids num, banner_lay_tag * in_ban1, banner_lay_tag * in_ban
     }
 
     if( in_reg1 != NULL ) {
-        g_info( inf_reg_id, in_reg1->reg_hoffset, in_reg1->reg_voffset, in_reg1->reg_indent );
+        g_info( inf_reg_id, in_reg1->hoffset.su_txt, in_reg1->voffset.su_txt,
+                in_reg1->indent.su_txt );
     }
 
     if( in_reg2 != NULL ) {
-        g_info( inf_reg_id, in_reg2->reg_hoffset, in_reg2->reg_voffset, in_reg2->reg_indent );
+        g_info( inf_reg_id, in_reg2->hoffset.su_txt, in_reg2->voffset.su_txt,
+                in_reg2->indent.su_txt );
     }
 
     g_info( num );

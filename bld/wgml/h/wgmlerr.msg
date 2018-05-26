@@ -843,8 +843,8 @@ pick( ERR_SELF_REF,             "Cannot reference banner currently being defined
 pick( INF_BAN_ID,               "For banner with docsect = %s and place = %s",
                                 "For banner with docsect = %s and place = %s" )
 
-pick( INF_REG_ID,               "For region with hoffset = %i, voffset = %i, and indent = %i",
-                                "For region with hoffset = %i, voffset = %i, and indent = %i" )
+pick( INF_REG_ID,               "For region with hoffset = %s, voffset = %s, and indent = %s",
+                                "For region with hoffset = %s, voffset = %s, and indent = %s" )
 
 /* Value Parsing Messages */
 

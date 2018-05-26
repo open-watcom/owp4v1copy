@@ -362,7 +362,7 @@ static void preprocess_script_region( region_lay_tag * reg )
 }
 
 /****************************************************************************/
-/* Computes non-attribute fields, resorts regions for output                */
+/* Computes non-attribute fields, re-sorts regions for output               */
 /* Finalizes region start positions and sizes                               */
 /* Also validates the banner and issues error messages as needed            */
 /****************************************************************************/
@@ -383,8 +383,6 @@ static void finish_banners( void )
     uint32_t            ban_line;
     uint32_t            ban_bot_depth;
     uint32_t            ban_top_depth;
-    uint32_t            max_reg_depth;
-    uint32_t            min_top_line;
 
     ban_bot_depth = 0;
     ban_top_depth = 0;
@@ -392,10 +390,8 @@ static void finish_banners( void )
     top_ban = NULL;
 
     for( cur_ban = layout_work.banner; cur_ban != NULL; cur_ban = cur_ban->next ) {
-        ban_line = 0;
-        max_reg_depth = 0;
+        ban_line = wgml_fonts[FONT0].line_height;       // minimum line height for banner
         max_reg_font = 0;
-        min_top_line = UINT32_MAX;      // start at very large positive number
         top_line_reg = NULL;
 
         /* horizontal attributes use default font */
@@ -404,6 +400,19 @@ static void finish_banners( void )
 
         if( (cur_ban->ban_left_adjust + cur_ban->ban_right_adjust) >= g_net_page_width ) {
             ban_reg_err( err_ban_width, cur_ban, NULL, NULL, NULL );
+        }
+
+        /****************************************************************/
+        /* Compute values used for vertical space occupied by banner    */
+        /****************************************************************/
+
+        for( cur_reg = cur_ban->region; cur_reg != NULL; cur_reg = cur_reg->next ) {
+            if( wgml_fonts[cur_reg->font].line_height > wgml_fonts[FONT0].line_height ) {
+                if( wgml_fonts[cur_reg->font].line_height > ban_line ) {
+                    max_reg_font = cur_reg->font;
+                    ban_line = wgml_fonts[max_reg_font].line_height;
+                }
+            }
         }
 
         /* vertical attribute uses the largest banregion font */
@@ -449,21 +458,25 @@ static void finish_banners( void )
         }
 
         /****************************************************************/
-        /* Compute values for each region before resorting them         */
+        /* Compute values for each region before re-sorting them        */
         /****************************************************************/
 
         for( cur_reg = cur_ban->region; cur_reg != NULL; cur_reg = cur_reg->next ) {
             /* horizontal attributes use default font */
             cur_reg->reg_indent = conv_hor_unit( &cur_reg->indent, g_curr_font );
-            if( cur_reg->hoffset.su_u == SU_lay_left ) {
+            if( cur_reg->hoffset.su_u == SU_lay_left ) {            // left banner margin
                 cur_reg->reg_hoffset = cur_ban->ban_left_adjust; 
-            } else if( cur_reg->hoffset.su_u == SU_lay_centre ) {
+                cur_reg->reg_h_type = SU_lay_left;                  // h_offset is left boundary
+            } else if( cur_reg->hoffset.su_u == SU_lay_centre ) {   // banner center point
                 cur_reg->reg_hoffset = cur_ban->ban_left_adjust +
                 ((g_net_page_width - cur_ban->ban_right_adjust - cur_ban->ban_left_adjust) / 2 );
-            } else if( cur_reg->hoffset.su_u == SU_lay_right ) {
+                cur_reg->reg_h_type = SU_lay_centre;                // h_offset is center
+            } else if( cur_reg->hoffset.su_u == SU_lay_right ) {    // right banner margin
                 cur_reg->reg_hoffset = g_net_page_width - cur_ban->ban_right_adjust;
-            } else {
+                cur_reg->reg_h_type = SU_lay_right;                 // h_offset is right boundary
+            } else {                                                // numeric value specified
                 cur_reg->reg_hoffset = conv_hor_unit( &cur_reg->hoffset, g_curr_font );
+                cur_reg->reg_h_type = SU_lay_left;                  // h_offset is left boundry
             }
             cur_reg->reg_width = conv_hor_unit( &cur_reg->width, g_curr_font );
 
@@ -471,18 +484,12 @@ static void finish_banners( void )
             cur_reg->reg_voffset = conv_vert_unit( &cur_reg->voffset, 1, cur_reg->font );
             cur_reg->reg_depth = conv_vert_unit( &cur_reg->depth, 1, cur_reg->font );
 
-            if( max_reg_depth < cur_reg->reg_voffset + cur_reg->reg_depth ) {
-                max_reg_depth = cur_reg->reg_voffset + cur_reg->reg_depth;
+            if( cur_ban->ban_depth < cur_reg->reg_voffset + cur_reg->reg_depth ) {
+                ban_reg_err( err_banreg_depth, cur_ban, NULL, cur_reg, NULL );
             }
-            if( ban_line < wgml_fonts[cur_reg->font].line_height ) {
-                max_reg_font = cur_reg->font;
-                ban_line = wgml_fonts[max_reg_font].line_height;
-            }
-            if( min_top_line > cur_reg->reg_voffset + cur_reg->reg_depth ) {
-                min_top_line = cur_reg->reg_voffset + cur_reg->reg_depth;
-                top_line_reg = cur_reg;
-            }
+
             preprocess_script_region( cur_reg );
+
         }
 
         /****************************************************************/
@@ -492,9 +499,8 @@ static void finish_banners( void )
 
         sav_reg = cur_ban->region;          // detach current region
         cur_ban->region = sav_reg->next;    // from start of list
-        cur_reg = cur_ban->region;
         sav_reg->next = NULL;
-        while( cur_ban->region != NULL ) {
+        while( sav_reg != NULL ) {
             if( cur_ban->by_line == NULL ) {    // first region
                 cur_ban->by_line = mem_alloc( sizeof(ban_reg_group) );
                 cur_ban->by_line->next = NULL;
@@ -504,7 +510,6 @@ static void finish_banners( void )
             } else {
                 old_grp = NULL;
                 for( cur_grp = cur_ban->by_line; cur_grp != NULL; cur_grp = cur_grp->next ) {
-//// sav_reg can be NULL at this point -- why???
                     if( cur_grp->voffset == sav_reg->reg_voffset ) {    // add to group
                         old_reg = NULL;
                         for( cur_reg = cur_grp->first; cur_reg != NULL; cur_reg = cur_reg->next ) {
@@ -529,7 +534,7 @@ static void finish_banners( void )
                             break;
                         }
                         if( sav_reg != NULL ) {                 // add to end of list
-                            old_reg->next = NULL;
+                            old_reg->next = sav_reg;
                             if( cur_grp->max_depth < sav_reg->reg_depth ) {
                                 cur_grp->max_depth = sav_reg->reg_depth;
                             }
@@ -571,24 +576,94 @@ static void finish_banners( void )
             }
 
             sav_reg = cur_ban->region;                  // detach current region
-            cur_ban->region = cur_ban->region->next;    // from start of list
-            cur_reg = cur_ban->region;
-            sav_reg->next = NULL;
+            if( sav_reg != NULL ) {
+                cur_ban->region = sav_reg->next;        // from start of list
+                sav_reg->next = NULL;
+            }
         }
 
         /****************************************************************/
         /* Finalize the hoffset and width of each region                */
+        /* This includes moving reg_hoffset if necessary so that it     */
+        /* at the left boundary of the region, and using reg_h_type     */
+        /* to avoid moving it more than once                            */
         /****************************************************************/
 
         old_grp = NULL;
         for( cur_grp = cur_ban->by_line; cur_grp != NULL; cur_grp = cur_grp->next ) {
+            old_reg = NULL;
+            for( cur_reg = cur_grp->first; cur_reg != NULL; cur_reg = cur_reg->next ) {
+                if( cur_reg == cur_grp->first ) {               // first region
+                    /* set hoffset to left boundary of region */
+                    if( cur_reg->width.su_u == SU_lay_extend ) {// extend to left margin
+                        if( cur_reg->reg_h_type != SU_lay_left ) {  // center or right
+                            cur_reg->reg_hoffset = cur_ban->ban_left_adjust;
+                            cur_reg->reg_h_type = SU_lay_left;
+                        }
+                    } else {                                    // explicit width
+                        if( cur_reg->reg_h_type == SU_lay_centre ) {
+                            cur_reg->reg_hoffset = cur_reg->reg_hoffset - (cur_reg->next->reg_width / 2);
+                            cur_reg->reg_h_type = SU_lay_left;
+                        } else if( cur_reg->reg_h_type == SU_lay_right ) {
+                            if( cur_reg->reg_hoffset < cur_reg->reg_width ) {
+                                /* correct position to left of banner left boundary */
+                                cur_reg->reg_hoffset = cur_ban->ban_left_adjust;
+                            } else {
+                                cur_reg->reg_hoffset = cur_reg->reg_hoffset - cur_reg->reg_width;
+                            }
+                            cur_reg->reg_h_type = SU_lay_left;
+                        }
+                    }
+                }
+                if( cur_reg->next != NULL ) {                   // interior region
+                    if( (cur_reg->width.su_u == SU_lay_extend) &&
+                            (cur_reg->next->width.su_u == SU_lay_extend) ) {    // both can't use "extend"
+                        ban_reg_err( err_banreg_extend, cur_ban, NULL, cur_reg, cur_reg->next );
+                    } else {
+                        /* set hoffset to left boundary of region */
+                        if( cur_reg->next->width.su_u != SU_lay_extend ) {  // explicit width
+                            if( cur_reg->next->reg_h_type == SU_lay_centre ) {
+                                cur_reg->next->reg_hoffset = cur_reg->next->reg_hoffset -
+                                                                    (cur_reg->next->reg_width / 2);
+                                cur_reg->next->reg_h_type = SU_lay_left;
+                            } else if( cur_reg->next->reg_h_type == SU_lay_right ) {
+                                cur_reg->next->reg_hoffset = cur_reg->next->reg_hoffset -
+                                                                        cur_reg->next->reg_width;
+                                cur_reg->next->reg_h_type = SU_lay_left;
+                            }
+                        }
+                        /* set width to reach right boundary of region */
+                        if( cur_reg->width.su_u == SU_lay_extend ) {                // next has fixed width
+                            cur_reg->reg_width = cur_reg->next->reg_hoffset - cur_reg->reg_hoffset;
+                        } else if( cur_reg->next->width.su_u == SU_lay_extend ) {   // cur_reg has fixed width
+                            cur_reg->next->reg_hoffset = cur_reg->reg_hoffset + cur_reg->reg_width;
+                        } else {                                                    // both have fixed widths
+                            if( (cur_reg->reg_hoffset + cur_reg->reg_width) >
+                                    cur_reg->next->reg_hoffset ) {      // overlap
+                                ban_reg_err( err_banreg_overlap, cur_ban, NULL, cur_reg, cur_reg->next );
+                            }
+                        }
+                    }
+                } else {                                        // last region
+                    /* set width to reach right boundary of region */
+                    if( cur_reg->width.su_u == SU_lay_extend ) {// extend to right margin
+                        cur_reg->reg_width = g_net_page_width - cur_ban->ban_right_adjust -
+                                                                cur_reg->reg_hoffset;
+                    }
+                    if( (old_reg != NULL) && ((old_reg->reg_hoffset + old_reg->reg_width) >
+                                cur_reg->reg_hoffset) ) {       // overlap
+                        ban_reg_err( err_banreg_overlap, cur_ban, NULL, cur_reg, old_reg );
+                    }
+                    if( (cur_reg->reg_hoffset + cur_reg->reg_width) >
+                            (g_net_page_width - cur_ban->ban_right_adjust) ) {
+                        ban_reg_err( err_banreg_width, cur_ban, NULL, cur_reg, NULL );
+                    }
+                }
+                old_reg = cur_reg;
+            }
         }
 
-        /* the original error check, will be adjusted in future */
-        if( cur_ban->ban_depth < max_reg_depth ) {
-            xx_err( err_banreg_depth );
-            cur_ban->ban_depth = max_reg_depth;
-        }
+        /* Set top_ban and bot_ban */
 
         switch( cur_ban->place ) {
         case bottom_place :

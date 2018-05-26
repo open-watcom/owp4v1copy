@@ -754,6 +754,7 @@ typedef struct region_lay_tag {
     uint32_t        reg_width;          // value of 'width' in base units
     uint32_t        reg_voffset;        // value of 'voffset' in base units
     uint32_t        reg_depth;          // value of 'depth' in base units
+    space_units     reg_h_type;         // type of reg_hoffset: left, middle, right
     su              indent;             // horizontal space unit or keywords
     su              hoffset;            // horizontal space unit or keywords
     su              width;              // horizontal space unit or extend
