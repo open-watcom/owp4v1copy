@@ -602,7 +602,7 @@ static void finish_banners( void )
                         }
                     } else {                                    // explicit width
                         if( cur_reg->reg_h_type == SU_lay_centre ) {
-                            cur_reg->reg_hoffset = cur_reg->reg_hoffset - (cur_reg->next->reg_width / 2);
+                            cur_reg->reg_hoffset = cur_reg->reg_hoffset - (cur_reg->reg_width / 2);
                             cur_reg->reg_h_type = SU_lay_left;
                         } else if( cur_reg->reg_h_type == SU_lay_right ) {
                             if( cur_reg->reg_hoffset < cur_reg->reg_width ) {
@@ -660,6 +660,45 @@ static void finish_banners( void )
                     }
                 }
                 old_reg = cur_reg;
+            }
+        }
+
+        /****************************************************************/
+        /* Trap any overlapping regions not yet detected                */
+        /* Specifially, those that overlap in the vertical direction    */
+        /* NOTE: overlaps detected previously fall into two categories: */
+        /*       exact match of voffset and hoffset                     */
+        /*       horizontal overlap within the same value of voffset    */
+        /*       here, it is necessary to verify that the two regions,  */
+        /*       which have different voffsets, overlap horizontally    */
+        /*       since, if they don't, the separate voffsets mean that  */
+        /*       no overlap exists                                      */
+        /*       that is, if one region has depth 2 and voffset 0, and  */
+        /*       another has voffset 1, they will overlap vertically    */
+        /*       only if they also overlap horizontally; otherwise,     */
+        /*       will simply be placed side-by-side, one starting a bit */
+        /*       lower than the other                                   */
+        /****************************************************************/
+
+//        old_grp = NULL;
+        for( cur_grp = cur_ban->by_line; cur_grp != NULL; cur_grp = cur_grp->next ) {
+            /* identify possible vertical overlap */
+            if( (cur_grp->next != NULL) && (cur_grp->voffset + cur_grp->max_depth) > cur_grp->next->voffset ) {
+                /* horizontal overlap is also needed */
+//                old_reg = NULL;
+                for( cur_reg = cur_grp->first; cur_reg != NULL; cur_reg = cur_reg->next ) {
+                    /* only proceed if this cur_reg may overlap a region in cur_grp->next */
+                    if( (cur_reg->reg_voffset + cur_reg->reg_depth) > cur_grp->next->voffset ) {
+                        /* using sav_reg to preserve the value of cur_reg */
+                        for( sav_reg = cur_grp->next->first; sav_reg != NULL; sav_reg = sav_reg->next ) {
+                            /* test for overlap */
+                            if( ((cur_reg->reg_hoffset + cur_reg->reg_width) > sav_reg->reg_hoffset) &&
+                                    ((cur_reg->reg_voffset + cur_reg->reg_depth) > sav_reg->reg_voffset) ) {
+                                ban_reg_err( err_banreg_overlap, cur_ban, NULL, cur_reg, sav_reg );
+                            }
+                        }
+                    }
+                }
             }
         }
 
