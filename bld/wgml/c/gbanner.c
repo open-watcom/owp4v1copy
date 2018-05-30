@@ -276,8 +276,7 @@ static void content_reg( region_lay_tag * region )
 
                 if( region->script_region[k].string != NULL ) {
                     strcpy_s( pbuf, strlen(region->contents.string) + 1, region->contents.string );
-                    resolve_symvar_functions( pbuf );
-                    resolve_symvar_functions( pbuf );
+                    while( resolve_symvar_functions( pbuf ) ); // loop until return shows no substitution done
                     if( *pbuf ) {
                         curr_t = alloc_text_chars( pbuf, strlen( pbuf ), region->font );
                         /***************************************************/
@@ -294,8 +293,7 @@ static void content_reg( region_lay_tag * region )
         } else {    // no script format only normal string with perhaps vars
 
             strcpy_s( pbuf, strlen(region->contents.string) + 1, region->contents.string );
-            resolve_symvar_functions( pbuf );
-            resolve_symvar_functions( pbuf );
+            while( resolve_symvar_functions( pbuf ) ); // loop until return shows no substitution done
             if( *pbuf ) {
                 curr_t = alloc_text_chars( pbuf, strlen( pbuf ), region->font );
                 /***********************************************************/
@@ -642,17 +640,20 @@ static void content_reg( region_lay_tag * region )
 static  void    out_ban_common( banner_lay_tag * ban, bool top )
 {
     ban_reg_group   *   cur_grp;
+    doc_element     *   ban_doc_el  = NULL;;
     doc_element     *   cur_doc_el;
+    doc_element     *   last_doc_el;
+    doc_element     *   old_doc_el;
     int                 k;
     region_lay_tag  *   cur_region;
     text_chars      *   curr_t;
     text_chars      *   curr_p;
     uint32_t            ban_left;
-    uint32_t            h_left;
     uint32_t            ban_right;
+    uint32_t            curr_x;
+    uint32_t            h_left;
     uint32_t            h_right;
     uint32_t            reg_indent;
-    uint32_t            curr_x;
 
     ban_line.first = NULL;
 
@@ -672,7 +673,7 @@ static  void    out_ban_common( banner_lay_tag * ban, bool top )
             reg_text[2] = NULL;
 
             if( cur_region->contents.content_type == rule_content ) {
-                cur_doc_el = create_rule( ban_left, ban_right - ban_left );  /// TEMPORARY: NEED ACTUAL VALUES!
+                cur_doc_el = create_rule( cur_region->reg_hoffset, cur_region->reg_width );
             } else {
                 content_reg( cur_region );
                 curr_x = 0;
@@ -761,41 +762,57 @@ static  void    out_ban_common( banner_lay_tag * ban, bool top )
                     ban_line.first = NULL;
                 }
             }
-
-            /****************************************************************/
-            /*  insert ban_line into t_page                                 */
-            /*  ban_line is taken to be a linked list of text_lines when    */
-            /*  a banregion has depth > 1 and enough text to fill the       */
-            /*  first line                                                  */
-            /*  this will need adjustment as banner output is enhanced      */
-            /****************************************************************/
-
-            if( top ) {
-                if( t_page.top_ban == NULL ) {
-                    t_page.top_ban = alloc_ban_col();
-                }
-                if( t_page.top_ban->first == NULL ){
-                    t_page.top_ban->first = cur_doc_el;
-                    t_page.top_ban->last = t_page.top_ban->first;
-                } else {
-                    t_page.top_ban->last->next = cur_doc_el;
-                    t_page.top_ban->last = t_page.top_ban->last->next;
-                }
+            if( ban_doc_el == NULL ) {
+                ban_doc_el = cur_doc_el;
+                last_doc_el = ban_doc_el;
+                old_doc_el = cur_doc_el;
             } else {
-                if( t_page.bot_ban == NULL ) {
-                    t_page.bot_ban = alloc_ban_col();
-                }
-                if( t_page.bot_ban->first == NULL ){
-                    t_page.bot_ban->first = cur_doc_el;
-                    t_page.bot_ban->last = t_page.bot_ban->first;
-                } else {
-                    t_page.bot_ban->last->next = cur_doc_el;
-                    t_page.bot_ban->last = t_page.bot_ban->last->next;
+                if( old_doc_el->top_skip == cur_doc_el->top_skip ) {   // same voffset
+                    /* only first element has skips and line_height */
+                    cur_doc_el->top_skip = 0;
+                    cur_doc_el->subs_skip = 0;
+                    cur_doc_el->element.text.first->line_height = 0;
+                    last_doc_el->next = cur_doc_el;
+                    last_doc_el = last_doc_el->next;
+                } else {                                                // new voffset
+                    last_doc_el->next = cur_doc_el;
+                    last_doc_el = last_doc_el->next;
+                    old_doc_el = cur_doc_el;
                 }
             }
+            cur_doc_el = NULL;
             cur_region = cur_region->next;
         }
         cur_grp = cur_grp->next;
+    }
+
+    /****************************************************************/
+    /*  insert the doc_elemets into t_page                          */
+    /*  ban_doc_el is a linked list of doc_els, one per voffset     */
+    /****************************************************************/
+
+    if( top ) {
+        if( t_page.top_ban == NULL ) {
+            t_page.top_ban = alloc_ban_col();
+        }
+        if( t_page.top_ban->first == NULL ){
+            t_page.top_ban->first = ban_doc_el;
+            t_page.top_ban->last = t_page.top_ban->first;
+        } else {
+            t_page.top_ban->last->next = ban_doc_el;
+            t_page.top_ban->last = t_page.top_ban->last->next;
+        }
+    } else {
+        if( t_page.bot_ban == NULL ) {
+            t_page.bot_ban = alloc_ban_col();
+        }
+        if( t_page.bot_ban->first == NULL ){
+            t_page.bot_ban->first = ban_doc_el;
+            t_page.bot_ban->last = t_page.bot_ban->first;
+        } else {
+            t_page.bot_ban->last->next = ban_doc_el;
+            t_page.bot_ban->last = t_page.bot_ban->last->next;
+        }
     }
 }
 
