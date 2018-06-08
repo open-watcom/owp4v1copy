@@ -348,8 +348,7 @@ static void preprocess_script_region( region_lay_tag * reg )
                 while( *pl &&  *pl != sep ) {
                     pl++;
                 }
-                reg->script_region[k].len =  pl -
-                reg->script_region[k].string ;
+                reg->script_region[k].len =  pl - reg->script_region[k].string ;
 
                 if( reg->script_region[k].len == 0 ) {
                     reg->script_region[k].string = NULL;
@@ -571,7 +570,6 @@ static void finish_banners( void )
                     old_grp->first = sav_reg;
                     old_grp->voffset = sav_reg->reg_voffset;
                     sav_reg = NULL;
-                    break;
                 }
             }
 
@@ -680,12 +678,10 @@ static void finish_banners( void )
         /*       lower than the other                                   */
         /****************************************************************/
 
-//        old_grp = NULL;
         for( cur_grp = cur_ban->by_line; cur_grp != NULL; cur_grp = cur_grp->next ) {
             /* identify possible vertical overlap */
             if( (cur_grp->next != NULL) && (cur_grp->voffset + cur_grp->max_depth) > cur_grp->next->voffset ) {
                 /* horizontal overlap is also needed */
-//                old_reg = NULL;
                 for( cur_reg = cur_grp->first; cur_reg != NULL; cur_reg = cur_reg->next ) {
                     /* only proceed if this cur_reg may overlap a region in cur_grp->next */
                     if( (cur_reg->reg_voffset + cur_reg->reg_depth) > cur_grp->next->voffset ) {

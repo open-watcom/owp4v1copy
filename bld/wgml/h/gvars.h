@@ -314,7 +314,6 @@ global  uint32_t        tab_col;        // width of one column, as used with tab
 global  tag_cb      *   tt_stack;       // font stack entry to modify for tab tables
 
 // the document page and related items
-global ban_column       *   ban_col_pool;       // for reuse of ban_column structs
 global doc_element      *   doc_el_pool;        // for reuse of doc_element structs
 global group_type           cur_group_type;     // current tag/cw in effect (gt_bx is not allowed)
 global doc_el_group     *   cur_doc_el_group;   // current doc_el_group, if any

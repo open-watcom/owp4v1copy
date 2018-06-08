@@ -296,7 +296,7 @@ void    free_some_mem( void )
         clear_doc_element( t_element );
     }
     if( t_page.top_ban != NULL ) {
-        add_ban_col_to_pool( t_page.top_ban );
+        clear_doc_element( t_page.top_ban );
     }
     while( t_page.panes != NULL ) {
         if( t_page.panes->page_width != NULL ) {
@@ -323,7 +323,7 @@ void    free_some_mem( void )
         t_page.panes = sav_pane;
     }
     if( t_page.bot_ban != NULL ) {
-        add_ban_col_to_pool( t_page.bot_ban );
+        clear_doc_element( t_page.top_ban );
     }
     if( n_page.page_width != NULL ) {
         add_doc_el_group_to_pool( n_page.page_width );

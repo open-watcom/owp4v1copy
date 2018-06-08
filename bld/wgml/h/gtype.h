@@ -1133,12 +1133,6 @@ typedef struct doc_el_group {
             group_type          owner;      // tag or control word using this instance
 } doc_el_group;
 
-typedef struct ban_column {
-    struct  ban_column  *   next;
-            doc_element *   first;
-            doc_element *   last;
-} ban_column;
-
 typedef struct {
             uint32_t        main_top;       // top of page for main
             uint32_t        fig_top;        // top of page for bot_fig
@@ -1192,9 +1186,9 @@ typedef struct {
     struct  banner_lay_tag  *   bottom_banner;
             symsub          *   topheadsub;     // ptr to $TOPHEAD symvar entry
             symsub          *   botheadsub;     // ptr to $BOTHEAD symvar entry
-            ban_column      *   top_ban;
+            doc_element     *   top_ban;
             doc_pane        *   panes;
-            ban_column      *   bot_ban;
+            doc_element     *   bot_ban;
 } doc_page;
 
 typedef struct {

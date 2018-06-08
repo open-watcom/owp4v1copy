@@ -214,7 +214,7 @@ void set_pgnum_style( void )
 /* hyphens is needed                                                       */
 /***************************************************************************/
 
-static doc_element * create_rule( uint32_t start, uint32_t width )
+static doc_element * create_rule( uint32_t start, uint32_t width, font_number font )
 {
     doc_element *   h_line_el;
 
@@ -243,8 +243,9 @@ static doc_element * create_rule( uint32_t start, uint32_t width )
         /*******************************************************************/
 
         h_line_el = init_doc_el( el_hline, 0 );
-        h_line_el->element.hline.ban_adjust = false;   // TBD, may not apply to FIG
-        h_line_el->element.hline.h_start = t_page.cur_width;
+        h_line_el->blank_lines = wgml_fonts[font].line_height;
+        h_line_el->element.hline.ban_adjust = false;
+        h_line_el->element.hline.h_start = start;
         h_line_el->element.hline.h_len = width;
     }
     return (h_line_el);
@@ -275,7 +276,8 @@ static void content_reg( region_lay_tag * region )
             for( k = 0; k < 3; ++k ) {
 
                 if( region->script_region[k].string != NULL ) {
-                    strcpy_s( pbuf, strlen(region->contents.string) + 1, region->contents.string );
+                    strcpy_s( pbuf, strlen(region->script_region[k].string) + 1,
+                            region->script_region[k].string );
                     while( resolve_symvar_functions( pbuf ) ); // loop until return shows no substitution done
                     if( *pbuf ) {
                         curr_t = alloc_text_chars( pbuf, strlen( pbuf ), region->font );
@@ -640,7 +642,7 @@ static void content_reg( region_lay_tag * region )
 static  void    out_ban_common( banner_lay_tag * ban, bool top )
 {
     ban_reg_group   *   cur_grp;
-    doc_element     *   ban_doc_el  = NULL;;
+    doc_element     *   ban_doc_el;
     doc_element     *   cur_doc_el;
     doc_element     *   last_doc_el;
     doc_element     *   old_doc_el;
@@ -663,6 +665,7 @@ static  void    out_ban_common( banner_lay_tag * ban, bool top )
 
     /* This is the simplest way to process multiple BANREGIONs -- more may be needed */
 
+    ban_doc_el = NULL;
     cur_grp = ban->by_line;
     while( cur_grp != NULL ) {
         cur_region = cur_grp ->first;
@@ -673,7 +676,8 @@ static  void    out_ban_common( banner_lay_tag * ban, bool top )
             reg_text[2] = NULL;
 
             if( cur_region->contents.content_type == rule_content ) {
-                cur_doc_el = create_rule( cur_region->reg_hoffset, cur_region->reg_width );
+                cur_doc_el = create_rule( cur_region->reg_hoffset, cur_region->reg_width,
+                                          cur_region->font );
             } else {
                 content_reg( cur_region );
                 curr_x = 0;
@@ -749,8 +753,7 @@ static  void    out_ban_common( banner_lay_tag * ban, bool top )
                         curr_p = curr_t;
                     }
                     cur_doc_el = alloc_doc_el( el_text );
-                    cur_doc_el->top_skip = ban->by_line->voffset;
-                    cur_doc_el->subs_skip = ban->by_line->voffset;
+                    cur_doc_el->blank_lines = ban->by_line->voffset;
                     cur_doc_el->element.text.first = alloc_text_line();
 
                     cur_doc_el->element.text.first->next = ban_line.next;
@@ -767,10 +770,9 @@ static  void    out_ban_common( banner_lay_tag * ban, bool top )
                 last_doc_el = ban_doc_el;
                 old_doc_el = cur_doc_el;
             } else {
-                if( old_doc_el->top_skip == cur_doc_el->top_skip ) {   // same voffset
-                    /* only first element has skips and line_height */
-                    cur_doc_el->top_skip = 0;
-                    cur_doc_el->subs_skip = 0;
+                if( old_doc_el->blank_lines == cur_doc_el->blank_lines ) {   // same voffset
+                    /* only first element has blank_lines and line_height */
+                    cur_doc_el->blank_lines = 0;
                     cur_doc_el->element.text.first->line_height = 0;
                     last_doc_el->next = cur_doc_el;
                     last_doc_el = last_doc_el->next;
@@ -791,27 +793,22 @@ static  void    out_ban_common( banner_lay_tag * ban, bool top )
     /*  ban_doc_el is a linked list of doc_els, one per voffset     */
     /****************************************************************/
 
+    last_doc_el = NULL;
     if( top ) {
-        if( t_page.top_ban == NULL ) {
-            t_page.top_ban = alloc_ban_col();
-        }
-        if( t_page.top_ban->first == NULL ){
-            t_page.top_ban->first = ban_doc_el;
-            t_page.top_ban->last = t_page.top_ban->first;
+        if( t_page.top_ban == NULL ){
+            t_page.top_ban = ban_doc_el;
         } else {
-            t_page.top_ban->last->next = ban_doc_el;
-            t_page.top_ban->last = t_page.top_ban->last->next;
+            for( last_doc_el = t_page.top_ban; last_doc_el->next != NULL;
+                last_doc_el = last_doc_el->next ) {}     // empty loop to find end of list
+            last_doc_el->next = ban_doc_el;
         }
     } else {
-        if( t_page.bot_ban == NULL ) {
-            t_page.bot_ban = alloc_ban_col();
-        }
-        if( t_page.bot_ban->first == NULL ){
-            t_page.bot_ban->first = ban_doc_el;
-            t_page.bot_ban->last = t_page.bot_ban->first;
+        if( t_page.bot_ban == NULL ){
+            t_page.bot_ban = ban_doc_el;
         } else {
-            t_page.bot_ban->last->next = ban_doc_el;
-            t_page.bot_ban->last = t_page.bot_ban->last->next;
+            for( last_doc_el = t_page.top_ban; last_doc_el->next != NULL;
+                last_doc_el = last_doc_el->next ) {}     // empty loop to find end of list
+            last_doc_el->next = ban_doc_el;
         }
     }
 }

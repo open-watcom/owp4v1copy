@@ -448,7 +448,10 @@ static bool su_layout_special( su * in_su )
     } else if( !strnicmp( "right", ps, 5 ) ) {
         s->su_u = SU_lay_right;
         strcpy( ps, "right" );
-    } else if( !(strnicmp( "center", ps, 6 )) && (strnicmp( "centre", ps, 6 )) ) {
+    } else if( !strnicmp( "center", ps, 6 ) ) {
+        s->su_u = SU_lay_centre;
+        strcpy( ps, "center" );
+    } else if( !strnicmp( "centre", ps, 6 ) ) {
         s->su_u = SU_lay_centre;
         strcpy( ps, "centre" );
     } else if( !strnicmp( "extend", ps, 6 ) ) {

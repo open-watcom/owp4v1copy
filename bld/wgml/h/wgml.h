@@ -408,8 +408,6 @@ extern  void                add_text_chars_to_pool( text_line * a_line );
 extern  text_chars      *   alloc_text_chars( const char *text, size_t cnt, font_number font );
 extern  void                add_text_line_to_pool( text_line * a_line );
 extern  text_line       *   alloc_text_line( void );
-extern  void                add_ban_col_to_pool( ban_column * a_column );
-extern  ban_column      *   alloc_ban_col( void );
 extern  void                add_box_col_set_to_pool( box_col_set * a_set );
 extern  box_col_set     *   alloc_box_col_set( void );
 extern  void                add_box_col_stack_to_pool( box_col_stack * a_stack );

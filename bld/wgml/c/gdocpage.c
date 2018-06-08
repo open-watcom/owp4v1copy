@@ -27,7 +27,6 @@
 * Description:  Page-oriented output
 *
 *               consolidate_array       convert column array to element list
-*               do_ban_column_out       output text from one or more ban_columns
 *               do_doc_panes_out        output text from one or more doc_panes
 *               do_el_list_out          output text from an array of element lists
 *               do_page_out             actually output t_page
@@ -785,25 +784,6 @@ static void set_positions( doc_element * list, uint32_t h_start, uint32_t v_star
 
 
 /***************************************************************************/
-/*  output the ban_column                                                  */
-/*  currently, each doc_element is a BANREGION                             */
-/*  NOTE: it is not clear how multiple columns are to be used, or even if  */
-/*        they are needed                                                  */
-/***************************************************************************/
-
-static void do_ban_column_out( ban_column * a_column, uint32_t v_start )
-{
-    if( a_column->first == NULL ) {          // nothing to output
-        return;
-    }
-    set_positions( a_column->first, t_page.page_left, v_start );
-    do_el_list_out( a_column->first );
-
-    return;
-}
-
-
-/***************************************************************************/
 /*  output the doc_pane(s)                                                 */
 /*                                                                         */
 /*  Convert the linked list of panes into an array of doc_elements, such   */
@@ -1458,8 +1438,8 @@ void do_page_out( void )
 
     ProcFlags.page_started = false;
     if( t_page.top_ban != NULL ) {
-        do_ban_column_out( t_page.top_ban, t_page.page_top );
-        add_ban_col_to_pool( t_page.top_ban );
+        set_positions( t_page.top_ban, t_page.page_left, t_page.page_top );
+        do_el_list_out( t_page.top_ban );
         t_page.top_ban = NULL;
     }
 
@@ -1470,8 +1450,8 @@ void do_page_out( void )
     }
 
     if( t_page.bot_ban != NULL ) {
-        do_ban_column_out( t_page.bot_ban, t_page.bot_ban_top );
-        add_ban_col_to_pool( t_page.bot_ban );
+        set_positions( t_page.bot_ban, t_page.page_left, t_page.bot_ban_top );
+        do_el_list_out( t_page.bot_ban );
         t_page.bot_ban = NULL;
     }
 

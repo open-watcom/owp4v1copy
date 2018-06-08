@@ -26,7 +26,6 @@
 *
 * Description:  pool-handling functions for alloc / return to pool / reuse of
 *               these structs:
-*                   ban_column
 *                   box_col_set
 *                   box_col_stack
 *                   doc_el_group
@@ -180,53 +179,6 @@ void add_text_line_to_pool( text_line * a_line )
 
     a_line->next = line_pool;
     line_pool = a_line;
-}
-
-
-/***************************************************************************/
-/*  allocate / reuse a ban_column instance                                 */
-/***************************************************************************/
-
-ban_column * alloc_ban_col( void )
-{
-    ban_column  *   curr;
-    ban_column  *   prev;
-    int             k;
-
-    curr = ban_col_pool;
-    if( curr != NULL ) {                // there is one to use
-        ban_col_pool = curr->next;
-    } else {                            // pool is empty
-        curr = mem_alloc( sizeof( ban_column ) );
-
-        ban_col_pool = mem_alloc( sizeof( *prev ) );
-        prev = ban_col_pool;
-        for( k = 0; k < 10; k++ ) {     // alloc 10 ban_columnss if pool empty
-            prev->next = mem_alloc( sizeof( *prev ) );
-            prev = prev->next;
-        }
-        prev->next = NULL;
-    }
-
-    curr->next = NULL;
-    curr->first = NULL;
-
-    return( curr );
-}
-
-
-/***************************************************************************/
-/*  add a ban_column instance to free pool for reuse                       */
-/***************************************************************************/
-
-void add_ban_col_to_pool( ban_column * a_column )
-{
-    if( a_column == NULL ) {
-        return;
-    }
-
-    a_column->next = ban_col_pool;
-    ban_col_pool = a_column;
 }
 
 
@@ -562,12 +514,6 @@ void    free_pool_storage( void )
 
     for( v = line_pool; v != NULL; ) {
         wv = ( (text_line *) v)->next;
-        mem_free( v );
-        v = wv;
-    }
-
-    for( v = ban_col_pool; v != NULL; ) {
-        wv = ( (ban_column *) v)->next;
         mem_free( v );
         v = wv;
     }
