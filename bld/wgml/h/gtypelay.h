@@ -773,12 +773,17 @@ typedef struct region_lay_tag {
 /***************************************************************************/
 /*  banner region group                                                    */
 /*  Note: each group corresponds to one vertical position in the banner    */
+/*        plus the line_height corresponding to the region font            */
+/*        this puts regions with fonts with different line_heights into    */
+/*        different groups, ultimately sorting the doc_elements into the   */
+/*        order needed to output them moving strictly down the page        */
 /***************************************************************************/
 
 typedef struct ban_reg_group {
     struct  ban_reg_group       *   next;       // next banner region group
             region_lay_tag      *   first;      // first BANREGION
             uint32_t                voffset;    // value of 'voffset' in base units
+            uint32_t                line_height;// line height (in base units) of the region font
             uint32_t                max_depth;  // largest value of 'depth' in base units
 } ban_reg_group;
 

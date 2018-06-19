@@ -1438,7 +1438,6 @@ void do_page_out( void )
 
     ProcFlags.page_started = false;
     if( t_page.top_ban != NULL ) {
-        set_positions( t_page.top_ban, t_page.page_left, t_page.page_top );
         do_el_list_out( t_page.top_ban );
         t_page.top_ban = NULL;
     }
@@ -1450,7 +1449,6 @@ void do_page_out( void )
     }
 
     if( t_page.bot_ban != NULL ) {
-        set_positions( t_page.bot_ban, t_page.page_left, t_page.bot_ban_top );
         do_el_list_out( t_page.bot_ban );
         t_page.bot_ban = NULL;
     }

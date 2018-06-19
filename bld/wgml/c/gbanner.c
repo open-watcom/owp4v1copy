@@ -33,16 +33,15 @@
 #include "wgml.h"
 #include "gvars.h"
 
-static  text_line       ban_line;       // for constructing banner line
-static  text_chars  *   reg_text[3];    // 3 possible ban region parts
-
 static  banner_lay_tag  *   ban_top[max_ban][2];
 static  banner_lay_tag  *   ban_bot[max_ban][2];
-
+static  text_chars      *   reg_text[3];        // 3 possible ban region parts
+static  text_line           ban_line;           // for constructing banner line
+static  uint32_t            ban_top_pos;        // top position of banner
 
 /***************************************************************************/
 /*  set banner pointers for head x heading                                 */
-/*  NOTE: this ignores differences in line height ant their effect on page */
+/*  NOTE: this ignores differences in line height and their effect on page */
 /*        top and page depth and so on pagination                          */
 /***************************************************************************/
 void set_headx_banners( int hx_lvl )
@@ -214,12 +213,12 @@ void set_pgnum_style( void )
 /* hyphens is needed                                                       */
 /***************************************************************************/
 
-static doc_element * create_rule( uint32_t start, uint32_t width, font_number font )
+static doc_element * create_rule( region_lay_tag * a_region )
 {
     doc_element *   h_line_el;
 
     if( bin_driver->hline.text == NULL ) {              // character device
-        line_buff.current = width;
+        line_buff.current = a_region->reg_width;
         while( line_buff.current > line_buff.length ) {
             line_buff.length *= 2;
             line_buff.text = mem_realloc( line_buff.text, line_buff.length + 1 );
@@ -227,9 +226,18 @@ static doc_element * create_rule( uint32_t start, uint32_t width, font_number fo
         memset( line_buff.text, bin_device->box.horizontal_line, line_buff.current );
         line_buff.text[line_buff.current] = '\0';
         process_text( line_buff.text, FONT0 );  // matches wgml 4.0
+        t_line->first->x_address += t_page.page_left;
         h_line_el = init_doc_el( el_text, 0 );
         h_line_el->element.text.first = t_line;
         t_line = NULL;
+        h_line_el->element.text.first->y_address = ban_top_pos;
+        if( bin_driver->y_positive == 0x00 ) {
+            h_line_el->element.text.first->y_address -= (a_region->reg_voffset +
+                                                    h_line_el->element.text.first->line_height);
+        } else {
+            h_line_el->element.text.first->y_address += (a_region->reg_voffset +
+                                                    h_line_el->element.text.first->line_height);
+        }
     } else {                                        // page-oriented device
 
         /*******************************************************************/
@@ -243,16 +251,23 @@ static doc_element * create_rule( uint32_t start, uint32_t width, font_number fo
         /*******************************************************************/
 
         h_line_el = init_doc_el( el_hline, 0 );
-        h_line_el->blank_lines = wgml_fonts[font].line_height;
         h_line_el->element.hline.ban_adjust = false;
-        h_line_el->element.hline.h_start = start;
-        h_line_el->element.hline.h_len = width;
+        h_line_el->element.hline.h_start = a_region->reg_hoffset + t_page.page_left;
+        h_line_el->element.hline.h_len = a_region->reg_width;
+        h_line_el->element.hline.v_start = ban_top_pos;
+        if( bin_driver->y_positive == 0x00 ) {
+            h_line_el->element.hline.v_start -= (a_region->reg_voffset +
+                                                        wgml_fonts[a_region->font].line_height);
+        } else {
+            h_line_el->element.hline.v_start += (a_region->reg_voffset +
+                                                        wgml_fonts[a_region->font].line_height);
+        }
     }
     return (h_line_el);
 }
 
 
-
+/***************************************************************************/
 /*  prepare 1 or more text_chars with region content                       */
 /*                                                                         */
 /***************************************************************************/
@@ -636,7 +651,9 @@ static void content_reg( region_lay_tag * region )
 
 /***************************************************************************/
 /*  output top / bottom banner                                             */
-/*  multiple columns not supported, as it is not clear if they are needed  */
+/*  fully specified horizontal and vertical positions are computed here    */
+/*  because set_positions() in docpage.c is specific to document text and  */
+/*  banners require a different approach                                   */
 /***************************************************************************/
 
 static  void    out_ban_common( banner_lay_tag * ban, bool top )
@@ -676,8 +693,7 @@ static  void    out_ban_common( banner_lay_tag * ban, bool top )
             reg_text[2] = NULL;
 
             if( cur_region->contents.content_type == rule_content ) {
-                cur_doc_el = create_rule( cur_region->reg_hoffset, cur_region->reg_width,
-                                          cur_region->font );
+                cur_doc_el = create_rule( cur_region );
             } else {
                 content_reg( cur_region );
                 curr_x = 0;
@@ -753,16 +769,27 @@ static  void    out_ban_common( banner_lay_tag * ban, bool top )
                         curr_p = curr_t;
                     }
                     cur_doc_el = alloc_doc_el( el_text );
-                    cur_doc_el->blank_lines = ban->by_line->voffset;
                     cur_doc_el->element.text.first = alloc_text_line();
 
                     cur_doc_el->element.text.first->next = ban_line.next;
                     cur_doc_el->element.text.first->line_height = ban_line.line_height;
                     cur_doc_el->element.text.first->spacing = 0;   // hbus; banners are always single-spaced
-                    cur_doc_el->element.text.first->y_address = ban_line.y_address;
+                    cur_doc_el->element.text.first->y_address = ban_top_pos;
+                    if( bin_driver->y_positive == 0x00 ) {
+                        cur_doc_el->element.text.first->y_address -= (cur_region->reg_voffset +
+                                                    cur_doc_el->element.text.first->line_height);
+                    } else {
+                        cur_doc_el->element.text.first->y_address += (cur_region->reg_voffset +
+                                                    cur_doc_el->element.text.first->line_height);
+                    }
                     cur_doc_el->element.text.first->first = ban_line.first;
                     cur_doc_el->element.text.first->last = ban_line.last;
                     ban_line.first = NULL;
+                    curr_t = cur_doc_el->element.text.first->first;
+                    while( curr_t != NULL ) {
+                        curr_t->x_address += t_page.page_left;
+                        curr_t = curr_t->next;
+                    }
                 }
             }
             if( ban_doc_el == NULL ) {
@@ -771,9 +798,6 @@ static  void    out_ban_common( banner_lay_tag * ban, bool top )
                 old_doc_el = cur_doc_el;
             } else {
                 if( old_doc_el->blank_lines == cur_doc_el->blank_lines ) {   // same voffset
-                    /* only first element has blank_lines and line_height */
-                    cur_doc_el->blank_lines = 0;
-                    cur_doc_el->element.text.first->line_height = 0;
                     last_doc_el->next = cur_doc_el;
                     last_doc_el = last_doc_el->next;
                 } else {                                                // new voffset
@@ -818,11 +842,13 @@ static  void    out_ban_common( banner_lay_tag * ban, bool top )
 /***************************************************************************/
 void    out_ban_top( void )
 {
+    ban_top_pos = t_page.page_top;
     out_ban_common( t_page.top_banner, true );      // true for top banner
 }
 
 void    out_ban_bot( void )
 {
+    ban_top_pos = t_page.bot_ban_top;
     out_ban_common( t_page.bottom_banner, false );  // false for bottom banner
 }
 
