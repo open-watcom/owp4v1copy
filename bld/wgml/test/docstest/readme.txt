@@ -19,7 +19,8 @@ to avoid the help compilers being applied unless all four passes are done.
 wgml (dos386, linux386, nt386, os2386) when appropriate, and to continue to select 
 the correct version of wgml 4.0 when needed.
 5. A debugging directory is provided so that wdw can be applied to our wgml using the
-same context as is used with the tests.
+same context as is used with the tests. It was renamed to debug2 when updating its 
+makefile became impossible for some undetermined reason.
 
 MIFTEST
 
@@ -93,9 +94,13 @@ one specified doc ("hbook="), and clean in each of its subdirectories.
 
 There is also a debug directory; this is used to allow wdw to be applied to our wgml
 using the same context as the build system. This has some special restrictions:
--- the makefile in "debug" itself only allows "clean";
+-- the makefile in "debug2" itself only allows "clean";
 -- the makefiles in the subdirectories only allow "clean" and a specific document 
-(that is, "hbook=" must be present and use a valid document name
+(that is, "hbook=" must be present and use a valid document name)
+
+The makefile in "docstest" only allows "clean", and it does it in all subdirectories, 
+including debug2. This works because the "hbook=" item needed in "debug2" does not restrict 
+the action of "clean" to that book; "clean" works on all documents found in that directory.
 
 While #pmake lines exist in the makefiles, no lang.ctl entries exist to allow builder 
 to be used. This is intentional: these tests should never be part of the actual build 

@@ -4,7 +4,7 @@ all : .SYMBOLIC
     @echo Only "clean" is allowed at this level
 
 clean : .SYMBOLIC
-    cd debug
+    cd debug2
     wmake -h clean
     cd ../miftest
     wmake -h clean
