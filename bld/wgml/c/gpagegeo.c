@@ -374,6 +374,7 @@ static void finish_banners( void )
     ban_reg_group   *   cur_grp;
     ban_reg_group   *   old_grp;
     ban_reg_group   *   sav_grp;
+    ban_reg_group   *   src_grp;
     font_number         max_reg_font;
     region_lay_tag  *   cur_reg;
     region_lay_tag  *   nxt_reg;
@@ -480,9 +481,8 @@ static void finish_banners( void )
             }
             cur_reg->reg_width = conv_hor_unit( &cur_reg->width, g_curr_font );
 
-            /* vertical attributes use the banregion font */
+            /* temporary value to allow region lines to be processed properly */
             cur_reg->reg_voffset = conv_vert_unit( &cur_reg->voffset, 1, max_reg_font );
-            cur_reg->reg_depth = conv_vert_unit( &cur_reg->depth, 1, max_reg_font );
 
             if( cur_ban->ban_depth < cur_reg->reg_voffset + cur_reg->reg_depth ) {
                 ban_reg_err( err_banreg_depth, cur_ban, NULL, cur_reg, NULL );
@@ -495,8 +495,6 @@ static void finish_banners( void )
         /****************************************************************/
         /* Re-sort the regions by voffset                               */
         /* Regions with the same voffset are linked in hoffset order    */
-        /* At this point, regions with the same voffset or depth given  */
-        /* as a line count use the values computed with max_reg_font    */
         /****************************************************************/
 
         sav_reg = cur_ban->region;          // detach current region
@@ -589,10 +587,8 @@ static void finish_banners( void )
         /* This includes moving reg_hoffset if necessary so that it     */
         /* at the left boundary of the region, and using reg_h_type     */
         /* to avoid moving it more than once                            */
-        /* Since voffset and depth were set using max_reg_font to sort  */
-        /* all regions intended to be on the same line into the same    */
-        /* group so their boundaries could be set properly here, they   */
-        /* must now be re-set using each region's own font              */
+        /* This also includes resetting the voffset and setting the     */
+        /* depth, if specified in lines, using the region's own font    */
         /****************************************************************/
 
         old_grp = NULL;
@@ -674,6 +670,141 @@ static void finish_banners( void )
         }
 
         /****************************************************************/
+        /* Reset each group to the first region's voffset/line_height   */
+        /****************************************************************/
+
+        old_grp = NULL;
+        for( sav_grp = cur_ban->by_line; sav_grp != NULL; sav_grp = sav_grp->next ) {
+            sav_grp->voffset = sav_grp->first->reg_voffset;
+            sav_grp->line_height = wgml_fonts[sav_grp->first->font].line_height;
+        }
+
+        /****************************************************************/
+        /* Re-sort by voffset, forming new groups as needed as          */
+        /* different values of voffset are encountered                  */
+        /****************************************************************/
+
+        src_grp = cur_ban->by_line;                 // pull entire list from banner
+        cur_ban->by_line = NULL;
+        while( src_grp != NULL ) {
+            sav_grp = src_grp;
+            src_grp = src_grp->next;                    // detach first group
+            sav_grp->next = NULL;
+            old_reg = NULL;
+            sav_reg = sav_grp->first;
+            while( sav_reg != NULL ) {
+                if( sav_grp->voffset == sav_reg->reg_voffset ) {    // leave in group
+                    old_reg = sav_reg;
+                    nxt_reg = sav_reg->next;
+                } else {                    // different line height: find/create matching group
+                    nxt_reg = sav_reg->next;    // next region to be processed
+                    if( sav_reg == sav_grp->first ) {
+                        sav_grp->first = sav_reg->next; // detach first region
+                    } else {
+                        old_reg->next = sav_reg->next; // detach subsequent region
+                    }
+                    sav_reg->next = NULL;
+                    old_grp = NULL;
+                    for( cur_grp = cur_ban->by_line; cur_grp != NULL; cur_grp = cur_grp->next ) {
+                        if( cur_grp->voffset == sav_reg->reg_voffset ) {   // append sav_reg to cur_grp
+                            for( cur_reg = cur_grp->first; cur_reg->next != NULL;
+                                                cur_reg = cur_reg->next ); // find last region
+                            cur_reg->next = sav_reg;
+                            sav_reg = NULL;
+                        } else if( cur_grp->voffset > sav_reg->reg_voffset ) {  // insert/add new group
+                            if( cur_grp == sav_grp ) {                  // insert before first group
+                                cur_ban->by_line = mem_alloc( sizeof(ban_reg_group) );
+                                cur_ban->by_line->next = cur_grp;
+                                cur_ban->by_line->first = sav_reg;
+                                cur_ban->by_line->voffset = sav_reg->reg_voffset;
+                                cur_ban->by_line->line_height = wgml_fonts[sav_reg->font].line_height;
+                                cur_ban->by_line->max_depth = sav_reg->reg_depth;
+                            } else {                                            // insert before current group
+                                old_grp->next = mem_alloc( sizeof(ban_reg_group) );
+                                old_grp->next->next = cur_grp;
+                                old_grp->next->first = sav_reg;
+                                old_grp->next->voffset = sav_reg->reg_voffset;
+                                old_grp->next->line_height = wgml_fonts[sav_reg->font].line_height;
+                                old_grp->next->max_depth = sav_reg->reg_depth;
+                            }
+                            old_grp = cur_grp;
+                            old_reg = sav_reg;
+                            sav_reg = NULL;
+                        } else {
+                            old_grp = cur_grp;
+                            continue;
+                        }
+                        break;
+                    }
+                    if( cur_ban->by_line == NULL ) {                // add new group at start                
+                        cur_ban->by_line = mem_alloc( sizeof(ban_reg_group) );
+                        cur_ban->by_line->next = NULL;
+                        cur_ban->by_line->first = sav_reg;
+                        cur_ban->by_line->voffset = sav_reg->reg_voffset;
+                        cur_ban->by_line->line_height = wgml_fonts[sav_reg->font].line_height;
+                        cur_ban->by_line->max_depth = sav_reg->reg_depth;
+                        sav_reg = NULL;
+                    } else if( sav_reg != NULL ) {                  // add new group at end
+                        old_grp->next = mem_alloc( sizeof(ban_reg_group) );
+                        old_grp = old_grp->next;
+                        old_grp->next = NULL;
+                        old_grp->first = sav_reg;
+                        old_grp->voffset = sav_reg->reg_voffset;
+                        old_grp->line_height = wgml_fonts[sav_reg->font].line_height;
+                        old_grp->max_depth = sav_reg->reg_depth;
+                        sav_reg = NULL;
+                    }
+                }
+                sav_reg = nxt_reg;   // reacquire next region to be processed
+            }
+
+            /* sav_grp now has only regions with the same voffset */
+            old_grp = NULL;
+            for( cur_grp = cur_ban->by_line; cur_grp != NULL; cur_grp = cur_grp->next ) {
+                if( cur_grp->voffset == sav_grp->voffset ) {        // shouldn't be possible
+                    internal_err( __FILE__, __LINE__ );
+                } else if( cur_grp->voffset > sav_grp->voffset ) {  // insert/add new group
+                    if( cur_grp == cur_ban->by_line ) {             // insert before first group
+                        sav_grp->next = cur_ban->by_line;
+                        cur_ban->by_line = sav_grp;
+                    } else {                                        // insert before current group
+                        old_grp->next = sav_grp;
+                        sav_grp->next = cur_grp;
+                    }
+                    old_grp = cur_grp;
+                    sav_grp = NULL;
+                } else {
+                    old_grp = cur_grp;
+                    continue;
+                }
+                break;
+            }
+            if( sav_grp != NULL ) {                                 // add new group at end
+                if( old_grp == NULL ) {                             // first group
+                    cur_ban->by_line = sav_grp;
+                    old_grp = sav_grp;
+                } else {
+                    old_grp->next = sav_grp;
+                    old_grp = old_grp->next;
+                }
+                old_grp->next = NULL;
+            }
+        }
+
+        /****************************************************************/
+        /* Set max_depth for each group                                 */
+        /****************************************************************/
+
+        for( sav_grp = cur_ban->by_line; sav_grp != NULL; sav_grp = sav_grp->next ) {
+            sav_grp->max_depth = sav_grp->first->reg_depth;
+            for( cur_reg = sav_grp->first; cur_reg != NULL; cur_reg = cur_reg->next ) {
+                if( cur_reg->reg_depth > sav_grp->max_depth ) {  // update max_depth as needed
+                    sav_grp->max_depth = cur_reg->reg_depth;
+                }
+            }
+        }
+
+        /****************************************************************/
         /* Trap any overlapping regions not yet detected                */
         /* Specifially, those that overlap in the vertical direction    */
         /* NOTE: overlaps detected previously fall into two categories: */
@@ -711,27 +842,31 @@ static void finish_banners( void )
         }
 
         /****************************************************************/
+        /* At this point the groups are in true voffset order           */
         /* Finalize the sort by separating each voffset by line_height  */
         /****************************************************************/
 
-        old_grp = NULL;
-        for( sav_grp = cur_ban->by_line; sav_grp != NULL; sav_grp = sav_grp->next ) {
-            sav_reg = sav_grp->first;
-            sav_grp->line_height = wgml_fonts[sav_reg->font].line_height;
+        src_grp = cur_ban->by_line;                 // pull entire list from banner
+        cur_ban->by_line = NULL;
+        while( src_grp != NULL ) {
+            sav_grp = src_grp;
+            src_grp = src_grp->next;                // detach first group
+            sav_grp->next = NULL;
             old_reg = NULL;
+            sav_reg = sav_grp->first;
             while( sav_reg != NULL ) {
-                if( sav_grp->line_height == wgml_fonts[sav_reg->font].line_height ) {
+                nxt_reg = sav_reg->next;    // next region to be processed
+                if( sav_grp->line_height == wgml_fonts[sav_reg->font].line_height ) {   // keep in sav_grp
                     old_reg = sav_reg;
-                    nxt_reg = sav_reg->next;
                 } else {                    // different line height: move sav_reg from sav_grp to a new grp
-                    nxt_reg = sav_reg->next;    // next region to be processed
                     if( sav_reg == sav_grp->first ) {
                         sav_grp->first = sav_reg->next; // detach first region
                     } else {
                         old_reg->next = sav_reg->next; // detach subsequent region
                     }
                     sav_reg->next = NULL;
-                    for( cur_grp = sav_grp; cur_grp != NULL; cur_grp = cur_grp->next ) {
+                    old_grp = NULL;
+                    for( cur_grp = cur_ban->by_line; cur_grp != NULL; cur_grp = cur_grp->next ) {
                         if( cur_grp->line_height == wgml_fonts[sav_reg->font].line_height ) {   // append sav_reg to cur_grp
                             for( cur_reg = cur_grp->first; cur_reg->next != NULL;
                                                 cur_reg = cur_reg->next );  // find last region
@@ -739,21 +874,19 @@ static void finish_banners( void )
                             sav_reg = NULL;
                         } else if( cur_grp->line_height > wgml_fonts[sav_reg->font].line_height ) {    // insert/add new group
                             if( cur_grp == sav_grp ) {                  // insert before first group
-                                sav_grp = mem_alloc( sizeof(ban_reg_group) );
-                                sav_grp->next = cur_grp;
-                                cur_ban->by_line = sav_grp;
-                                sav_grp->first = sav_reg;
-                                sav_grp->voffset = sav_reg->reg_voffset;
-                                sav_grp->line_height = wgml_fonts[sav_reg->font].line_height;
-                                sav_grp->max_depth = sav_reg->reg_depth;
+                                cur_ban->by_line = mem_alloc( sizeof(ban_reg_group) );
+                                cur_ban->by_line->next = cur_grp;
+                                cur_ban->by_line->first = sav_reg;
+                                cur_ban->by_line->voffset = sav_reg->reg_voffset;
+                                cur_ban->by_line->line_height = wgml_fonts[sav_reg->font].line_height;
+                                cur_ban->by_line->max_depth = sav_reg->reg_depth;
                             } else {                                            // insert before current group
-                                sav_grp = mem_alloc( sizeof(ban_reg_group) );
-                                old_grp->next = sav_grp;
-                                sav_grp->next = cur_grp;
-                                sav_grp->first = sav_reg;
-                                sav_grp->voffset = sav_reg->reg_voffset;
-                                sav_grp->line_height = wgml_fonts[sav_reg->font].line_height;
-                                sav_grp->max_depth = sav_reg->reg_depth;
+                                old_grp->next = mem_alloc( sizeof(ban_reg_group) );
+                                old_grp->next->next = cur_grp;
+                                old_grp->next->first = sav_reg;
+                                old_grp->next->voffset = sav_reg->reg_voffset;
+                                old_grp->next->line_height = wgml_fonts[sav_reg->font].line_height;
+                                old_grp->next->max_depth = sav_reg->reg_depth;
                             }
                             old_grp = cur_grp;
                             old_reg = sav_reg;
@@ -764,7 +897,15 @@ static void finish_banners( void )
                         }
                         break;
                     }
-                    if( sav_reg != NULL ) {                                     // add new group at end
+                    if( cur_ban->by_line == NULL ) {                // add new group at start                
+                        cur_ban->by_line = mem_alloc( sizeof(ban_reg_group) );
+                        cur_ban->by_line->next = NULL;
+                        cur_ban->by_line->first = sav_reg;
+                        cur_ban->by_line->voffset = sav_reg->reg_voffset;
+                        cur_ban->by_line->line_height = wgml_fonts[sav_reg->font].line_height;
+                        cur_ban->by_line->max_depth = sav_reg->reg_depth;
+                        sav_reg = NULL;
+                    } else if( sav_reg != NULL ) {                  // add new group at end
                         old_grp->next = mem_alloc( sizeof(ban_reg_group) );
                         old_grp = old_grp->next;
                         old_grp->next = NULL;
@@ -776,6 +917,40 @@ static void finish_banners( void )
                     }
                 }
                 sav_reg = nxt_reg;   // reacquire next region to be processed
+            }
+
+            /* sav_grp now has only regions with the same voffset */
+            old_grp = NULL;
+            for( cur_grp = cur_ban->by_line; cur_grp != NULL; cur_grp = cur_grp->next ) {
+                if( (cur_grp->voffset + cur_grp->line_height) ==
+                        (sav_grp->voffset + sav_grp->line_height) ) {        // shouldn't be possible
+                    internal_err( __FILE__, __LINE__ );
+                } else if( (cur_grp->voffset + cur_grp->line_height) >
+                        (sav_grp->voffset + sav_grp->line_height) ) {  // insert/add new group
+                    if( cur_grp == cur_ban->by_line ) {             // insert before first group
+                        sav_grp->next = cur_ban->by_line;
+                        cur_ban->by_line = sav_grp;
+                    } else {                                        // insert before current group
+                        old_grp->next = sav_grp;
+                        sav_grp->next = cur_grp;
+                    }
+                    old_grp = cur_grp;
+                    sav_grp = NULL;
+                } else {
+                    old_grp = cur_grp;
+                    continue;
+                }
+                break;
+            }
+            if( sav_grp != NULL ) {                                 // add new group at end
+                if( old_grp == NULL ) {                             // first group
+                    cur_ban->by_line = sav_grp;
+                    old_grp = sav_grp;
+                } else {
+                    old_grp->next = sav_grp;
+                    old_grp = old_grp->next;
+                }
+                old_grp->next = NULL;
             }
         }
 

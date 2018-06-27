@@ -113,7 +113,7 @@ typedef struct  ban_places {
 /*  definitions for frame   :FIG tag and others                            */
 /***************************************************************************/
 #define xx_str      char
-#define str_size    60                  // max string length in layout TBD
+#define str_size    120                 // max string length in layout TBD
                                         // no value found in documentation
 typedef enum def_frame_type {
     none,
