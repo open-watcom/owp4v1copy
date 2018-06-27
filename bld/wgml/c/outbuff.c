@@ -893,47 +893,50 @@ static void set_out_file( void )
 
 /* Function set_out_file_attr().
  * Sets the global out_file_attr to the correct value. This will be either the
- * record type entered on the command line, the spec_rec field in the :DRIVER
- * block, or the default record type "t:132".
+ * the spec_rec field in the :DRIVER block, record type entered on the command
+ * line, or the default record type "t:132".
  */
 
 static void set_out_file_attr( void )
 {
     size_t      len;
 
-    /* Construct the output file record type if necessary. If the command-line
-     * option OUTput was used and a record type was given, then out_file_attr
-     * will be used as-is. Otherwise, the rec_spec will be used if it is
-     * properly formatted. If all else fails, the default will be used.
+    /* Construct the output file record type if necessary. The only documentd
+     * choice is the rec_spec in the DRIVER block. If that is not properly
+     * formatted, and if the command-line option OUTput was used and a record
+     * type was given, then out_file_attr will be used as-is. Otherwise, the
+     * input file default "t:128" will be used.
      */
 
-    if( out_file_attr == NULL ) {
-        if( bin_driver->rec_spec != NULL ) {
-            len = strlen( bin_driver->rec_spec );
-            if( (bin_driver->rec_spec[0] != '(') ||
-                (bin_driver->rec_spec[len - 1] != ')')) {
+    if( bin_driver->rec_spec != NULL ) {
+        if( out_file_attr != NULL ) {           // free the existing memory
+            mem_free( out_file_attr);
+        }
+        len = strlen( bin_driver->rec_spec );
+        if( (bin_driver->rec_spec[0] != '(') ||
+            (bin_driver->rec_spec[len - 1] != ')')) {
 
-                /* Use default if rec_spec is badly-formed. */
+            /* Use default if rec_spec is badly-formed. */
 
-                len = 1 + strlen( "t:132" );
-                out_file_attr = mem_alloc( len );
-                strcpy_s( out_file_attr, len, "t:132" );
+            len = 1 + strlen( "t:132" );
+            out_file_attr = mem_alloc( len );
+            strcpy_s( out_file_attr, len, "t:132" );
 
-            } else {
-
-                /* Copy the record type itself, without parentheses, into
-                 * out_file_attr.
-                 */
-
-                len -= 1;
-                out_file_attr = mem_alloc( len );
-                memcpy_s( out_file_attr, len,
-                          &bin_driver->rec_spec[1], len - 1 );
-                out_file_attr[len - 1] = '\0';
-            }
         } else {
 
-            /* Use default if rec_spec is missing. */
+            /* Copy the record type itself, without parentheses, into
+             * out_file_attr.
+             */
+
+            len -= 1;
+            out_file_attr = mem_alloc( len );
+            memcpy_s( out_file_attr, len, &bin_driver->rec_spec[1], len - 1 );
+            out_file_attr[len - 1] = '\0';
+        }
+    } else {
+        if( out_file_attr == NULL ) {
+
+            /* Use default if out_file_attr is missing. */
 
             size_t len = 1 + strlen( "t:132" );
             out_file_attr = mem_alloc( len );
