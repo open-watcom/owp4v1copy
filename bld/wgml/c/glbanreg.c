@@ -256,6 +256,12 @@ static  void    init_banregion_wk( region_lay_tag * reg )
     reg->script_region[0].string = NULL;
     reg->script_region[1].string = NULL;
     reg->script_region[2].string = NULL;
+    reg->final_content[0].len = 0;
+    reg->final_content[1].len = 0;
+    reg->final_content[2].len = 0;
+    reg->final_content[0].string = NULL;
+    reg->final_content[1].string = NULL;
+    reg->final_content[2].string = NULL;
 
     for( k = 0; k < att_count; k++ ) {
         count[k] = false;

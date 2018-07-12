@@ -329,12 +329,20 @@ void    free_layout( void )
             mem_free( reg );
             reg = ban->region;
         }
-
         br_gp = ban->by_line;
         while( br_gp != NULL ) {
             reg = br_gp->first;
             while( reg != NULL ) {
                 br_gp->first = reg->next;
+                if( reg->final_content[0].string != NULL ) {
+                    mem_free( reg->final_content[0].string );
+                }
+                if( reg->final_content[1].string != NULL ) {
+                    mem_free( reg->final_content[1].string );
+                }
+                if( reg->final_content[2].string != NULL ) {
+                    mem_free( reg->final_content[2].string );
+                }
                 mem_free( reg );
                 reg = br_gp->first;
             }

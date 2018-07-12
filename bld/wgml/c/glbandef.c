@@ -98,6 +98,12 @@ void    banner_defaults( void )
     reg->script_region[0].string = NULL;
     reg->script_region[1].string = NULL;
     reg->script_region[2].string = NULL;
+    reg->final_content[0].len = 0;
+    reg->final_content[1].len = 0;
+    reg->final_content[2].len = 0;
+    reg->final_content[0].string = NULL;
+    reg->final_content[1].string = NULL;
+    reg->final_content[2].string = NULL;
 
 
     wk = ban;

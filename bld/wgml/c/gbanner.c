@@ -212,316 +212,325 @@ void set_pgnum_style( void )
 
 static void content_reg( region_lay_tag * region )
 {
-    char        *   pbuf;
+    char            buf[BUF_SIZE];
     symsub      *   symsubval;
     int             k;
     int             rc;
 
-    pbuf = mem_alloc( buf_size );
-    *pbuf = '\0';
+    buf[0] = '\0';
     if( region->script_format ) {
         for( k = 0; k < 3; ++k ) {
             if( region->script_region[k].string != NULL ) {
-                strcpy_s( pbuf, strlen(region->script_region[k].string) + 1,
+                strcpy_s( &buf, strlen(region->script_region[k].string) + 1,
                           region->script_region[k].string );
-                while( resolve_symvar_functions( pbuf ) ); // loop until return shows no substitution done
-                region->final_content[k] = pbuf;
-                pbuf = mem_alloc( buf_size );
-                *pbuf = '\0';
+                while( resolve_symvar_functions( &buf ) ); // loop until return shows no substitution done
+                while( region->final_content[k].len < strlen( &buf ) ) {
+                    if( region->final_content[k].string == NULL ) {
+                        region->final_content[k].len = str_size;
+                        region->final_content[k].string = mem_alloc( str_size );
+                    } else {
+                        region->final_content[k].len += str_size;
+                        mem_realloc( region->final_content[k].string,
+                                                                region->final_content[k].len );
+                    }
+                }
+                strcpy_s( region->final_content[k].string, strlen( &buf ) + 1,
+                          &buf );
+                buf[0] = '\0';
             }
         }
     } else {    // no script format only normal string or keyword
         switch( region->contents.content_type ) {
         case   string_content:
-            strcpy_s( pbuf, strlen(region->contents.string) + 1, region->contents.string );
-            while( resolve_symvar_functions( pbuf ) ); // loop until return shows no substitution done
-        break;
+            strcpy_s( &buf, strlen(region->contents.string) + 1, region->contents.string );
+            while( resolve_symvar_functions( &buf ) ); // loop until return shows no substitution done
+            break;
         case author_content :
             rc = find_symvar( &global_dict, "$author", no_subscript, &symsubval );
             if( rc == 2 ) {
-                strcpy_s( pbuf, strlen(symsubval->value) + 1, symsubval->value );
+                strcpy_s( &buf, strlen(symsubval->value) + 1, symsubval->value );
             } else {
-                strcpy_s( pbuf, strlen("author") + 1, "author" );
+                strcpy_s( &buf, strlen("author") + 1, "author" );
             }
             break;
         case bothead_content :
             rc = find_symvar( &global_dict, "$bothead", no_subscript, &symsubval );
             if( rc == 2 ) {
-                strcpy_s( pbuf, strlen(symsubval->value) + 1, symsubval->value );
+                strcpy_s( &buf, strlen(symsubval->value) + 1, symsubval->value );
             } else {
-                strcpy_s( pbuf, strlen("$bothead") + 1, "$bothead" );
+                strcpy_s( &buf, strlen("$bothead") + 1, "$bothead" );
             }
             break;
         case date_content :
             rc = find_symvar( &global_dict, "$date", no_subscript, &symsubval );
             if( rc == 2 ) {
-                strcpy_s( pbuf, strlen(symsubval->value) + 1, symsubval->value );
+                strcpy_s( &buf, strlen(symsubval->value) + 1, symsubval->value );
             } else {
-                strcpy_s( pbuf, strlen("$date") + 1, "$date" );
+                strcpy_s( &buf, strlen("$date") + 1, "$date" );
             }
             break;
         case docnum_content :
             rc = find_symvar( &global_dict, "$docnum", no_subscript, &symsubval );
             if( rc == 2 ) {
-                strcpy_s( pbuf, strlen(symsubval->value) + 1, symsubval->value );
+                strcpy_s( &buf, strlen(symsubval->value) + 1, symsubval->value );
             } else {
-                strcpy_s( pbuf, strlen("$docnum") + 1, "$docnum" );
+                strcpy_s( &buf, strlen("$docnum") + 1, "$docnum" );
             }
             break;
         case head0_content :
             rc = find_symvar( &global_dict, "$head0", no_subscript, &symsubval );
             if( rc == 2 ) {
-                strcpy_s( pbuf, strlen(symsubval->value) + 1, symsubval->value );
+                strcpy_s( &buf, strlen(symsubval->value) + 1, symsubval->value );
             } else {
-                strcpy_s( pbuf, strlen("$head0") + 1, "$head0" );
+                strcpy_s( &buf, strlen("$head0") + 1, "$head0" );
             }
             break;
         case head1_content :
             rc = find_symvar( &global_dict, "$head1", no_subscript, &symsubval );
             if( rc == 2 ) {
-                strcpy_s( pbuf, strlen(symsubval->value) + 1, symsubval->value );
+                strcpy_s( &buf, strlen(symsubval->value) + 1, symsubval->value );
             } else {
-                strcpy_s( pbuf, strlen("$head1") + 1, "$head1" );
+                strcpy_s( &buf, strlen("$head1") + 1, "$head1" );
             }
             break;
         case head2_content :
             rc = find_symvar( &global_dict, "$head2", no_subscript, &symsubval );
             if( rc == 2 ) {
-                strcpy_s( pbuf, strlen(symsubval->value) + 1, symsubval->value );
+                strcpy_s( &buf, strlen(symsubval->value) + 1, symsubval->value );
             } else {
-                strcpy_s( pbuf, strlen("$head2") + 1, "$head2" );
+                strcpy_s( &buf, strlen("$head2") + 1, "$head2" );
             }
             break;
         case head3_content :
             rc = find_symvar( &global_dict, "$head3", no_subscript, &symsubval );
             if( rc == 2 ) {
-                strcpy_s( pbuf, strlen(symsubval->value) + 1, symsubval->value );
+                strcpy_s( &buf, strlen(symsubval->value) + 1, symsubval->value );
             } else {
-                strcpy_s( pbuf, strlen("$head3") + 1, "$head3" );
+                strcpy_s( &buf, strlen("$head3") + 1, "$head3" );
             }
             break;
         case head4_content :
             rc = find_symvar( &global_dict, "$head4", no_subscript, &symsubval );
             if( rc == 2 ) {
-                strcpy_s( pbuf, strlen(symsubval->value) + 1, symsubval->value );
+                strcpy_s( &buf, strlen(symsubval->value) + 1, symsubval->value );
             } else {
-                strcpy_s( pbuf, strlen("$head4") + 1, "$head4" );
+                strcpy_s( &buf, strlen("$head4") + 1, "$head4" );
             }
             break;
         case head5_content :
             rc = find_symvar( &global_dict, "$head5", no_subscript, &symsubval );
             if( rc == 2 ) {
-                strcpy_s( pbuf, strlen(symsubval->value) + 1, symsubval->value );
+                strcpy_s( &buf, strlen(symsubval->value) + 1, symsubval->value );
             } else {
-                strcpy_s( pbuf, strlen("$head5") + 1, "$head5" );
+                strcpy_s( &buf, strlen("$head5") + 1, "$head5" );
             }
             break;
         case head6_content :
             rc = find_symvar( &global_dict, "$head6", no_subscript, &symsubval );
             if( rc == 2 ) {
-                strcpy_s( pbuf, strlen(symsubval->value) + 1, symsubval->value );
+                strcpy_s( &buf, strlen(symsubval->value) + 1, symsubval->value );
             } else {
-                strcpy_s( pbuf, strlen("$head6") + 1, "$head6" );
+                strcpy_s( &buf, strlen("$head6") + 1, "$head6" );
             }
             break;
         case headnum0_content :
             rc = find_symvar( &global_dict, "$hnum0", no_subscript, &symsubval );
             if( rc == 2 ) {
-                strcpy_s( pbuf, strlen(symsubval->value) + 1, symsubval->value );
+                strcpy_s( &buf, strlen(symsubval->value) + 1, symsubval->value );
             } else {
-                strcpy_s( pbuf, strlen("$hnum0") + 1, "$hnum0" );
+                strcpy_s( &buf, strlen("$hnum0") + 1, "$hnum0" );
             }
             break;
         case headnum1_content :
             rc = find_symvar( &global_dict, "$hnum1", no_subscript, &symsubval );
             if( rc == 2 ) {
-                strcpy_s( pbuf, strlen(symsubval->value) + 1, symsubval->value );
+                strcpy_s( &buf, strlen(symsubval->value) + 1, symsubval->value );
             } else {
-                strcpy_s( pbuf, strlen("$hnum1") + 1, "$hnum1" );
+                strcpy_s( &buf, strlen("$hnum1") + 1, "$hnum1" );
             }
             break;
         case headnum2_content :
             rc = find_symvar( &global_dict, "$hnum2", no_subscript, &symsubval );
             if( rc == 2 ) {
-                strcpy_s( pbuf, strlen(symsubval->value) + 1, symsubval->value );
+                strcpy_s( &buf, strlen(symsubval->value) + 1, symsubval->value );
             } else {
-                strcpy_s( pbuf, strlen("$hnum2") + 1, "$hnum2" );
+                strcpy_s( &buf, strlen("$hnum2") + 1, "$hnum2" );
             }
             break;
         case headnum3_content :
             rc = find_symvar( &global_dict, "$hnum3", no_subscript, &symsubval );
             if( rc == 2 ) {
-                strcpy_s( pbuf, strlen(symsubval->value) + 1, symsubval->value );
+                strcpy_s( &buf, strlen(symsubval->value) + 1, symsubval->value );
             } else {
-                strcpy_s( pbuf, strlen("$hnum3") + 1, "$hnum3" );
+                strcpy_s( &buf, strlen("$hnum3") + 1, "$hnum3" );
             }
             break;
         case headnum4_content :
             rc = find_symvar( &global_dict, "$hnum4", no_subscript, &symsubval );
             if( rc == 2 ) {
-                strcpy_s( pbuf, strlen(symsubval->value) + 1, symsubval->value );
+                strcpy_s( &buf, strlen(symsubval->value) + 1, symsubval->value );
             } else {
-                strcpy_s( pbuf, strlen("$hnum4") + 1, "$hnum4" );
+                strcpy_s( &buf, strlen("$hnum4") + 1, "$hnum4" );
             }
             break;
         case headnum5_content :
             rc = find_symvar( &global_dict, "$hnum5", no_subscript, &symsubval );
             if( rc == 2 ) {
-                strcpy_s( pbuf, strlen(symsubval->value) + 1, symsubval->value );
+                strcpy_s( &buf, strlen(symsubval->value) + 1, symsubval->value );
             } else {
-                strcpy_s( pbuf, strlen("$hnum5") + 1, "$hnum5" );
+                strcpy_s( &buf, strlen("$hnum5") + 1, "$hnum5" );
             }
             break;
         case headnum6_content :
             rc = find_symvar( &global_dict, "$hnum6", no_subscript, &symsubval );
             if( rc == 2 ) {
-                strcpy_s( pbuf, strlen(symsubval->value) + 1, symsubval->value );
+                strcpy_s( &buf, strlen(symsubval->value) + 1, symsubval->value );
             } else {
-                strcpy_s( pbuf, strlen("$hnum6") + 1, "$hnum6" );
+                strcpy_s( &buf, strlen("$hnum6") + 1, "$hnum6" );
             }
             break;
         case headtext0_content :
             rc = find_symvar( &global_dict, "$htext0", no_subscript, &symsubval );
             if( rc == 2 ) {
-                strcpy_s( pbuf, strlen(symsubval->value) + 1, symsubval->value );
+                strcpy_s( &buf, strlen(symsubval->value) + 1, symsubval->value );
             } else {
-                strcpy_s( pbuf, strlen("$htext0") + 1, "$htext0" );
+                strcpy_s( &buf, strlen("$htext0") + 1, "$htext0" );
             }
             break;
         case headtext1_content :
             rc = find_symvar( &global_dict, "$htext1", no_subscript, &symsubval );
             if( rc == 2 ) {
-                strcpy_s( pbuf, strlen(symsubval->value) + 1, symsubval->value );
+                strcpy_s( &buf, strlen(symsubval->value) + 1, symsubval->value );
             } else {
-                strcpy_s( pbuf, strlen("$htext1") + 1, "$htext1" );
+                strcpy_s( &buf, strlen("$htext1") + 1, "$htext1" );
             }
             break;
         case headtext2_content :
             rc = find_symvar( &global_dict, "$htext2", no_subscript, &symsubval );
             if( rc == 2 ) {
-                strcpy_s( pbuf, strlen(symsubval->value) + 1, symsubval->value );
+                strcpy_s( &buf, strlen(symsubval->value) + 1, symsubval->value );
             } else {
-                strcpy_s( pbuf, strlen("$htext2") + 1, "$htext2" );
+                strcpy_s( &buf, strlen("$htext2") + 1, "$htext2" );
             }
             break;
         case headtext3_content :
             rc = find_symvar( &global_dict, "$htext3", no_subscript, &symsubval );
             if( rc == 2 ) {
-                strcpy_s( pbuf, strlen(symsubval->value) + 1, symsubval->value );
+                strcpy_s( &buf, strlen(symsubval->value) + 1, symsubval->value );
             } else {
-                strcpy_s( pbuf, strlen("$htext3") + 1, "$htext3" );
+                strcpy_s( &buf, strlen("$htext3") + 1, "$htext3" );
             }
             break;
         case headtext4_content :
             rc = find_symvar( &global_dict, "$htext4", no_subscript, &symsubval );
             if( rc == 2 ) {
-                strcpy_s( pbuf, strlen(symsubval->value) + 1, symsubval->value );
+                strcpy_s( &buf, strlen(symsubval->value) + 1, symsubval->value );
             } else {
-                strcpy_s( pbuf, strlen("$htext4") + 1, "$htext4" );
+                strcpy_s( &buf, strlen("$htext4") + 1, "$htext4" );
             }
             break;
         case headtext5_content :
             rc = find_symvar( &global_dict, "$htext5", no_subscript, &symsubval );
             if( rc == 2 ) {
-                strcpy_s( pbuf, strlen(symsubval->value) + 1, symsubval->value );
+                strcpy_s( &buf, strlen(symsubval->value) + 1, symsubval->value );
             } else {
-                strcpy_s( pbuf, strlen("$htext5") + 1, "$htext5" );
+                strcpy_s( &buf, strlen("$htext5") + 1, "$htext5" );
             }
             break;
         case headtext6_content :
             rc = find_symvar( &global_dict, "$htext6", no_subscript, &symsubval );
             if( rc == 2 ) {
-                strcpy_s( pbuf, strlen(symsubval->value) + 1, symsubval->value );
+                strcpy_s( &buf, strlen(symsubval->value) + 1, symsubval->value );
             } else {
-                strcpy_s( pbuf, strlen("$htext6") + 1, "$htext6" );
+                strcpy_s( &buf, strlen("$htext6") + 1, "$htext6" );
             }
             break;
         case pgnuma_content :
             rc = find_symvar( &global_dict, "$pgnuma", no_subscript, &symsubval );
             if( rc == 2 ) {
-                strcpy_s( pbuf, strlen(symsubval->value) + 1, symsubval->value );
+                strcpy_s( &buf, strlen(symsubval->value) + 1, symsubval->value );
             } else {
-                strcpy_s( pbuf, strlen("$pgnuma") + 1, "$pgnuma" );
+                strcpy_s( &buf, strlen("$pgnuma") + 1, "$pgnuma" );
             }
             break;
         case pgnumad_content :
             rc = find_symvar( &global_dict, "$pgnumad", no_subscript, &symsubval );
             if( rc == 2 ) {
-                strcpy_s( pbuf, strlen(symsubval->value) + 1, symsubval->value );
+                strcpy_s( &buf, strlen(symsubval->value) + 1, symsubval->value );
             } else {
-                strcpy_s( pbuf, strlen("$pgnumad") + 1, "$pgnumad" );
+                strcpy_s( &buf, strlen("$pgnumad") + 1, "$pgnumad" );
             }
             break;
         case pgnumc_content :
             rc = find_symvar( &global_dict, "$pgnumc", no_subscript, &symsubval );
             if( rc == 2 ) {
-                strcpy_s( pbuf, strlen(symsubval->value) + 1, symsubval->value );
+                strcpy_s( &buf, strlen(symsubval->value) + 1, symsubval->value );
             } else {
-                strcpy_s( pbuf, strlen("$pgnumc") + 1, "$pgnumc" );
+                strcpy_s( &buf, strlen("$pgnumc") + 1, "$pgnumc" );
             }
             break;
         case pgnumcd_content :
             rc = find_symvar( &global_dict, "$pgnumcd", no_subscript, &symsubval );
             if( rc == 2 ) {
-                strcpy_s( pbuf, strlen(symsubval->value) + 1, symsubval->value );
+                strcpy_s( &buf, strlen(symsubval->value) + 1, symsubval->value );
             } else {
-                strcpy_s( pbuf, strlen("$pgnumcd") + 1, "$pgnumcd" );
+                strcpy_s( &buf, strlen("$pgnumcd") + 1, "$pgnumcd" );
             }
             break;
         case pgnumr_content :
             rc = find_symvar( &global_dict, "$pgnumr", no_subscript, &symsubval );
             if( rc == 2 ) {
-                strcpy_s( pbuf, strlen(symsubval->value) + 1, symsubval->value );
+                strcpy_s( &buf, strlen(symsubval->value) + 1, symsubval->value );
             } else {
-                strcpy_s( pbuf, strlen("$pgnumr") + 1, "$pgnumr" );
+                strcpy_s( &buf, strlen("$pgnumr") + 1, "$pgnumr" );
             }
             break;
         case pgnumrd_content :
             rc = find_symvar( &global_dict, "$pgnumrd", no_subscript, &symsubval );
             if( rc == 2 ) {
-                strcpy_s( pbuf, strlen(symsubval->value) + 1, symsubval->value );
+                strcpy_s( &buf, strlen(symsubval->value) + 1, symsubval->value );
             } else {
-                strcpy_s( pbuf, strlen("$pgnumrd") + 1, "$pgnumrd" );
+                strcpy_s( &buf, strlen("$pgnumrd") + 1, "$pgnumrd" );
             }
             break;
         case sec_content :
             rc = find_symvar( &global_dict, "$sec", no_subscript, &symsubval );
             if( rc == 2 ) {
-                strcpy_s( pbuf, strlen(symsubval->value) + 1, symsubval->value );
+                strcpy_s( &buf, strlen(symsubval->value) + 1, symsubval->value );
             } else {
-                strcpy_s( pbuf, strlen("$sec") + 1, "$sec" );
+                strcpy_s( &buf, strlen("$sec") + 1, "$sec" );
             }
             break;
         case stitle_content :
             rc = find_symvar( &global_dict, "$stitle", no_subscript, &symsubval );
             if( rc == 2 ) {
-                strcpy_s( pbuf, strlen(symsubval->value) + 1, symsubval->value );
+                strcpy_s( &buf, strlen(symsubval->value) + 1, symsubval->value );
             } else {
-                strcpy_s( pbuf, strlen("$stitle") + 1, "$stitle" );
+                strcpy_s( &buf, strlen("$stitle") + 1, "$stitle" );
             }
             break;
         case title_content :
             rc = find_symvar( &global_dict, "$title", no_subscript, &symsubval );
             if( rc == 2 ) {
-                strcpy_s( pbuf, strlen(symsubval->value) + 1, symsubval->value );
+                strcpy_s( &buf, strlen(symsubval->value) + 1, symsubval->value );
             } else {
-                strcpy_s( pbuf, strlen("$title") + 1, "$title" );
+                strcpy_s( &buf, strlen("$title") + 1, "$title" );
             }
             break;
         case time_content :
             rc = find_symvar( &global_dict, "$time", no_subscript, &symsubval );
             if( rc == 2 ) {
-                strcpy_s( pbuf, strlen(symsubval->value) + 1, symsubval->value );
+                strcpy_s( &buf, strlen(symsubval->value) + 1, symsubval->value );
             } else {
-                strcpy_s( pbuf, strlen("$time") + 1, "$time" );
+                strcpy_s( &buf, strlen("$time") + 1, "$time" );
             }
             break;
         case tophead_content :
             rc = find_symvar( &global_dict, "$tophead", no_subscript, &symsubval );
             if( rc == 2 ) {
-                strcpy_s( pbuf, strlen(symsubval->value) + 1, symsubval->value );
+                strcpy_s( &buf, strlen(symsubval->value) + 1, symsubval->value );
             } else {
-                strcpy_s( pbuf, strlen("$tophead") + 1, "$tophead" );
+                strcpy_s( &buf, strlen("$tophead") + 1, "$tophead" );
             }
             break;
         case no_content :                   // empty region
@@ -531,19 +540,53 @@ static void content_reg( region_lay_tag * region )
         }
     }
 
-    if( *pbuf ) {       // assign to final_content depending on region_position
+    if( buf[0] != '\0' ) {       // assign to final_content depending on region_position
         if( region->region_position == pos_left ) {
-            region->final_content[0] = pbuf;
+            while( region->final_content[0].len < strlen( &buf ) ) {
+                if( region->final_content[0].string == NULL ) {
+                    region->final_content[0].len = str_size;
+                    region->final_content[0].string = mem_alloc( str_size );
+                } else {
+                    region->final_content[0].len += str_size;
+                    mem_realloc( region->final_content[0].string, region->final_content[0].len );
+                }
+            }
+            strcpy_s( region->final_content[0].string, strlen( &buf ) + 1, &buf );
         } else if( region->region_position == pos_center ) {
-            region->final_content[1] = pbuf;
+            while( region->final_content[1].len < strlen( &buf ) ) {
+                if( region->final_content[1].string == NULL ) {
+                    region->final_content[1].len = str_size;
+                    region->final_content[1].string = mem_alloc( str_size );
+                } else {
+                    region->final_content[1].len += str_size;
+                    mem_realloc( region->final_content[1].string, region->final_content[1].len );
+                }
+            }
+            strcpy_s( region->final_content[1].string, strlen( &buf ) + 1, &buf );
         } else if( region->region_position == pos_right ) {
-            region->final_content[2] = pbuf;
-        } else {
-            region->final_content[0] = pbuf;    // position left if unknown
+            while( region->final_content[2].len < strlen( &buf ) ) {
+                if( region->final_content[2].string == NULL ) {
+                    region->final_content[2].len = str_size;
+                    region->final_content[2].string = mem_alloc( str_size );
+                } else {
+                    region->final_content[2].len += str_size;
+                    mem_realloc( region->final_content[2].string, region->final_content[2].len );
+                }
+            }
+            strcpy_s( region->final_content[2].string, strlen( &buf ) + 1, &buf );
+        } else {                                // position left if unknown
+            while( region->final_content[0].len < strlen( &buf ) ) {
+                if( region->final_content[0].string == NULL ) {
+                    region->final_content[0].len = str_size;
+                    region->final_content[0].string = mem_alloc( str_size );
+                } else {
+                    region->final_content[0].len += str_size;
+                    mem_realloc( region->final_content[0].string, region->final_content[0].len );
+                }
+            }
+            strcpy_s( region->final_content[0].string, strlen( &buf ) + 1, &buf );
         }
     }
-    pbuf = NULL;
-
     return;
 }
 
@@ -572,6 +615,7 @@ static  void    out_ban_common( banner_lay_tag * ban, bool top )
     region_lay_tag  *   cur_region;
     text_line       *   cur_line;
     uint32_t            cur_width;
+    uint32_t            hoffset[3];
 
     ban_line.first = NULL;
 
@@ -593,11 +637,11 @@ static  void    out_ban_common( banner_lay_tag * ban, bool top )
                 content_reg( cur_region );      // load final_content array
 
                 for( k = 0; k < 3; ++k ) {          // for all region parts
-                    if( cur_region->final_content[k] == NULL ) {
+                    if( cur_region->final_content[k].string == NULL ) {
                         continue;                   // skip empty part
                     }
                     cur_width = 0;
-                    for( cur_p = cur_region->final_content[k]; *cur_p != '\0'; cur_p++ ) {
+                    for( cur_p = cur_region->final_content[k].string; *cur_p != '\0'; cur_p++ ) {
                         if( (cur_width + wgml_fonts[cur_region->font].width_table[(unsigned char) *cur_p]) <
                                 cur_region->reg_width ) {
                             cur_width += wgml_fonts[cur_region->font].width_table[(unsigned char) *cur_p];
@@ -612,8 +656,6 @@ static  void    out_ban_common( banner_lay_tag * ban, bool top )
         }
         cur_grp = cur_grp->next;
     }
-/// somewhere in here the script_format lines final_content fields need to be finalized
-
 
     /***************************************************************************/
     /* convert each final_text into a text_chars and group those with the same */
@@ -654,7 +696,7 @@ static  void    out_ban_common( banner_lay_tag * ban, bool top )
                     old_doc_el = old_doc_el->next;
                 }
                 old_doc_el->element.hline.ban_adjust = false;
-                old_doc_el->element.hline.h_start = cur_region->reg_hoffset + t_page.page_left;
+                old_doc_el->element.hline.h_start = t_page.page_left + cur_region->reg_hoffset;
                 old_doc_el->element.hline.h_len = cur_region->reg_width;
                 old_doc_el->element.hline.v_start = ban_top_pos;
                 if( bin_driver->y_positive == 0x00 ) {
@@ -674,59 +716,156 @@ static  void    out_ban_common( banner_lay_tag * ban, bool top )
                     }
                     memset( line_buff.text, bin_device->box.horizontal_line, line_buff.current );
                     line_buff.text[line_buff.current] = '\0';
-                    cur_region->final_content[0] = line_buff.text;  // char hline in text content position
+                    while( cur_region->final_content[0].len < strlen( line_buff.text ) ) {
+                        if( cur_region->final_content[0].string == NULL ) {
+                            cur_region->final_content[0].string = mem_alloc( str_size );
+                        } else {
+                            mem_realloc( cur_region->final_content[0].string,
+                                                    cur_region->final_content[0].len + str_size );
+                        }
+                    }
+                    strcpy_s( cur_region->final_content[0].string, strlen( line_buff.text ) + 1,
+                                                                            line_buff.text );
                 }
                 if( ban_doc_el == NULL ) {
                     ban_doc_el = alloc_doc_el( el_text );
                     old_doc_el = ban_doc_el;
+                    cur_line = NULL;
                 } else if( old_doc_el->type == el_hline ) {
                     old_doc_el->next = alloc_doc_el( el_text );
                     old_doc_el = old_doc_el->next;
+                    cur_line = NULL;
                 }
-                if( (old_grp == NULL) || (cur_grp->voffset != old_grp->voffset) ) {
-                    cur_line = alloc_text_line();
+                if( (cur_line == NULL) || ((old_grp != NULL) &&
+                                ((cur_grp->voffset != old_grp->voffset)
+                                || (cur_grp->line_height != old_grp->line_height))) ) {
                     if( old_doc_el->element.text.first == NULL ) {
+                        cur_line = alloc_text_line();
                         old_doc_el->element.text.first = cur_line;
-                    } else {
+                    } else {    
                         cur_line->next = alloc_text_line();
                         cur_line = cur_line->next;
                     }
-                }
-                for( k = 0; k < 3; ++k ) {          // for all region parts
-                    if( cur_region->final_content[k] == NULL ) {
-                        continue;                   // skip empty part
-                    }
-                    cur_p = cur_region->final_content[k];
-                    if( cur_line->first == NULL ) {
-                        cur_line->first = alloc_text_chars( cur_p, strlen( cur_p ), cur_region->font );
-                        cur_line->last = cur_line->first;
-                    } else {
-                        cur_line->last->next = alloc_text_chars( cur_p, strlen( cur_p ), cur_region->font );
-                        cur_line->last->next->prev = cur_line->last;
-                        cur_line->last = cur_line->last->next;
-                    }
-                    old_doc_el->element.text.first->y_address = ban_top_pos;
-                    if( cur_line->line_height < wgml_fonts[cur_region->font].line_height ) {
-                        cur_line->line_height = wgml_fonts[cur_region->font].line_height;
-                    }
+                    cur_line->line_height = wgml_fonts[cur_region->font].line_height;
+                    cur_line->y_address = ban_top_pos;
                     if( bin_driver->y_positive == 0x00 ) {
-                        old_doc_el->element.text.first->y_address -= (cur_region->reg_voffset +
-                                                    cur_line->line_height);
+                        cur_line->y_address -= (cur_region->reg_voffset + cur_line->line_height);
                     } else {
-                        old_doc_el->element.text.first->y_address += (cur_region->reg_voffset +
-                                                    cur_line->line_height);
+                        cur_line->y_address += (cur_region->reg_voffset + cur_line->line_height);
+                    }
+                }
+                if( cur_region->script_format ) {       // matches wgml 4.0
+                    hoffset[0] = cur_region->reg_hoffset;
+                    hoffset[1] = cur_region->reg_hoffset;
+                    hoffset[2] = cur_region->reg_hoffset;
+                    if( cur_region->final_content[2].string != NULL ) {
+                        hoffset[2] = (cur_region->reg_hoffset + cur_region->reg_width) -
+                            cop_text_width( cur_region->final_content[2].string,
+                            strlen( cur_region->final_content[2].string ), cur_region->font);
+                    }
+                    if( cur_region->final_content[1].string != NULL ) {
+                        hoffset[1] = (cur_region->reg_hoffset + (cur_region->reg_width / 2)) -
+                            (cop_text_width( cur_region->final_content[1].string,
+                            strlen( cur_region->final_content[1].string ), cur_region->font) / 2);
+                        if( hoffset[1] > hoffset[2] ) {
+                            hoffset[1] = hoffset[2];
+                            cur_region->final_content[1].string[0] = '\0';
+                        } else {
+                            cur_width = 0;
+                            for( cur_p = cur_region->final_content[1].string; *cur_p != '\0';
+                                    cur_p++ ) {
+                                if( (cur_width +
+                                        wgml_fonts[cur_region->font].width_table[(unsigned char) *cur_p]) <
+                                        hoffset[2] - hoffset[1] ) {
+                                    cur_width += wgml_fonts[cur_region->font].width_table[(unsigned char) *cur_p];
+                                } else {
+                                    *cur_p = '\0';     // This is where multiline support goes!!!
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    if( cur_region->final_content[0].string != NULL ) {
+                        if( hoffset[0] > hoffset[1] ) {
+                            cur_region->final_content[0].string[0] = '\0';
+                        } else {
+                            cur_width = 0;
+                            for( cur_p = cur_region->final_content[0].string; *cur_p != '\0';
+                                    cur_p++ ) {
+                                if( (cur_width +
+                                        wgml_fonts[cur_region->font].width_table[(unsigned char) *cur_p]) <
+                                        hoffset[1] - hoffset[0] ) {
+                                    cur_width += wgml_fonts[cur_region->font].width_table[(unsigned char) *cur_p];
+                                } else {
+                                    *cur_p = '\0';     // This is where multiline support goes!!!
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    cur_p = cur_region->final_content[0].string;
+                    if( (cur_p != NULL) && *cur_p ) {
+                        if( cur_line->first == NULL ) {
+                            cur_line->first = alloc_text_chars( cur_p, strlen( cur_p ),
+                                                                                cur_region->font );
+                            cur_line->last = cur_line->first;
+                        } else {
+                            cur_line->last->next = alloc_text_chars( cur_p, strlen( cur_p ),
+                                                                                cur_region->font );
+                            cur_line->last->next->prev = cur_line->last;
+                            cur_line->last = cur_line->last->next;
+                        }
+                        cur_line->last->x_address = t_page.page_left + hoffset[0]; 
+                    }
+                    cur_p = cur_region->final_content[1].string;
+                    if( (cur_p != NULL) && *cur_p ) {
+                        if( cur_line->first == NULL ) {
+                            cur_line->first = alloc_text_chars( cur_p, strlen( cur_p ),
+                                                                                cur_region->font );
+                            cur_line->last = cur_line->first;
+                        } else {
+                            cur_line->last->next = alloc_text_chars( cur_p, strlen( cur_p ),
+                                                                                cur_region->font );
+                            cur_line->last->next->prev = cur_line->last;
+                            cur_line->last = cur_line->last->next;
+                        }
+                        cur_line->last->x_address = t_page.page_left + hoffset[1]; 
+                    }
+                    cur_p = cur_region->final_content[2].string;
+                    if( (cur_p != NULL) && *cur_p ) {
+                        if( cur_line->first == NULL ) {
+                            cur_line->first = alloc_text_chars( cur_p, strlen( cur_p ),
+                                                                                cur_region->font );
+                            cur_line->last = cur_line->first;
+                        } else {
+                            cur_line->last->next = alloc_text_chars( cur_p, strlen( cur_p ),
+                                                                                cur_region->font );
+                            cur_line->last->next->prev = cur_line->last;
+                            cur_line->last = cur_line->last->next;
+                        }
+                        cur_line->last->x_address = t_page.page_left + hoffset[2]; 
+                    }
+                } else {
+                    for( k = 0; k < 3; ++k ) {          // for all region parts
+                        if( cur_region->final_content[k].string == NULL ) {
+                            continue;                   // skip empty part
+                        }
+                        cur_p = cur_region->final_content[k].string;
+                        if( cur_line->first == NULL ) {
+                            cur_line->first = alloc_text_chars( cur_p, strlen( cur_p ),
+                                                                                cur_region->font );
+                            cur_line->last = cur_line->first;
+                        } else {
+                            cur_line->last->next = alloc_text_chars( cur_p, strlen( cur_p ),
+                                                                                cur_region->font );
+                            cur_line->last->next->prev = cur_line->last;
+                            cur_line->last = cur_line->last->next;
+                        }
+                        cur_line->last->x_address = t_page.page_left + cur_region->reg_hoffset; 
                     }
                 }
                 if( top ) {
                     g_prev_font = cur_region->font;
-                }
-                old_doc_el->element.text.first->y_address = ban_top_pos;
-                if( bin_driver->y_positive == 0x00 ) {
-                    old_doc_el->element.text.first->y_address -= (cur_region->reg_voffset +
-                                                    old_doc_el->element.text.first->line_height);
-                } else {
-                    old_doc_el->element.text.first->y_address += (cur_region->reg_voffset +
-                                                    old_doc_el->element.text.first->line_height);
                 }
             }
             cur_region = cur_region->next;

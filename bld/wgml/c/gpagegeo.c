@@ -380,7 +380,6 @@ static void finish_banners( void )
     region_lay_tag  *   nxt_reg;
     region_lay_tag  *   old_reg;
     region_lay_tag  *   sav_reg;
-    region_lay_tag  *   top_line_reg;
     uint32_t            ban_line;
     uint32_t            ban_bot_depth;
     uint32_t            ban_top_depth;
@@ -393,7 +392,6 @@ static void finish_banners( void )
     for( cur_ban = layout_work.banner; cur_ban != NULL; cur_ban = cur_ban->next ) {
         ban_line = wgml_fonts[FONT0].line_height;       // minimum line height for banner
         max_reg_font = 0;
-        top_line_reg = NULL;
 
         /* horizontal attributes use default font */
         cur_ban->ban_left_adjust = conv_hor_unit( &cur_ban->left_adjust, g_curr_font );
