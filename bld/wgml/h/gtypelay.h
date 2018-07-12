@@ -767,6 +767,7 @@ typedef struct region_lay_tag {
     script_ban_reg  script_region[3];   // speed up processing if script_format
                                         // will be constructed from contents
     content         contents;           // what is in the region
+    script_ban_reg  final_content[3];   // fully resolved content from contents or script_region
     bool            script_format;      // yes no -> bool
 } region_lay_tag;
 
