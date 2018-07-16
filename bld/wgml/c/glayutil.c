@@ -125,12 +125,12 @@ const   ban_sections    doc_sections[max_ban] = {
 const   ban_places    bf_places[max_place] = {
     { "???",      3, no_place      },
     { "inline",   6, inline_place  },
-    { "top",      3, top_place     },
     { "bottom",   6, bottom_place  },
-    { "topodd",   6, topodd_place  },
-    { "topeven",  7, topeven_place },
     { "botodd",   6, botodd_place  },
     { "boteven",  7, boteven_place },
+    { "topodd",   6, topodd_place  },
+    { "topeven",  7, topeven_place },
+    { "top",      3, top_place     },   // must follow or topodd/topeven are never found
 };
 
 

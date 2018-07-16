@@ -339,10 +339,16 @@ static void preprocess_script_region( region_lay_tag * reg )
                                             // isolate region parts
             for( k = 0; k < 3; ++k ) {      // left, center, right
                 pl++;
-                if( k == 2 ) {// special hack for right part without success
-                    while( *pl == ' ' ) {
-                        pl++;               // remove leading spaces
-                    }           // still not quite the same result as wgml4   TBD
+
+                /***************************************************************/
+                /* this makes sense but only works like wgml 4.0 when k == 2   */
+                /* wgml 4.0 starts 2 spaces to the right when k == 0 when k == */
+                /* 1 per space skipped here, although the spaces themselves    */
+                /* are removed                                                 */
+                /***************************************************************/
+                
+                while( *pl == ' ' ) {
+                    pl++;               // remove leading spaces
                 }
                 reg->script_region[k].string = pl;
                 while( *pl &&  *pl != sep ) {

@@ -236,10 +236,10 @@ static void content_reg( region_lay_tag * region )
                 }
                 strcpy_s( region->final_content[k].string, strlen( &buf ) + 1,
                           &buf );
-                buf[0] = '\0';
+                intrans( region->final_content[k].string, strlen( &buf ) + 1, region->font );
             }
         }
-    } else {    // no script format only normal string or keyword
+    } else {    // not script format only normal string or keyword
         switch( region->contents.content_type ) {
         case   string_content:
             strcpy_s( &buf, strlen(region->contents.string) + 1, region->contents.string );
@@ -538,53 +538,57 @@ static void content_reg( region_lay_tag * region )
         default:
             internal_err( __FILE__, __LINE__ );
         }
-    }
-
-    if( buf[0] != '\0' ) {       // assign to final_content depending on region_position
-        if( region->region_position == pos_left ) {
-            while( region->final_content[0].len < strlen( &buf ) ) {
-                if( region->final_content[0].string == NULL ) {
-                    region->final_content[0].len = str_size;
-                    region->final_content[0].string = mem_alloc( str_size );
-                } else {
-                    region->final_content[0].len += str_size;
-                    mem_realloc( region->final_content[0].string, region->final_content[0].len );
+        /* still not script format only normal string or keyword */
+        if( buf[0] != '\0' ) {       // assign to final_content depending on region_position
+            if( region->region_position == pos_left ) {
+                while( region->final_content[0].len < strlen( &buf ) ) {
+                    if( region->final_content[0].string == NULL ) {
+                        region->final_content[0].len = str_size;
+                        region->final_content[0].string = mem_alloc( str_size );
+                    } else {
+                        region->final_content[0].len += str_size;
+                        mem_realloc( region->final_content[0].string, region->final_content[0].len );
+                    }
                 }
-            }
-            strcpy_s( region->final_content[0].string, strlen( &buf ) + 1, &buf );
-        } else if( region->region_position == pos_center ) {
-            while( region->final_content[1].len < strlen( &buf ) ) {
-                if( region->final_content[1].string == NULL ) {
-                    region->final_content[1].len = str_size;
-                    region->final_content[1].string = mem_alloc( str_size );
-                } else {
-                    region->final_content[1].len += str_size;
-                    mem_realloc( region->final_content[1].string, region->final_content[1].len );
+                strcpy_s( region->final_content[0].string, strlen( &buf ) + 1, &buf );
+                intrans( region->final_content[0].string, strlen( &buf ) + 1, region->font );
+            } else if( region->region_position == pos_center ) {
+                while( region->final_content[1].len < strlen( &buf ) ) {
+                    if( region->final_content[1].string == NULL ) {
+                        region->final_content[1].len = str_size;
+                        region->final_content[1].string = mem_alloc( str_size );
+                    } else {
+                        region->final_content[1].len += str_size;
+                        mem_realloc( region->final_content[1].string, region->final_content[1].len );
+                    }
                 }
-            }
-            strcpy_s( region->final_content[1].string, strlen( &buf ) + 1, &buf );
-        } else if( region->region_position == pos_right ) {
-            while( region->final_content[2].len < strlen( &buf ) ) {
-                if( region->final_content[2].string == NULL ) {
-                    region->final_content[2].len = str_size;
-                    region->final_content[2].string = mem_alloc( str_size );
-                } else {
-                    region->final_content[2].len += str_size;
-                    mem_realloc( region->final_content[2].string, region->final_content[2].len );
+                strcpy_s( region->final_content[1].string, strlen( &buf ) + 1, &buf );
+                intrans( region->final_content[1].string, strlen( &buf ) + 1, region->font );
+            } else if( region->region_position == pos_right ) {
+                while( region->final_content[2].len < strlen( &buf ) ) {
+                    if( region->final_content[2].string == NULL ) {
+                        region->final_content[2].len = str_size;
+                        region->final_content[2].string = mem_alloc( str_size );
+                    } else {
+                        region->final_content[2].len += str_size;
+                        mem_realloc( region->final_content[2].string, region->final_content[2].len );
+                    }
                 }
-            }
-            strcpy_s( region->final_content[2].string, strlen( &buf ) + 1, &buf );
-        } else {                                // position left if unknown
-            while( region->final_content[0].len < strlen( &buf ) ) {
-                if( region->final_content[0].string == NULL ) {
-                    region->final_content[0].len = str_size;
-                    region->final_content[0].string = mem_alloc( str_size );
-                } else {
-                    region->final_content[0].len += str_size;
-                    mem_realloc( region->final_content[0].string, region->final_content[0].len );
+                strcpy_s( region->final_content[2].string, strlen( &buf ) + 1, &buf );
+                intrans( region->final_content[2].string, strlen( &buf ) + 1, region->font );
+            } else {                                // position left if unknown
+                while( region->final_content[0].len < strlen( &buf ) ) {
+                    if( region->final_content[0].string == NULL ) {
+                        region->final_content[0].len = str_size;
+                        region->final_content[0].string = mem_alloc( str_size );
+                    } else {
+                        region->final_content[0].len += str_size;
+                        mem_realloc( region->final_content[0].string, region->final_content[0].len );
+                    }
                 }
+                strcpy_s( region->final_content[0].string, strlen( &buf ) + 1, &buf );
+                intrans( region->final_content[0].string, strlen( &buf ) + 1, region->font );
             }
-            strcpy_s( region->final_content[0].string, strlen( &buf ) + 1, &buf );
         }
     }
     return;
@@ -606,7 +610,6 @@ static void content_reg( region_lay_tag * region )
 static  void    out_ban_common( banner_lay_tag * ban, bool top )
 {
     ban_reg_group   *   cur_grp;
-    ban_reg_group   *   old_grp;
     char            *   cur_p;
     doc_element     *   ban_doc_el;
     doc_element     *   last_doc_el;
@@ -614,8 +617,9 @@ static  void    out_ban_common( banner_lay_tag * ban, bool top )
     int                 k;
     region_lay_tag  *   cur_region;
     text_line       *   cur_line;
+    uint32_t            cur_line_height;
     uint32_t            cur_width;
-    uint32_t            hoffset[3];
+    uint32_t            cur_v_pos;
 
     ban_line.first = NULL;
 
@@ -671,7 +675,6 @@ static  void    out_ban_common( banner_lay_tag * ban, bool top )
     ban_doc_el = NULL;
     old_doc_el = NULL;
     cur_grp = ban->by_line;
-    old_grp = NULL;
     while( cur_grp != NULL ) {
         cur_region = cur_grp ->first;
         while( cur_region != NULL ) {
@@ -727,6 +730,9 @@ static  void    out_ban_common( banner_lay_tag * ban, bool top )
                     strcpy_s( cur_region->final_content[0].string, strlen( line_buff.text ) + 1,
                                                                             line_buff.text );
                 }
+
+                /* Initialize new doc_element, if appropriate */
+
                 if( ban_doc_el == NULL ) {
                     ban_doc_el = alloc_doc_el( el_text );
                     old_doc_el = ban_doc_el;
@@ -736,9 +742,17 @@ static  void    out_ban_common( banner_lay_tag * ban, bool top )
                     old_doc_el = old_doc_el->next;
                     cur_line = NULL;
                 }
-                if( (cur_line == NULL) || ((old_grp != NULL) &&
-                                ((cur_grp->voffset != old_grp->voffset)
-                                || (cur_grp->line_height != old_grp->line_height))) ) {
+
+                /* Initialize new text_line, if appropriate */
+
+                cur_line_height = wgml_fonts[cur_region->font].line_height;
+                cur_v_pos = ban_top_pos;
+                if( bin_driver->y_positive == 0x00 ) {
+                    cur_v_pos -= (cur_region->reg_voffset + cur_line_height);
+                } else {
+                    cur_v_pos += (cur_region->reg_voffset + cur_line_height);
+                }
+                if( (cur_line == NULL) || (cur_line->y_address != cur_v_pos) ) {
                     if( old_doc_el->element.text.first == NULL ) {
                         cur_line = alloc_text_line();
                         old_doc_el->element.text.first = cur_line;
@@ -746,29 +760,29 @@ static  void    out_ban_common( banner_lay_tag * ban, bool top )
                         cur_line->next = alloc_text_line();
                         cur_line = cur_line->next;
                     }
-                    cur_line->line_height = wgml_fonts[cur_region->font].line_height;
-                    cur_line->y_address = ban_top_pos;
-                    if( bin_driver->y_positive == 0x00 ) {
-                        cur_line->y_address -= (cur_region->reg_voffset + cur_line->line_height);
-                    } else {
-                        cur_line->y_address += (cur_region->reg_voffset + cur_line->line_height);
-                    }
+                    cur_line->line_height = cur_line_height;
+                    cur_line->y_address = cur_v_pos;
                 }
+
+                /* Conver the region into one or more text_chars */
+
+                cur_region->final_content[0].hoffset = cur_region->reg_hoffset;
+                cur_region->final_content[1].hoffset = cur_region->reg_hoffset;
+                cur_region->final_content[2].hoffset = cur_region->reg_hoffset;
                 if( cur_region->script_format ) {       // matches wgml 4.0
-                    hoffset[0] = cur_region->reg_hoffset;
-                    hoffset[1] = cur_region->reg_hoffset;
-                    hoffset[2] = cur_region->reg_hoffset;
                     if( cur_region->final_content[2].string != NULL ) {
-                        hoffset[2] = (cur_region->reg_hoffset + cur_region->reg_width) -
+                        cur_region->final_content[2].hoffset += cur_region->reg_width -
                             cop_text_width( cur_region->final_content[2].string,
                             strlen( cur_region->final_content[2].string ), cur_region->font);
                     }
-                    if( cur_region->final_content[1].string != NULL ) {
-                        hoffset[1] = (cur_region->reg_hoffset + (cur_region->reg_width / 2)) -
+                    if( cur_region->final_content[1].string == NULL ) {
+                        cur_region->final_content[1].hoffset = cur_region->final_content[2].hoffset;
+                    } else {
+                        cur_region->final_content[1].hoffset += (cur_region->reg_width / 2) -
                             (cop_text_width( cur_region->final_content[1].string,
                             strlen( cur_region->final_content[1].string ), cur_region->font) / 2);
-                        if( hoffset[1] > hoffset[2] ) {
-                            hoffset[1] = hoffset[2];
+                        if( cur_region->final_content[1].hoffset > cur_region->final_content[2].hoffset ) {
+                            cur_region->final_content[1].hoffset = cur_region->final_content[2].hoffset;
                             cur_region->final_content[1].string[0] = '\0';
                         } else {
                             cur_width = 0;
@@ -776,7 +790,7 @@ static  void    out_ban_common( banner_lay_tag * ban, bool top )
                                     cur_p++ ) {
                                 if( (cur_width +
                                         wgml_fonts[cur_region->font].width_table[(unsigned char) *cur_p]) <
-                                        hoffset[2] - hoffset[1] ) {
+                                        cur_region->final_content[2].hoffset - cur_region->final_content[1].hoffset ) {
                                     cur_width += wgml_fonts[cur_region->font].width_table[(unsigned char) *cur_p];
                                 } else {
                                     *cur_p = '\0';     // This is where multiline support goes!!!
@@ -786,7 +800,7 @@ static  void    out_ban_common( banner_lay_tag * ban, bool top )
                         }
                     }
                     if( cur_region->final_content[0].string != NULL ) {
-                        if( hoffset[0] > hoffset[1] ) {
+                        if( cur_region->final_content[0].hoffset > cur_region->final_content[1].hoffset ) {
                             cur_region->final_content[0].string[0] = '\0';
                         } else {
                             cur_width = 0;
@@ -794,7 +808,7 @@ static  void    out_ban_common( banner_lay_tag * ban, bool top )
                                     cur_p++ ) {
                                 if( (cur_width +
                                         wgml_fonts[cur_region->font].width_table[(unsigned char) *cur_p]) <
-                                        hoffset[1] - hoffset[0] ) {
+                                        cur_region->final_content[1].hoffset - cur_region->final_content[0].hoffset ) {
                                     cur_width += wgml_fonts[cur_region->font].width_table[(unsigned char) *cur_p];
                                 } else {
                                     *cur_p = '\0';     // This is where multiline support goes!!!
@@ -815,7 +829,7 @@ static  void    out_ban_common( banner_lay_tag * ban, bool top )
                             cur_line->last->next->prev = cur_line->last;
                             cur_line->last = cur_line->last->next;
                         }
-                        cur_line->last->x_address = t_page.page_left + hoffset[0]; 
+                        cur_line->last->x_address = t_page.page_left + cur_region->final_content[0].hoffset; 
                     }
                     cur_p = cur_region->final_content[1].string;
                     if( (cur_p != NULL) && *cur_p ) {
@@ -829,7 +843,7 @@ static  void    out_ban_common( banner_lay_tag * ban, bool top )
                             cur_line->last->next->prev = cur_line->last;
                             cur_line->last = cur_line->last->next;
                         }
-                        cur_line->last->x_address = t_page.page_left + hoffset[1]; 
+                        cur_line->last->x_address = t_page.page_left + cur_region->final_content[1].hoffset; 
                     }
                     cur_p = cur_region->final_content[2].string;
                     if( (cur_p != NULL) && *cur_p ) {
@@ -843,12 +857,23 @@ static  void    out_ban_common( banner_lay_tag * ban, bool top )
                             cur_line->last->next->prev = cur_line->last;
                             cur_line->last = cur_line->last->next;
                         }
-                        cur_line->last->x_address = t_page.page_left + hoffset[2]; 
+                        cur_line->last->x_address = t_page.page_left + cur_region->final_content[2].hoffset; 
                     }
                 } else {
                     for( k = 0; k < 3; ++k ) {          // for all region parts
                         if( cur_region->final_content[k].string == NULL ) {
                             continue;                   // skip empty part
+                        }
+                        /* if k == 0, left-justify: already done */
+                        if( k == 1 ) {  // center-justify
+                            cur_region->final_content[1].hoffset += (cur_region->reg_width / 2) -
+                            (cop_text_width( cur_region->final_content[1].string,
+                            strlen( cur_region->final_content[1].string ), cur_region->font) / 2);
+                        }
+                        if( k == 2 ) {  // right-justify
+                            cur_region->final_content[2].hoffset += cur_region->reg_width -
+                            cop_text_width( cur_region->final_content[2].string,
+                            strlen( cur_region->final_content[2].string ), cur_region->font);
                         }
                         cur_p = cur_region->final_content[k].string;
                         if( cur_line->first == NULL ) {
@@ -861,7 +886,7 @@ static  void    out_ban_common( banner_lay_tag * ban, bool top )
                             cur_line->last->next->prev = cur_line->last;
                             cur_line->last = cur_line->last->next;
                         }
-                        cur_line->last->x_address = t_page.page_left + cur_region->reg_hoffset; 
+                        cur_line->last->x_address = t_page.page_left + cur_region->final_content[k].hoffset; 
                     }
                 }
                 if( top ) {
@@ -870,7 +895,6 @@ static  void    out_ban_common( banner_lay_tag * ban, bool top )
             }
             cur_region = cur_region->next;
         }
-        old_grp = cur_grp;
         cur_grp = cur_grp->next;
     }
 

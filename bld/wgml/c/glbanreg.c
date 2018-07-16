@@ -259,6 +259,9 @@ static  void    init_banregion_wk( region_lay_tag * reg )
     reg->final_content[0].len = 0;
     reg->final_content[1].len = 0;
     reg->final_content[2].len = 0;
+    reg->final_content[0].hoffset = 0;
+    reg->final_content[1].hoffset = 0;
+    reg->final_content[2].hoffset = 0;
     reg->final_content[0].string = NULL;
     reg->final_content[1].string = NULL;
     reg->final_content[2].string = NULL;

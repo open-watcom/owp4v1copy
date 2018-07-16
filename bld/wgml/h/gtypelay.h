@@ -739,36 +739,42 @@ typedef struct content {
 } content;
  
 typedef struct script_ban_reg {         // for script format region
-    size_t          len;                // preprocessed content
+    size_t          len;                // split into sub-fields
     char        *   string;
 } script_ban_reg;
  
+typedef struct final_reg_content {      // final fully-preprocessed content
+    size_t          len;                // suitable for final trim and output
+    uint32_t        hoffset;
+    char        *   string;
+} final_reg_content;
+
 /***************************************************************************/
 /*  :BANREGION      Layout tag data                                        */
 /***************************************************************************/
  
 typedef struct region_lay_tag {
-    struct region_lay_tag       *   next;   // next banner region
-    uint32_t        reg_indent;         // value of 'indent' in base units
-    uint32_t        reg_hoffset;        // value of 'hoffset' in base units
-    uint32_t        reg_width;          // value of 'width' in base units
-    uint32_t        reg_voffset;        // value of 'voffset' in base units
-    uint32_t        reg_depth;          // value of 'depth' in base units
-    space_units     reg_h_type;         // type of reg_hoffset: left, middle, right
-    su              indent;             // horizontal space unit or keywords
-    su              hoffset;            // horizontal space unit or keywords
-    su              width;              // horizontal space unit or extend
-    su              voffset;            // vertical space unit
-    su              depth;              // vertical space unit
-    font_number     font;               // non negative integer
-    int8_t          refnum;             // positive integer
-    page_pos        region_position;    // special enum
-    reg_pour        pouring;            // special enum
-    script_ban_reg  script_region[3];   // speed up processing if script_format
+    struct  region_lay_tag  *   next;       // next banner region
+    uint32_t            reg_indent;         // value of 'indent' in base units
+    uint32_t            reg_hoffset;        // value of 'hoffset' in base units
+    uint32_t            reg_width;          // value of 'width' in base units
+    uint32_t            reg_voffset;        // value of 'voffset' in base units
+    uint32_t            reg_depth;          // value of 'depth' in base units
+    space_units         reg_h_type;         // type of reg_hoffset: left, middle, right
+    su                  indent;             // horizontal space unit or keywords
+    su                  hoffset;            // horizontal space unit or keywords
+    su                  width;              // horizontal space unit or extend
+    su                  voffset;            // vertical space unit
+    su                  depth;              // vertical space unit
+    font_number         font;               // non negative integer
+    int8_t              refnum;             // positive integer
+    page_pos            region_position;    // special enum
+    reg_pour            pouring;            // special enum
+    script_ban_reg      script_region[3];   // speed up processing if script_format
                                         // will be constructed from contents
-    content         contents;           // what is in the region
-    script_ban_reg  final_content[3];   // fully resolved content from contents or script_region
-    bool            script_format;      // yes no -> bool
+    content             contents;           // what is in the region
+    final_reg_content   final_content[3];   // fully resolved content from contents or script_region
+    bool                script_format;      // yes no -> bool
 } region_lay_tag;
 
 /***************************************************************************/
