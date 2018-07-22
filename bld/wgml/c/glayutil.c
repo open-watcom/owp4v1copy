@@ -949,12 +949,14 @@ bool    i_place( char * p, lay_att curr, bf_place * tm )
 
 void    o_place( FILE * f, lay_att curr, bf_place * tm )
 {
-    const   char    * p;
+    const   char    *   p;
+            int         k;
 
-    if( *tm >= no_place && *tm < max_place ) {
-        p = bf_places[*tm].name;
-    } else {
-        p = "???";
+    p = "???";          // desperation value
+    for( k = no_place; k < max_place; ++k ) {
+        if( bf_places[k].type == *tm ) {
+            p = bf_places[k].name;
+        }
     }
     fprintf_s( f, "        %s = %s\n", att_names[curr], p );
     return;
