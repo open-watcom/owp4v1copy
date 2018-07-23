@@ -40,23 +40,42 @@ static  uint32_t            ban_top_pos;        // top position of banner
 
 /***************************************************************************/
 /*  set banner pointers for head x heading                                 */
-/*  NOTE: this ignores differences in line height and their effect on page */
-/*        top and page depth and so on pagination                          */
 /***************************************************************************/
+
 void set_headx_banners( int hx_lvl )
 {
+    bool    has_banners;
+
+    static  int curr_hx_lvl;    // only valid when ProcFlags.heading_banner is true
+
+    /* Determine if the current heading level has banners associated with it */
+
     if( (ban_top[hx_lvl + head0_ban][0] != NULL) ||
             (ban_top[hx_lvl + head0_ban][1] != NULL) ||
             (ban_bot[hx_lvl + head0_ban][0] != NULL) ||
             (ban_bot[hx_lvl + head0_ban][1] != NULL) ) {
-        ProcFlags.heading_banner = true;        // at least one Hn banner exists
+        has_banners = true;        // at least one Hn banner exists
     }
-    if( ProcFlags.heading_banner ) {            // change all banners if any exist
-        sect_ban_top[0] = ban_top[hx_lvl + head0_ban][0];
-        sect_ban_top[1] = ban_top[hx_lvl + head0_ban][1];
-        sect_ban_bot[0] = ban_bot[hx_lvl + head0_ban][0];
-        sect_ban_bot[1] = ban_bot[hx_lvl + head0_ban][1];
+
+    if( has_banners ) {
+        if( ProcFlags.heading_banner ) {    // current banners are from a heading
+            if( curr_hx_lvl >= hx_lvl ) {   // skip lower levels
+                sect_ban_top[0] = ban_top[hx_lvl + head0_ban][0];
+                sect_ban_top[1] = ban_top[hx_lvl + head0_ban][1];
+                sect_ban_bot[0] = ban_bot[hx_lvl + head0_ban][0];
+                sect_ban_bot[1] = ban_bot[hx_lvl + head0_ban][1];
+                curr_hx_lvl = hx_lvl;
+            }
+        } else {                            // replace non-banner-related headers
+            sect_ban_top[0] = ban_top[hx_lvl + head0_ban][0];
+            sect_ban_top[1] = ban_top[hx_lvl + head0_ban][1];
+            sect_ban_bot[0] = ban_bot[hx_lvl + head0_ban][0];
+            sect_ban_bot[1] = ban_bot[hx_lvl + head0_ban][1];
+            ProcFlags.heading_banner = true;
+            curr_hx_lvl = hx_lvl;
+        }
     }
+
     return;
 }
 
