@@ -625,6 +625,7 @@ static void set_positions( doc_element * list, uint32_t h_start, uint32_t v_star
             } else {
                 g_cur_v_start += cur_el->depth;
             }
+            at_top = false;
             break;
         case el_graph :
             cur_el->element.graph.cur_left += h_start;
@@ -642,6 +643,7 @@ static void set_positions( doc_element * list, uint32_t h_start, uint32_t v_star
             } else {
                 g_cur_v_start += cur_el->depth;
             }
+            at_top = false;
             break;
         case el_hline :
             cur_el->element.hline.h_start += h_start;
@@ -658,6 +660,7 @@ static void set_positions( doc_element * list, uint32_t h_start, uint32_t v_star
             } else {
                 g_cur_v_start += cur_el->depth;
             }
+            at_top = false;
             break;
         case el_text :
             for( cur_line = cur_el->element.text.first; cur_line != NULL;
@@ -742,6 +745,7 @@ static void set_positions( doc_element * list, uint32_t h_start, uint32_t v_star
                 cur_spacing = 0;
                 g_cur_v_start = old_v_start;
             }
+            at_top = false;
             break;
         case el_vline :
             cur_el->element.vline.h_start += h_start;
@@ -758,6 +762,7 @@ static void set_positions( doc_element * list, uint32_t h_start, uint32_t v_star
             } else {
                 g_cur_v_start += cur_el->depth;
             }
+            at_top = false;
             break;
         case el_vspace :
             cur_el->h_pos = h_start;
@@ -772,11 +777,11 @@ static void set_positions( doc_element * list, uint32_t h_start, uint32_t v_star
             } else {
                 g_cur_v_start += cur_el->depth;
             }
+            at_top = false;
             break;
         default :
             internal_err( __FILE__, __LINE__ );
         }
-        at_top = false;
     }
 
     return;
