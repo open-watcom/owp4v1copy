@@ -362,7 +362,9 @@ static void gml_ixxx_common( const gmltag * entry, int hx_lvl )
                 ixhwork = index_dict;
                 ixhwk = find_create_ix_h_entry( ixhwork, ixhbase, printtxt, printtxtlen,
                                                 txt, txtlen, hx_lvl - 1 );
-                printtxt = NULL;
+                if( ixhwk->prt_term == printtxt ) {         // printtxt was reassigned
+                    printtxt = NULL;
+                }
                 ixhtag[hx_lvl] = ixhwk;
                 break;
             case 2 :
@@ -381,7 +383,9 @@ static void gml_ixxx_common( const gmltag * entry, int hx_lvl )
                 }
                 ixhwk = find_create_ix_h_entry( ixhwork, ixhbase, printtxt, printtxtlen,
                                                 txt, txtlen, hx_lvl - 1 );
-                printtxt = NULL;
+                if( ixhwk->prt_term == printtxt ) {         // printtxt was reassigned
+                    printtxt = NULL;
+                }
                 if( !refidseen && (hx_lvl == 2) ) {
                     ixhtag[hx_lvl] = ixhwk;
                 }
@@ -402,7 +406,9 @@ static void gml_ixxx_common( const gmltag * entry, int hx_lvl )
                 ixhwork = index_dict;
                 ixhwk = find_create_ix_h_entry( ixhwork, ixhbase, printtxt, printtxtlen,
                                                 txt, txtlen, hx_lvl - 1 );
-                printtxt = NULL;
+                if( ixhwk->prt_term == printtxt ) {         // printtxt was reassigned
+                    printtxt = NULL;
+                }
                 ixhtag[hx_lvl] = ixhwk;
                 break;
             case 2 :
@@ -411,7 +417,9 @@ static void gml_ixxx_common( const gmltag * entry, int hx_lvl )
                 ixhwork = ixhtag[hx_lvl - 1]->lower;
                 ixhwk = find_create_ix_h_entry( ixhwork, ixhbase, printtxt, printtxtlen,
                                                 txt, txtlen, hx_lvl - 1 );
-                printtxt = NULL;
+                if( ixhwk->prt_term == printtxt ) {         // printtxt was reassigned
+                    printtxt = NULL;
+                }
                 if( hx_lvl == 2 ) {
                     ixhtag[hx_lvl] = ixhwk;
                 }

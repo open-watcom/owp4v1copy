@@ -263,7 +263,8 @@ static void consolidate_array( doc_element * array[MAX_COL], uint8_t count )
     nt_el_list = NULL;
     cur_nt_el_list = nt_el_list;
     while( nt_el_group != NULL ) {
-        cur_v_el = nt_el_group->first;
+        cur_v_el = nt_el_group->first;          // detach doc_element list
+        nt_el_group->first = NULL;
         top_pos = cur_v_el->v_pos;
         if( cur_v_el->next == NULL ) {
             if( nt_el_list == NULL ) {
@@ -303,8 +304,13 @@ static void consolidate_array( doc_element * array[MAX_COL], uint8_t count )
                 cur_v_el = sav_nt_el;
             }
         }
+        cur_nt_el_group = nt_el_group;
         nt_el_group = nt_el_group->next;
+        cur_nt_el_group->next = NULL;
+        add_doc_el_group_to_pool( cur_nt_el_group );
     }
+
+
 
     /* Initialize the text_lines array */
 

@@ -372,6 +372,7 @@ static  void    free_entry_block( entry_list * e )
     free_ix_e_entries( e->normal_pgnum );
     free_ix_e_entries( e->normal_string );
     free_ix_e_entries( e->see_string );
+    mem_free( e );
 }
 
 
