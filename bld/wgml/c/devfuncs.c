@@ -3825,7 +3825,7 @@ void fb_first_text_line_pass( text_line *out_line )
 
 
 /* Function fb_graphic_support().
- * Sets the start position for GRAPHIC for the PS device.
+ * Sets the start position and font for GRAPHIC for the PS device.
  *
  * This function is extremely specialized.
  */
@@ -3838,6 +3838,7 @@ void fb_graphic_support( graphic_element *in_el )
         desired_state.y_address = in_el->y_address;
     }
     desired_state.x_address = in_el->cur_left;
+    df_font  = FONT0;             // matches wgml 4.0
     y_address = desired_state.y_address;
     fb_initial_horizontal_positioning();
 

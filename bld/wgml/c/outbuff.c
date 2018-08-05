@@ -1133,6 +1133,7 @@ void ob_graphic( graphic_element * in_el )
 {
     char        begindoc[] = "%%BeginDocument: ";
     char        enddoc[] = "%%EndDocument";
+    char        fontstr[] = "@fs0 ";
     char        graphobj[] = "/graphobj save def /showpage { } def";
     char        restore[] = "graphobj restore";
     size_t      ps_size;
@@ -1187,6 +1188,11 @@ void ob_graphic( graphic_element * in_el )
     strcpy_s( buffout.text, buffout.length, restore );
     buffout.current = ps_size;
     ob_flush();
+    ob_flush();
+
+    ps_size = strlen( fontstr );
+    strcpy_s( buffout.text, buffout.length, fontstr );
+    buffout.current = ps_size;
     if( ferror( in_el->fp ) ) {
         xx_simple_err_cc( err_in_file, "GRAPHIC", in_el->file );
     }
