@@ -182,6 +182,7 @@ void    scr_in( void )
  
     t_page.max_width = t_page.last_pane->col_width + g_indentr + nest_cb->right_indent;
     t_page.cur_left = g_indent + nest_cb->left_indent + nest_cb->align;
+    t_page.cur_width = t_page.cur_left;
 
     scan_restart = p;
     return;
