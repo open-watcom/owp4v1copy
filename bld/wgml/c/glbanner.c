@@ -350,6 +350,9 @@ void    lay_banner( const gmltag * entry )
                     regwkold = regwkold->next;
                 }
                 sum_count = 5;                  // process as if all attributes for new banner found
+                count[0] = 1;
+                count[1] = 1;
+                count[2] = 1;
             }
         }
     }
