@@ -317,6 +317,7 @@ void    lay_banner( const gmltag * entry )
             } else {                                // copy from referenced banner
                 for( k = 0; k < att_count; ++k ) {
                     if( !count[k] ) {               // copy only unchanged values
+                        count[k] = 1;               // treat as new value
                         switch( banner_att[k] ) {
                         case   e_left_adjust:
                             memcpy( &(wk.left_adjust), &(ref_ban->left_adjust),
@@ -350,9 +351,6 @@ void    lay_banner( const gmltag * entry )
                     regwkold = regwkold->next;
                 }
                 sum_count = 5;                  // process as if all attributes for new banner found
-                count[0] = 1;
-                count[1] = 1;
-                count[2] = 1;
             }
         }
     }

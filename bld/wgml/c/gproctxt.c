@@ -340,6 +340,8 @@ static text_chars * do_c_chars( text_chars *c_chars, text_chars *in_chars,
 
 static void do_fc_comp( void )
 {
+    uint32_t    end_point;
+
     fill_width = wgml_fonts[g_curr_font].width_table[c_stop->fill_char];
     fill_count = t_page.cur_width / fill_width;
 
@@ -353,6 +355,25 @@ static void do_fc_comp( void )
 
     if( (fill_count == 0) && (t_page.cur_width < fill_start) ) {
         t_page.cur_width = fill_start;
+    }
+
+/// out_msg() lines saved for work with FIGLIST, when needed
+//    end_point = fill_start + (fill_width * fill_count);
+//    out_msg( "%i %i %i %i\n", fill_start, fill_width * fill_count, end_point, c_stop->column );
+
+    /* This may seem unduly complicated, but it does match wgml 4.0 */
+
+     if( figlist_toc && (c_stop->alignment == al_right) ) {
+        end_point = fill_start + (fill_width * fill_count);
+        if( end_point != c_stop->column ) {
+            if( figlist_toc & gs_figlist ) {    // this depends on TOC preceding FIGLIST
+                fill_start -= ((c_stop->column + tab_col) - end_point);
+                fill_start -= 5;                // matches wgml 4.0, at least so far
+            } else {
+                fill_start += ((c_stop->column + tab_col) - end_point);
+            }
+        }
+//        out_msg( "%i\n", fill_start );
     }
 
     return;
@@ -527,7 +548,7 @@ static void wgml_tabs( void )
                 if( c_stop->alignment == al_left ) {   // alignment left
                     s_width = 0;
                     if( input_cbs->fmflags & II_tag_mac ) {   // inside macro
-                        t_page.cur_width = c_stop->column + post_space;  // text after $ISO$
+                        t_page.cur_width = c_stop->column + post_space;  // text after $ISO$ in macro noansi
                     } else {                                // not inside macro
                         t_page.cur_width = t_page.cur_left + c_stop->column + tab_space *
                                         wgml_fonts[in_chars->font].spc_width;
@@ -863,7 +884,7 @@ static void wgml_tabs( void )
     i = in_count - 1;                       // reset to check last character
     if( (in_text[i] == '\t') || (in_text[i] == tab_char) ) {
         gap_start = t_page.cur_width;
-        t_page.cur_width = c_stop->column;   // works with $ISO$ in macro
+        t_page.cur_width = c_stop->column;   // works with $ISO$ in macro noansi
         if( c_stop->alignment == al_right ) {
             t_page.cur_width += tab_col;
         }

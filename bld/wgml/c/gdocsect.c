@@ -174,7 +174,6 @@ void set_section_banners( doc_section ds )
 
 static void figlist_toc_tabs( char * fill, uint32_t size, bool setup )
 {
-
     if( setup) {                    // set up tabbing
 
         /* Set tab char to "$" */
