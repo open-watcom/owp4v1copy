@@ -341,6 +341,7 @@ static text_chars * do_c_chars( text_chars *c_chars, text_chars *in_chars,
 static void do_fc_comp( void )
 {
     uint32_t    end_point;
+    uint32_t    tot_shift;
 
     fill_width = wgml_fonts[g_curr_font].width_table[c_stop->fill_char];
     fill_count = t_page.cur_width / fill_width;
@@ -370,7 +371,16 @@ static void do_fc_comp( void )
                 fill_start -= ((c_stop->column + tab_col) - end_point);
                 fill_start -= 5;                // matches wgml 4.0, at least so far
             } else {
+                tot_shift = (fill_start - gap_start) + ((c_stop->column + tab_col) - end_point);
                 fill_start += ((c_stop->column + tab_col) - end_point);
+                if( tot_shift >= fill_width ) {     // adjustment for fill char revealed by shift
+                    fill_start -= fill_width;
+                    fill_count++;
+                    if( tot_shift == fill_width ) {  // matches wgml 4.0
+                        fill_start -= fill_width;
+                        fill_count++;
+                    }
+                }
             }
         }
 //        out_msg( "%i\n", fill_start );
