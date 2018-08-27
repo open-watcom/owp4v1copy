@@ -376,10 +376,6 @@ static void do_fc_comp( void )
                 if( tot_shift >= fill_width ) {     // adjustment for fill char revealed by shift
                     fill_start -= fill_width;
                     fill_count++;
-                    if( tot_shift == fill_width ) {  // matches wgml 4.0
-                        fill_start -= fill_width;
-                        fill_count++;
-                    }
                 }
             }
         }
