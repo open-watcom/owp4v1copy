@@ -44,7 +44,7 @@ static  uint32_t            ban_top_pos;        // top position of banner
 
 void set_headx_banners( int hx_lvl )
 {
-    bool    has_banners;
+    bool    has_banners = false;
 
     static  int curr_hx_lvl;    // only valid when ProcFlags.heading_banner is true
 
