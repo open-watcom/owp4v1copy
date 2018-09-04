@@ -467,6 +467,7 @@ void gen_heading( char * h_text, char * id, hdsrc hn_lvl, hdsrc hds_lvl )
                     insert_col_width( cur_doc_el_group );
                 }
                 cur_doc_el_group = NULL;
+                g_post_skip = 0;        // used in processing heading
             }
         }
 

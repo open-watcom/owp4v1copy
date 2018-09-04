@@ -147,7 +147,7 @@ void  scr_process_break( void )
 
         /* Putting set_skip_vars() first can affect the result of the if() */
 
-        if( (g_line_indent > 0) || (g_subs_skip > 0) || (g_blank_lines > 0) ) {
+        if( (g_line_indent > 0) || (g_blank_lines > 0) ) {
             set_skip_vars( NULL, NULL, NULL, spacing, g_curr_font);
             t_element = init_doc_el( el_text, wgml_fonts[g_curr_font].line_height );
             if( g_line_indent == 0 ) {  // special case
