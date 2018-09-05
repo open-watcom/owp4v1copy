@@ -639,6 +639,7 @@ static  void    out_ban_common( banner_lay_tag * ban, bool top )
     uint32_t            cur_line_height;
     uint32_t            cur_width;
     uint32_t            cur_v_pos;
+    uint32_t            text_width;
 
     ban_line.first = NULL;
 
@@ -884,15 +885,19 @@ static  void    out_ban_common( banner_lay_tag * ban, bool top )
                             continue;                   // skip empty part
                         }
                         /* if k == 0, left-justify: already done */
+                        text_width = cop_text_width( cur_region->final_content[k].string,
+                                        strlen( cur_region->final_content[k].string ),
+                                        cur_region->font);
                         if( k == 1 ) {  // center-justify
                             cur_region->final_content[1].hoffset += (cur_region->reg_width / 2) -
-                            (cop_text_width( cur_region->final_content[1].string,
-                            strlen( cur_region->final_content[1].string ), cur_region->font) / 2);
+                                                                                text_width / 2;
+                            if( text_width % 2 ) {
+                                cur_region->final_content[1].hoffset--;
+                            }
                         }
                         if( k == 2 ) {  // right-justify
                             cur_region->final_content[2].hoffset += cur_region->reg_width -
-                            cop_text_width( cur_region->final_content[2].string,
-                            strlen( cur_region->final_content[2].string ), cur_region->font);
+                                                                                text_width;
                         }
                         cur_p = cur_region->final_content[k].string;
                         if( cur_line->first == NULL ) {
