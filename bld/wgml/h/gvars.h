@@ -213,6 +213,7 @@ global struct ProcFlags {
     unsigned        top_line            : 1;// determines if current line is at top of page
     unsigned        vline_done          : 1;// determines if a vertical line was done
 
+    unsigned        dd_empty            : 1;// DD had no text (modifies para_starting behavior)
     unsigned        keep_left_margin    : 1;// for indent NOTE tag paragraph
     unsigned        need_dd             : 1;// DT seen; DD must be next tag
     unsigned        need_ddhd           : 1;// DTHD seen; DDHD must be next tag

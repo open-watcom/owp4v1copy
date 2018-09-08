@@ -143,12 +143,15 @@ void  scr_process_break( void )
             insert_col_main( cur_el );
         }
         t_el_last = NULL;
-    } else if( ProcFlags.para_starting ) {      // LP, P or PC : no text before break
+    } else if( ProcFlags.dd_empty || ProcFlags.para_starting ) {    // DD, LP, P or PC : no text before break
 
         /* Putting set_skip_vars() first can affect the result of the if() */
 
-        if( (g_line_indent > 0) || (g_blank_lines > 0) ) {
+        if( ProcFlags.dd_empty || (g_line_indent > 0) || (g_blank_lines > 0) ) {
             set_skip_vars( NULL, NULL, NULL, spacing, g_curr_font);
+            if( ProcFlags.dd_empty ) {  // insert blank line
+                g_subs_skip = wgml_fonts[g_curr_font].line_height;
+            }
             t_element = init_doc_el( el_text, wgml_fonts[g_curr_font].line_height );
             if( g_line_indent == 0 ) {  // special case
                 t_element->depth = 0;
@@ -164,6 +167,7 @@ void  scr_process_break( void )
             insert_col_main( t_element );
             t_element = NULL;
             t_el_last = NULL;
+            ProcFlags.dd_empty = false;
         } else {
             set_skip_vars( NULL, NULL, NULL, spacing, g_curr_font);
         }

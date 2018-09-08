@@ -2410,6 +2410,7 @@ void process_text( const char *text, font_number font )
     /* Clear various control flags/variables */
 
     ProcFlags.ct = false;
+    ProcFlags.dd_empty = false;
     ProcFlags.fsp = false;
     ProcFlags.para_starting = false;
     ProcFlags.stop_xspc = false;
