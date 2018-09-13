@@ -547,7 +547,7 @@ static void gen_figlist( void )
                                   wgml_fonts[g_curr_font].spc_width;
                 t_page.cur_width = t_page.cur_left;
                 ProcFlags.ct = true;                // emulate CT
-                ProcFlags.stop_xspc = true;         // suppress 2nd space after stops
+                ProcFlags.as_text_line = true;      // suppress 2nd space after stops
                 post_space = 0;
                 t_page.max_width -= size;
                 if( ProcFlags.has_aa_block ) {      // matches wgml 4.0
@@ -1002,7 +1002,7 @@ static void gen_toc( void )
                 } else {
                     t_page.max_width -= 3 * tab_col;
                 }
-                ProcFlags.stop_xspc = true;         // suppress 2nd space after stop
+                ProcFlags.as_text_line = true;      // suppress 2nd space after stop
                 process_text( curr->text, g_curr_font );
                 if( ProcFlags.has_aa_block ) {      // matches wgml 4.0
                     t_page.max_width += tab_col;

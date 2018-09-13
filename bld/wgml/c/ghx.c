@@ -121,7 +121,7 @@ static void hx_header( char * h_num, char * h_text, hdsrc hn_lvl, hdsrc hds_lvl 
 
     post_space = 0;
 
-    ProcFlags.stop_xspc = true;     // suppress 2nd space after stop
+    ProcFlags.as_text_line = true;  // treat as <text_line>
 
     if( (hds_lvl < hds_abstract) && (layout_work.hx.hx_head[hds_lvl].number_form != none) ) {
         process_text( h_num, layout_work.hx.hx_head[hds_lvl].number_font );        

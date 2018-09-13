@@ -1458,7 +1458,7 @@ void gml_gd( const gmltag * entry )
     p = scan_start;
 
     ProcFlags.ct = true;
-    ProcFlags.stop_xspc = true;
+    ProcFlags.as_text_line = true;
     post_space = 0;
     process_text( &nest_cb->gl_layout->delim, g_curr_font );
 

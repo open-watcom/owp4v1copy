@@ -281,11 +281,17 @@ static void content_reg( region_lay_tag * region )
             }
             break;
         case date_content :
-            rc = find_symvar( &global_dict, "$date", no_subscript, &symsubval );
-            if( rc == 2 ) {
+            /* This matches what wgml 4.0 actually does */
+            rc = find_symvar( &global_dict, "date", no_subscript, &symsubval );
+            if( rc == 2 ){  // tag DATE used
                 strcpy_s( &buf, strlen(symsubval->value) + 1, symsubval->value );
-            } else {
-                strcpy_s( &buf, strlen("$date") + 1, "$date" );
+            } else {        // tag DATE not used
+                rc = find_symvar( &global_dict, "$date", no_subscript, &symsubval );
+                if( rc == 2 ) {
+                    strcpy_s( &buf, strlen(symsubval->value) + 1, symsubval->value );
+                } else {
+                    strcpy_s( &buf, strlen("$date") + 1, "$date" );
+                }
             }
             break;
         case docnum_content :
@@ -645,11 +651,13 @@ static  void    out_ban_common( banner_lay_tag * ban, bool top )
 
     /***************************************************************************/
     /* For each region in the banner, fully resolve all symbols/functions      */
-    /* Then determine how much of the text will fit and, if the region has     */
-    /* enough space for another line, create a new region with the remainder   */
-    /* of the text and insert it at the proper position in cur_grp (voffset    */
-    /* will always be larger by one line_height, so the new banner will always */
-    /* sort further down the list)                                             */
+    /* Then determine how much of the text will fit and (for now) cut it off   */
+    /* at the last space before that point.                                    */ 
+    /* When multiline regions are implemented then, if the region has enough   */
+    /* space for another line, create a new region with the remainder of the   */
+    /* text and insert it at the proper position in cur_grp (voffset will      */
+    /* always be larger by one line_height, so the new region will always sort */
+    /* further down the list)                                                  */
     /* NOTE: regions with content "rule" will not be processed here            */
     /***************************************************************************/
 
@@ -670,6 +678,9 @@ static  void    out_ban_common( banner_lay_tag * ban, bool top )
                                 cur_region->reg_width ) {
                             cur_width += wgml_fonts[cur_region->font].width_table[(unsigned char) *cur_p];
                         } else {
+                            while( *cur_p != ' ' ) {
+                                cur_p--;
+                            }
                             *cur_p = '\0';     // This is where multiline support goes!!!
                             break;
                         }
@@ -784,7 +795,7 @@ static  void    out_ban_common( banner_lay_tag * ban, bool top )
                     cur_line->y_address = cur_v_pos;
                 }
 
-                /* Conver the region into one or more text_chars */
+                /* Convert the region into one or more text_chars */
 
                 cur_region->final_content[0].hoffset = cur_region->reg_hoffset;
                 cur_region->final_content[1].hoffset = cur_region->reg_hoffset;

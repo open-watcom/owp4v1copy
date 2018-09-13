@@ -1869,7 +1869,7 @@ void process_text( const char *text, font_number font )
                     }
                 }
                 if( post_space > 0 ) {
-                    if( !ProcFlags.stop_xspc && is_stop_char( t_line->last->text[t_line->last->count - 1] ) ) {
+                    if( !ProcFlags.as_text_line && is_stop_char( t_line->last->text[t_line->last->count - 1] ) ) {
                         post_space += wgml_fonts[font].spc_width;
                     }
                     if( (c_stop != NULL) && (t_line->last->width == 0) ) {
@@ -2316,7 +2316,7 @@ void process_text( const char *text, font_number font )
         if( *p == ' ' ) {                                       // spaces to process
             pword = p;
             post_space = wgml_fonts[font].spc_width;
-            if( !ProcFlags.stop_xspc && stop_fnd
+            if( !ProcFlags.as_text_line && stop_fnd
                     && (cur_group_type != gt_xmp) ) {   // exclude XMP 
                 post_space += wgml_fonts[font].spc_width;
             }
@@ -2338,18 +2338,12 @@ void process_text( const char *text, font_number font )
                 && !ProcFlags.wrap_indent) { // insert spaces at actual end-of-line, except in INDEX
             pword = p;
             post_space = wgml_fonts[font].spc_width;
-            if( !ProcFlags.stop_xspc && stop_fnd
+            if( !ProcFlags.as_text_line && stop_fnd
                     && (cur_group_type != gt_xmp) ) {   // exclude XMP 
                 post_space += wgml_fonts[font].spc_width;
             }
         }
         n_chars = NULL;
-        if( (ProcFlags.doc_sect != doc_sect_figlist) &&
-                (ProcFlags.doc_sect != doc_sect_toc) ) {
-            if( stop_fnd ) {    // only use on first stop except in FIGCAP, TOC or FIGLIST
-                ProcFlags.stop_xspc = false;
-            }
-        }
     }
 
     /***********************************************************************/
@@ -2413,7 +2407,7 @@ void process_text( const char *text, font_number font )
     ProcFlags.dd_empty = false;
     ProcFlags.fsp = false;
     ProcFlags.para_starting = false;
-    ProcFlags.stop_xspc = false;
+    ProcFlags.as_text_line = false;
     ProcFlags.utc = false;
 }
 

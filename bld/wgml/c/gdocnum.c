@@ -32,120 +32,86 @@
  
 
 /***************************************************************************/
-/*  prepare docnum line                                                    */
-/***************************************************************************/
- 
-static void prep_docnum_line( text_line * p_line, char * p )
-{
-    text_chars  *   curr_t;
-    uint32_t        h_left;
-    uint32_t        h_right;
- 
-    h_left = conv_hor_unit( &layout_work.docnum.left_adjust, g_curr_font );
-    h_right = t_page.max_width - conv_hor_unit( &layout_work.docnum.right_adjust, g_curr_font );
- 
-    if( *p ) {
-        curr_t = alloc_text_chars( layout_work.docnum.string, 1 + strlen( p ) +
-                                   strlen( layout_work.docnum.string ),
-                                   g_curr_font );
-    } else {
-        curr_t = alloc_text_chars( layout_work.docnum.string,
-                                   1 + strlen( layout_work.docnum.string ),
-                                   g_curr_font );
-    }
-    if( *p  ) {
-        strcat_s( curr_t->text, curr_t->length, p );
-    }
-    curr_t->count = strlen( curr_t->text );
-    curr_t->count = len_to_trail_space( curr_t->text, curr_t->count );
-    curr_t->count = intrans( curr_t->text, curr_t->count, g_curr_font );
-    curr_t->width = cop_text_width( curr_t->text, curr_t->count, g_curr_font );
-    while( curr_t->width > (h_right - h_left) ) {   // too long for line
-        if( curr_t->count < 2 ) {        // sanity check
-            break;
-        }
-        curr_t->count -= 1;             // truncate text
-        curr_t->width = cop_text_width( curr_t->text, curr_t->count, g_curr_font );
-    }
-    p_line->first = curr_t;
-    p_line->last = curr_t;
-    p_line->line_height = wgml_fonts[g_curr_font].line_height;
-    curr_t->x_address = h_left;
-    if( layout_work.docnum.page_position == pos_center ) {
-        if( h_left + curr_t->width < h_right ) {
-            curr_t->x_address += (h_right - h_left - curr_t->width) / 2;
-        }
-    } else if( layout_work.docnum.page_position == pos_right ) {
-        curr_t->x_address = h_right - curr_t->width;
-    }
-    ju_x_start = curr_t->x_address;
- 
-    return;
-}
- 
-/***************************************************************************/
 /*  :docnum.docnum   tag                                                       */
 /***************************************************************************/
  
 void    gml_docnum( const gmltag * entry )
 {
+    char        *   buff            = NULL;
     char        *   p;
-    doc_element *   cur_el;
-    text_line   *   p_line;
-    int8_t          d_spacing;
     font_number     font_save;
-    int32_t         rc;
-    symsub      *   docnumval;
+    size_t          buff_len;
+    uint32_t        left_indent;
+    uint32_t        right_indent;
  
  
     if( !((ProcFlags.doc_sect == doc_sect_titlep) ||
           (ProcFlags.doc_sect_nxt == doc_sect_titlep)) ) {
-        g_err( err_tag_wrong_sect, entry->tagname, ":TITLEP section" );
-        err_count++;
-        show_include_stack();
+        xx_nest_err_cc( err_tag_wrong_sect, entry->tagname, ":TITLEP section" );
     }
 
     if( ProcFlags.docnum_tag_seen ) {   // only one DOCNUM tag allowed
         xx_line_err( err_2nd_docnum, buff2 );
     }
 
-    ProcFlags.docnum_tag_seen = true;
     p = scan_start;
     if( *p && *p == '.' ) p++;          // over . to docnum
 
     while( *p == ' ' ) {                // over WS to attribute
         p++;
     }
-    rc = find_symvar( &sys_dict, "$docnum", no_subscript, &docnumval );
-    if( *p ) {                          // docnum specified
-        strcpy_s( docnumval->value, 60, p );
-    } else {
-        *(docnumval->value) = 0;
+
+    /* Prepend the docnum_string, if any */
+
+    if( layout_work.docnum.string != NULL ) {
+        buff_len = strlen( layout_work.docnum.string ) + strlen ( p ) + 1;
+        buff = mem_alloc( buff_len );
+        strcpy_s( buff, buff_len, layout_work.docnum.string );
+        strcat_s( buff, buff_len    , p );
+        p = buff;
     }
+
+    if( GlobalFlags.firstpass && *p ) {
+        add_symvar( &global_dict, "$docnum", p, no_subscript, 0 );
+    }
+    ProcFlags.docnum_tag_seen = true;
  
+    scr_process_break();
     start_doc_sect();                   // if not already done
 
     font_save = g_curr_font;
     g_curr_font = layout_work.docnum.font;
 
-    p_line = alloc_text_line();
-    p_line->line_height = wgml_fonts[layout_work.docnum.font].line_height;
-    prep_docnum_line( p_line, docnumval->value );
-
-    d_spacing = layout_work.titlep.spacing;
+    spacing = layout_work.titlep.spacing;
 
     /************************************************************/
     /*  pre_skip is treated as pre_top_skip because it is       */
     /*  always used at the top of the page, despite the docs    */
     /************************************************************/
 
-    set_skip_vars( NULL, &layout_work.docnum.pre_skip, NULL, d_spacing, 
-                       g_curr_font );
+    set_skip_vars( NULL, &layout_work.docnum.pre_skip, NULL, spacing, g_curr_font );
  
-    cur_el = init_doc_el( el_text, p_line->line_height );
-    cur_el->element.text.first = p_line;
-    p_line = NULL;
-    insert_col_main( cur_el );
+
+    left_indent = conv_hor_unit( &layout_work.docnum.left_adjust, g_curr_font );
+    right_indent = conv_hor_unit( &layout_work.docnum.right_adjust, g_curr_font );
+
+    t_page.cur_left += left_indent;
+    t_page.cur_width = t_page.cur_left;
+    if( t_page.max_width < right_indent ) {
+        t_page.max_width = 0;               // negative right margin not allowed
+        xx_line_err( err_page_width_too_small, val_start );
+    } else {
+        t_page.max_width -= right_indent;
+    }
+    ProcFlags.keep_left_margin = true;  // keep special indent
+    line_position = layout_work.docnum.page_position;
+    ProcFlags.as_text_line = true;
+    if( *p ) {
+        process_text( p, g_curr_font );
+    }
+    if( buff != NULL ) {
+        mem_free( buff );
+    }
 
     g_curr_font = font_save;
     scan_start = scan_stop + 1;

@@ -32,7 +32,6 @@
 #include    "gvars.h"
 
 static  bool            first_aline;    // special for first :ALINE
-static  int8_t          a_spacing;      // spacing between adr lines
 static  font_number     font_save;      // save for font
 static  group_type      sav_group_type; // save prior group type
 
@@ -44,11 +43,7 @@ void gml_address( const gmltag * entry )
 {
     if( !((ProcFlags.doc_sect == doc_sect_titlep) ||
           (ProcFlags.doc_sect_nxt == doc_sect_titlep)) ) {
-        g_err( err_tag_wrong_sect, entry->tagname, ":TITLEP section" );
-        err_count++;
-        show_include_stack();
-        scan_start = scan_stop + 1;
-        return;
+        xx_nest_err_cc( err_tag_wrong_sect, entry->tagname, ":TITLEP section" );
     }
     first_aline = true;
     font_save = g_curr_font;
@@ -58,8 +53,11 @@ void gml_address( const gmltag * entry )
     init_nest_cb();
     nest_cb->p_stack = copy_to_nest_stack();
     nest_cb->c_tag = t_ADDRESS;
-    nest_cb->left_indent = nest_cb->prev->left_indent;
-    nest_cb->right_indent = nest_cb->prev->right_indent;
+    nest_cb->left_indent = nest_cb->prev->left_indent + conv_hor_unit( &layout_work.address.left_adjust, g_curr_font );
+    nest_cb->right_indent = nest_cb->prev->right_indent - conv_hor_unit( &layout_work.address.right_adjust, g_curr_font );
+
+    nest_cb->lm = t_page.cur_left;
+    nest_cb->rm = t_page.max_width;
 
     spacing = layout_work.titlep.spacing;
 
@@ -94,12 +92,8 @@ void gml_eaddress( const gmltag * entry )
 
     if( cur_group_type != gt_address ) {   // no preceding :ADDRESS tag
         g_err_tag_prec( "ADDRESS" );
-        scan_start = scan_stop + 1;
-        return;
     }
     g_curr_font = font_save;
-    nest_cb->prev->left_indent = nest_cb->left_indent;
-    nest_cb->prev->right_indent = nest_cb->right_indent;
     rs_loc = titlep_tag;
     wk = nest_cb;
     nest_cb = nest_cb->prev;
@@ -107,6 +101,7 @@ void gml_eaddress( const gmltag * entry )
 
     /* Place the accumulated ALINES on the proper page */
 
+    scr_process_break();
     cur_group_type = sav_group_type;
     if( t_doc_el_group != NULL ) {
         cur_doc_el_group = t_doc_el_group;      // detach current element group
@@ -140,45 +135,9 @@ void gml_eaddress( const gmltag * entry )
         add_doc_el_group_to_pool( cur_doc_el_group );
         cur_doc_el_group = NULL;
     }
+    t_page.cur_left = nest_cb->lm;
+    t_page.max_width = nest_cb->rm;
     scan_start = scan_stop + 1;
-    return;
-}
-
-
-/***************************************************************************/
-/*  prepare address line for output                                        */
-/***************************************************************************/
-
-static void prep_aline( text_line *p_line, const char *p )
-{
-    text_chars  *   curr_t;
-    uint32_t        h_left;
-    uint32_t        h_right;
-
-    h_left = nest_cb->left_indent + conv_hor_unit( &layout_work.address.left_adjust, g_curr_font );
-    h_right = t_page.max_width + nest_cb->right_indent - conv_hor_unit( &layout_work.address.right_adjust, g_curr_font );
-
-    curr_t = alloc_text_chars( p, strlen( p ), g_curr_font );
-    curr_t->count = len_to_trail_space( curr_t->text, curr_t->count );
-    curr_t->count = intrans( curr_t->text, curr_t->count, g_curr_font );
-    curr_t->width = cop_text_width( curr_t->text, curr_t->count, g_curr_font );
-    while( curr_t->width > (h_right - h_left) ) {   // too long for line
-        if( curr_t->count < 2) {        // sanity check
-            break;
-        }
-        curr_t->count -= 1;             // truncate text
-        curr_t->width = cop_text_width( curr_t->text, curr_t->count, g_curr_font );
-    }
-    p_line->first = curr_t;
-    curr_t->x_address = h_left;
-    if( layout_work.address.page_position == pos_center ) {
-        if( h_left + curr_t->width < h_right ) {
-            curr_t->x_address = h_left + (h_right - h_left - curr_t->width) / 2;
-        }
-    } else if( layout_work.address.page_position == pos_right ) {
-        curr_t->x_address = h_right - curr_t->width;
-    }
-
     return;
 }
 
@@ -190,14 +149,10 @@ static void prep_aline( text_line *p_line, const char *p )
 void gml_aline( const gmltag * entry )
 {
     char        *   p;
-    doc_element *   cur_el;
-    text_line   *   ad_line;
 
     if( !((ProcFlags.doc_sect == doc_sect_titlep) ||
           (ProcFlags.doc_sect_nxt == doc_sect_titlep)) ) {
-        g_err( err_tag_wrong_sect, entry->tagname, ":TITLEP section" );
-        err_count++;
-        show_include_stack();
+        xx_nest_err_cc( err_tag_wrong_sect, entry->tagname, ":TITLEP section" );
     }
     if( cur_group_type != gt_address ) {   // no preceding :ADDRESS tag
         g_err_tag_prec( "ADDRESS" );
@@ -205,8 +160,13 @@ void gml_aline( const gmltag * entry )
     p = scan_start;
     if( *p == '.' ) p++;                // over '.'
 
+    while( *p == ' ' ) {                // over WS to <text line>
+        p++;
+    }
+
+    scr_process_break();
     start_doc_sect();               // if not already done
-    a_spacing = layout_work.titlep.spacing;
+    spacing = layout_work.titlep.spacing;
     g_curr_font = layout_work.address.font;
     if( !first_aline ) {
 
@@ -216,20 +176,23 @@ void gml_aline( const gmltag * entry )
         /*  this is not what the docs say                           */
         /************************************************************/
 
-        set_skip_vars( NULL, &layout_work.aline.skip, NULL, a_spacing, g_curr_font );
+        set_skip_vars( NULL, &layout_work.aline.skip, NULL, spacing, g_curr_font );
     }
 
-    ad_line = alloc_text_line();
-    ad_line->line_height = wgml_fonts[g_curr_font].line_height;
-
+    t_page.cur_left += nest_cb->left_indent;
+    t_page.cur_width = t_page.cur_left;
+    if( t_page.max_width < -1 * nest_cb->right_indent ) {
+        t_page.max_width = 0;               // negative right margin not allowed
+        xx_line_err( err_page_width_too_small, val_start );
+    } else {
+        t_page.max_width += nest_cb->right_indent;
+    }
+    ProcFlags.keep_left_margin = true;  // keep special indent
+    line_position = layout_work.address.page_position;
+    ProcFlags.as_text_line = true;
     if( *p ) {
-        prep_aline( ad_line, p );
+        process_text( p, g_curr_font );
     }
-
-    cur_el = init_doc_el( el_text, ad_line->line_height );
-    cur_el->element.text.first = ad_line;
-    ad_line = NULL;
-    insert_col_main( cur_el );
 
     first_aline = false;
     scan_start = scan_stop + 1;

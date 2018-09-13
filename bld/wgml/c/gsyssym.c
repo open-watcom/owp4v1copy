@@ -42,7 +42,6 @@
 #define pica( var, next, flag )    pick( var, next, flag )
 #define picc( var, next, flag )    pick( var, next, flag )
 #define picl( var, next, flag )    pick( var, next, flag )
-#define pics( var, next, flag )    pick( var, next, flag )
 
 /***************************************************************************/
 /*  declare dictionary entries for system variables                        */
@@ -58,14 +57,12 @@
 #undef pica
 #undef picc
 #undef picl
-#undef pics
 
 /***************************************************************************/
 /*  declare the access functions for system variables                      */
 /***************************************************************************/
 
 #define pica( var, next, flag )
-#define pics( var, next, flag )
 #define picc( var, next, flag ) picl( var, next, flag )
 #define pick( var, next, flag ) picl( var, next, flag )
 #define picl( var, next, flag ) static void sysf( var )( symvar * entry );
@@ -74,7 +71,6 @@
 #undef pica
 #undef picc
 #undef picl
-#undef pics
 
 /***************************************************************************/
 /*  define char strings to hold the values of some system variables        */
@@ -84,13 +80,11 @@
 #define pick( var, next, flag )
 #define picc( var, next, flag ) static char syss( var )[2];             // for single char values as string
 #define picl( var, next, flag ) static char syss( var )[MAX_L_AS_STR];  // for long as string and sysbxchar
-#define pics( var, next, flag ) static char syss( var )[60];            // for special string $docnum arbitrary length
 #include "gsyssym.h"
 #undef pick
 #undef pica
 #undef picc
 #undef picl
-#undef pics
 
 /***************************************************************************/
 /*  define the dictionary for the system variables                         */
@@ -98,7 +92,6 @@
 /*  pica:       no access function, no separate string value               */
 /*  picc:          access function,    separate string value 2 chars       */
 /*  picl:          access function,    separate string value 12 chars      */
-/*  pics:       no access function,    separate string value 60 chars      */
 /*  pick:          access function, no separate string value               */
 /*                                  or 2 predefined values  ON OFF         */
 /***************************************************************************/
@@ -114,11 +107,6 @@ static symvar sys( var ) = {        \
     &sys( next ), "$" #var, 0L, 0L, NULL, &sys0( var ), NULL, flag };\
 static symsub sys0( var ) = { NULL, &sys( var ), no_subscript, NULL };
 
-#define pics( var, next, flag )     \
-static symvar sys( var ) = {        \
-    &sys( next ), "$" #var, 0L, 0L, NULL, &sys0( var ), NULL, flag };\
-static symsub sys0( var ) = { NULL, &sys( var ), no_subscript, &syss( var ) };
-
 #define pick( var, next, flag )     \
 static symvar sys( var ) = {        \
     &sys( next ), "$" #var, 0L, 0L, NULL, &sys0( var ), sysf( var ), flag };\
@@ -129,7 +117,6 @@ static symsub sys0( var ) = { NULL, &sys( var ), no_subscript, NULL };
 #undef pica
 #undef picc
 #undef picl
-#undef pics
 
 
 /***************************************************************************/
@@ -1155,7 +1142,6 @@ void    init_sys_dict( symvar * * dict )
 
     *sysampstr = '&';
     *(sysampstr + 1) = 0;
-//  *sysauthor =
     *sysbcstr  = 'Y';
     *(sysbcstr + 1)  = 0;
 //  *sysbestr  =
@@ -1183,7 +1169,6 @@ void    init_sys_dict( symvar * * dict )
     *(syscwstr + 1) = 0;
 //  *sysdfontsstr =
 //  *sysdhsetstr =
-    *sysdocnumstr = 0;
 //  *sysdpagestr =
     sysduplex0.value = str[ju_off];
     *sysfbstr = 'N';
@@ -1208,7 +1193,7 @@ void    init_sys_dict( symvar * * dict )
 //  *syshsstr =
     syshy0.value = str[ju_off];
 //  *syshycstr =
-    *syshyphstr = 'N';                // hyphenation OFF not implemented  TBD
+    *syshyphstr = 'N';                // hyphenation OFF is default; hyphenation ON not implemented
     *(syshyphstr + 1) = 0;
 //  *sysinstr =
 //  *sysinrstr =
@@ -1267,7 +1252,6 @@ void    init_sys_dict( symvar * * dict )
 //  *sysskcondstr =
 //  *sysslstr =
 //  *sysspcondstr =
-//  *sysstitlestr =
     syssu0.value = str[ju_on];
     syssys0.value = "DOS";
     *systabstr       = *systbstr       = 0x09;

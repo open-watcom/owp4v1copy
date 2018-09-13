@@ -194,7 +194,7 @@ global struct ProcFlags {
     unsigned        concat              : 1;// .co ON if set
     unsigned        ct                  : 1;// .ct continue text is active
     unsigned        fsp                 : 1;// force space in spite of .ct
-    unsigned        stop_xspc           : 1;// suppress 2nd space after stop char (FIG, Hn, FIGLIST, TOC)
+    unsigned        as_text_line        : 1;// process text as <text line>
     unsigned        utc                 : 1;// user tag with "continue" is active
     unsigned        in_trans            : 1;// esc char is specified (.ti set x)
     unsigned        reprocess_line      : 1;// unget for current input line
@@ -213,7 +213,7 @@ global struct ProcFlags {
     unsigned        top_line            : 1;// determines if current line is at top of page
     unsigned        vline_done          : 1;// determines if a vertical line was done
 
-    unsigned        dd_empty            : 1;// DD had no text (modifies para_starting behavior)
+    unsigned        dd_empty            : 1;// DD had no text
     unsigned        keep_left_margin    : 1;// for indent NOTE tag paragraph
     unsigned        need_dd             : 1;// DT seen; DD must be next tag
     unsigned        need_ddhd           : 1;// DTHD seen; DDHD must be next tag

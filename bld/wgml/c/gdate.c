@@ -32,75 +32,27 @@
  
  
 /***************************************************************************/
-/*  prepare date line                                                      */
-/***************************************************************************/
- 
-static void prep_date_line( text_line *p_line, const char *p )
-{
-    text_chars  *   curr_t;
-    uint32_t        h_left;
-    uint32_t        h_right;
-    symsub      *   subdate;
-    int             rc;
- 
-    h_left = conv_hor_unit( &layout_work.date.left_adjust, g_curr_font );
-    h_right = t_page.max_width - conv_hor_unit( &layout_work.date.right_adjust, g_curr_font );
- 
-    if( *p ) {
-        curr_t = alloc_text_chars( p, strlen( p ), g_curr_font );
-    } else {
-        rc = find_symvar( &global_dict, "date", no_subscript, &subdate );
-        curr_t = alloc_text_chars( subdate->value, strlen( subdate->value ), g_curr_font );
-    }
-    curr_t->count = len_to_trail_space( curr_t->text, curr_t->count );
-    curr_t->count = intrans( curr_t->text, curr_t->count, g_curr_font );
-    curr_t->width = cop_text_width( curr_t->text, curr_t->count, g_curr_font );
-    while( curr_t->width > (h_right - h_left) ) {   // too long for line
-        if( curr_t->count < 2) {        // sanity check
-            break;
-        }
-        curr_t->count -= 1;             // truncate text
-        curr_t->width = cop_text_width( curr_t->text, curr_t->count, g_curr_font );
-    }
-    p_line->first = curr_t;
-    p_line->last  = curr_t;
-    curr_t->x_address = h_left;
-    if( layout_work.date.page_position == pos_center ) {
-        if( h_left + curr_t->width < h_right ) {
-            curr_t->x_address += (h_right - h_left - curr_t->width) / 2;
-        }
-    } else if( layout_work.date.page_position == pos_right ) {
-        curr_t->x_address = h_right - curr_t->width;
-    }
-    ju_x_start = curr_t->x_address;
- 
-    return;
-}
- 
-/***************************************************************************/
 /*  :DATE.date   tag                                                       */
 /***************************************************************************/
  
 void    gml_date( const gmltag * entry )
 {
     char        *   p;
-    doc_element *   cur_el;
-    text_line   *   p_line;
-    int8_t          d_spacing;
     font_number     font_save;
- 
+    int32_t         rc;
+    symsub      *   dateval;
+    uint32_t        left_indent;
+    uint32_t        right_indent;
+
     if( !((ProcFlags.doc_sect == doc_sect_titlep) ||
           (ProcFlags.doc_sect_nxt == doc_sect_titlep)) ) {
-        g_err( err_tag_wrong_sect, entry->tagname, ":TITLEP section" );
-        err_count++;
-        show_include_stack();
+        xx_nest_err_cc( err_tag_wrong_sect, entry->tagname, ":TITLEP section" );
     }
 
     if( ProcFlags.date_tag_seen ) {     // only one DATE tag allowed
         xx_line_err( err_2nd_date, buff2 );
     }
 
-    ProcFlags.date_tag_seen = true;
     p = scan_start;
     if( *p && *p == '.' ) p++;          // over . to docnum
 
@@ -108,35 +60,48 @@ void    gml_date( const gmltag * entry )
         p++;
     }
 
-    if( *p ) {                                              // date specified
-        add_symvar( &global_dict, "date", p, no_subscript, 0 );
+    if( *p ) { // date specified
+        if( GlobalFlags.firstpass  ) { 
+            add_symvar( &global_dict, "date", p, no_subscript, 0 );
+        }
+    } else {
+        rc = find_symvar( &sys_dict, "$date", no_subscript, &dateval );
+        p = dateval->value;
     }
  
+    scr_process_break();
     start_doc_sect();                   // if not already done
  
     font_save = g_curr_font;
     g_curr_font = layout_work.date.font;
-
-    p_line = alloc_text_line();
-    p_line->line_height = wgml_fonts[layout_work.date.font].line_height;
-
-    prep_date_line( p_line, p );
-
-    d_spacing = layout_work.titlep.spacing;
+    spacing = layout_work.titlep.spacing;
 
     /************************************************************/
     /*  pre_skip is treated as pre_top_skip because it is       */
     /*  always used at the top of the page, despite the docs    */
     /************************************************************/
 
-    set_skip_vars( NULL, &layout_work.date.pre_skip, NULL, d_spacing, 
-                       g_curr_font );
+    set_skip_vars( NULL, &layout_work.date.pre_skip, NULL, spacing, g_curr_font );
  
-    cur_el = init_doc_el( el_text, p_line->line_height );
-    cur_el->element.text.first = p_line;
-    p_line = NULL;
-    insert_col_main( cur_el );
+    left_indent = conv_hor_unit( &layout_work.date.left_adjust, g_curr_font );
+    right_indent = conv_hor_unit( &layout_work.date.right_adjust, g_curr_font );
+
+    t_page.cur_left += left_indent;
+    t_page.cur_width = t_page.cur_left;
+    if( t_page.max_width < right_indent ) {
+        t_page.max_width = 0;               // negative right margin not allowed
+        xx_line_err( err_page_width_too_small, val_start );
+    } else {
+        t_page.max_width -= right_indent;
+    }
+    ProcFlags.keep_left_margin = true;  // keep special indent
+    line_position = layout_work.author.page_position;
+    ProcFlags.as_text_line = true;
+    if( *p ) {
+        process_text( p, g_curr_font );
+    }
 
     g_curr_font = font_save;
+    ProcFlags.date_tag_seen = true;
     scan_start = scan_stop + 1;
 }

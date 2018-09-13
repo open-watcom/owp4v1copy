@@ -33,137 +33,100 @@
 
 
 /***************************************************************************/
-/*  prepare title line                                                     */
-/*  Note: only used when text exists                                       */
-/***************************************************************************/
-
-static void prep_title_line( text_line * p_line, const char * p )
-{
-    text_chars  *   curr_t;
-    uint32_t        h_left;
-    uint32_t        h_right;
-    uint32_t        curr_x;
-
-    h_left = conv_hor_unit( &layout_work.title.left_adjust, g_curr_font );
-    h_right = t_page.max_width - conv_hor_unit( &layout_work.title.right_adjust, g_curr_font );
-
-    curr_t = alloc_text_chars( p, strlen( p ), g_curr_font );
-    curr_t->count = len_to_trail_space( curr_t->text, curr_t->count );
-    curr_t->count = intrans( curr_t->text, curr_t->count, g_curr_font );
-    curr_t->font = layout_work.title.font;
-    curr_t->width = cop_text_width( curr_t->text, curr_t->count, g_curr_font );
-    while( curr_t->width > (h_right - h_left) ) {   // too long for line
-        if( curr_t->count < 2 ) {        // sanity check
-            break;
-        }
-        curr_t->count -= 1;             // truncate text
-        curr_t->width = cop_text_width( curr_t->text, curr_t->count, g_curr_font );
-    }
-    p_line->first = curr_t;
-    p_line->last  = curr_t;
-    curr_x = h_left;
-    if( layout_work.title.page_position == pos_center ) {
-        if( h_left + curr_t->width < h_right ) {
-            curr_x += (h_right - h_left - curr_t->width) / 2;
-        }
-    } else if( layout_work.title.page_position == pos_right ) {
-        curr_x = h_right - curr_t->width;
-    }
-    curr_t->x_address = curr_x;
-    ju_x_start = curr_x;
-
-    return;
-}
-
-
-/***************************************************************************/
 /*  :TITLE tag                                                             */
 /***************************************************************************/
 
 void    gml_title( const gmltag * entry )
 {
     char        *   p;
-    doc_element *   cur_el;
-    text_line   *   p_line      = NULL;
-    int8_t          t_spacing;
+    char        *   pa;
     font_number     font_save;
+    uint32_t        left_indent;
+    uint32_t        right_indent;
 
     if( !((ProcFlags.doc_sect == doc_sect_titlep) ||
           (ProcFlags.doc_sect_nxt == doc_sect_titlep)) ) {
-        g_err( err_tag_wrong_sect, entry->tagname, ":TITLEP section" );
-        err_count++;
-        show_include_stack();
+        xx_nest_err_cc( err_tag_wrong_sect, entry->tagname, ":TITLEP section" );
     }
+
     p = scan_start;
-    if( *p && *p != '.' ) p++;
 
-    while( *p == ' ' ) {                // over WS to attribute
-        p++;
-    }
-    if( *p &&
-        ! (strnicmp( "stitle ", p, 7 ) &&   // look for stitle
-           strnicmp( "stitle=", p, 7 )) ) {
-        char        quote;
-        char    *   valstart;
-
-        p += 6;
-        while( *p == ' ' ) {
-            p++;
-        }
-        if( *p == '=' ) {
-            p++;
-            while( *p == ' ' ) {
-                p++;
+    if( *p == '.' ) {
+        /* already at tag end */
+    } else {
+        for( ;; ) {
+            pa = get_att_start( p );
+            p = att_start;
+            if( ProcFlags.reprocess_line ) {
+                break;
+            }
+            if( !strnicmp( "stitle", p, 6 ) ) {
+                p += 6;
+                p = get_att_value( p );
+                if( val_start == NULL ) {
+                    break;
+                }
+                if( GlobalFlags.firstpass && !ProcFlags.stitle_seen ) {  // first stitle goes into dictionary
+                    add_symvar( &global_dict, "$stitle", val_start, no_subscript, 0 );
+                    ProcFlags.stitle_seen = true;
+                }
+                if( ProcFlags.tag_end_found ) {
+                    break;
+                }
+            } else {    // no match = end-of-tag in wgml 4.0
+                ProcFlags.tag_end_found = true;
+                p = pa; // restore spaces before text
+                break;
             }
         }
-        if( *p == '"' || *p == '\'' ) {
-            quote = *p;
-            ++p;
-        } else {
-            quote = ' ';
-        }
-        valstart = p;
-        while( *p && *p != quote ) {
-            ++p;
-        }
-        *p = '\0';
-        if( !ProcFlags.stitle_seen ) {  // first stitle goes into dictionary
-            add_symvar( &global_dict, "$stitle", valstart, no_subscript, 0 );
-            ProcFlags.stitle_seen = true;
-        }
+    }
+
+    if( *p && *p == '.' ) p++;          // over . to docnum
+
+    while( *p == ' ' ) {                // over WS to title
         p++;
     }
 
-    if( *p == '.' ) p++;                // over '.'
-    if( !ProcFlags.title_text_seen ) {
+    if( GlobalFlags.firstpass && !ProcFlags.title_text_seen ) {
         if( *p ) {                      // first title goes into dictionary
             add_symvar( &global_dict, "$title", p, no_subscript, 0 );
         }
+        ProcFlags.title_text_seen = true;
     }
 
+    scr_process_break();
     start_doc_sect();                   // if not already done
 
     font_save = g_curr_font;
     g_curr_font = layout_work.title.font;
-    t_spacing = layout_work.titlep.spacing;
-    if( !ProcFlags.title_tag_top ) {
-        set_skip_vars( NULL, &layout_work.title.pre_top_skip, NULL, t_spacing, 
-                       g_curr_font );
+    spacing = layout_work.titlep.spacing;
+    if( !ProcFlags.title_tag_top && *p ) {  // first title to appear on page, not just first TITLE tag
+        set_skip_vars( NULL, &layout_work.title.pre_top_skip, NULL, spacing, g_curr_font );
         ProcFlags.title_tag_top = true;
     } else {
-        set_skip_vars( &layout_work.title.skip, NULL, NULL, t_spacing, 
-                       g_curr_font );
+        set_skip_vars( &layout_work.title.skip, NULL, NULL, spacing, g_curr_font );
     }
     
-    p_line = alloc_text_line();
-    p_line->line_height = wgml_fonts[g_curr_font].line_height;
-    if( *p ) {
-        prep_title_line( p_line, p );
+    left_indent = conv_hor_unit( &layout_work.title.left_adjust, g_curr_font );
+    right_indent = conv_hor_unit( &layout_work.title.right_adjust, g_curr_font );
+
+    t_page.cur_left += left_indent;
+    t_page.cur_width = t_page.cur_left;
+    if( t_page.max_width < right_indent ) {
+        t_page.max_width = 0;               // negative right margin not allowed
+        xx_line_err( err_page_width_too_small, val_start );
+    } else {
+        t_page.max_width -= right_indent;
     }
-    cur_el = init_doc_el( el_text, p_line->line_height );
-    cur_el->element.text.first = p_line;
-    p_line = NULL;
-    insert_col_main( cur_el );
+    ProcFlags.keep_left_margin = true;  // keep special indent
+    line_position = layout_work.title.page_position;
+    ProcFlags.as_text_line = true;
+    if( *p ) {
+        process_text( p, g_curr_font );
+    }
+
+    g_curr_font = font_save;
+    scan_start = scan_stop + 1;
 
     g_curr_font = font_save;
     scan_start = scan_stop + 1;
