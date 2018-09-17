@@ -174,8 +174,8 @@ global struct ProcFlags {
     unsigned        stitle_seen         : 1;// remember first stitle value
     unsigned        title_tag_top       : 1;// :TITLE pre_top_skip used
     unsigned        title_text_seen     : 1;// remember first :TITLE tag text
+
     unsigned        heading_banner      : 1;// banner replaced for heading (Hn)
-    unsigned        para_starting       : 1;// :LP, :P or :PC first line/blank line
     unsigned        goto_active         : 1;// processing .go label
     unsigned        newLevelFile        : 1;// start new include Level (file)
     unsigned        gml_tag             : 1;// input buf starts with GML_char
@@ -212,9 +212,12 @@ global struct ProcFlags {
     unsigned        no_bx_hline         : 1;// determines if a horizontal line is to be emitted or not
     unsigned        top_line            : 1;// determines if current line is at top of page
     unsigned        vline_done          : 1;// determines if a vertical line was done
-
-    unsigned        dd_empty            : 1;// DD had no text
     unsigned        keep_left_margin    : 1;// for indent NOTE tag paragraph
+
+    unsigned        dd_starting         : 1;// DD after break had no text (in next scr_process_break())
+    unsigned        para_starting       : 1;// :LP, :P or :PC had no text (in scr_process_break())
+    unsigned        titlep_starting     : 1;// AUTHOR or TITLE had no text (in scr_process_break())
+
     unsigned        need_dd             : 1;// DT seen; DD must be next tag
     unsigned        need_ddhd           : 1;// DTHD seen; DDHD must be next tag
     unsigned        need_gd             : 1;// GT seen; GD must be next tag
@@ -355,6 +358,7 @@ global  int32_t     g_resv;             // vert base units
 global  font_number g_curr_font;        // the font to use for current line
 global  font_number g_phrase_font;      // the font used with SF, even if too large
 global  font_number g_prev_font;        // the font used for the last text output
+
 global  uint32_t    g_cl;               // column length
 global  uint32_t    g_ll;               // line length
 global  uint32_t    g_cd;               // no of columns

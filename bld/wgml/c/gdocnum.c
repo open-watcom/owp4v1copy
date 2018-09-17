@@ -40,6 +40,7 @@ void    gml_docnum( const gmltag * entry )
     char        *   buff            = NULL;
     char        *   p;
     font_number     font_save;
+    page_pos        old_line_pos;
     size_t          buff_len;
     uint32_t        left_indent;
     uint32_t        right_indent;
@@ -77,11 +78,10 @@ void    gml_docnum( const gmltag * entry )
     ProcFlags.docnum_tag_seen = true;
  
     scr_process_break();
-    start_doc_sect();                   // if not already done
+    start_doc_sect();                       // if not already done
 
     font_save = g_curr_font;
     g_curr_font = layout_work.docnum.font;
-
     spacing = layout_work.titlep.spacing;
 
     /************************************************************/
@@ -104,15 +104,21 @@ void    gml_docnum( const gmltag * entry )
         t_page.max_width -= right_indent;
     }
     ProcFlags.keep_left_margin = true;  // keep special indent
+    old_line_pos = line_position;
     line_position = layout_work.docnum.page_position;
     ProcFlags.as_text_line = true;
     if( *p ) {
         process_text( p, g_curr_font );
+    } else {
+        ProcFlags.titlep_starting = true;
     }
+    scr_process_break();                // commit docnum line (or blank line)
+
     if( buff != NULL ) {
         mem_free( buff );
     }
 
     g_curr_font = font_save;
+    line_position = old_line_pos;
     scan_start = scan_stop + 1;
 }

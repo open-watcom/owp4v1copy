@@ -34,6 +34,7 @@
 static  bool            first_aline;    // special for first :ALINE
 static  font_number     font_save;      // save for font
 static  group_type      sav_group_type; // save prior group type
+static  page_pos        old_line_pos;   // save prior line position
 
 /***************************************************************************/
 /*  :ADDRESS                                                               */
@@ -69,6 +70,7 @@ void gml_address( const gmltag * entry )
 
     set_skip_vars( NULL, &layout_work.address.pre_skip, NULL, spacing, g_curr_font );
 
+    old_line_pos = line_position;
     sav_group_type = cur_group_type;
     cur_group_type = gt_address;
     cur_doc_el_group = alloc_doc_el_group( gt_address );
@@ -95,18 +97,32 @@ void gml_eaddress( const gmltag * entry )
     }
     g_curr_font = font_save;
     rs_loc = titlep_tag;
+    t_page.cur_left = nest_cb->lm;
+    t_page.max_width = nest_cb->rm;
     wk = nest_cb;
     nest_cb = nest_cb->prev;
     add_tag_cb_to_pool( wk );
 
     /* Place the accumulated ALINES on the proper page */
 
-    scr_process_break();
     cur_group_type = sav_group_type;
     if( t_doc_el_group != NULL ) {
         cur_doc_el_group = t_doc_el_group;      // detach current element group
         t_doc_el_group = t_doc_el_group->next;  // processed doc_elements go to next group, if any
         cur_doc_el_group->next = NULL;
+
+        scr_process_break();                    // commit any existing text
+        if( first_aline ) {                     // empty ADDRESS block: no ALINEs
+            set_skip_vars( NULL, NULL, NULL, spacing, g_curr_font);
+            g_subs_skip = 0;                    // matches wgml 4.0 
+            t_element = init_doc_el( el_text, wgml_fonts[g_curr_font].line_height );
+            t_element->element.text.first = alloc_text_line();
+            t_element->element.text.first->line_height = wgml_fonts[g_curr_font].line_height;
+            t_element->element.text.first->first = NULL;
+            insert_col_main( t_element );
+            t_element = NULL;
+            t_el_last = NULL;        
+        }
 
         if( cur_doc_el_group->first != NULL ) {
             cur_doc_el_group->depth += (cur_doc_el_group->first->blank_lines +
@@ -135,8 +151,9 @@ void gml_eaddress( const gmltag * entry )
         add_doc_el_group_to_pool( cur_doc_el_group );
         cur_doc_el_group = NULL;
     }
-    t_page.cur_left = nest_cb->lm;
-    t_page.max_width = nest_cb->rm;
+
+    scr_process_break();                // commit last address line
+    line_position = old_line_pos;
     scan_start = scan_stop + 1;
     return;
 }
@@ -165,9 +182,10 @@ void gml_aline( const gmltag * entry )
     }
 
     scr_process_break();
-    start_doc_sect();               // if not already done
-    spacing = layout_work.titlep.spacing;
+    start_doc_sect();                       // if not already done
+
     g_curr_font = layout_work.address.font;
+    spacing = layout_work.titlep.spacing;
     if( !first_aline ) {
 
         /************************************************************/
@@ -192,7 +210,10 @@ void gml_aline( const gmltag * entry )
     ProcFlags.as_text_line = true;
     if( *p ) {
         process_text( p, g_curr_font );
+    } else {
+        ProcFlags.titlep_starting = true;
     }
+    scr_process_break();                // commit address line (or blank line)
 
     first_aline = false;
     scan_start = scan_stop + 1;

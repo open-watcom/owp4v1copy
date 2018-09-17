@@ -40,6 +40,7 @@ void    gml_date( const gmltag * entry )
     char        *   p;
     font_number     font_save;
     int32_t         rc;
+    page_pos        old_line_pos;
     symsub      *   dateval;
     uint32_t        left_indent;
     uint32_t        right_indent;
@@ -70,7 +71,7 @@ void    gml_date( const gmltag * entry )
     }
  
     scr_process_break();
-    start_doc_sect();                   // if not already done
+    start_doc_sect();                       // if not already done
  
     font_save = g_curr_font;
     g_curr_font = layout_work.date.font;
@@ -95,12 +96,17 @@ void    gml_date( const gmltag * entry )
         t_page.max_width -= right_indent;
     }
     ProcFlags.keep_left_margin = true;  // keep special indent
+    old_line_pos = line_position;
     line_position = layout_work.author.page_position;
     ProcFlags.as_text_line = true;
     if( *p ) {
         process_text( p, g_curr_font );
+    } else {
+        ProcFlags.titlep_starting = true;
     }
+    scr_process_break();                // commit date line (or blank line)
 
+    line_position = old_line_pos;
     g_curr_font = font_save;
     ProcFlags.date_tag_seen = true;
     scan_start = scan_stop + 1;

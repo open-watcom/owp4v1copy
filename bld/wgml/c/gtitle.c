@@ -41,6 +41,7 @@ void    gml_title( const gmltag * entry )
     char        *   p;
     char        *   pa;
     font_number     font_save;
+    page_pos        old_line_pos;
     uint32_t        left_indent;
     uint32_t        right_indent;
 
@@ -87,20 +88,19 @@ void    gml_title( const gmltag * entry )
         p++;
     }
 
-    if( GlobalFlags.firstpass && !ProcFlags.title_text_seen ) {
-        if( *p ) {                      // first title goes into dictionary
-            add_symvar( &global_dict, "$title", p, no_subscript, 0 );
-        }
+    if( GlobalFlags.firstpass && !ProcFlags.title_text_seen && *p ) {   // first title goes into dictionary
+        add_symvar( &global_dict, "$title", p, no_subscript, 0 );
         ProcFlags.title_text_seen = true;
     }
 
     scr_process_break();
-    start_doc_sect();                   // if not already done
+    start_doc_sect();                       // if not already done
 
     font_save = g_curr_font;
     g_curr_font = layout_work.title.font;
     spacing = layout_work.titlep.spacing;
-    if( !ProcFlags.title_tag_top && *p ) {  // first title to appear on page, not just first TITLE tag
+
+    if( !ProcFlags.title_tag_top ) {    // first TITLE tag
         set_skip_vars( NULL, &layout_work.title.pre_top_skip, NULL, spacing, g_curr_font );
         ProcFlags.title_tag_top = true;
     } else {
@@ -119,15 +119,17 @@ void    gml_title( const gmltag * entry )
         t_page.max_width -= right_indent;
     }
     ProcFlags.keep_left_margin = true;  // keep special indent
+    old_line_pos = line_position;
     line_position = layout_work.title.page_position;
     ProcFlags.as_text_line = true;
     if( *p ) {
         process_text( p, g_curr_font );
+    } else {
+        ProcFlags.titlep_starting = true;
     }
+    scr_process_break();                // commit title line (or blank line)
 
     g_curr_font = font_save;
-    scan_start = scan_stop + 1;
-
-    g_curr_font = font_save;
+    line_position = old_line_pos;
     scan_start = scan_stop + 1;
 }

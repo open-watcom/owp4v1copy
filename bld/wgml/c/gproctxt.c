@@ -2403,11 +2403,12 @@ void process_text( const char *text, font_number font )
 
     /* Clear various control flags/variables */
 
+    ProcFlags.as_text_line = false;
     ProcFlags.ct = false;
-    ProcFlags.dd_empty = false;
+    ProcFlags.dd_starting = false;
     ProcFlags.fsp = false;
     ProcFlags.para_starting = false;
-    ProcFlags.as_text_line = false;
+    ProcFlags.titlep_starting = false;
     ProcFlags.utc = false;
 }
 

@@ -39,6 +39,7 @@ void gml_author( const gmltag * entry )
 {
     char        *   p;
     font_number     font_save;
+    page_pos        old_line_pos;
     uint32_t        left_indent;
     uint32_t        right_indent;
  
@@ -63,7 +64,7 @@ void gml_author( const gmltag * entry )
     }
  
     scr_process_break();
-    start_doc_sect();                   // if not already done
+    start_doc_sect();                       // if not already done
 
     font_save = g_curr_font;
     g_curr_font = layout_work.author.font;
@@ -93,12 +94,17 @@ void gml_author( const gmltag * entry )
         t_page.max_width -= right_indent;
     }
     ProcFlags.keep_left_margin = true;  // keep special indent
+    old_line_pos = line_position;
     line_position = layout_work.author.page_position;
     ProcFlags.as_text_line = true;
     if( *p ) {
         process_text( p, g_curr_font );
+    } else {
+        ProcFlags.titlep_starting = true;
     }
+    scr_process_break();                // commit author line (or blank line)
 
+    line_position = old_line_pos;
     g_curr_font = font_save;
     scan_start = scan_stop + 1;
 }

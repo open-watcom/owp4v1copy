@@ -1322,7 +1322,6 @@ void gml_dd( const gmltag * entry )
 {
     char    *   p;
 
-    ProcFlags.dd_empty = false;         // expected value
     if( ProcFlags.need_dd ) {
         ProcFlags.need_dd = false;
     } else if( ProcFlags.need_ddhd ) {
@@ -1357,7 +1356,7 @@ void gml_dd( const gmltag * entry )
         process_text( p, g_curr_font ); // if text follows
     } else {
         if( nest_cb->dl_break ) {
-            ProcFlags.dd_empty = true;  // no text, set flag
+            ProcFlags.dd_starting = true;   // no text, set flag
         }
     }
 
