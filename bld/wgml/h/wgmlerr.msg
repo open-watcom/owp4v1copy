@@ -490,6 +490,9 @@ pick( ERR_TAG_NOT_EXPECTED,     "Not expecting %s tag",
 pick( ERR_TAG_NOT_TEXT,         "Expecting a GML tag, found text",
                                 "Expecting a GML tag, found text" )
 
+pick( ERR_TEXT_NOT_TAG_CW,      "Expecting text, found a GML tag or Script control word/macro",
+                                "Expecting text, found a GML tag or Script control word/macro" )
+
 pick( ERR_TAG_PRECEDING,        "Missing preceding %s tag",
                                 "Missing preceding %s tag" )
 

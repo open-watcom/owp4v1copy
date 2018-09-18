@@ -1180,8 +1180,11 @@ void gml_dthd( const gmltag * entry )
 
     if( *p == '.' ) p++;                // possible tag end
     while( *p == ' ' ) p++;             // skip initial spaces
+    ProcFlags.as_text_line = true;
     if( *p ) {
         process_text( p, g_curr_font ); // if text follows
+    } else {
+        ProcFlags.need_text = true;
     }
 
     ProcFlags.need_ddhd = true;
@@ -1292,8 +1295,11 @@ void gml_dt( const gmltag * entry )
 
     if( *p == '.' ) p++;                // possible tag end
     while( *p == ' ' ) p++;             // skip initial spaces
+    ProcFlags.as_text_line = true;
     if( *p ) {
         process_text( p, g_curr_font ); // if text follows
+    } else {
+        ProcFlags.need_text = true;
     }
 
     ProcFlags.need_dd = true;
@@ -1411,8 +1417,11 @@ void gml_gt( const gmltag * entry )
 
     if( *p == '.' ) p++;                // possible tag end
     while( *p == ' ' ) p++;             // skip initial spaces
+    ProcFlags.as_text_line = true;
     if( *p ) {
         process_text( p, g_curr_font ); // if text follows
+    } else {
+        ProcFlags.need_text = true;
     }
 
     ProcFlags.need_gd = true;
@@ -1457,7 +1466,6 @@ void gml_gd( const gmltag * entry )
     p = scan_start;
 
     ProcFlags.ct = true;
-    ProcFlags.as_text_line = true;
     post_space = 0;
     process_text( &nest_cb->gl_layout->delim, g_curr_font );
 

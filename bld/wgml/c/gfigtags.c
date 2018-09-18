@@ -1145,6 +1145,8 @@ void gml_figcap( const gmltag * entry )
             strcpy_s(fig_entry->text, current + 1, p );
         }
         process_text( p, g_curr_font );     // if text follows
+    } else {
+        ProcFlags.need_text = true;
     }
     fig_entry->flags |= ffh_figcap;         // mark as FIGCAP present, with or without text
     figcap_done = true;

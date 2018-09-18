@@ -121,15 +121,15 @@ static void hx_header( char * h_num, char * h_text, hdsrc hn_lvl, hdsrc hds_lvl 
 
     post_space = 0;
 
-    ProcFlags.as_text_line = true;  // treat as <text_line>
-
     if( (hds_lvl < hds_abstract) && (layout_work.hx.hx_head[hds_lvl].number_form != none) ) {
+        ProcFlags.as_text_line = true;  // treat as <text_line>
         process_text( h_num, layout_work.hx.hx_head[hds_lvl].number_font );        
         post_space /= wgml_fonts[layout_work.hx.hx_head[hds_lvl].number_font].spc_width;     // rescale post_space to correct font
         post_space *= wgml_fonts[layout_work.hx.hx_sect[hds_lvl].text_font].spc_width;
     }
 
     if( (h_text != NULL) && (*h_text != '\0') ) {
+        ProcFlags.as_text_line = true;  // treat as <text_line>
         process_text( h_text, layout_work.hx.hx_sect[hds_lvl].text_font );        
     }
 }
@@ -320,7 +320,20 @@ void gen_heading( char * h_text, char * id, hdsrc hn_lvl, hdsrc hds_lvl )
     /***********************************************************************/
 
     old_line_pos = line_position;
+    if( h_text[0] == '\0' ) {               // no text on line
+        ProcFlags.need_text = true;
+    }
+
     hx_header( prefix, h_text, hn_lvl, hds_lvl );
+
+    /************************************************************/
+    /* Calling scr_process_break() here forces the header to be */
+    /* place on the line following the Hx tag, something that   */
+    /* wgml 4.0 does not do. This allows the doc_el_group which */
+    /* contains the header to be processed here instead of      */
+    /* somewhere else, probably in scr_process_break with a new */
+    /* ProcFlags flag to control the processing                 */
+    /************************************************************/
     scr_process_break();                    // commit the header
     line_position = old_line_pos;
     if( (prefix != NULL) && (prefix != hd_nums[hn_lvl].hnumstr) ) {

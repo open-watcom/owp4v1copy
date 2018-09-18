@@ -182,6 +182,10 @@ static void scan_gml( void )
     processed = false;
     me = NULL;
     if( ge != NULL ) {                  // GML user defined Tag found
+        if( ProcFlags.need_text ) {
+            xx_err( err_text_not_tag_cw );
+            ProcFlags.need_text = false;
+        }
         *p = csave;
         if( ge->tagflags & tag_off ) {  // inactive, treat as text
             scan_start = tok_start;
@@ -343,6 +347,9 @@ static void scan_gml( void )
                             } else {
                                 xx_nest_err( err_no_li_lp );
                             }
+                        } else if( ProcFlags.need_text ) {
+                            xx_err( err_text_not_tag_cw );
+                            ProcFlags.need_text = false;
                         } else if( rs_loc == 0 ) {
                             // no restrictions: do them all
                             gml_tags[k].gmlproc( &gml_tags[k] );
@@ -439,6 +446,11 @@ static void     scan_script( void )
     int             toklen;
     int             k;
     bool            cwfound;
+
+    if( ProcFlags.need_text ) {
+        xx_err( err_text_not_tag_cw );
+        ProcFlags.need_text = false;
+    }
 
     cb = input_cbs;
     p = scan_start + 1;
