@@ -966,3 +966,102 @@ bool is_ip_tag( e_tags offset )
     return( false );                                // not found
 }
 
+/***************************************************************************/
+/*  returns a pointer to the start of the <text line> for the tag or of    */
+/*  the next logical input record to be reprocessed                        */
+/*  the line is not a <text line> if it starts with a tag (whether normal, */
+/*  layout, or user-defined) or if it beginswith the current SCR_char      */
+/*  (which can be any number of things: control word, macro, attribute,    */
+/*  function, none of the above)                                           */
+/*  ProcFlags.reprocess_line is set to true if this is not a <text_line>   */
+/***************************************************************************/
+
+char * get_text_line( char * p )
+{
+    bool            use_current                     = false;
+    bool            tl_found                        = true;
+    char        *   tok_start                       = NULL;
+    char            tok_txt[TAG_NAME_LENGTH + 1];
+    int             k;
+    gtentry     *   ge;                                         // GML user tag entry
+    size_t          toklen                          = 0;
+
+    if( !ProcFlags.reprocess_line  ) {  // still on last line of tag
+        while( *p == ' ' ) p++;         // skip initial spaces
+        if( *p == '.' ) {
+            p++;                        // possible tag end
+        }
+        if( *p == '\0' ) {              // get new line 
+            while( *p == '\0' ) {
+                if( !(input_cbs->fmflags & II_eof) ) {
+                    if( get_line( true ) ) {    // next line for text
+                        process_line();
+                        scan_start = buff2;
+                        scan_stop  = buff2 + buff2_lg;
+                        p = scan_start;
+                        continue;
+                    }
+                } else {
+                    break;              // eof found
+                }
+            }
+        } else {                        // use text following tag on same line
+            use_current = true;
+        }
+    } else {
+        ProcFlags.reprocess_line = false; 
+    }
+    if( !use_current ) {                // not on same line as tag
+        while( *p == ' ' ) p++;         // skip initial spaces
+        if( *p ) {                      // text exists
+            classify_record( *p );      // sets ProcFlags used below if appropriate
+            if( ProcFlags.scr_cw) {
+                tl_found = false;       // control word, macro, or whatever
+            } else if( ProcFlags.gml_tag ) {
+                tok_start = p;
+                p++;
+                while( is_id_char( *p ) && p <= scan_stop ) {   // find end of TAG
+                    p++;
+                }
+                toklen = p - tok_start - 1;
+                if( toklen < TAG_NAME_LENGTH ) {    // possible tag
+                    memcpy( &tok_txt, tok_start, toklen );
+                    tok_txt[toklen] = '\0';
+                    if( ProcFlags.layout ) {
+                        ge = NULL;                  // no user tags within :LAYOUT
+                    } else {
+                        ge = find_tag( &tag_dict, tok_start + 1 );
+                    }
+                    if( ge != NULL ) {
+                        tl_found = false;           // user defined tag found
+                    } else {
+                        strupr( tok_txt );
+                        for( k = 0; k < LAY_TAGMAX; ++k ) {
+                            if( toklen == lay_tags[k].taglen ) {
+                                if( !strcmp( lay_tags[k].tagname, tok_txt ) ) {
+                                    tl_found = false;   // layout tag found
+                                }
+                            }
+                        }
+                        if( tl_found ) {
+                            for( k = 0; k < GML_TAGMAX; ++k ) {
+                                if( toklen == gml_tags[k].taglen ) {
+                                    if( !strcmp( gml_tags[k].tagname, tok_txt ) ) {
+                                        tl_found = false;   // normal tag found
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        if( !tl_found ) {                   // no <text_line> found
+            ProcFlags.reprocess_line = true;
+        }
+    }
+
+    return( p );
+}
+

@@ -1178,13 +1178,17 @@ void gml_dthd( const gmltag * entry )
     ProcFlags.keep_left_margin = true;  // keep special Note indent
     ju_x_start = t_page.cur_width;
 
-    if( *p == '.' ) p++;                // possible tag end
-    while( *p == ' ' ) p++;             // skip initial spaces
-    ProcFlags.as_text_line = true;
-    if( *p ) {
-        process_text( p, g_curr_font ); // if text follows
-    } else {
-        ProcFlags.need_text = true;
+    p = get_text_line( p );
+
+    if( !ProcFlags.reprocess_line ) {
+        while( *p == ' ' ) p++;             // skip initial spaces
+        ProcFlags.as_text_line = true;
+        if( *p ) {
+            process_text( p, g_curr_font ); // if text follows
+        } else {
+            ProcFlags.need_text = true;
+        }
+        scan_start = scan_stop + 1;
     }
 
     ProcFlags.need_ddhd = true;
@@ -1192,7 +1196,6 @@ void gml_dthd( const gmltag * entry )
     dl_gl_starting = false;
     dl_gl_first = false;
 
-    scan_start = scan_stop + 1;
     return;
 }
 
@@ -1242,7 +1245,6 @@ void gml_ddhd( const gmltag * entry )
         process_text( p, g_curr_font ); // if text follows
     }
 
-    ProcFlags.need_tag = true;
     scan_start = scan_stop + 1;
     return;
 }
@@ -1293,13 +1295,17 @@ void gml_dt( const gmltag * entry )
     ProcFlags.keep_left_margin = true;  // keep special Note indent
     ju_x_start = t_page.cur_width;
 
-    if( *p == '.' ) p++;                // possible tag end
-    while( *p == ' ' ) p++;             // skip initial spaces
-    ProcFlags.as_text_line = true;
-    if( *p ) {
-        process_text( p, g_curr_font ); // if text follows
-    } else {
-        ProcFlags.need_text = true;
+    p = get_text_line( p );
+
+    if( !ProcFlags.reprocess_line ) {
+        while( *p == ' ' ) p++;             // skip initial spaces
+        ProcFlags.as_text_line = true;
+        if( *p ) {
+            process_text( p, g_curr_font ); // if text follows
+        } else {
+            ProcFlags.need_text = true;
+        }
+        scan_start = scan_stop + 1;
     }
 
     ProcFlags.need_dd = true;
@@ -1307,7 +1313,6 @@ void gml_dt( const gmltag * entry )
     dl_gl_starting = false;
     dl_gl_first = false;
 
-    scan_start = scan_stop + 1;
     return;
 }
 
@@ -1415,13 +1420,17 @@ void gml_gt( const gmltag * entry )
         set_skip_vars( NULL, NULL, NULL, 1, g_curr_font );
     }
 
-    if( *p == '.' ) p++;                // possible tag end
-    while( *p == ' ' ) p++;             // skip initial spaces
-    ProcFlags.as_text_line = true;
-    if( *p ) {
-        process_text( p, g_curr_font ); // if text follows
-    } else {
-        ProcFlags.need_text = true;
+    p = get_text_line( p );
+
+    if( !ProcFlags.reprocess_line ) {
+        while( *p == ' ' ) p++;             // skip initial spaces
+        ProcFlags.as_text_line = true;
+        if( *p ) {
+            process_text( p, g_curr_font ); // if text follows
+        } else {
+            ProcFlags.need_text = true;
+        }
+        scan_start = scan_stop + 1;
     }
 
     ProcFlags.need_gd = true;
@@ -1429,7 +1438,6 @@ void gml_gt( const gmltag * entry )
     dl_gl_starting = false;
     dl_gl_first = false;
 
-    scan_start = scan_stop + 1;
     return;
 }
 

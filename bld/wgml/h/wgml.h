@@ -325,11 +325,12 @@ extern  void    eoc_bx_box( void );
 /* gscan.c                              */
 extern  const   gmltag  *   find_lay_tag( char * token, size_t toklen );
 extern  const   gmltag  *   find_sys_tag( char * token, size_t toklen );
-extern  bool                is_ip_tag( e_tags offset );
-extern  void                set_overload( gtentry * in_gt );
-extern  void                scan_line( void );
-extern  void                set_if_then_do( ifcb * cb );
-extern  condcode            test_process( ifcb * cb );
+extern          char    *   get_text_line( char * p );
+extern          bool        is_ip_tag( e_tags offset );
+extern          void        set_overload( gtentry * in_gt );
+extern          void        scan_line( void );
+extern          void        set_if_then_do( ifcb * cb );
+extern          condcode    test_process( ifcb * cb );
 
 
 /* gsfbfk.c                             */

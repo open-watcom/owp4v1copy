@@ -2125,12 +2125,11 @@ void set_skip_vars( su * pre_skip, su * pre_top_skip, su * post_skip,
 
     /* SK can tell if it follows SP or blank lines, but not if it precedes them */
 
-    g_top_skip = 0;
     if( !ProcFlags.sk_2nd ) {
         if( g_blank_lines > g_skip ) {
             g_skip = 0;                 // use g_blank_lines
         } else {
-            g_top_skip = g_blank_lines; // use g_blank_lines at top of page        
+            g_top_skip += g_blank_lines;// use g_blank_lines at top of page        
             g_blank_lines = 0;          // use SK skip elsewhere
         }
     } else {

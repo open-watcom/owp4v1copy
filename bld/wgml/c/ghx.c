@@ -201,6 +201,10 @@ void gen_heading( char * h_text, char * id, hdsrc hn_lvl, hdsrc hds_lvl )
     }
     strcat_s( headp, headlen, h_text );
 
+    if( *headp == '\0' ) {              // no text on line
+        ProcFlags.need_text = true;
+    }
+
     /* Reset $HEADx */
 
     if( strlen( hd_nums[hn_lvl].headsub->value ) < strlen( headp ) ) {     // need more room
@@ -320,10 +324,6 @@ void gen_heading( char * h_text, char * id, hdsrc hn_lvl, hdsrc hds_lvl )
     /***********************************************************************/
 
     old_line_pos = line_position;
-    if( h_text[0] == '\0' ) {               // no text on line
-        ProcFlags.need_text = true;
-    }
-
     hx_header( prefix, h_text, hn_lvl, hds_lvl );
 
     /************************************************************/
@@ -685,31 +685,35 @@ static void gml_hx_common( const gmltag * entry, hdsrc hn_lvl )
     /***********************************************************************/
 
     sav_spacing = spacing;
-    if( *p == '.' ) p++;                // possible tag end
-    while( *p == ' ' ) p++;             // skip initial spaces
-    if( *p ) {                          // text exists
-        pa = &p[strlen( p )];
-        pa--;
-        while( *pa == ' ' ) {
-            *pa = '\0';                 // remove trailing spaces
+
+    p = get_text_line( p );
+
+    if( !ProcFlags.reprocess_line ) {
+        if( *p ) {                     // text exists
+
+            /* remove trailing spaces */
+
+            pa = &p[strlen( p )];
             pa--;
+            while( *pa == ' ' ) {
+                *pa = '\0';
+            }
+
+            /* Implement the case attribute */
+
+            if( layout_work.hx.hx_head[hds_lvl].hd_case == case_lower ) {
+                strlwr( p );
+            } else if( layout_work.hx.hx_head[hds_lvl].hd_case == case_upper ) {
+                strupr( p );
+            }
         }
+        gen_heading( p, id, hn_lvl, hds_lvl );
+        scan_start = scan_stop + 1;
+    } else {
+        gen_heading( "", id, hn_lvl, hds_lvl );
     }
-
-    /* Implement the case attribute */
-
-    if( *p ) {                     // text exists
-        if( layout_work.hx.hx_head[hds_lvl].hd_case == case_lower ) {
-            strlwr( p );
-        } else if( layout_work.hx.hx_head[hds_lvl].hd_case == case_upper ) {
-            strupr( p );
-        }
-    }
-
-    gen_heading( p, id, hn_lvl, hds_lvl );
 
     spacing = sav_spacing;
-    scan_start = scan_stop + 1;
     return;
 }
 
