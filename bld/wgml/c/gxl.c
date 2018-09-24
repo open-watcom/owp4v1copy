@@ -1243,6 +1243,8 @@ void gml_ddhd( const gmltag * entry )
     while( *p == ' ' ) p++;             // skip initial spaces
     if( *p ) {
         process_text( p, g_curr_font ); // if text follows
+    } else {
+        ProcFlags.need_text = true;
     }
 
     scan_start = scan_stop + 1;

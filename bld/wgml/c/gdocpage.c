@@ -1758,7 +1758,9 @@ void insert_col_main( doc_element * a_element )
             }
             t_page.cur_depth += depth;
         }
-        ProcFlags.col_started = true;
+        if( a_element->type != el_binc ) {      // BINCLUDE at top of column has no effect
+            ProcFlags.col_started = true;
+        }
     }
 
     if( page_full ) {
