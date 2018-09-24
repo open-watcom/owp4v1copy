@@ -157,7 +157,7 @@ global struct ProcFlags {
     unsigned        frontm_seen    : 1; // FRONTM tag seen
     unsigned        start_section  : 1; // start section call done
 
-    unsigned        researchfile   : 1;// research for one file ( -r filename )
+    unsigned        researchfile   : 1; // research for one file ( -r filename )
 
     unsigned        fb_document_done    : 1;// true if fb_document() called
     unsigned        fb_position_done    : 1;// first positioning on new page done
@@ -218,6 +218,7 @@ global struct ProcFlags {
     unsigned        para_starting       : 1;// :LP, :P or :PC had no text (in scr_process_break())
     unsigned        titlep_starting     : 1;// AUTHOR or TITLE had no text (in scr_process_break())
 
+    unsigned        dd_space            : 1;// insert one space before DD text
     unsigned        need_dd             : 1;// DT seen; DD must be next tag
     unsigned        need_ddhd           : 1;// DTHD seen; DDHD must be next tag
     unsigned        need_gd             : 1;// GT seen; GD must be next tag

@@ -1358,6 +1358,8 @@ void gml_dd( const gmltag * entry )
         scr_process_break();
         t_page.cur_width = t_page.cur_left;
         post_space = 0;
+    } else {                        // cur_width > cur_left and no break
+        ProcFlags.dd_space = true;
     }
     t_page.max_width = nest_cb->rm + nest_cb->right_indent;
 
@@ -1370,6 +1372,7 @@ void gml_dd( const gmltag * entry )
     } else {
         if( nest_cb->dl_break ) {
             ProcFlags.dd_starting = true;   // no text, set flag
+            ProcFlags.dd_space = false;     // no text, no space
         }
     }
 

@@ -197,6 +197,7 @@ void  scr_process_break( void )
         ProcFlags.skips_valid = false;
     }
     set_h_start();      // to stop paragraph indent from being used after a break
+    ProcFlags.dd_space = false;
     ProcFlags.dd_starting = false;
     ProcFlags.para_starting = false;
     ProcFlags.titlep_starting = false;
