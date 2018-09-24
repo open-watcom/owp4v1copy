@@ -1372,7 +1372,6 @@ void gml_dd( const gmltag * entry )
     } else {
         if( nest_cb->dl_break ) {
             ProcFlags.dd_starting = true;   // no text, set flag
-            ProcFlags.dd_space = false;     // no text, no space
         }
     }
 
