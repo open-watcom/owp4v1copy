@@ -91,7 +91,7 @@ static void gml_xl_lp_common( e_tags t )
             ProcFlags.para_starting = false;    // clear for this tag's first break
         }
         scr_process_break();
-        if( *p ) {
+        if( !ProcFlags.reprocess_line && *p ) {
             process_text( p, g_curr_font );
         }
     }
@@ -311,8 +311,8 @@ void gml_gl( const gmltag * entry )
             }
 
             if( !strnicmp( "compact", p, 7 ) ) {
+                p += 7;
                 compact = true;
-                scan_start = p + 7;
             } else if( !strnicmp( "termhi", p, 6 ) ) {
                 p += 6;
                 p = get_att_value( p );
@@ -386,24 +386,39 @@ void gml_gl( const gmltag * entry )
 
 void gml_ol( const gmltag * entry )
 {
-    bool                compact;
-    char            *   p;
+    bool        compact =   false;
+    char    *   p;
+    char    *   pa;
 
     if( !ProcFlags.start_section ) {
         start_doc_sect();
     }
 
-    p = scan_start + 1;
-    while( *p == ' ' ) {
+    p = scan_start;
+    while( *p == ' ' ) {                     // over spaces
         p++;
     }
-    scan_start = p;
-    if( !strnicmp( "compact", p, 7 ) ) {
-        compact = true;
-        scan_start = p + 7;
+    if( *p == '.' ) {
+        /* already at tag end */
     } else {
-        compact = false;
+        for( ;; ) {
+            pa = get_att_start( p );
+            p = att_start;
+            if( ProcFlags.reprocess_line ) {
+                break;
+            }
+
+            if( !strnicmp( "compact", p, 7 ) ) {
+                p += 7;
+                compact = true;
+            } else {
+                p = pa; // restore any spaces before non-attribute value
+                break;
+            }
+        }
     }
+    scan_start = p;
+
     if( ProcFlags.need_li_lp ) {
         xx_nest_err( err_no_li_lp );
     }
@@ -461,24 +476,39 @@ void gml_ol( const gmltag * entry )
 
 void gml_sl( const gmltag * entry )
 {
-    bool                compact;
-    char            *   p;
+    bool        compact =   false;
+    char    *   p;
+    char    *   pa;
 
     if( !ProcFlags.start_section ) {
         start_doc_sect();
     }
 
-    p = scan_start + 1;
-    while( *p == ' ' ) {
+    p = scan_start;
+    while( *p == ' ' ) {                     // over spaces
         p++;
     }
-    scan_start = p;                     // over spaces
-    if( !strnicmp( "compact", p, 7 ) ) {
-        compact = true;
-        scan_start = p + 7;
+    if( *p == '.' ) {
+        /* already at tag end */
     } else {
-        compact = false;
+        for( ;; ) {
+            pa = get_att_start( p );
+            p = att_start;
+            if( ProcFlags.reprocess_line ) {
+                break;
+            }
+
+            if( !strnicmp( "compact", p, 7 ) ) {
+                p += 7;
+                compact = true;
+            } else {
+                p = pa; // restore any spaces before non-attribute value
+                break;
+            }
+        }
     }
+    scan_start = p;
+
     if( ProcFlags.need_li_lp ) {
         xx_nest_err( err_no_li_lp );
     }
@@ -535,24 +565,39 @@ void gml_sl( const gmltag * entry )
 
 void gml_ul( const gmltag * entry )
 {
-    bool                compact;
-    char            *   p;
+    bool        compact =   false;
+    char    *   p;
+    char    *   pa;
 
     if( !ProcFlags.start_section ) {
         start_doc_sect();
     }
 
-    p = scan_start + 1;
-    while( *p == ' ' ) {
+    p = scan_start;
+    while( *p == ' ' ) {                     // over spaces
         p++;
     }
-    scan_start = p;                     // over spaces
-    if( !strnicmp( "compact", p, 7 ) ) {
-        compact = true;
-        scan_start = p + 7;
+    if( *p == '.' ) {
+        /* already at tag end */
     } else {
-        compact = false;
+        for( ;; ) {
+            pa = get_att_start( p );
+            p = att_start;
+            if( ProcFlags.reprocess_line ) {
+                break;
+            }
+
+            if( !strnicmp( "compact", p, 7 ) ) {
+                p += 7;
+                compact = true;
+            } else {
+                p = pa; // restore any spaces before non-attribute value
+                break;
+            }
+        }
     }
+    scan_start = p;
+
     if( ProcFlags.need_li_lp ) {
         xx_nest_err( err_no_li_lp );
     }
