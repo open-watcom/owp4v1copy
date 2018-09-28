@@ -26,7 +26,12 @@
 *
 * Description:  WGML tags :H0 :H1 :H2 :H3 :H4 :H5 :H6 processing
 *
-*                  stitle is not implemented: not used in OW documentation
+*           These tag :Hn attributes are not used in the OW docs and so 
+*               are not implemented:
+*                   align
+*                   stitle
+*           Only one of the attributes of tag :HEADING is implemented:
+*                   delim
 ****************************************************************************/
 
 /***************************************************************************/
@@ -86,7 +91,7 @@ static void update_headnumx( hdsrc hn_lvl, hdsrc hds_lvl )
 
 
 /***************************************************************************/
-/*  output hx Header  only  called if display_heading = yes                */
+/*  output the heading                                                     */
 /***************************************************************************/
 
 static void hx_header( char * h_num, char * h_text, hdsrc hn_lvl, hdsrc hds_lvl )
@@ -119,18 +124,24 @@ static void hx_header( char * h_num, char * h_text, hdsrc hn_lvl, hdsrc hds_lvl 
                        layout_work.hx.hx_sect[hds_lvl].text_font );
     }
 
+    t_page.cur_width = conv_hor_unit( &layout_work.hx.hx_head[hds_lvl].indent,
+                                       layout_work.hx.hx_sect[hds_lvl].text_font);
     post_space = 0;
 
-    if( (hds_lvl < hds_abstract) && (layout_work.hx.hx_head[hds_lvl].number_form != none) ) {
-        ProcFlags.as_text_line = true;  // treat as <text_line>
-        process_text( h_num, layout_work.hx.hx_head[hds_lvl].number_font );        
-        post_space /= wgml_fonts[layout_work.hx.hx_head[hds_lvl].number_font].spc_width;     // rescale post_space to correct font
-        post_space *= wgml_fonts[layout_work.hx.hx_sect[hds_lvl].text_font].spc_width;
-    }
+    /* display_heading is always "true" for section headings */
 
-    if( (h_text != NULL) && (*h_text != '\0') ) {
-        ProcFlags.as_text_line = true;  // treat as <text_line>
-        process_text( h_text, layout_work.hx.hx_sect[hds_lvl].text_font );        
+    if( (hds_lvl > hds_appendix) || layout_work.hx.hx_head[hds_lvl].display_heading ) {
+        if( (hds_lvl < hds_abstract) && (layout_work.hx.hx_head[hds_lvl].number_form != none) ) {
+            ProcFlags.as_text_line = true;  // treat as <text_line>
+            process_text( h_num, layout_work.hx.hx_head[hds_lvl].number_font );        
+            post_space /= wgml_fonts[layout_work.hx.hx_head[hds_lvl].number_font].spc_width;     // rescale post_space to correct font
+            post_space *= wgml_fonts[layout_work.hx.hx_sect[hds_lvl].text_font].spc_width;
+        }
+
+        if( (h_text != NULL) && (*h_text != '\0') ) {
+            ProcFlags.as_text_line = true;  // treat as <text_line>
+            process_text( h_text, layout_work.hx.hx_sect[hds_lvl].text_font );        
+        }
     }
 }
 
@@ -156,6 +167,7 @@ void gen_heading( char * h_text, char * id, hdsrc hn_lvl, hdsrc hds_lvl )
     uint32_t        bot_depth;
     uint32_t        hx_depth;
     uint32_t        old_bot_depth;
+    uint32_t        old_cur_left;
     uint32_t        old_top_depth;
     uint32_t        page_diff;
     uint32_t        top_depth;
@@ -323,6 +335,7 @@ void gen_heading( char * h_text, char * id, hdsrc hn_lvl, hdsrc hds_lvl )
     /* heading is displayed.                                               */
     /***********************************************************************/
 
+    old_cur_left = t_page.cur_left;
     old_line_pos = line_position;
     hx_header( prefix, h_text, hn_lvl, hds_lvl );
 
@@ -336,6 +349,7 @@ void gen_heading( char * h_text, char * id, hdsrc hn_lvl, hdsrc hds_lvl )
     /************************************************************/
     scr_process_break();                    // commit the header
     line_position = old_line_pos;
+    t_page.cur_left = old_cur_left;
     if( (prefix != NULL) && (prefix != hd_nums[hn_lvl].hnumstr) ) {
         mem_free( prefix );
     }
@@ -456,31 +470,45 @@ void gen_heading( char * h_text, char * id, hdsrc hn_lvl, hdsrc hds_lvl )
                 }
             }
         }
-        if( !ProcFlags.page_ejected ) {
-            while( cur_doc_el_group->first != NULL ) {
-                cur_el = cur_doc_el_group->first;
-                cur_doc_el_group->first = cur_doc_el_group->first->next;
-                cur_el->next = NULL;
-                insert_col_main( cur_el );
+
+        /* display_heading is always "true" for section headings */
+
+        if( (hds_lvl > hds_appendix) || layout_work.hx.hx_head[hds_lvl].display_heading ) {
+            if( !ProcFlags.page_ejected ) {
+                while( cur_doc_el_group->first != NULL ) {
+                    cur_el = cur_doc_el_group->first;
+                    cur_doc_el_group->first = cur_doc_el_group->first->next;
+                    cur_el->next = NULL;
+                    insert_col_main( cur_el );
+                }
+                add_doc_el_group_to_pool( cur_doc_el_group );
+                cur_doc_el_group = NULL;
+            } else {                                        // page was ejected
+                reset_t_page();                             // update metrics for new banners, if any
+                cur_doc_el_group->depth -= cur_doc_el_group->first->subs_skip;  // top of page: no subs_skip
+                cur_doc_el_group->depth += cur_doc_el_group->first->top_skip;   // top of page: top_skip
+                cur_doc_el_group->first->subs_skip = 0;
+                if( cur_doc_el_group->depth > t_page.max_depth ) {
+                    xx_err( err_heading_too_deep );     // the block won't fit on any page
+                } else {
+                    cur_doc_el_group->post_skip = g_post_skip;
+                    if( page_width ) {
+                        insert_page_width( cur_doc_el_group );
+                    } else {
+                        insert_col_width( cur_doc_el_group );
+                    }
+                    cur_doc_el_group = NULL;
+                    g_post_skip = 0;        // used in processing heading
+                }
             }
+        } else {
+
+            /* cur_doc_group will contain a single doc_element with no content at all */
+
             add_doc_el_group_to_pool( cur_doc_el_group );
             cur_doc_el_group = NULL;
-        } else {                                        // page was ejected
-            reset_t_page();                             // update metrics for new banners, if any
-            cur_doc_el_group->depth -= cur_doc_el_group->first->subs_skip;  // top of page: no subs_skip
-            cur_doc_el_group->depth += cur_doc_el_group->first->top_skip;   // top of page: top_skip
-            cur_doc_el_group->first->subs_skip = 0;
-            if( cur_doc_el_group->depth > t_page.max_depth ) {
-                xx_err( err_heading_too_deep );     // the block won't fit on any page
-            } else {
-                cur_doc_el_group->post_skip = g_post_skip;
-                if( page_width ) {
-                    insert_page_width( cur_doc_el_group );
-                } else {
-                    insert_col_width( cur_doc_el_group );
-                }
-                cur_doc_el_group = NULL;
-                g_post_skip = 0;        // used in processing heading
+            if( ProcFlags.page_ejected ) {
+                reset_t_page();                             // update metrics for new banners, if any
             }
         }
 
