@@ -310,8 +310,6 @@ static void consolidate_array( doc_element * array[MAX_COL], uint8_t count )
         add_doc_el_group_to_pool( cur_nt_el_group );
     }
 
-
-
     /* Initialize the text_lines array */
 
     for( i = 0; i < count; i++ ) {
@@ -393,7 +391,9 @@ static void consolidate_array( doc_element * array[MAX_COL], uint8_t count )
         }
     }
 
-    if( nt_el_list != NULL ) {                  // out_el is done if there are no non-text elements
+    if( out_el == NULL ) {                      // page consists entirely of non-text elements
+        out_el = nt_el_list;
+    } else if( nt_el_list != NULL ) {           // out_el is done if there are no non-text elements
 
         /* Insert the non-text list into the text element list */
 
