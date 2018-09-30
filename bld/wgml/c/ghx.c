@@ -178,9 +178,9 @@ void gen_heading( char * h_text, char * id, hdsrc hn_lvl, hdsrc hds_lvl )
     headx[5] = '0' + hn_lvl;
     htextx[6] = '0' + hn_lvl;
 
-    /* Only H0 headings on multi-column pages actually go into the page_width section */
+    /* Only Hx headings on multi-column pages actually go into the page_width section */
 
-    page_width = (hds_lvl == hds_h0) && (t_page.last_pane->col_count > 1);
+    page_width = (hds_lvl < hds_abstract) && (t_page.last_pane->col_count > 1);
     if( page_width ) {
         t_page.max_width = t_page.page_width;
    }
