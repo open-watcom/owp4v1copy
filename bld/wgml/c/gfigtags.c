@@ -47,6 +47,8 @@ static  def_frame       frame;                  // FIG attribute used by eFIG
 static  group_type      sav_group_type;         // save prior group type
 static  ju_enum         justify_save;           // for ProcFlags.justify
 static  uint32_t        depth           = 0;    // FIG attribute used by eFIG
+static  uint32_t        left_inset;             // offset from frame to contents
+static  uint32_t        right_inset;            // offset from frame to contents
 static  uint32_t        spacing_save;           // for spacing
 static  uint32_t        width           = 0;    // FIG attribute used by eFIG
 
@@ -325,7 +327,7 @@ static void insert_frame_line( void )
 
             h_line_el = init_doc_el( el_hline, 0 );
             h_line_el->element.hline.ban_adjust = false;   // TBD, may not apply to FIG
-            h_line_el->element.hline.h_start = t_page.cur_width;
+            h_line_el->element.hline.h_start = t_page.cur_left;
             h_line_el->element.hline.h_len = width;
             insert_col_main( h_line_el );
         } else {                    // char_frame Note: wgml 4.0 uses font 0 regardless of the default font for the section
@@ -401,13 +403,13 @@ static void insert_frame_line( void )
 
 void gml_fig( const gmltag * entry )
 {
-    bool            id_seen = false;
+    bool            id_seen     = false;
+    bool            width_seen  = false;
     char        *   p;
     char        *   pa;
-    ref_entry   *   cur_ref = NULL;
+    ref_entry   *   cur_ref     = NULL;
     su              cur_su;
-    uint32_t        left_inset;
-    uint32_t        right_inset;
+    uint32_t        max_width;
 
     start_doc_sect();
     scr_process_break();
@@ -425,7 +427,7 @@ void gml_fig( const gmltag * entry )
         strcpy_s( frame.string, str_size, layout_work.fig.default_frame.string );
     }
     place = layout_work.fig.default_place;
-    width = t_page.last_pane->col_width;// default value regardless of number of columns
+    max_width = t_page.last_pane->col_width;// default value regardless of number of columns
     g_curr_font = layout_work.fig.font;
     spacing_save = spacing;
     spacing = layout_work.fig.spacing;
@@ -531,6 +533,7 @@ void gml_fig( const gmltag * entry )
                     if( width == 0 ) {
                         xx_line_err( err_inv_width_fig_1, val_start );
                     }
+                    width_seen = true;
                 }
                 if( ProcFlags.tag_end_found ) {
                     break;
@@ -601,36 +604,45 @@ void gml_fig( const gmltag * entry )
         }
     }
 
-    left_inset = 0;
-    right_inset = 0;
-    if( frame.type == none ) {
-        width -= nest_cb->right_indent;
-        right_inset = nest_cb->right_indent;
-        if( ProcFlags.has_aa_block ) {      // matches wgml 4.0
-            width -= tab_col;
+    /* Select the width to use */
+
+    if( t_page_width ) {                // t_page.page_width will be used
+        max_width = t_page.page_width;
+    }
+
+    if( width_seen ) {                  // width entered will be used
+        if( width > max_width ) {
+            xx_line_err( err_inv_width_fig_3, val_start );
         }
     } else {
+        width = max_width;              // t_page.last_pane->col_width will be used
+    }
+
+    if( width_seen ) {                  // wgml 4.0 makes this distinction
+        width -= nest_cb->right_indent;
+    } else {
         width -= (nest_cb->left_indent + nest_cb->right_indent);
+    }
+
+    /* Initialize the insets */
+
+    if( frame.type == none ) {
+        left_inset = 0;
+        right_inset = 0;
+    } else {
         if( ProcFlags.has_aa_block ) {      // matches wgml 4.0
             left_inset = wgml_fonts[FONT0].line_height + 1;
-            right_inset = wgml_fonts[FONT0].line_height + 1 + tab_col;
+            right_inset = wgml_fonts[FONT0].line_height + 1;
         } else {
             left_inset = 2 * tab_col;
             right_inset = 2 * tab_col;
         }
     }
 
-    /* This sets text processing up for page width text */
-
-    if( t_page_width ) {
-        t_page.max_width = t_page.page_width;
-        width = t_page.page_width;
-    }
-
     /* This is for the overall figure, including any frame */
 
-    t_page.cur_left += nest_cb->left_indent;
-    t_page.cur_width = t_page.cur_left;
+    t_page.cur_left = nest_cb->left_indent;
+    t_page.max_width = width + nest_cb->left_indent;    // page/col width is not fig width
 
     if( width > t_page.last_pane->col_width ) {
         if( (t_page.last_pane->col_count > 1) && (place != top_place) ) {
@@ -647,9 +659,6 @@ void gml_fig( const gmltag * entry )
             xx_line_err( err_inv_margins_2, val_start );
         }
     }
-
-    t_page.cur_width = t_page.cur_left;
-    ProcFlags.keep_left_margin = true;  // keep special indent
 
     if( (place != top_place) &&
             ((frame.type == rule_frame) || (frame.type == char_frame)) ) {
@@ -672,9 +681,18 @@ void gml_fig( const gmltag * entry )
         scr_process_break();
     }
 
+    /* scr_process_width resets these values, so they must be restored */
+
+    t_page.cur_left = nest_cb->left_indent;
+    t_page.max_width = width;
+
     /* Now set up margins for any text inside the figure */  
 
+    t_page.max_width -= right_inset;
     t_page.cur_left += left_inset;
+    t_page.cur_width = t_page.cur_left;
+    ProcFlags.keep_left_margin = true;  // keep special indent
+
 
     if( t_page.max_width < right_inset ) {
         t_page.max_width = 0;               // negative right margin not allowed
@@ -730,15 +748,13 @@ void gml_efig( const gmltag * entry )
     p = scan_start;
     if( *p == '.' ) p++;                    // possible tag end
 
-    if( cur_group_type != gt_fig ) {       // no preceding :FIG tag
+    if( cur_group_type != gt_fig ) {        // no preceding :FIG tag
         g_err_tag_prec( "FIG" );
     }
 
-    t_page.cur_left = nest_cb->left_indent; // reset various values
-    t_page.max_width = width;
-    t_page.cur_width = 0;
+    t_page.cur_left -= left_inset;          // reset various values in case needed for frame
+    t_page.cur_width += right_inset;
     ProcFlags.concat = false;
-
     set_skip_vars( NULL, NULL, &layout_work.fig.post_skip, spacing, layout_work.fig.font );
 
     raw_p_skip = g_post_skip;           // save for future use
@@ -1040,10 +1056,12 @@ void gml_efig( const gmltag * entry )
         }
     }
 
+    t_page.cur_left = nest_cb->lm;          // reset various values
+    t_page.max_width = nest_cb->rm;
+    t_page.cur_width = 0;
+
     ProcFlags.concat = concat_save;
     ProcFlags.justify = justify_save;
-    t_page.cur_left = nest_cb->lm;
-    t_page.max_width = nest_cb->rm;
 
     wk = nest_cb;
     nest_cb = nest_cb->prev;
@@ -1144,7 +1162,9 @@ void gml_figcap( const gmltag * entry )
             fig_entry->text = (char *) mem_alloc( current + 1);
             strcpy_s(fig_entry->text, current + 1, p );
         }
+        ProcFlags.in_figcap = true;
         process_text( p, g_curr_font );     // if text follows
+        ProcFlags.in_figcap = false;
     } else {
         ProcFlags.need_text = true;
     }

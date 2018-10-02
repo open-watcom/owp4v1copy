@@ -1865,7 +1865,7 @@ void process_text( const char *text, font_number font )
                         if( ((font != FONT0) || (g_prev_font == FONT0))
                                 && (input_cbs->s.m != prev_mac) ) {
                             post_space = wgml_fonts[FONT0].spc_width;
-                        } else if( (font != 0) && (g_prev_font != 0) ) {
+                        } else if( !ProcFlags.in_figcap && (font != 0) && (g_prev_font != 0) ) {
                             post_space = wgml_fonts[font].spc_width;
                         }
                     }

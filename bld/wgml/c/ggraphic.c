@@ -66,7 +66,8 @@ void    gml_graphic( const gmltag * entry )
 
     file[0] = '\0';
     rt_buff[0] = '\0';
-    width = t_page.last_pane->col_width;
+//    width = t_page.max_width - t_page.cur_left;
+    width = t_page.max_width;
 
     p = scan_start;
     if( *p == '.' ) {
@@ -220,7 +221,7 @@ void    gml_graphic( const gmltag * entry )
    // only set up the doc_element if the file exists
     if( search_file_in_dirs( file, "", "", ds_doc_spec ) ) {
         cur_el = init_doc_el( el_graph, depth );
-        cur_el->element.graph.cur_left = t_page.cur_width;
+        cur_el->element.graph.cur_left = t_page.cur_left;
         cur_el->element.graph.depth = depth;
         cur_el->element.graph.scale = scale;
         cur_el->element.graph.width = width;

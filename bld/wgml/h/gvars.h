@@ -185,6 +185,7 @@ global struct ProcFlags {
     unsigned        CW_sep_ignore       : 1;// ignore scr cw separator
     unsigned        in_macro_define     : 1;// macro definition active
     unsigned        in_fb_fk_block      : 1;// inside FB/FK block     
+    unsigned        in_figcap           : 1;// FIGCAP in progress
     unsigned        suppress_msg        : 1;// suppress error msg (during scanning)
     unsigned        blanks_allowed      : 1;// blanks allowed (during scanning)
     unsigned        keep_ifstate        : 1;// leave ifstack unchanged for next line
