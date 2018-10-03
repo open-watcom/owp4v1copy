@@ -491,14 +491,24 @@ void gen_heading( char * h_text, char * id, hdsrc hn_lvl, hdsrc hds_lvl )
                 if( cur_doc_el_group->depth > t_page.max_depth ) {
                     xx_err( err_heading_too_deep );     // the block won't fit on any page
                 } else {
-                    cur_doc_el_group->post_skip = g_post_skip;
                     if( page_width ) {
+
+                        /****************************************************/
+                        /* this is for multi-column pages where the heading */
+                        /* goes to the top of the page                      */
+                        /* each column must start at the same vertical      */
+                        /* position, whether some of the heading text       */
+                        /* above it or not, hence the post_skip is included */
+                        /* in the depth -- this appears to match wgml 4.0   */
+                        /****************************************************/
+
+                        cur_doc_el_group->post_skip = g_post_skip;
                         insert_page_width( cur_doc_el_group );
+                        g_post_skip = 0;
                     } else {
                         insert_col_width( cur_doc_el_group );
                     }
                     cur_doc_el_group = NULL;
-                    g_post_skip = 0;        // used in processing heading
                 }
             }
         } else {

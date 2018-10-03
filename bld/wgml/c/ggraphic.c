@@ -66,8 +66,7 @@ void    gml_graphic( const gmltag * entry )
 
     file[0] = '\0';
     rt_buff[0] = '\0';
-//    width = t_page.max_width - t_page.cur_left;
-    width = t_page.max_width;
+    width = t_page.max_width - t_page.cur_left;
 
     p = scan_start;
     if( *p == '.' ) {

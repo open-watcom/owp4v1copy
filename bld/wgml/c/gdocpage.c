@@ -833,6 +833,7 @@ static void do_doc_panes_out( void )
             cur_pane->page_width = NULL;
         }
         for( i = 0; i < cur_pane->col_count; i++ ) {
+            ProcFlags.page_started = false;
             if( cur_pane->cols[i].col_width != NULL ) {
                 set_positions( cur_pane->cols[i].col_width, cur_pane->cols[i].col_left,
                                cur_pane->col_width_top );
@@ -846,8 +847,8 @@ static void do_doc_panes_out( void )
                 }
                 while( cur_el[i]->next != NULL ) cur_el[i] = cur_el[i]->next;
                 cur_pane->cols[i].col_width = NULL;
+                ProcFlags.page_started = true;
             }
-            ProcFlags.page_started = false;
             if( cur_pane->cols[i].main != NULL ) {
                 set_positions( cur_pane->cols[i].main, cur_pane->cols[i].col_left,
                                cur_pane->cols[i].main_top );

@@ -327,7 +327,7 @@ static void insert_frame_line( void )
 
             h_line_el = init_doc_el( el_hline, 0 );
             h_line_el->element.hline.ban_adjust = false;   // TBD, may not apply to FIG
-            h_line_el->element.hline.h_start = t_page.cur_left;
+            h_line_el->element.hline.h_start = nest_cb->left_indent;
             h_line_el->element.hline.h_len = width;
             insert_col_main( h_line_el );
         } else {                    // char_frame Note: wgml 4.0 uses font 0 regardless of the default font for the section
@@ -604,6 +604,29 @@ void gml_fig( const gmltag * entry )
         }
     }
 
+    /* insert_frame_line() uses width and nest_cb->left_indent */
+
+    if( (place != top_place) &&
+            ((frame.type == rule_frame) || (frame.type == char_frame)) ) {
+        if( (frame.type == rule_frame) && (bin_driver->hline.text != NULL)
+                && (place == inline_place) ) {
+            g_subs_skip += wgml_fonts[FONT0].line_height;   // this is actually the depth used by the HLINE
+            g_top_skip += wgml_fonts[FONT0].line_height;    // for use if fig moved to top of next column
+        }
+        insert_frame_line();
+    }
+
+    if( (frame.type == none) && (place != bottom_place) ) {
+        if( depth > g_subs_skip ) {
+            g_blank_lines = depth;
+            g_subs_skip = 0;
+            scr_process_break();
+        }
+    } else {
+        g_blank_lines = depth;      
+        scr_process_break();
+    }
+
     /* Select the width to use */
 
     if( t_page_width ) {                // t_page.page_width will be used
@@ -660,35 +683,8 @@ void gml_fig( const gmltag * entry )
         }
     }
 
-    if( (place != top_place) &&
-            ((frame.type == rule_frame) || (frame.type == char_frame)) ) {
-        if( (frame.type == rule_frame) && (bin_driver->hline.text != NULL)
-                && (place == inline_place) ) {
-            g_subs_skip += wgml_fonts[FONT0].line_height;   // this is actually the depth used by the HLINE
-            g_top_skip += wgml_fonts[FONT0].line_height;    // for use if fig moved to top of next column
-        }
-        insert_frame_line();
-    }
-
-    if( (frame.type == none) && (place != bottom_place) ) {
-        if( depth > g_subs_skip ) {
-            g_blank_lines = depth;
-            g_subs_skip = 0;
-            scr_process_break();
-        }
-    } else {
-        g_blank_lines = depth;      
-        scr_process_break();
-    }
-
-    /* scr_process_width resets these values, so they must be restored */
-
-    t_page.cur_left = nest_cb->left_indent;
-    t_page.max_width = width;
-
     /* Now set up margins for any text inside the figure */  
 
-    t_page.max_width -= right_inset;
     t_page.cur_left += left_inset;
     t_page.cur_width = t_page.cur_left;
     ProcFlags.keep_left_margin = true;  // keep special indent
@@ -752,8 +748,8 @@ void gml_efig( const gmltag * entry )
         g_err_tag_prec( "FIG" );
     }
 
-    t_page.cur_left -= left_inset;          // reset various values in case needed for frame
-    t_page.cur_width += right_inset;
+    t_page.cur_left = nest_cb->left_indent; // reset various values in case needed for frame
+    t_page.max_width += right_inset;
     ProcFlags.concat = false;
     set_skip_vars( NULL, NULL, &layout_work.fig.post_skip, spacing, layout_work.fig.font );
 
