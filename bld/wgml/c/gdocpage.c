@@ -616,6 +616,7 @@ static void set_positions( doc_element * list, uint32_t h_start, uint32_t v_star
             } else {
                 g_cur_v_start += cur_el->depth;
             }
+            at_top = false;
             break;
         case el_dbox :
             cur_el->element.dbox.h_start += h_start;
@@ -1760,9 +1761,7 @@ void insert_col_main( doc_element * a_element )
             }
             t_page.cur_depth += depth;
         }
-        if( a_element->type != el_binc ) {      // BINCLUDE at top of column has no effect
-            ProcFlags.col_started = true;
-        }
+        ProcFlags.col_started = true;
     }
 
     if( page_full ) {
