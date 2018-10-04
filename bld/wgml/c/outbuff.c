@@ -1190,11 +1190,15 @@ void ob_graphic( graphic_element * in_el )
     ob_flush();
     ob_flush();
 
-    ps_size = strlen( fontstr );
-    strcpy_s( buffout.text, buffout.length, fontstr );
-    buffout.current = ps_size;
-    if( ferror( in_el->fp ) ) {
-        xx_simple_err_cc( err_in_file, "GRAPHIC", in_el->file );
+    /* Only if font in use before the GRAPHIC was not font 0 */
+
+    if( g_prev_font > 0 ) {
+        ps_size = strlen( fontstr );
+        strcpy_s( buffout.text, buffout.length, fontstr );
+        buffout.current = ps_size;
+        if( ferror( in_el->fp ) ) {
+            xx_simple_err_cc( err_in_file, "GRAPHIC", in_el->file );
+        }
     }
 
     return;
