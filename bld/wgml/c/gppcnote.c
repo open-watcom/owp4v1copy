@@ -51,9 +51,8 @@ void    proc_p_pc( p_lay_tag * p_pc )
     }
     scr_process_break();
     g_line_indent = conv_hor_unit( &(p_pc->line_indent), g_curr_font );
-    t_page.cur_left = g_indent + nest_cb->left_indent + nest_cb->align;// left start    TBD
-                                        // possibly indent first line
-    t_page.cur_width = t_page.cur_left + g_line_indent;
+
+    t_page.cur_width = t_page.cur_left + g_line_indent; // possibly indent first line
 
     g_cur_threshold = layout_work.widow.threshold; // standard threshold
 
