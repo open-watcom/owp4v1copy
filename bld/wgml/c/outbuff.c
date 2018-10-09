@@ -1188,11 +1188,11 @@ void ob_graphic( graphic_element * in_el )
     strcpy_s( buffout.text, buffout.length, restore );
     buffout.current = ps_size;
     ob_flush();
-    ob_flush();
 
     /* Only if font in use before the GRAPHIC was not font 0 */
 
-    if( g_prev_font > 0 ) {
+    if( in_el->prev_font > 0 ) {
+        ob_flush();
         ps_size = strlen( fontstr );
         strcpy_s( buffout.text, buffout.length, fontstr );
         buffout.current = ps_size;

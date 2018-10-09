@@ -338,6 +338,7 @@ doc_element * alloc_doc_el( element_type type )
         curr->element.graph.xoff = 0;
         curr->element.graph.yoff = 0;
         curr->element.graph.at_top = false;
+        curr->element.graph.prev_font = 0;
         curr->element.graph.file[0] = '\0';
         break;
     case el_hline :

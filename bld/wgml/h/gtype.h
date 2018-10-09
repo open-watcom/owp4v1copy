@@ -1042,6 +1042,7 @@ typedef struct {
     int32_t         yoff;
     bool            at_top;
     FILE        *   fp;
+    font_number     prev_font;
     char            short_name[FILENAME_MAX];
     char            file[FILENAME_MAX];
 } graphic_element;

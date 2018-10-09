@@ -1382,6 +1382,7 @@ void do_page_out( void )
         out_ban_top();
 
         /********************************************************************/
+        /* Record g_prev_font for a GRAPHIC element                         */
         /* Adjust height of first element, if hline with ban_adjust == true */
         /* Note: since this applies only to hline, page_width must be empty */
         /*       and the hline must be the first or second element in main, */
@@ -1393,6 +1394,9 @@ void do_page_out( void )
 
         first_col = &t_page.panes->cols[0];
         if( (t_page.panes->page_width == NULL) && (first_col->main != NULL) ) {
+            if( first_col->main->type == el_graph ) {               // first element on page
+                first_col->main->element.graph.prev_font = g_prev_font;
+            }
             work_el = NULL;
             if( (first_col->main->type == el_hline) &&
                     (first_col->main->element.hline.ban_adjust) ) {
