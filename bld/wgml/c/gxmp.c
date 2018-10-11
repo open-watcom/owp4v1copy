@@ -194,6 +194,8 @@ void gml_exmp( const gmltag * entry )
         t_doc_el_group = t_doc_el_group->next;  // processed doc_elements go to next group, if any
         cur_doc_el_group->next = NULL;
 
+        cur_doc_el_group->first->element.text.first->spacing = 0;   // no spacing on first line
+
         if( cur_doc_el_group->first != NULL ) {
             cur_doc_el_group->depth += (cur_doc_el_group->first->blank_lines +
                                 cur_doc_el_group->first->subs_skip);
@@ -223,6 +225,10 @@ void gml_exmp( const gmltag * entry )
     }
 
     g_post_skip = nest_cb->post_skip;   // shift post_skip to follow eXMP
+    if( g_post_skip == 0 ) {            // minimum post_skip
+        g_post_skip = wgml_fonts[g_curr_font].line_height;
+    }
+
     ProcFlags.skips_valid = false;      // activate post_skip for next element
     t_page.cur_width = t_page.cur_left;
     scan_err = false;
