@@ -194,7 +194,9 @@ void gml_exmp( const gmltag * entry )
         t_doc_el_group = t_doc_el_group->next;  // processed doc_elements go to next group, if any
         cur_doc_el_group->next = NULL;
 
-        cur_doc_el_group->first->element.text.first->spacing = 0;   // no spacing on first line
+        if( cur_doc_el_group->first->type == el_text ) {            // only text has spacing
+            cur_doc_el_group->first->element.text.first->spacing = 0;   // no spacing on first line
+        }
 
         if( cur_doc_el_group->first != NULL ) {
             cur_doc_el_group->depth += (cur_doc_el_group->first->blank_lines +
