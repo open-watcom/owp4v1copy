@@ -43,7 +43,6 @@
 *               lay_init_su
 *               len_to_trail_space
 *               skip_to_quote
-*               start_line_with_string
 *               su_expression
 *               su_layout_special
 *
@@ -1165,70 +1164,6 @@ char * int_to_roman( uint32_t n, char * r, size_t rsize )
     } while( n > 0 );
     *p = '\0';
     return( r );
-}
-
-/***************************************************************************/
-/* for :NOTE :OL, ... tags                                                 */
-/* trailing spaces are stripped                                            */
-/* influencing the left margin for the paragraph                           */
-/***************************************************************************/
-
-void start_line_with_string( const char *text, font_number font, bool leave_1space )
-{
-    text_chars          *   n_char;     // new text char
-    size_t                  count;
-
-    count = strlen( text );
-    if( count == 0 ) {
-        return;
-    }
-    post_space = 0;
-    while( *(text + count - 1) == ' ' ) {   // strip trailing spaces
-        post_space++;
-        if( --count == 0 ) {
-            break;
-        }
-    }
-    if( leave_1space && post_space > 0 ) {// for ordered :LI keep 1 trailing space
-        post_space--;
-        count++;
-    }
-
-    n_char = alloc_text_chars( text, count, font );
-
-    n_char->x_address = t_page.cur_width;
-    ju_x_start = t_page.cur_width;
-    input_cbs->fmflags &= ~II_sol;      // no longer start of line
-
-    n_char->width = cop_text_width( n_char->text, n_char->count, font );
-
-    /***********************************************************/
-    /*  Test if word hits right margin                         */
-    /***********************************************************/
-
-    if( n_char->x_address + n_char->width > t_page.cur_width ) {
-        process_line_full( t_line, ProcFlags.concat );
-        t_line = alloc_text_line();
-        n_char->x_address = t_page.cur_width;
-    }
-
-    if( t_line == NULL ) {
-        t_line = alloc_text_line();
-    }
-
-    if( t_line->first == NULL ) {        // first element in output line
-        t_line->first = n_char;
-        t_line->line_height = wgml_fonts[font].line_height;
-        ju_x_start = n_char->x_address;
-        ProcFlags.line_started = true;
-    } else {
-        t_line->last->next = n_char;
-        n_char->prev = t_line->last;
-    }
-    t_line->last  = n_char;
-
-    t_page.cur_width = n_char->x_address + n_char->width;
-    post_space = post_space * wgml_fonts[layout_work.defaults.font].spc_width;
 }
 
 

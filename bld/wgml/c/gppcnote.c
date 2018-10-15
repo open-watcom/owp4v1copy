@@ -95,9 +95,12 @@ extern  void    gml_pc( const gmltag * entry )
 extern  void    gml_note( const gmltag * entry )
 {
     char        *   p;
+    char        *   note_text;
+    char        *   text_end;
     font_number     font_save;
+    size_t          spc_cnt;
+    size_t          txt_cnt;
     text_chars  *   marker;
-    uint32_t        spc_cnt;
 
     scan_err = false;
     p = scan_start;
@@ -112,11 +115,28 @@ extern  void    gml_note( const gmltag * entry )
                     spacing, g_curr_font );
     post_space = 0;
 
-    t_page.cur_left = conv_hor_unit( &layout_work.note.left_indent, g_curr_font );
+    t_page.cur_left += conv_hor_unit( &layout_work.note.left_indent, g_curr_font );
     t_page.cur_width = t_page.cur_left;
+    ju_x_start = t_page.cur_width;
     ProcFlags.keep_left_margin = true;  // keep special Note indent
 
-    start_line_with_string( layout_work.note.string, layout_work.note.font, false );
+    note_text = layout_work.note.string;
+    txt_cnt = strlen( note_text );
+    if( txt_cnt > 0 ) {
+        text_end = note_text + txt_cnt - 1;
+        spc_cnt = 0;
+        while( *text_end == ' ' ) {
+            text_end--;
+            spc_cnt++;
+        }
+        text_end++;                     // off non-space character
+        *text_end = '\0';
+//// trailing spaces are output fs0 even when the text is, say, fs2
+//// the original function counted them & set the post_space, but that did not work
+//// new procflag? or "hard space" char? or what?
+//        ProcFlags.concat = true;        // emit trailing spaces
+        process_text( &layout_work.note.string, g_curr_font );
+    }
 
     /* the value of post_space after start_line_with_string() is wrong for  */
     /* two reasons: 1) it uses the wrong font; 2) it is at most "1" even if */
