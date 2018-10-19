@@ -147,6 +147,8 @@ void    init_def_lay( void )
     layout_work.note.spacing = 1;
     layout_work.note.font = 2;
     strcpy( layout_work.note.string, "NOTE: " );
+    layout_work.note.text[0] = '\0';
+    layout_work.note.spaces[0] = '\0';
 
     /***********************************************************************/
     /*  :H0 - :H6 values                                                   */

@@ -302,6 +302,8 @@ typedef struct note_lay_tag {
     font_number     font;               // non-negative integer
     int8_t          spacing;            // positive integer
     xx_str          string[str_size];   // special string
+    xx_str          text[str_size];     // special string
+    xx_str          spaces[str_size];   // special string
 } note_lay_tag;
  
  

@@ -95,11 +95,12 @@ extern  void    gml_pc( const gmltag * entry )
 extern  void    gml_note( const gmltag * entry )
 {
     char        *   p;
-    char        *   note_text;
-    char        *   text_end;
+//    char        *   note_text;
+//    char        *   spaces      = NULL;
+//    char        *   text_end    = NULL;
     font_number     font_save;
     size_t          spc_cnt;
-    size_t          txt_cnt;
+//    size_t          txt_cnt;
     text_chars  *   marker;
 
     scan_err = false;
@@ -110,45 +111,34 @@ extern  void    gml_note( const gmltag * entry )
     scr_process_break();
 
     font_save = g_curr_font;
-    g_curr_font = layout_work.note.font;
     set_skip_vars( &layout_work.note.pre_skip, NULL, &layout_work.note.post_skip,
-                    spacing, g_curr_font );
-    post_space = 0;
+                    spacing, layout_work.note.font );
 
-    t_page.cur_left += conv_hor_unit( &layout_work.note.left_indent, g_curr_font );
+    t_page.cur_left += conv_hor_unit( &layout_work.note.left_indent, layout_work.note.font );
     t_page.cur_width = t_page.cur_left;
     ju_x_start = t_page.cur_width;
     ProcFlags.keep_left_margin = true;  // keep special Note indent
 
-    note_text = layout_work.note.string;
-    txt_cnt = strlen( note_text );
-    if( txt_cnt > 0 ) {
-        text_end = note_text + txt_cnt - 1;
-        spc_cnt = 0;
-        while( *text_end == ' ' ) {
-            text_end--;
-            spc_cnt++;
+    if( strlen(layout_work.note.string) > 0 ) {
+        process_text( &layout_work.note.text, layout_work.note.font );
+    }
+    spc_cnt = strlen( &layout_work.note.spaces );
+    if( spc_cnt > 0 ) {
+        if( t_line == NULL ) {
+            t_line->first = process_word( &layout_work.note.spaces, spc_cnt, FONT0 );
+            t_line->last = t_line->first;
+        } else {
+            t_line->last->next = process_word( &layout_work.note.spaces, spc_cnt, FONT0 );
+            t_line->last = t_line->last->next;
+        }            
+        t_line->last->type = norm;
+        t_line->last->x_address = t_page.cur_width;
+        t_page.cur_width += t_line->last->width;
+        if( wgml_fonts[FONT0].line_height > t_line->line_height ) {
+            t_line->line_height = wgml_fonts[FONT0].line_height;
         }
-        text_end++;                     // off non-space character
-        *text_end = '\0';
-//// trailing spaces are output fs0 even when the text is, say, fs2
-//// the original function counted them & set the post_space, but that did not work
-//// new procflag? or "hard space" char? or what?
-//        ProcFlags.concat = true;        // emit trailing spaces
-        process_text( &layout_work.note.string, g_curr_font );
+        ProcFlags.zsp = true;
     }
-
-    /* the value of post_space after start_line_with_string() is wrong for  */
-    /* two reasons: 1) it uses the wrong font; 2) it is at most "1" even if */
-    /* more than one space appears at the end of the note_string.           */
-
-    spc_cnt = post_space / wgml_fonts[g_curr_font].spc_width;
-    post_space = spc_cnt * wgml_fonts[font_save].spc_width;
-    if( (t_line != NULL)  && (t_line->last != NULL) ) {
-        t_page.cur_left += t_line->last->width + post_space;
-    }
-    t_page.cur_width = t_page.cur_left;
-    ju_x_start = t_page.cur_width;
 
     spacing = layout_work.note.spacing;
     g_curr_font = layout_work.defaults.font;

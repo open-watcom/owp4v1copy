@@ -1954,6 +1954,9 @@ void process_text( const char *text, font_number font )
             }
         }
     }
+    if( ProcFlags.zsp ) {   // for NOTE; position TBD
+        post_space = 0;
+    }
     h_chars = NULL;
     n_chars = NULL;
     pword = p;                          // remember word start
@@ -2413,5 +2416,6 @@ void process_text( const char *text, font_number font )
     ProcFlags.para_starting = false;
     ProcFlags.titlep_starting = false;
     ProcFlags.utc = false;
+    ProcFlags.zsp = false;
 }
 

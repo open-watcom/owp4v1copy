@@ -999,6 +999,9 @@ static void finish_banners( void )
 
 void    do_layout_end_processing( void )
 {
+    size_t          spc_cnt;
+    size_t          txt_cnt;
+
     /***********************************************************************/
     /*  Since the LAYOUT blocks are only processed on the first pass, most */
     /*  of this function is similarly restricted to the first pass.        */
@@ -1019,6 +1022,21 @@ void    do_layout_end_processing( void )
         /*  This should be where all processing and error-checking         */
         /*  required after all LAYOUT blocks have been processed is done.  */
         /*******************************************************************/
+
+        /* If a note_string exists, split it into text and spaces */
+
+        txt_cnt = strlen( &layout_work.note.string );
+        if( txt_cnt > 0 ) {
+            spc_cnt = 0;
+            while( layout_work.note.string[txt_cnt - 1] == ' ' ) {
+                txt_cnt--;
+                spc_cnt++;
+            }
+            memcpy_s( layout_work.note.text, txt_cnt, layout_work.note.string, txt_cnt );
+            layout_work.note.text[txt_cnt] = '\0';
+            memset( layout_work.note.spaces, ' ', spc_cnt );
+            layout_work.note.spaces[spc_cnt] = '\0';
+        }
 
         finish_lists();
         finish_banners();
