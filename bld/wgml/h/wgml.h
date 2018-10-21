@@ -276,6 +276,7 @@ extern  void    split_input( char * buf, char * split_pos, bool startofline );
 
 /* gproctxt.c                           */
 extern  void        do_justify( uint32_t left_m, uint32_t right_m, text_line *line );
+extern  void        insert_hard_spaces( char * spaces );
 extern  size_t      intrans( char *text, size_t count, font_number font );
 extern  void        process_line_full( text_line *a_line, bool justify );
 extern  void        process_text( const char *text, font_number font );

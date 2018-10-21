@@ -868,8 +868,7 @@ static  void    gml_li_ol( const gmltag * entry )
                      nest_cb->ol_layout->number_style );
     if( pn != NULL ) {
         num_len = strlen( pn );
-        *(pn + num_len) = ' ';          // trailing space like wgml4 does
-        *(pn + num_len + 1) = '\0';
+        *(pn + num_len ) = '\0';
         num_len++;
     } else {
         pn = charnumber;
@@ -895,11 +894,15 @@ static  void    gml_li_ol( const gmltag * entry )
 
     ProcFlags.keep_left_margin = true;  // keep special Note indent
     process_text( charnumber, g_curr_font );    // insert item number
+    insert_hard_spaces( " " );
 
-    t_page.cur_width = t_page.cur_left + nest_cb->align;
+    t_page.cur_left = nest_cb->lm + nest_cb->left_indent + nest_cb->align;   // left start
+    if( t_page.cur_width < t_page.cur_left ) {  // set for current line
+        t_page.cur_width = t_page.cur_left;
+        post_space = 0;
+    }
     ju_x_start = t_page.cur_width;
 
-    ProcFlags.ct = true;
     g_curr_font = nest_cb->ol_layout->font;
     if( *p == '.' ) p++;                // over '.'
     while( *p == ' ' ) p++;             // skip initial spaces
@@ -968,7 +971,7 @@ static  void    gml_li_sl( const gmltag * entry )
 static  void    gml_li_ul( const gmltag * entry )
 {
     char        *   p;
-    char            bullet[3];
+    char            bullet[2];
 
     if( nest_cb == NULL ) {
         xx_nest_err( err_li_lp_no_list );   // tag must be in a list
@@ -1002,12 +1005,16 @@ static  void    gml_li_ul( const gmltag * entry )
     ProcFlags.keep_left_margin = true;  // keep special Note indent
     g_curr_font = nest_cb->ul_layout->bullet_font;
     process_text( bullet, g_curr_font );    // insert bullet
+    insert_hard_spaces( " " );
 
-    t_page.cur_width = t_page.cur_left + nest_cb->align;
+    t_page.cur_left = nest_cb->lm + nest_cb->left_indent + nest_cb->align;   // left start
+    if( t_page.cur_width < t_page.cur_left ) {  // set for current line
+        t_page.cur_width = t_page.cur_left;
+        post_space = 0;
+    }
 
     ju_x_start = t_page.cur_width;
 
-    ProcFlags.ct = true;
     g_curr_font = nest_cb->ul_layout->font;
     if( *p == '.' ) p++;                // over '.'
     while( *p == ' ' ) p++;             // skip initial spaces

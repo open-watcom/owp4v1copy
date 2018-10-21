@@ -29,6 +29,7 @@
 *               do_c_chars              generate c_chars for wgml_tabs
 *               do_fc_comp              compute data used by fill_chars
 *               do_justify              insert spaces between words
+*               insert_hard_spaces      inserts hard spaces into the output line
 *               intrans                 perform input translation
 *               next_tab                finds next tab stop
 *               process_line_full       process text line into t_element
@@ -1378,6 +1379,38 @@ void do_justify( uint32_t lm, uint32_t rm, text_line * line )
     default:
         break;
     }
+}
+
+
+/***************************************************************************/
+/*  insert space characters as if they were text                           */
+/*  NOTE: used with NOTE, SL and UL                                        */
+/*        avoids complicating process_text() further                       */
+/*        sets ProcFlags.zsp to avoid any post_space before text           */
+/***************************************************************************/
+
+void insert_hard_spaces( char * spaces )
+{
+    size_t  spc_cnt;
+
+    spc_cnt = strlen( spaces );
+    if( spc_cnt > 0 ) {
+        if( t_line == NULL ) {
+            t_line->first = process_word( &layout_work.note.spaces, spc_cnt, FONT0 );
+            t_line->last = t_line->first;
+        } else {
+            t_line->last->next = process_word( &layout_work.note.spaces, spc_cnt, FONT0 );
+            t_line->last = t_line->last->next;
+        }            
+        t_line->last->type = norm;
+        t_line->last->x_address = t_page.cur_width;
+        t_page.cur_width += t_line->last->width;
+        if( wgml_fonts[FONT0].line_height > t_line->line_height ) {
+            t_line->line_height = wgml_fonts[FONT0].line_height;
+        }
+        ProcFlags.zsp = true;
+    }
+    return;
 }
 
 

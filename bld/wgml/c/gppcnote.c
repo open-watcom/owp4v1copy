@@ -95,12 +95,7 @@ extern  void    gml_pc( const gmltag * entry )
 extern  void    gml_note( const gmltag * entry )
 {
     char        *   p;
-//    char        *   note_text;
-//    char        *   spaces      = NULL;
-//    char        *   text_end    = NULL;
     font_number     font_save;
-    size_t          spc_cnt;
-//    size_t          txt_cnt;
     text_chars  *   marker;
 
     scan_err = false;
@@ -122,23 +117,7 @@ extern  void    gml_note( const gmltag * entry )
     if( strlen(layout_work.note.string) > 0 ) {
         process_text( &layout_work.note.text, layout_work.note.font );
     }
-    spc_cnt = strlen( &layout_work.note.spaces );
-    if( spc_cnt > 0 ) {
-        if( t_line == NULL ) {
-            t_line->first = process_word( &layout_work.note.spaces, spc_cnt, FONT0 );
-            t_line->last = t_line->first;
-        } else {
-            t_line->last->next = process_word( &layout_work.note.spaces, spc_cnt, FONT0 );
-            t_line->last = t_line->last->next;
-        }            
-        t_line->last->type = norm;
-        t_line->last->x_address = t_page.cur_width;
-        t_page.cur_width += t_line->last->width;
-        if( wgml_fonts[FONT0].line_height > t_line->line_height ) {
-            t_line->line_height = wgml_fonts[FONT0].line_height;
-        }
-        ProcFlags.zsp = true;
-    }
+    insert_hard_spaces( layout_work.note.spaces );
 
     spacing = layout_work.note.spacing;
     g_curr_font = layout_work.defaults.font;
