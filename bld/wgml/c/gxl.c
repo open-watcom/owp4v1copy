@@ -1359,6 +1359,7 @@ void gml_dt( const gmltag * entry )
 
 void gml_dd( const gmltag * entry )
 {
+    bool        break_done  = false;
     char    *   p;
 
     if( ProcFlags.need_dd ) {
@@ -1381,7 +1382,10 @@ void gml_dd( const gmltag * entry )
         t_page.cur_width = t_page.cur_left;
         post_space = 0;
     } else if( nest_cb->dl_break ) {
-        scr_process_break();
+        break_done = true;
+        process_line_full( t_line, ((ProcFlags.justify != ju_off) &&
+                (ProcFlags.justify != ju_on) && (ProcFlags.justify != ju_half)) );
+        t_line = NULL;              // commit term but as part of same doc_element as definition
         t_page.cur_width = t_page.cur_left;
         post_space = 0;
     } else {                        // cur_width > cur_left and no break
@@ -1396,7 +1400,8 @@ void gml_dd( const gmltag * entry )
     if( *p ) {
         process_text( p, g_curr_font ); // if text follows
     } else {
-        if( nest_cb->dl_break ) {
+//        if( nest_cb->dl_break ) {
+        if( break_done ) {
             ProcFlags.dd_starting = true;   // no text, set flag
         }
     }

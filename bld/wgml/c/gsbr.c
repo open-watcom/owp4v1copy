@@ -104,7 +104,25 @@ void  scr_process_break( void )
     doc_element *   cur_el;
     text_chars  *   marker  = NULL;
 
-    if( t_line != NULL ) {
+    if( ProcFlags.dd_starting ) {    // DD : no text before break
+        if( t_line != NULL ) {
+            process_line_full( t_line, ((ProcFlags.justify != ju_off) &&
+                (ProcFlags.justify != ju_on) && (ProcFlags.justify != ju_half)) );
+        }
+        set_skip_vars( NULL, NULL, NULL, spacing, g_curr_font );
+        g_subs_skip = wgml_fonts[g_curr_font].line_height;
+        t_line = alloc_text_line();
+        t_line->line_height = wgml_fonts[g_curr_font].line_height;
+        t_line->first = NULL;
+        if( t_element == NULL ) {
+            t_element = init_doc_el( el_text, wgml_fonts[g_curr_font].line_height );
+            t_element->element.text.first = t_line;
+        } else {
+            t_element->element.text.first->next = t_line;
+        }
+        t_element->depth += t_line->line_height;
+        t_line = NULL;
+    } else if( t_line != NULL ) {
         if( t_line->first != NULL ) {
 
             /* Insert a marker if CO OFF and post_space > 0 */
@@ -142,16 +160,6 @@ void  scr_process_break( void )
             cur_el->next = NULL;
             insert_col_main( cur_el );
         }
-        t_el_last = NULL;
-    } else if( ProcFlags.dd_starting ) {    // DD : no text before break
-        set_skip_vars( NULL, NULL, NULL, spacing, g_curr_font );
-        g_subs_skip = wgml_fonts[g_curr_font].line_height;
-        t_element = init_doc_el( el_text, wgml_fonts[g_curr_font].line_height );
-        t_element->element.text.first = alloc_text_line();
-        t_element->element.text.first->line_height = 0;
-        t_element->element.text.first->first = NULL;
-        insert_col_main( t_element );
-        t_element = NULL;
         t_el_last = NULL;
     } else if( ProcFlags.titlep_starting ) {    // TITLE : no text before break
         set_skip_vars( NULL, NULL, NULL, spacing, g_curr_font);
