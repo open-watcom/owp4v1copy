@@ -702,7 +702,7 @@ void    gml_exl_common( const gmltag * entry )
 /* previously specified for each :eul tag.                                                   */
 /*********************************************************************************************/
 
-void    gml_edl( const gmltag * entry ) // not tested TBD
+void    gml_edl( const gmltag * entry )
 {
     if( g_line_indent == 0 ) {
         ProcFlags.para_starting = false;    // clear for this tag's break
@@ -729,7 +729,7 @@ void    gml_edl( const gmltag * entry ) // not tested TBD
     }
 }
 
-void    gml_egl( const gmltag * entry ) // not tested TBD
+void    gml_egl( const gmltag * entry )
 {
     if( g_line_indent == 0 ) {
         ProcFlags.para_starting = false;    // clear for this tag's break
@@ -1400,7 +1400,6 @@ void gml_dd( const gmltag * entry )
     if( *p ) {
         process_text( p, g_curr_font ); // if text follows
     } else {
-//        if( nest_cb->dl_break ) {
         if( break_done ) {
             ProcFlags.dd_starting = true;   // no text, set flag
         }
