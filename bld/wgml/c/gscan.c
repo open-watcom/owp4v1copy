@@ -184,7 +184,6 @@ static void scan_gml( void )
     if( ge != NULL ) {                  // GML user defined Tag found
         if( ProcFlags.need_text ) {
             xx_err( err_text_not_tag_cw );
-            ProcFlags.need_text = false;
         }
         *p = csave;
         if( ge->tagflags & tag_off ) {  // inactive, treat as text
@@ -349,7 +348,6 @@ static void scan_gml( void )
                             }
                         } else if( ProcFlags.need_text ) {
                             xx_err( err_text_not_tag_cw );
-                            ProcFlags.need_text = false;
                         } else if( rs_loc == 0 ) {
                             // no restrictions: do them all
                             gml_tags[k].gmlproc( &gml_tags[k] );
@@ -449,7 +447,6 @@ static void     scan_script( void )
 
     if( ProcFlags.need_text ) {
         xx_err( err_text_not_tag_cw );
-        ProcFlags.need_text = false;
     }
 
     cb = input_cbs;
@@ -1018,12 +1015,12 @@ char * get_text_line( char * p )
             if( ProcFlags.scr_cw) {
                 tl_found = false;       // control word, macro, or whatever
             } else if( ProcFlags.gml_tag ) {
-                tok_start = p;
                 p++;
+                tok_start = p;
                 while( is_id_char( *p ) && p <= scan_stop ) {   // find end of TAG
                     p++;
                 }
-                toklen = p - tok_start - 1;
+                toklen = p - tok_start;
                 if( toklen < TAG_NAME_LENGTH ) {    // possible tag
                     memcpy( &tok_txt, tok_start, toklen );
                     tok_txt[toklen] = '\0';
@@ -1058,7 +1055,7 @@ char * get_text_line( char * p )
         }
 
         if( !tl_found ) {                   // no <text_line> found
-            ProcFlags.reprocess_line = true;
+            xx_err( err_text_not_tag_cw );
         }
     }
 
