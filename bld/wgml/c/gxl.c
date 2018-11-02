@@ -1380,7 +1380,7 @@ void gml_dd( const gmltag * entry )
     t_page.cur_left = nest_cb->lm + nest_cb->left_indent + nest_cb->tsize;   // left start
     if( t_page.cur_width < t_page.cur_left ) {  // set for current line
         t_page.cur_width = t_page.cur_left;
-        post_space = 0;
+        ProcFlags.zsp = true;
     } else if( nest_cb->dl_break ) {
         break_done = true;
         process_line_full( t_line, ((ProcFlags.justify != ju_off) &&
