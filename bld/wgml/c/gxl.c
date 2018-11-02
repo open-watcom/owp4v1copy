@@ -1265,6 +1265,10 @@ void gml_ddhd( const gmltag * entry )
 
     ju_x_start = t_page.cur_width;
 
+    if( t_page.cur_width > t_page.cur_left ) {  // ensure space between DTHD and DDHD
+        ProcFlags.dd_space = true;
+    }
+
     if( *p == '.' ) p++;                // possible tag end
     while( *p == ' ' ) p++;             // skip initial spaces
     if( *p ) {
