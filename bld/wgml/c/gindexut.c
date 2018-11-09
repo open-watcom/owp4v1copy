@@ -256,9 +256,9 @@ void find_create_ix_e_entry( ix_h_blk * ixhwork, char * ref, size_t len,
         if( *base == NULL ) {
             if( ixework != NULL ) {         // displace prior reference list head
                 ixewk->next = ixework;
-                ixework = ixewk;
+                *base = ixewk;
             } else {                        // new reference list head
-                ixework = ixewk;
+                *base = ixewk;
             }
         } else {                            // insert in list at current point
             if( ixework != NULL ) {         // displace prior reference list head
@@ -266,10 +266,9 @@ void find_create_ix_e_entry( ix_h_blk * ixhwork, char * ref, size_t len,
                 ixework->next = ixewk;
             } else {                        // new reference list head
                 ixewk->next = *base;
-                ixework = ixewk;
+                *base = ixewk;
             }
         }
-        *base = ixework;
     }
     return;
 }
