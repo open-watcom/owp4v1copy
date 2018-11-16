@@ -922,6 +922,8 @@ char * get_att_start( char * p )
                         continue;
                     }
                 }
+            } else {
+                break;  // eof() found: return for further processing
             }
         } else {
             break;      // potential next attribute found
