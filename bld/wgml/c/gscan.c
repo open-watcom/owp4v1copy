@@ -307,6 +307,7 @@ static void scan_gml( void )
                         }
 
                         ProcFlags.need_tag = false;
+                        ProcFlags.force_pc = false;
 
                         /*******************************************************************/
                         /*  The Procflags must be cleared to prevent the error from being  */
@@ -584,6 +585,7 @@ static void     scan_script( void )
                     } else {
                         scan_start = p; // script controlword found, process
                         if( scr_tags[k].cwflags & cw_break ) {
+                            ProcFlags.force_pc = false;
                             scr_process_break();// output incomplete line, if any
                         }
                         scr_tags[k].tagproc();
@@ -858,7 +860,11 @@ void    scan_line( void )
                         blank_lines++;
                     }
                 } else {
-                    process_text( scan_start, g_curr_font );
+                    if( ProcFlags.force_pc ) {
+                        gml_pc( NULL );
+                    } else {
+                        process_text( scan_start, g_curr_font );
+                    }
                 }
             }
         } else if( !ProcFlags.concat && (*buff2 == '\0') ) {    // blank line found with concatenation off

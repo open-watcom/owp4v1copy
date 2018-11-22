@@ -197,6 +197,7 @@ global struct ProcFlags {
     unsigned        fsp                 : 1;// force space in spite of .ct
     unsigned        zsp                 : 1;// force no space (used when start position of next text_chars is already set)
     unsigned        as_text_line        : 1;// process text as <text line>
+    unsigned        force_pc            : 1;// use PC tag processing on text not preceded by a tag or control word
     unsigned        utc                 : 1;// user tag with "continue" is active
     unsigned        in_trans            : 1;// esc char is specified (.ti set x)
     unsigned        reprocess_line      : 1;// unget for current input line

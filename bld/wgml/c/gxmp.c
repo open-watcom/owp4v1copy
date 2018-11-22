@@ -234,9 +234,6 @@ void gml_exmp( const gmltag * entry )
     }
 
     g_post_skip = nest_cb->post_skip;   // shift post_skip to follow eXMP
-    if( g_post_skip == 0 ) {            // minimum post_skip
-        g_post_skip = wgml_fonts[g_curr_font].line_height;
-    }
 
     ProcFlags.skips_valid = false;      // activate post_skip for next element
     t_page.cur_width = t_page.cur_left;
@@ -245,6 +242,8 @@ void gml_exmp( const gmltag * entry )
     if( *p == '.' ) p++;            // over '.'
     if( *p ) {
         gml_pc( NULL );
+    } else {
+        ProcFlags.force_pc = true;
     }
 
     scan_start = scan_stop + 1;
