@@ -71,6 +71,10 @@ void gml_xmp( const gmltag * entry )
 
     g_keep_nest( "Example" );           // catch nesting errors
 
+    if( is_ip_tag( nest_cb->c_tag ) ) {                 // inline phrase not closed
+        g_err_tag_nest( str_tags[nest_cb->c_tag + 1] ); // end tag expected
+    }
+
     font_save = g_curr_font;
     g_curr_font = layout_work.xmp.font;
     depth = 0;                          // default value: depth will be depth of box contents
@@ -241,7 +245,7 @@ void gml_exmp( const gmltag * entry )
     p = scan_start;
     if( *p == '.' ) p++;            // over '.'
     if( *p ) {
-        gml_pc( NULL );
+        do_force_pc( p );
     } else {
         ProcFlags.force_pc = true;
     }

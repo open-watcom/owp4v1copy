@@ -415,6 +415,9 @@ void gml_fig( const gmltag * entry )
     scr_process_break();
     scan_err = false;
 
+    if( is_ip_tag( nest_cb->c_tag ) ) {                 // inline phrase not closed
+        g_err_tag_nest( str_tags[nest_cb->c_tag + 1] ); // end tag expected
+    }
     g_keep_nest( "Figure" );            // catch nesting errors
 
     figcap_done = false;                // reset for this FIG
@@ -1069,7 +1072,9 @@ void gml_efig( const gmltag * entry )
 
     scan_err = false;
     if( *p ) {
-        process_text( p, g_curr_font);  // if text follows
+        do_force_pc( p );
+    } else {
+        ProcFlags.force_pc = true;
     }
     if( t_page_width ) {
         t_page.max_width = t_page.last_pane->col_width;

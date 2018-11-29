@@ -2445,6 +2445,7 @@ void process_text( const char *text, font_number font )
     ProcFlags.ct = false;
     ProcFlags.dd_space = false;
     ProcFlags.dd_starting = false;
+    ProcFlags.force_pc = false;
     ProcFlags.fsp = false;
     ProcFlags.para_starting = false;
     ProcFlags.titlep_starting = false;

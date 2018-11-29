@@ -68,6 +68,12 @@ static void gml_xl_lp_common( e_tags t )
 {
     char        *   p;
 
+    if( t != t_LP ) {
+        if( is_ip_tag( nest_cb->c_tag ) ) {                 // inline phrase not closed
+            g_err_tag_nest( str_tags[nest_cb->c_tag + 1] ); // end tag expected
+        }
+    }
+
     end_lp();                           // terminate :LP if active
 
     init_nest_cb();
@@ -660,8 +666,9 @@ void    gml_exl_common( const gmltag * entry )
     p = scan_start;
     if( *p == '.' ) p++;            // over '.'
     if( *p ) {
-        gml_pc( NULL );
+        do_force_pc( p );
     } else {
+        ProcFlags.force_pc = true;
         ProcFlags.skips_valid = false;  // force use of post_skip with following text element
     }
 

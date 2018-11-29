@@ -263,7 +263,7 @@ extern  void    set_page_position( doc_section ds );
 
 
 /* gppcnote.c                           */
-extern  void    proc_p_pc( p_lay_tag * p_pc );
+extern  void    do_force_pc( char * p );
 
 
 /* gprocess.c                           */

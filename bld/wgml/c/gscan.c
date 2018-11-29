@@ -307,7 +307,18 @@ static void scan_gml( void )
                         }
 
                         ProcFlags.need_tag = false;
-                        ProcFlags.force_pc = false;
+
+                        /*******************************************************************/
+                        /*  When text occurs after certain blocks, it is processed as if   */
+                        /*  it were preceded by tag PC. This is cancelled when a tag comes */
+                        /*  before the text, but not if the tag starts or ends an inline   */
+                        /*  phrase.                                                        */
+                        /*******************************************************************/
+
+                        if( ((gml_tags[k].taglocs & ip_start_tag) == 0) &&
+                                ((gml_tags[k].taglocs & ip_end_tag) == 0) ) {
+                            ProcFlags.force_pc = false;
+                        }
 
                         /*******************************************************************/
                         /*  The Procflags must be cleared to prevent the error from being  */
@@ -861,7 +872,7 @@ void    scan_line( void )
                     }
                 } else {
                     if( ProcFlags.force_pc ) {
-                        gml_pc( NULL );
+                        do_force_pc( scan_start );
                     } else {
                         process_text( scan_start, g_curr_font );
                     }
@@ -951,9 +962,9 @@ const gmltag * find_lay_tag( char * token, size_t toklen )
 
 
 /***************************************************************************/
-/*  find gml tag entry by e_tag value and determine if is an ip_tag        */
-/*  ip_tags are CIT, HPx, Q, SF                                            */
-/*  return true if offset is for an ip_tag, false otherwise                */
+/*  find gml tag entry by e_tag value and determine if is an ip_start_tag  */
+/*  ip_start_tags are CIT, HPx, Q, SF                                      */
+/*  return true if offset is for an ip_start_tag, false otherwise          */
 /*  NOTE: for some reason, an offset specified as, say "t_CIT" is actually */
 /*        the offset for the gmltag object for tag eCIT, hence the         */
 /*        adjustment                                                       */
@@ -963,8 +974,8 @@ bool is_ip_tag( e_tags offset )
 {
     if( (offset < t_NONE) || (offset >= t_MAX) ) {  // catch invalid offset values
         internal_err( __FILE__, __LINE__ );
-    } else if( offset != t_NONE ) {                 // t_NONE is valid, but is not an ip_tag
-        return( gml_tags[offset - 1].taglocs & ip_tag );
+    } else if( offset != t_NONE ) {                 // t_NONE is valid, but is not an ip_start_tag
+        return( gml_tags[offset - 1].taglocs & ip_start_tag );
     }
     return( false );                                // not found
 }

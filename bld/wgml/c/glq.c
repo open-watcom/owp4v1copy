@@ -134,6 +134,8 @@ void gml_elq( const gmltag * entry )
     if( *p ) {
         ProcFlags.skips_valid = false;
         process_text( p, g_curr_font);  // if text follows
+    } else {
+        ProcFlags.force_pc = true;
     }
 
     scan_start = scan_stop + 1;

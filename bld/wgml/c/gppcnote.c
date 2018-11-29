@@ -34,15 +34,11 @@
 #include    "gvars.h"
 
 /***************************************************************************/
-/*  :P. :PC common routine                                                 */
+/*  Setup for both proc_p_c() and do_force_pc()                            */
 /***************************************************************************/
-void    proc_p_pc( p_lay_tag * p_pc )
+
+void p_pc_setup( p_lay_tag * p_pc )
 {
-    char        *   p;
-
-    scan_err = false;
-    p = scan_start;
-
     ProcFlags.keep_left_margin = true;  // special Note indent
     start_doc_sect();                   // if not already done
 
@@ -56,14 +52,30 @@ void    proc_p_pc( p_lay_tag * p_pc )
 
     g_cur_threshold = layout_work.widow.threshold; // standard threshold
 
-    if( *p == '.' ) p++;                // over '.'
-
     set_skip_vars( &(p_pc->pre_skip), NULL, &(p_pc->post_skip), spacing,
                     g_curr_font );
 
     ProcFlags.para_starting = true;     // for next break, not this tag's break
 
     post_space = 0;
+
+    return;
+}
+
+/***************************************************************************/
+/*  :P. :PC common routine                                                 */
+/***************************************************************************/
+
+void proc_p_pc( p_lay_tag * p_pc )
+{
+    char    *   p;
+
+    p_pc_setup( p_pc );
+
+    scan_err = false;
+    p = scan_start;
+
+    if( *p == '.' ) p++;                // over '.'
 
     if( *p ) {
         process_text( p, g_curr_font );
@@ -76,7 +88,8 @@ void    proc_p_pc( p_lay_tag * p_pc )
 /***************************************************************************/
 /*  :P.perhaps paragraph elements                                          */
 /***************************************************************************/
-extern  void    gml_p( const gmltag * entry )
+
+extern void gml_p( const gmltag * entry )
 {
     proc_p_pc( &layout_work.p );
 }
@@ -84,7 +97,8 @@ extern  void    gml_p( const gmltag * entry )
 /***************************************************************************/
 /*  :PC.perhaps paragraph elements                                         */
 /***************************************************************************/
-extern  void    gml_pc( const gmltag * entry )
+
+extern void gml_pc( const gmltag * entry )
 {
     proc_p_pc( &layout_work.pc );
 }
@@ -92,7 +106,8 @@ extern  void    gml_pc( const gmltag * entry )
 /***************************************************************************/
 /*  :NOTE.perhaps paragraph elements                                       */
 /***************************************************************************/
-extern  void    gml_note( const gmltag * entry )
+
+extern void gml_note( const gmltag * entry )
 {
     char        *   p;
     font_number     font_save;
@@ -152,3 +167,19 @@ extern  void    gml_note( const gmltag * entry )
     return;
 }
 
+/***************************************************************************/
+/*  Force PC on text line following certain blocks                         */
+/***************************************************************************/
+
+extern void do_force_pc( char * p )
+{
+    p_pc_setup( &layout_work.pc );
+
+    if( *p == '.' ) p++;                // over '.'
+
+    if( *p ) {
+        process_text( p, g_curr_font );
+    }
+
+    return;
+}

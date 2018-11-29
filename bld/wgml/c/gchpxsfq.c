@@ -85,11 +85,23 @@ static void gml_inline_common( const gmltag * entry, int level, e_tags t )
         }
     }
 
+//// this won't work: if the virtual PC is needed, the quote must be positioned by it
+//// this requires a gml_pc() that can take a character string
+//// iow, PC must be refactored
+
     if( t == t_Q ) {                            // Q/eQ inserts quote char
         if( (quote_lvl % 2) ) {
-            process_text( single_q, g_curr_font );
+            if( ProcFlags.force_pc ) {
+                do_force_pc( single_q );
+            } else {
+                process_text( p, g_curr_font );
+            }
         } else {
-            process_text( double_q, g_curr_font );
+            if( ProcFlags.force_pc ) {
+                do_force_pc( double_q );
+            } else {
+                process_text( p, g_curr_font );
+            }
         }
         quote_lvl++;
     }
@@ -98,7 +110,11 @@ static void gml_inline_common( const gmltag * entry, int level, e_tags t )
     p = scan_start;
     if( *p == '.' ) p++;                // over '.'
     if( *p ) {
-        process_text( p, g_curr_font );
+        if( ProcFlags.force_pc ) {
+            do_force_pc( p );
+        } else {
+            process_text( p, g_curr_font );
+        }
     }
     if( !ProcFlags.concat && (input_cbs->fmflags & II_eol)
             && (input_cbs->fmflags & II_file) ) {

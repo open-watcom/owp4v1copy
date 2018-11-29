@@ -55,8 +55,8 @@
   pickg( BINCLUDE, 8,      gml_binclude,   0,   titlep_tag | address_tag )
   pickg( BODY,     4,      gml_body,       0,   0 )
 
-  pickg( CIT,      3,      gml_cit,        tag_out_txt, ip_tag )
-  pickg( ECIT,     4,      gml_ecit,       tag_out_txt, 0 )
+  pickg( CIT,      3,      gml_cit,        tag_out_txt, ip_start_tag )
+  pickg( ECIT,     4,      gml_ecit,       tag_out_txt, ip_end_tag )
 
   pickg( CMT,      3,      gml_cmt,        tag_only | tag_is_general, 0 )
   pickg( DATE,     4,      gml_date,       tag_out_txt, titlep_tag )
@@ -101,17 +101,17 @@
   pickg( H6,       2,      gml_h6,         0,           0 )
   pickg( HDREF,    5,      gml_hdref,      tag_out_txt, 0 )
 
-  pickg( HP0,      3,      gml_hp0,        tag_out_txt, ip_tag )
-  pickg( EHP0,     4,      gml_ehp0,       tag_out_txt, 0 )
+  pickg( HP0,      3,      gml_hp0,        tag_out_txt, ip_start_tag )
+  pickg( EHP0,     4,      gml_ehp0,       tag_out_txt, ip_end_tag )
 
-  pickg( HP1,      3,      gml_hp1,        tag_out_txt, ip_tag )
-  pickg( EHP1,     4,      gml_ehp1,       tag_out_txt, 0 )
+  pickg( HP1,      3,      gml_hp1,        tag_out_txt, ip_start_tag )
+  pickg( EHP1,     4,      gml_ehp1,       tag_out_txt, ip_end_tag )
 
-  pickg( HP2,      3,      gml_hp2,        tag_out_txt, ip_tag )
-  pickg( EHP2,     4,      gml_ehp2,       tag_out_txt, 0 )
+  pickg( HP2,      3,      gml_hp2,        tag_out_txt, ip_start_tag )
+  pickg( EHP2,     4,      gml_ehp2,       tag_out_txt, ip_end_tag )
 
-  pickg( HP3,      3,      gml_hp3,        tag_out_txt, ip_tag )
-  pickg( EHP3,     4,      gml_ehp3,       tag_out_txt, 0 )
+  pickg( HP3,      3,      gml_hp3,        tag_out_txt, ip_start_tag )
+  pickg( EHP3,     4,      gml_ehp3,       tag_out_txt, ip_end_tag )
 
   pickg( I1,       2,      gml_i1,         tag_out_txt, 0 )
   pickg( I2,       2,      gml_i2,         tag_out_txt, 0 )
@@ -144,13 +144,13 @@
   pickg( PSC,      3,      gml_dummy,      tag_out_txt, 0 )
   pickg( EPSC,     4,      gml_dummy,      tag_out_txt, 0 )
 
-  pickg( Q,        1,      gml_q,          tag_out_txt, ip_tag )
-  pickg( EQ,       2,      gml_eq,         tag_out_txt, 0 )
+  pickg( Q,        1,      gml_q,          tag_out_txt, ip_start_tag )
+  pickg( EQ,       2,      gml_eq,         tag_out_txt, ip_end_tag )
 
   pickg( SET,      3,      gml_set,        tag_is_general, li_lp_tag )
 
-  pickg( SF,       2,      gml_sf,         tag_out_txt, ip_tag )
-  pickg( ESF,      3,      gml_esf,        tag_out_txt, 0 )
+  pickg( SF,       2,      gml_sf,         tag_out_txt, ip_start_tag )
+  pickg( ESF,      3,      gml_esf,        tag_out_txt, ip_end_tag )
 
   pickg( SL,       2,      gml_sl,         tag_out_txt, 0 )
   pickg( ESL,      3,      gml_esl,        tag_out_txt, 0 )

@@ -394,21 +394,24 @@ typedef enum {
 /*      corresponding flag set in gmltag.taglocs.                       */
 /*  Special use tags:                                                   */
 /*      def_tag is used to mark a DL/GL list definition tag             */
-/*      ip_tag is used to mark inline phrase tags for tag LQ            */
+/*      ip_start_tag is used to mark inline phrase tags for tag LQ      */
+/*      ip_start_tag and ip_end_tag are used to mark inline phrase tags */
+/*      for processing text after certain blocks                        */
 /*      li_lp_tag is used with ProcFlags.need_li_lp.                    */
 /************************************************************************/
 
 typedef enum {
     /*  restricted location tags */
-    titlep_tag  = 1,                    // tag allowed in TITLEP section
-    address_tag = 2,                    // tag allowed in ADDRESS section
-    figcap_tag  = 4,                    // tag allowed after FIGCAP
-    banner_tag  = 8,                    // tag allowed in BANNER (BANREGION, eBANNER)
-    banreg_tag  = 16,                   // tag allowed in BANREGION (eBANREGION)
+    titlep_tag      = 1,                // tag allowed in TITLEP section
+    address_tag     = 2,                // tag allowed in ADDRESS section
+    figcap_tag      = 4,                // tag allowed after FIGCAP
+    banner_tag      = 8,                // tag allowed in BANNER (BANREGION, eBANNER)
+    banreg_tag      = 16,               // tag allowed in BANREGION (eBANREGION)
     /*  special use tags */
-    def_tag     = 32,                   // marks DDHD, DD, GD
-    ip_tag      = 64,                   // marks CIT, HP0, HP1, HP2, HP3, SF, Q
-    li_lp_tag   = 128,                  // marks LI LP 
+    def_tag         = 32,               // marks DDHD, DD, GD
+    ip_start_tag    = 64,               // marks CIT, HP0, HP1, HP2, HP3, SF, Q
+    ip_end_tag      = 128,              // marks eCIT, eHP0, eHP1, eHP2, eHP3, eSF, eQ
+    li_lp_tag       = 256,              // marks LI LP 
 } locflags;
 
 typedef struct gmltag {
