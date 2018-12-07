@@ -160,6 +160,7 @@ void    gml_binclude( const gmltag * entry )
         }
         cur_el->element.binc.depth = depth;
         cur_el->element.binc.cur_left = t_page.cur_width;
+        cur_el->element.binc.force_FONT0 = false;
         cur_el->element.binc.has_rec_type = has_rec_type;
         cur_el->element.binc.fp = try_fp;
         try_fp = NULL;

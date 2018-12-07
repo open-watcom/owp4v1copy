@@ -1023,6 +1023,7 @@ typedef struct {
     uint32_t        depth;
     uint32_t        y_address;
     bool            at_top;
+    bool            force_FONT0;
     bool            has_rec_type;
     FILE        *   fp;
     char            file[FILENAME_MAX];

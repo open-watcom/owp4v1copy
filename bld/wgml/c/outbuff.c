@@ -1014,6 +1014,8 @@ void cop_tr_table( const char *p )
 
 void ob_binclude( binclude_element * in_el )
 {
+    char        fontstr[] = "@fs0 ";
+    size_t      ps_size;
     uint32_t    count;
 
     fb_binclude_support( in_el );
@@ -1065,6 +1067,13 @@ void ob_binclude( binclude_element * in_el )
         if( ferror( in_el->fp ) ) {
             xx_simple_err_cc( err_in_file, "BINCLUDE", in_el->file );
         }
+    }
+
+    if( in_el->force_FONT0 ) {          // force fs0 under some conditions; not PS? tbd
+        ob_flush();
+        ps_size = strlen( fontstr );
+        strcpy_s( buffout.text, buffout.length, fontstr );
+        buffout.current = ps_size;
     }
 
     return;

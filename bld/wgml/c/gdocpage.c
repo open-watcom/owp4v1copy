@@ -73,6 +73,17 @@ static void do_el_list_out( doc_element * in_element )
         switch( in_element->type ) {
         case el_binc :
             if( GlobalFlags.lastpass ) {
+                if( in_element->next != NULL ) {
+                    if( in_element->next->type == el_text ) {
+                        if( in_element->next->element.text.first != NULL ) {
+                            if( in_element->next->element.text.first->first != NULL ) {
+                                if( in_element->next->element.text.first->first->font > 0 ) {
+                                    in_element->element.binc.force_FONT0 = true;
+                                }
+                            }
+                        }
+                    }
+                }
                 ob_binclude( &in_element->element.binc );
             }
             break;
