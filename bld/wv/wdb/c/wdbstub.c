@@ -121,7 +121,7 @@ extern bool             InsMemRef( mad_disasm_data *dd );
 extern void             InitSource( void );
 extern void             LoadNewProg( char *cmd, char *parms );
 extern address          ModFirstAddr( mod_handle mod );
-extern void             *OpenSrcFile( cue_handle *); 
+extern void             *OpenSrcFile( cue_handle *);
 extern void             PerformTrace( void );
 extern void             ProcCall( void );
 extern void             ProcGo( void );
@@ -152,7 +152,7 @@ extern char_ring        *SrcSpec;
 /* Constants Used in this File */
 
 /*
-Whenever you add a short cut command, please the 
+Whenever you add a short cut command, please the
 corresponding help command in the process_cmd_help function
 */
 static const char   *WDB_CMD_QUIT = "quit";
@@ -291,7 +291,7 @@ char *MyStrTrim( char *s )
     StrLTrim( s );
     StrRTrim( s );
     return( s );
-} 
+}
 
 char *GetCmdPartByChar( char *cmd, char* delimit )
 {
@@ -396,7 +396,7 @@ bool IsCmdEqualCmd2( char *cmd, const char *e_cmd )
 }
 
 /*for setting a breakpoint in a file,
-we need to check is the file is in the 
+we need to check is the file is in the
 module list. then from the module we get the cuFileID
 and cuMod. Then using the cuFileID, cuMod and line number
 we can find the breakoint address associated with the file
@@ -435,7 +435,7 @@ address SetBreakPointInFile( char *filename,int line_num )
             }
             break;
         }
-        
+
     }
     ModListFree( &list );
     if( bp_handled == TRUE) {
@@ -471,7 +471,7 @@ void ShowModuleList( void )
 static void DisplayDebuggerVarRecursively( var_info *pVarInfoList, var_node *v )
 {
     var_node    *e;
-        
+
     /*temp code start*/
     VarBuildName( pVarInfoList , v, TRUE );
     printf( "%s = {\n", TxtBuff );
@@ -532,7 +532,7 @@ void DisplayDebuggerVarValue( var_info *pVarInfoList )
             VarBuildName( pVarInfoList , v, TRUE );
             printf( "%s = { \n%s\n}\n", TxtBuff, v->value );
         }
-        
+
         fflush( stdout );
     }
 }
@@ -557,7 +557,7 @@ bool InspectDebuggerVar( char *item )
                     v = VarAdd1( &InspectVars, item, strlen( item ), TRUE, FALSE );
                     if( v != NULL ) {
                         DisplayDebuggerVarValue( &InspectVars );
-                    }                    
+                    }
                     return( v != NULL );
                 }
             case INSP_RAW_DATA:
@@ -581,7 +581,7 @@ static void DumpLocals( void )
         VarInfoRefresh( VAR_LOCALS, &Locals, &addr, NULL );
         VarOkToCache( &Locals, TRUE );
     }
-    
+
     DisplayDebuggerVarValue( &Locals );
 
     if( !_IsOn( SW_TASK_RUNNING ) ) {
@@ -606,7 +606,7 @@ void ShowSourceDirectories( void )
 the global src path variable*/
 void AddSourcePathsToDebugger( char *srcpath )
 {
-    // if possible replace strtok with other 
+    // if possible replace strtok with other
     // efficient tokenizer
     char    delims[] = ";";
     char    *path = NULL;
@@ -681,7 +681,7 @@ and enable the bps one at a time
 */
 bool DisableBps( char *params )
 {
-    //if possible replace strtok with other 
+    //if possible replace strtok with other
     //efficient tokenizer
     char    delims[] = " ";
     char    *num = NULL;
@@ -703,7 +703,7 @@ and enable the bps one at a time
 */
 bool EnableBps( char *params )
 {
-    //if possible replace strtok with other 
+    //if possible replace strtok with other
     //efficient tokenizer
     char    delims[] = " ";
     char    *num = NULL;
@@ -749,7 +749,7 @@ bool ProcessCmdPrint( char *param )
     if( IsCmdEqualCmd2( param, WDB_HELP_PARAM ) ) {
         ShowDebuggerMsg( WDB_HELP_PRINT );
         return( TRUE );
-    } 
+    }
     if( IsDbgProgramLoaded() == FALSE ) {
         ShowDebuggerError( "program not loaded." );
         return( FALSE );
@@ -775,7 +775,7 @@ bool ProcessCmdRun( char *param )
     if( IsCmdEqualCmd2( param, WDB_HELP_PARAM ) ) {
         ShowDebuggerMsg( WDB_HELP_RUN );
         return( TRUE );
-    } 
+    }
     if( IsDbgProgramLoaded() == FALSE ) {
         ShowDebuggerError( "program not loaded." );
         return( FALSE );
@@ -819,7 +819,7 @@ bool ProcessCmdLoad( char *param )
     char    *program_name = GetFirstQuotedPart( param );
     char    *program_param = GetSecondQuotedPart( param );
     bool    do_return = FALSE;
-    
+
     if( IsCmdEqualCmd2( param, WDB_HELP_PARAM ) ) {
         ShowDebuggerMsg( WDB_HELP_LOAD );
         return( TRUE );
@@ -864,7 +864,7 @@ bool ProcessCmdBreakpoint( char *param )
     char    *line_number_str;
     char    *only_file_name;
     int     line_num = 0;
-    
+
     if( IsCmdEqualCmd2( param, WDB_HELP_PARAM ) ) {
         ShowDebuggerMsg(WDB_HELP_BREAKPOINT);
         return( TRUE );
@@ -973,7 +973,7 @@ bool ProcessCmdEnable( char *param )
     if( IsCmdEqualCmd2( param, WDB_HELP_PARAM ) ) {
         ShowDebuggerMsg( WDB_HELP_ENABLE );
         return( TRUE );
-    } 
+    }
     if( IsDbgProgramLoaded() == FALSE ) {
         ShowDebuggerError( "program not loaded." );
         return( FALSE );
@@ -1154,7 +1154,7 @@ bool ProcessCmdBacktrace( char *param )
     }
     if( IsCmdEqualCmd2( "full", param ) == TRUE ) {
         DumpLocals();
-    } else {    
+    } else {
         ShowCalls();
     }
     return( TRUE );
@@ -2022,6 +2022,17 @@ bool DUICopyCancelled( void * cookie )
     return( FALSE );
 }
 
+void InitRunThreadWnd( void )
+/***************************/
+{
+}
+
+unsigned DlgAsyncRun( void )
+/**************************/
+{
+    return( FALSE );
+}
+
 int main( int argc, char **argv )
 {
     char        buff[256];
@@ -2038,13 +2049,11 @@ int main( int argc, char **argv )
     Requestdonesem = CreateSemaphore( NULL, 0, 1, NULL );
     ReleaseSemaphore( Requestdonesem, 1, NULL ); // signal req done
     hThread = CreateThread( NULL, 0, (LPTHREAD_START_ROUTINE)ControlFunc, NULL, 0, &tid );
-    if( hThread == NULL) {
-        //MessageBox( NULL, "Error creating thread!", "Stubugger", MB_APPLMODAL+MB_OK );
+    if( hThread == NULL)
         ShowDebuggerError( "Error creating thread!" );
-    }
-    
+
     DlgCmd();
-    
+
     CloseHandle( Requestsem );
     CloseHandle( Requestdonesem );
     DebugFini();
