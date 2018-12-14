@@ -207,19 +207,27 @@ int find_symvar( symvar * * dict, char * name, sub_index sub, symsub * * symsubv
 /*  find_symvar_l   find local symbolic variable                           */
 /*          if the dictionary is the local dict then                       */
 /*          search up thru the local dictionaries up to the first file     */
+/*          unless the symbol looks like an auto symbol (all numeric)      */
 /***************************************************************************/
 
 int find_symvar_l( symvar * * dict, char * name, sub_index sub, symsub * * symsubval )
 {
-    symvar  *   wk;
+    char    *   p;
     inputcb *   incbs;
     int         rc;
+    symvar  *   wk;
 
     rc = find_symvar( dict, name, sub, symsubval );
     if( rc ) {
         return( rc );                   // found variable in specified dict
     }
-    if( dict == &input_cbs->local_dict ) { // if current local dict
+
+    p = name;                           // see if symbol name consists entirely of digits
+    while( !*p && isdigit(*p) ) {
+        p++;
+    }
+
+    if( !*p && (dict == &input_cbs->local_dict) ) { // not auto symbol and current dict is local dict
 
                                         // search upwards thru all local dicts
 
