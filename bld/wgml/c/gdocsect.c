@@ -370,6 +370,7 @@ static void gen_ref_list( ix_e_blk * refs, font_number font )
 {
     char            buffer[11];
     ix_e_blk    *   cur_ref;
+    uint32_t        predict     = 0;
 
     cur_ref = refs;
     while( cur_ref != NULL ) {
@@ -412,6 +413,27 @@ static void gen_ref_list( ix_e_blk * refs, font_number font )
         case pgpageno :
             format_num( cur_ref->page_no, &buffer, sizeof( buffer ), cur_ref->style );
             process_text( buffer, font );
+            if( cur_ref->next != NULL ) {                   // done if last page number
+                predict = cur_ref->page_no;
+                predict++;
+                if( cur_ref->next->page_no == predict ) {   // sequence detected
+                    ProcFlags.ct = true;
+                    post_space = 0;
+                    process_text( ixjval->value, font );
+                    cur_ref = cur_ref->next;                // find final page number in sequence
+                    while( cur_ref->next != NULL ) {
+                        predict++;
+                        if( cur_ref->next->page_no != predict ) {
+                            break;
+                        }
+                        cur_ref = cur_ref->next;
+                    }
+                    format_num( cur_ref->page_no, &buffer, sizeof( buffer ), cur_ref->style );
+                    ProcFlags.ct = true;
+                    post_space = 0;
+                    process_text( buffer, font );
+                }
+            }
             break;
         case pgsee :
             if( cur_ref->prt_text != NULL ) {
