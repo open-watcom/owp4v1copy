@@ -740,7 +740,7 @@ static void gen_index( void )
 
             /* Set g_subs_skip for IXHEAD */
 
-            set_skip_vars( NULL, &layout_work.ixhead.pre_skip, NULL, spacing, 
+            set_skip_vars( &layout_work.ixhead.pre_skip, NULL, NULL, spacing, 
                            layout_work.ixhead.font );
 
             /* Generate IXHEAD heading */
