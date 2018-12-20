@@ -747,7 +747,8 @@ static void gen_index( void )
 
             letter[0] = toupper( *(ixh1->ix_term) );
 
-            if( 4 * wgml_fonts[layout_work.ixhead.font].line_height
+            if( (4 * wgml_fonts[layout_work.ixhead.font].line_height)
+                   + g_subs_skip
                    + t_page.cur_depth > t_page.max_depth ) {
                 next_column();
             }
