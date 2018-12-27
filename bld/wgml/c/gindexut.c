@@ -39,7 +39,7 @@
 /*  find an index item number reference in index_dict                      */
 /***************************************************************************/
 
-static bool find_num_ref( ix_e_blk * * base )
+static bool find_num_ref( ix_e_blk * * base, uint32_t page_nr )
 {
     bool            retval  = false;
     ix_e_blk    *   cur_ieh;
@@ -47,11 +47,11 @@ static bool find_num_ref( ix_e_blk * * base )
 
     cur_ieh = *base;                    // starting point is value passed
     while( cur_ieh != NULL ) {
-        if( (page + 1) > cur_ieh->page_no ) {       // new is later in list
+        if( page_nr > cur_ieh->page_no ) {       // new is later in list
             old_ieh = cur_ieh;
             cur_ieh = cur_ieh->next;
             continue;
-        } else if( (page + 1) < cur_ieh->page_no ) {// new is earlier in list
+        } else if( page_nr < cur_ieh->page_no ) {// new is earlier in list
             *base = old_ieh;           // use old_ixh as insert point
             break;                     // entry found, and is in *entry
         } else {                       // must be equal
@@ -67,7 +67,6 @@ static bool find_num_ref( ix_e_blk * * base )
 
     return( retval );
 }
-
 
 /***************************************************************************/
 /*  find an index item string reference in index_dict                      */
@@ -176,34 +175,29 @@ void find_create_ix_e_entry( ix_h_blk * ixhwork, char * ref, size_t len,
                              ix_h_blk * seeidwork, ereftyp type )
 {
     bool                found;
+    eol_ix      *       cur_ixh;
     ix_e_blk    *   *   base;
     ix_e_blk    *       ixework;
     ix_e_blk    *       ixewk;
 
     switch( type ) {
         case pgmajor :
-            base = &ixhwork->entry->major_pgnum;
-            ixework = ixhwork->entry->major_pgnum;
-            found = find_num_ref( &ixework );
+        case pgpageno :
+        case pgstart :
+        case pgend :
+            cur_ixh = eol_index;
+            if( cur_ixh == NULL ) {
+                cur_ixh = alloc_eol_ix( ixhwork, type );
+                eol_index = cur_ixh;
+            } else {
+                while( cur_ixh->next != NULL ) cur_ixh = cur_ixh->next;
+                cur_ixh->next = alloc_eol_ix( ixhwork, type );
+            };
             break;
         case pgmajorstring :
             base = &ixhwork->entry->major_string;
             ixework = ixhwork->entry->major_string;
             found = find_string_ref( ref, len, &ixework );
-            break;
-        case pgpageno :
-            base = &ixhwork->entry->normal_pgnum;
-            ixework = ixhwork->entry->normal_pgnum;
-            found = find_num_ref( &ixework );
-            break;
-        case pgstart :
-        case pgend :
-            base = &ixhwork->entry->normal_pgnum;
-            ixework = ixhwork->entry->normal_pgnum;
-            found = find_num_ref( &ixework );
-            if( found ) {           // ensure correct type
-                ixework->entry_typ = type;
-            }
             break;
         case pgstring :
             base = &ixhwork->entry->normal_string;
@@ -243,15 +237,10 @@ void find_create_ix_e_entry( ix_h_blk * ixhwork, char * ref, size_t len,
             ixewk->prt_text[0] = '\0';
             strcpy_s( ixewk->prt_text, seeidwork->prt_term_len + 1, seeidwork->prt_term );
         }
-        if( type >= pgstring ) {
-            ixewk->page_text = mem_alloc( len + 1);
-            memcpy_s( ixewk->page_text, len + 1, ref, len );
-            ixewk->page_text[len] = '\0';
-            ixewk->page_text_len = len;
-        } else {
-            ixewk->page_no = page + 1;
-            ixewk->style = find_pgnum_style();
-        }
+        ixewk->page_text = mem_alloc( len + 1);
+        memcpy_s( ixewk->page_text, len + 1, ref, len );
+        ixewk->page_text[len] = '\0';
+        ixewk->page_text_len = len;
 
         if( *base == NULL ) {
             if( ixework != NULL ) {         // displace prior reference list head
@@ -264,7 +253,7 @@ void find_create_ix_e_entry( ix_h_blk * ixhwork, char * ref, size_t len,
             if( ixework != NULL ) {         // displace prior reference list head
                 ixewk->next  = ixework->next;
                 ixework->next = ixewk;
-            } else {                        // new reference list head
+            } else {                        // new referhence list head
                 ixewk->next = *base;
                 *base = ixewk;
             }
@@ -273,6 +262,94 @@ void find_create_ix_e_entry( ix_h_blk * ixhwork, char * ref, size_t len,
     return;
 }
 
+/***************************************************************************/
+/*  find or create/insert new index reference entry (at eol)               */
+/***************************************************************************/
+
+void eol_index_page( void )
+{
+    bool                found;
+    eol_ix      *       save;
+    ix_e_blk    *   *   base;
+    ix_e_blk    *       ixework;
+    ix_e_blk    *       ixewk;
+    uint32_t            page_nr;
+
+    if( t_page.cur_depth + t_element->depth < t_page.max_depth ) {
+        page_nr = page + 1; // line will appear on current page
+    } else {
+        page_nr = page + 2; // line will appear on next page
+    }
+    while( eol_index != NULL ) {
+        switch( eol_index->type ) {
+            case pgmajor :
+                base = &eol_index->ixh->entry->major_pgnum;
+                ixework = eol_index->ixh->entry->major_pgnum;
+                found = find_num_ref( &ixework, page_nr );
+                break;
+            case pgpageno :
+                base = &eol_index->ixh->entry->normal_pgnum;
+                ixework = eol_index->ixh->entry->normal_pgnum;
+                found = find_num_ref( &ixework, page_nr );
+                break;
+            case pgstart :
+            case pgend :
+                base = &eol_index->ixh->entry->normal_pgnum;
+                ixework = eol_index->ixh->entry->normal_pgnum;
+                found = find_num_ref( &ixework, page_nr );
+                if( found ) {           // ensure correct type
+                    ixework->entry_typ = eol_index->type;
+                }
+                break;
+            case pgmajorstring :// should never appear used here, error
+            case pgstring :
+            case pgsee :
+            case pgnone :
+            default :           // out-of-range enum value
+                internal_err( __FILE__, __LINE__ );
+        }
+
+        if( found ) {
+
+            /* Item found and ixework points to it */
+
+            ixewk = ixework;
+
+        } else {                            // create block
+
+            /* Item not found and ixework points to insertion point */
+
+            ixewk = mem_alloc( sizeof( ix_e_blk ) );
+            ixewk->next = NULL;
+            ixewk->entry_typ = eol_index->type;
+            ixewk->prt_text = NULL;
+            ixewk->page_no = page_nr;
+            ixewk->style = find_pgnum_style();
+
+            if( *base == NULL ) {
+                if( ixework != NULL ) {         // displace prior reference list head
+                    ixewk->next = ixework;
+                    *base = ixewk;
+                } else {                        // new reference list head
+                    *base = ixewk;
+                }
+            } else {                            // insert in list at current point
+                if( ixework != NULL ) {         // displace prior reference list head
+                    ixewk->next  = ixework->next;
+                    ixework->next = ixewk;
+                } else {                        // new reference list head
+                    ixewk->next = *base;
+                    *base = ixewk;
+                }
+            }
+        }
+        save = eol_index;
+        eol_index = eol_index->next;
+        save->next = NULL;
+        add_eol_ix_to_pool( save );
+    }
+    return;
+}
 
 /***************************************************************************/
 /*  find or create/insert new index header block                           */

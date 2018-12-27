@@ -1329,6 +1329,12 @@ typedef struct ix_h_blk {                   // index header with index term text
             char        *   prt_term;       // display text (NULL -> use index term)
 } ix_h_blk;
 
+typedef struct eol_ix {                     // type for eol_index list
+    struct  eol_ix      *   next;
+    struct  ix_h_blk    *   ixh;            // the index header block to reference
+            ereftyp         type;           // type of entry (pgmajor, pgnum, pgbegin, pgend)
+} eol_ix;
+
 /***************************************************************************/
 /*  Enum for distinguishing the source of a heading.                       */
 /*  For use with gen_heading() in ghx.c                                    */

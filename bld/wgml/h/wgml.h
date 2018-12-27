@@ -208,6 +208,7 @@ extern  void    gen_heading( char * h_text, char * id, hdsrc hn_lvl, hdsrc hds_l
 
 
 /* gindexut.c                           */
+extern  void            eol_index_page( void );
 extern  void            find_create_ix_e_entry( ix_h_blk * ixhwork, char * ref, size_t len, ix_h_blk * seeidwork, ereftyp type );
 extern  ix_h_blk    *   find_create_ix_h_entry( ix_h_blk * ixhwork, ix_h_blk * ixhbase, char * printtxt, size_t printtxtlen, char * txt, size_t txtlen, uint32_t lvl );
 extern  void            free_index_dict( ix_h_blk ** dict );
@@ -418,6 +419,8 @@ extern  void                add_doc_el_to_pool( doc_element * a_element );
 extern  doc_element     *   alloc_doc_el( element_type type );
 extern  void                add_doc_el_group_to_pool( doc_el_group * a_group );
 extern  doc_el_group    *   alloc_doc_el_group( group_type type );
+extern  void                add_eol_ix_to_pool( eol_ix * an_eol_ix );
+extern  eol_ix          *   alloc_eol_ix( ix_h_blk * in_ixh, ereftyp in_type );
 extern  void                add_tag_cb_to_pool( tag_cb * cb );
 extern  tag_cb          *   alloc_tag_cb( void );
 extern  void                clear_doc_element( doc_element * a_element );

@@ -30,6 +30,7 @@
 *                   box_col_stack
 *                   doc_el_group
 *                   doc_element
+*                   eol_ix
 *                   tag_cb
 *                   text_chars
 *                   text_line
@@ -447,6 +448,55 @@ void add_doc_el_group_to_pool( doc_el_group * a_group )
 
 
 /***************************************************************************/
+/*  allocate / reuse an eol_ix instance                                    */
+/***************************************************************************/
+
+eol_ix * alloc_eol_ix( ix_h_blk * in_ixh, ereftyp in_type )
+{
+    eol_ix      *   curr;
+    eol_ix      *   prev;
+    int             k;
+
+    curr = eol_ix_pool;
+    if( curr != NULL ) {                // there is one to use
+        eol_ix_pool = curr->next;
+    } else {                            // pool is empty
+        curr = mem_alloc( sizeof( eol_ix ) );
+
+        eol_ix_pool = mem_alloc( sizeof( *prev ) );
+        prev = eol_ix_pool;
+        for( k = 0; k < 10; k++ ) {     // alloc 10 eol_ix instances if pool empty
+            prev->next = mem_alloc( sizeof( *prev ) );
+            prev = prev->next;
+        }
+        prev->next = NULL;
+    }
+
+    curr->next = NULL;
+    curr->ixh = in_ixh;
+    curr->type = in_type;
+
+    return( curr );
+}
+
+/***************************************************************************/
+/*  add an eol_ix instance to free pool for reuse                          */
+/***************************************************************************/
+
+void add_eol_ix_to_pool( eol_ix * an_eol_ix )
+{
+    if( an_eol_ix == NULL ) {
+        return;
+    }
+
+    an_eol_ix->next = eol_ix_pool;
+    eol_ix_pool = an_eol_ix;
+}
+
+
+
+
+/***************************************************************************/
 /*  allocate / reuse a tag_cb instance                                     */
 /*  Note: init_tag_cb() initializes the new instance                       */
 /***************************************************************************/
@@ -542,6 +592,12 @@ void    free_pool_storage( void )
 
     for( v = doc_el_group_pool; v != NULL; ) {
         wv = ( (doc_el_group *) v)->next;
+        mem_free( v );
+        v = wv;
+    }
+
+    for( v = eol_ix_pool; v != NULL; ) {
+        wv = ( (eol_ix *) v)->next;
         mem_free( v );
         v = wv;
     }
