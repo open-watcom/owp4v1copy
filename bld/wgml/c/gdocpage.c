@@ -450,19 +450,19 @@ static void consolidate_array( doc_element * array[MAX_COL], uint8_t count )
                 /* Find next non-text element to insert */
 
                 if( bin_driver->y_positive == 0x00 ) {
-                    while( (cur_tl_list != NULL) && (cur_tl_list->y_address > nt_el_list->v_pos) ) {
+                    while( (cur_tl_list != NULL) && (cur_tl_list->y_address >= nt_el_list->v_pos) ) {
                         sav_tl = cur_tl_list;
                         cur_tl_list = cur_tl_list->next;
                     }
                 } else {
-                    while( (cur_tl_list != NULL) && (cur_tl_list->y_address < nt_el_list->v_pos) ) {
+                    while( (cur_tl_list != NULL) && (cur_tl_list->y_address <= nt_el_list->v_pos) ) {
                         sav_tl = cur_tl_list;
                         cur_tl_list = cur_tl_list->next;
                     }
                 }
 
                 while( (cur_tl_list != NULL) && (sav_tl != NULL) &&
-                       (sav_tl->y_address == nt_el_list->v_pos) &&
+                       (cur_tl_list->y_address == nt_el_list->v_pos) &&
                        (sav_tl->first->x_address < nt_el_list->h_pos) ) {
                     sav_tl = cur_tl_list;
                     cur_tl_list = cur_tl_list->next;
