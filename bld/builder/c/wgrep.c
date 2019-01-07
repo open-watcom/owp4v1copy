@@ -470,17 +470,31 @@ static void searchBuffer( char *srch, size_t read )
     char        last;
     unsigned    skip;
     unsigned    diss;
+    unsigned    repline1;
 
     last = '\0';
     next = Buff;
     first = *srch;
     ++srch;
+    // if the searchstring looks for linestart, fix for line 1 without NL
+    if( Recs == 1 && first == '\n' ) {
+        p = &first; // line 1 has no leading NL, so fake one
+        repline1 = 1; // remember the hack
+    } else {
+        repline1 = 0;
+    }
     for( ;; ) {
         p = next;
         if( *p == '\n' && p < &Buff[read] ) {
             ++Recs;
         }
         if( Similar && (tolower(*p) == tolower(first)) ) { // similar char
+            if( repline1 ) {
+                repline1 = 0;
+                p = Buff;
+            } else {
+                ++p;
+            }
             diss = 0;
             if( *p != first ) diss = 1;
             ++p;
@@ -491,7 +505,7 @@ static void searchBuffer( char *srch, size_t read )
                 if( *s == '\0' ) {
                     if( NoSubstring && isTextChar( last ) ) diss = 0;
                     if( NoSubstring && isTextChar( *p ) ) diss = 0;
-                    if( outputMatch( next - 1, read, diss ) ) return;
+                    if( outputMatch( next - ( next > Buff ), read, diss ) ) return;
                     next = (char *)memchr( next, '\n', BSize + 1 );
                     break;
                 }
@@ -513,7 +527,12 @@ static void searchBuffer( char *srch, size_t read )
                 ++p;
             }
         } else if( CharTrans[ (unsigned char)*p ] == first ) { // possible match!
-            ++p;
+            if( repline1 ) {
+                repline1 = 0;
+                p = Buff;
+            } else {
+                ++p;
+            }
             next = p;
             s = srch;
             skip = 0;
@@ -522,7 +541,7 @@ static void searchBuffer( char *srch, size_t read )
                     diss = 1;
                     if( NoSubstring && isTextChar( last ) ) diss = 0;
                     if( NoSubstring && isTextChar( *p ) ) diss = 0;
-                    if( outputMatch( next - 1, read, diss ) ) return;
+                    if( outputMatch( next - ( next > Buff ), read, diss ) ) return;
                     next = (char *)memchr( next, '\n', BSize + 1 );
                     break;
                 }
