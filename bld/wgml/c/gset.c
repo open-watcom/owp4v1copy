@@ -51,165 +51,80 @@
  
 extern  void    gml_set( const gmltag * entry )
 {
+    bool            symbol_found    = false;
+    bool            value_found     = false;
     char        *   p;
-    char        *   symstart;
-    char        *   valstart;
-    char            c;
-    bool            symbolthere = false;
-    bool            valuethere = false;
+    char        *   pa;
+    int             rc;
     symvar          sym;
     sub_index       subscript;
-    int             rc;
     symvar      * * working_dict;
  
     subscript = no_subscript;           // not subscripted
     scan_err = false;
  
     p = scan_start;
-    p++;
- 
-    for( ;;) {
-        while( *p == ' ' ) {            // over WS to attribute
-            p++;
-        }
- 
-        if( !strnicmp( "symbol", p, 6 ) ) {
- 
-            p += 6;
-            while( *p == ' ' ) {        // over WS to attribute
-                p++;
-            }
-            if( *p == '=' ) {
-                p++;
-                while( *p == ' ' ) {    // over WS to attribute
-                    p++;
-                }
-            } else {
-                continue;
-            }
-            symstart = p;
- 
-            p = scan_sym( symstart, &sym, &subscript );
-            if( scan_err ) {
-                return;
-            }
-            if( *p == '"' || *p == '\'' ) {
-                p++;                    // skip terminating quote
-            }
-            if( sym.flags & local_var ) {
-                working_dict = &input_cbs->local_dict;
-            } else {
-                working_dict = &global_dict;
-            }
-            symbolthere = true;
- 
-            while( *p == ' ' ) {
-                p++;
-            }
-        } else {
- 
-            if( !strnicmp( "value", p, 5 ) ) {
-                char    quote;
- 
-                p += 5;
-                while( *p == ' ' ) {    // over WS to attribute
-                    p++;
-                }
-                if( *p == '=' ) {
-                    p++;
-                    while( *p == ' ' ) {// over WS to attribute
-                        p++;
-                    }
-                } else {
-                    continue;
-                }
-                if( *p == '"' || *p == '\'' ) {
-                    quote = *p;
-                    ++p;
-                } else {
-                    quote = ' ';
-                }
-                valstart = p;
-                while( *p && *p != quote ) {
-                    ++p;
-                }
-                c = *p;
-                *p = '\0';
-                strcpy_s( token_buf, buf_size, valstart );
-                *p = c;
-                if( c == '"' || c == '\'' ) {
-                    p++;
-                }
-                valuethere = true;
-            } else {
-                char    linestr[MAX_L_AS_STR];
- 
-                err_count++;
- 
-                g_err( err_att_name_inv );
-                if( input_cbs->fmflags & II_tag_mac ) {
-                    utoa( input_cbs->s.m->lineno, linestr, 10 );
-                    g_info( inf_mac_line, linestr, input_cbs->s.m->mac->name );
-                } else {
-                    utoa( input_cbs->s.f->lineno, linestr, 10 );
-                    g_info( inf_file_line, linestr, input_cbs->s.f->filename );
-                }
-                if( inc_level > 1 ) {
-                    show_include_stack();
-                }
+    if( *p == '.' ) {
+        /* already at tag end */
+    } else {
+        for( ;;) {
+            pa = get_att_start( p );
+            p = att_start;
+            if( ProcFlags.reprocess_line ) {
                 break;
- 
             }
-        }
-        if( symbolthere && valuethere ) {   // both attributes
- 
-            if( !strnicmp( token_buf, "delete", 6 ) ) {
-                sym.flags |= deleted;
-            }
-            rc = add_symvar( working_dict, sym.name, token_buf, subscript,
-                             sym.flags );
-            break;                          // tag complete with attributes
-        }
- 
-        c = *p;
-        if( p >= scan_stop ) {
-            c = '.';                    // simulate end of tag if EOF
- 
-            if( !(input_cbs->fmflags & II_eof) ) {
-                if( get_line( true ) ) {      // next line for missing attribute
- 
-                    process_line();
-                    scan_start = buff2;
-                    scan_stop  = buff2 + buff2_lg;
-                    if( (*scan_start == SCR_char) ||
-                        (*scan_start == GML_char) ) {
-                                        //  missing attribute not supplied error
- 
-                    } else {
-                        p = scan_start;
-                        continue;       // scanning
-                    }
+            if( !strnicmp( "symbol", p, 6 ) ) {
+                p += 6;
+                p = get_att_value( p );
+                if( val_start == NULL ) {
+                    break;
                 }
+                scan_sym( val_start, &sym, &subscript );
+                if( scan_err ) {
+                  return;
+                }
+                symbol_found = true;
+            } else if( !strnicmp( "value", p, 5 ) ) {
+                p += 5;
+                p = get_att_value( p );
+                if( val_start == NULL ) {
+                    break;
+                }
+                value_found = true;
+                memcpy_s( token_buf, buf_size, val_start, val_len );
+                if( val_len < buf_size ) {
+                    token_buf[val_len] = '\0';
+                } else {
+                    token_buf[buf_size - 1] = '\0';
+                }
+            } else if( !strnicmp( token_buf, "delete", 6 ) ) {
+                p += 6;
+                sym.flags |= deleted;
+            } else {    // no match = end-of-tag in wgml 4.0
+                ProcFlags.tag_end_found = true;
+                p = pa; // restore spaces before text
+                break;
             }
         }
-        if( c == '.' ) {                // end of tag found
-            char    linestr[MAX_L_AS_STR];
- 
-            err_count++;
-            // AT-001 Required attribute not found
- 
-            g_err( err_att_missing );
-            if( input_cbs->fmflags & II_tag_mac ) {
-                utoa( input_cbs->s.m->lineno, linestr, 10 );
-                g_info( inf_mac_line, linestr, input_cbs->s.m->mac->name );
-            } else {
-                utoa( input_cbs->s.f->lineno, linestr, 10 );
-                g_info( inf_file_line, linestr, input_cbs->s.f->filename );
-            }
-            if( inc_level > 1 ) {
-                show_include_stack();
-            }
-            break;
+    }
+
+    if( symbol_found && value_found ) {   // both attributes
+        if( sym.flags & local_var ) {
+            working_dict = &input_cbs->local_dict;
+        } else {
+          working_dict = &global_dict;
+        }
+        rc = add_symvar( working_dict, sym.name, token_buf, subscript, sym.flags );
+    } else {
+        xx_err( err_att_missing );
+    }
+
+    if( !ProcFlags.reprocess_line && *p ) {
+        if( *p == '.' ) p++;                // possible tag end
+        if( *p ) {
+            post_space = 0;
+            ProcFlags.ct = true;
+            process_text( p, g_curr_font);  // if text follows
         }
     }
     scan_start = scan_stop + 1;
