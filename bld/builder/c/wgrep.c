@@ -54,6 +54,17 @@
 #endif
 #define  MAX_SRCH_STRINGS       2048
 
+// define taken from wgml/gtype.h
+#if defined(__QNX__) || defined(__LINUX__) // try to be nice to linux
+    #define PATH_SEP        '/'
+    #define INCLUDE_SEP     ':'
+    #define WILDCARDFN      ""
+#elif defined(__DOS_) || defined(__OS2__) || defined(__NT__) || defined(__OSI__)
+    #define PATH_SEP        '\\'
+    #define INCLUDE_SEP     ';'
+    #define WILDCARDFN      "*.*"
+#endif
+
 typedef int wbool;
 #ifndef TRUE
     #define TRUE 1
@@ -366,8 +377,8 @@ static void printFileName( void )
     } else {
         i = 0;
         while( FName[i] != '\0' ) {
-            if( FName[i] == '.'  &&  FName[i+1] == '\\' ) {
-                if( i != 0  &&  FName[i-1] != '\\' ) {
+            if( FName[i] == '.'  &&  FName[i+1] == PATH_SEP ) {
+                if( i != 0  &&  FName[i-1] != PATH_SEP ) {
                     *p = FName[i];
                     p++;
                     *p = FName[i+1];
@@ -734,7 +745,7 @@ static void extendPath( char *path, char *ext )
     for( d = Stack->name; *d; d++, path++ ) {
         *path = *d;
     }
-    *path = '\\';
+    *path = PATH_SEP;
     for( ++path; *ext; ext++, path++ ) {
         *path = *ext;
     }
@@ -789,6 +800,8 @@ static void executeWgrep( void )
                 performSearch( PathBuff );
             }
             closedir( dirh );
+        } else {
+            performSearch( PathBuff ); // no dir try file fix for Linux
         }
     }
 }
@@ -800,7 +813,7 @@ static void processDirectory( void )
     dirstack            *tmp;
 
     if( RecurLevels != 0 ) {
-        extendPath( PathBuff, "*.*" );
+        extendPath( PathBuff, WILDCARDFN );
         dirh = opendir( PathBuff );
         if( dirh != NULL ) {
             --RecurLevels;
@@ -871,7 +884,7 @@ static void nextWgrep( char **paths )
     while( *paths != NULL ) {
         if( stat( *paths, &sblk ) == 0  && S_ISDIR( sblk.st_mode ) ) {
             strcpy( Stack->name, *paths );
-            strcpy( CurrPattern, "*.*" );
+            strcpy( CurrPattern, WILDCARDFN );
         } else {
             splitPath( *paths, Stack->name, CurrPattern );
         }
@@ -933,8 +946,12 @@ static void startWgrep( char **paths )
                 j++;
             }
             c = env[i];
+            if( c == PATH_SEP && env[i+1] == '\0' ) {
+                c = '\0';
+                env[i] = c;
+            }
             if( c == '\0' ) break;
-            if( c == ';' ) {
+            if( c == INCLUDE_SEP ) {
                 c = '\0';
                 env[i] = c;
             }
@@ -1262,7 +1279,7 @@ int main( int argc, char **argv ) {
             if( !isatty( STDIN_FILENO ) ) {
                 allfiles[ 0 ] = "@@";
             } else {
-                allfiles[ 0 ] = "*.*";
+                allfiles[ 0 ] = WILDCARDFN;
             }
             allfiles[ 1 ] = NULL;
             startWgrep( allfiles );
