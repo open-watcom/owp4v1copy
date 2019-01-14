@@ -75,13 +75,16 @@ extern  void    gml_set( const gmltag * entry )
             }
             if( !strnicmp( "symbol", p, 6 ) ) {
                 p += 6;
+
+                /* both get_att_value() and scan_sym() must be used */
+
                 p = get_att_value( p );
                 if( val_start == NULL ) {
                     break;
                 }
                 scan_sym( val_start, &sym, &subscript );
                 if( scan_err ) {
-                  return;
+                    break;
                 }
                 symbol_found = true;
             } else if( !strnicmp( "value", p, 5 ) ) {
@@ -112,7 +115,7 @@ extern  void    gml_set( const gmltag * entry )
         if( sym.flags & local_var ) {
             working_dict = &input_cbs->local_dict;
         } else {
-          working_dict = &global_dict;
+            working_dict = &global_dict;
         }
         rc = add_symvar( working_dict, sym.name, token_buf, subscript, sym.flags );
     } else {

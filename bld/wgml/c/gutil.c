@@ -894,6 +894,8 @@ char * get_att_start( char * p )
 {
     char    * pa;
 
+    static  char      buf[BUF_SIZE];
+
     ProcFlags.tag_end_found = false;
     for(;;) {                           // loop until potential attribute/rescan line found
         pa = p;                         // save initial location
@@ -909,12 +911,20 @@ char * get_att_start( char * p )
         if( *p == '\0' ) {              // end of line: get new line
             if( !(input_cbs->fmflags & II_eof) ) {
                 if( get_line( true ) ) {// next line for missing attribute
- 
+
+                    /*******************************************************/
+                    /* buff2 must be restored if it is to be reprocessed   */
+                    /* so that any symbol substitutions will reflect any   */
+                    /* changes made by the tag calling it                  */
+                    /*******************************************************/
+                    
+                    strcpy_s( &buf, strlen( buff2 ) + 1, buff2 );
                     process_line();
                     scan_start = buff2;
                     scan_stop  = buff2 + buff2_lg;
                     if( (*scan_start == SCR_char) ||    // cw found: end-of-tag
                         (*scan_start == GML_char) ) {   // tag found: end-of-tag
+                        strcpy_s( buff2, strlen( &buf ) + 1, &buf );
                         ProcFlags.reprocess_line = true; 
                         break;          
                     } else {

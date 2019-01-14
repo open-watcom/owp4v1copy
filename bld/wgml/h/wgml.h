@@ -82,7 +82,6 @@ extern void         fb_position( uint32_t h_start, uint32_t v_start );
 
 /* gargutil.c                           */
 extern  void        garginit( void );
-extern  void        garginitdot( void );
 extern  condcode    getarg( void );
 extern  condcode    getqst( void );
 extern  bool        is_quote_char( char c );
