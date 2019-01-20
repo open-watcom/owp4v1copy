@@ -41,8 +41,6 @@
 #include "wgml.h"
 #include "gvars.h"
 
-
-
 /***************************************************************************/
 /*  add info about macro   to LIFO input list                              */
 /*  if second parm is not null, macro is called via GML tag processing     */
@@ -88,57 +86,93 @@ void    add_macro_cb_entry( mac_entry * me, gtentry * ge )
     return;
 }
 
-
-/*
- * add macro parms from input line as local symbolic variables
- * for non quoted parms try to assign symbolic variables
- * i.e. .mac     a b c *xyz="1.8" d "1 + 2"
- *          01234
- *        only 1 space after mac is ignored
- *    will give  &*=    a b c *xyz="1.8" d "1 + 2"
- *              &*0=5
- *              &*1=a
- *              &*2=b
- *              &*3=c
- *              &*4=d
- *              &*5=1 + 2
- *        and &*xyz=1.8
- *
- *  the variable for &* is named _  This can be changed if this leads to
- *  conflicts  -> change define MAC_STAR_NAME in gtype.h
- *
- */
+/***************************************************************************/
+/* add macro parms from input line as local automatic symbols              */
+/* for non quoted parms try to assign local set symbols                    */
+/* i.e. .mac     a b c *xyz="1.8" d "1 + 2"                                */
+/*          01234 -- only 1 space after mac is ignored                     */
+/*    will give  &*=    a b c *xyz="1.8" d "1 + 2"                         */
+/*              &*0=5                                                      */
+/*              &*1=a                                                      */
+/*              &*2=b                                                      */
+/*              &*3=c                                                      */
+/*              &*4=d                                                      */
+/*              &*5=1 + 2                                                  */
+/*        and &*xyz=1.8                                                    */
+/*  the variable for &* is named _  This can be changed if this leads to   */
+/*  conflicts  -> change define MAC_STAR_NAME in gtype.h                   */
+/*  note: .mac    "a b c" produces                                         */
+/*               &*=   "a b c"                                             */
+/*              &*1=   "a b c"                                             */
+/*  that is, it shares characteristics of both spaces and delimiters       */
+/*  some notes on delimiters are needed, at least as applied to local      */
+/*  automatic symbols; local set symbols are documented to use the same    */
+/*  rules as symbols defined with control word SR (TBD)                    */
+/*  .mac "a b c" produces:                                                 */
+/*               &*="a b c"                                                */
+/*              &*0=1                                                      */
+/*              &*1=a b c                                                  */
+/*  as might be expected but what may not be as expected is that           */
+/*  .mac ""a b c"" produces:                                               */
+/*               &*=""a b c""                                              */
+/*              &*0=1                                                      */
+/*              &*1="a b c"                                                */
+/*  and, indeed, the final delimiter is only recognized if it is followed  */
+/*  by a space or the terminating '\0'; otherwise, it is included:         */
+/*  .mac ""a b"c"" produces:                                               */
+/*               &*=""a b"c""                                              */
+/*              &*0=1                                                      */
+/*              &*1="a b"c"                                                */
+/*  while, if a space precedes "c", then "c" becomes the value of *2       */
+/***************************************************************************/
 
 void    add_macro_parms( char * p )
 {
-    int             len;
-    condcode        cc;
+    char        c;
+    char    *   pa;
+    char        quote;
+    char    *   scan_save;
+    char        starbuf[12];
+    condcode    cc;
+    int         star0;
 
-    /************************************************/
-    /*.macro   parameters                           */
-    /*      012                                     */
-    /*      p points here 2 spaces are kept         */
-    /************************************************/
-    p++;
-    len = strlen( p );
-    if( len > 0 ) {
-        char    starbuf[12];
-        int     star0;
-                                        // the macro parameter line
-                                        // the name _ has to change (perhaps)
-        add_symvar( &input_cbs->local_dict, MAC_STAR_NAME, p, no_subscript,
-                    local_var );
+    garginit();                         // resets scan_start to space after macro name  
+    p = scan_start;
+    p++;                                // over space between macro name and first parm
+    if( !*p ) {
+
+        /* the name used for * is a macro because it may have to be changed -- TBD */
+
+        add_symvar( &input_cbs->local_dict, MAC_STAR_NAME, p, no_subscript, local_var );
         star0 = 0;
-        garginit();
-        cc = getarg();
-        while( cc > omit ) {            // as long as there are parms
-            char        c;
-            char    *   scan_save;
-
-            if( cc == pos ) {           // argument not quoted
-                           /* look if it is a symbolic variable definition */
+        tok_start = p;                  // save start of parameter
+        while( *p == ' ' ) {             // find first nonspace character
+            p++;
+        }
+        while( !*p ) {                  // as long as there are parms
+            if( is_quote_char( *p ) ) { // argument is quoted
+                star0++;
+                sprintf( starbuf, "%d", star0 );
+                quote = *p;
+                pa = p;
+                pa++;
+                while( !*pa ) {
+                    if( (*pa == quote) && ((*(pa+1) == ' ') || (*(pa+1) == '\0')) ) {
+                        break;          // matching delimiter found
+                    }
+                    pa++;
+                }
+                if( !*pa || (p != tok_start) ) {    // no matching delimiter or preceded by spaces
+                    p = tok_start;      // include spaces and initial delimiter in value
+                }
+                c = *pa;                // prepare value end
+                *pa = '\0';             // terminate string
+                add_symvar( &input_cbs->local_dict, starbuf, p, no_subscript, local_var );
+                *pa = c;                // restore original char at string end
+            } else {                    // look if it is a symbolic variable definition
+                cc = getarg();
                 scan_save  = scan_start;
-                c          = *scan_save; // prepare value end
+                c          = *scan_save;// prepare value end
                 *scan_save = '\0';      // terminate string
                 scan_start = tok_start; // rescan for variable
                 ProcFlags.suppress_msg = true;  // no errmsg please
@@ -148,7 +182,7 @@ void    add_macro_parms( char * p )
 
                 ProcFlags.suppress_msg = false; // reenable err msg
                 ProcFlags.blanks_allowed = 1;   // blanks again
-                *scan_save = c;        // restore original char at string end
+                *scan_save = c;         // restore original char at string end
                 scan_start = scan_save; // restore scan address
                 if( scan_err ) {        // not variable=value format
                     cc = omit;
@@ -161,23 +195,10 @@ void    add_macro_parms( char * p )
                                 no_subscript, local_var );
                     *p = c;                // restore original char at string end
                 }
-
             }
-            if( cc == quotes ) {        // add argument as local symbolic var
-                star0++;
-                sprintf( starbuf, "%d", star0 );
-                p = tok_start + arg_flen;
-                c = *p;                 // prepare value end
-                *p = '\0';              // terminate string
-                add_symvar( &input_cbs->local_dict, starbuf, tok_start,
-                            no_subscript, local_var );
-                *p = c;                // restore original char at string end
-            }
-            cc = getarg();              // look for next parm
         }
                                         // the positional parameter count
-        add_symvar( &input_cbs->local_dict, "0", starbuf,
-                    no_subscript, local_var );
+        add_symvar( &input_cbs->local_dict, "0", starbuf, no_subscript, local_var );
     }
 
     if( input_cbs->fmflags & II_research && GlobalFlags.firstpass ) {
