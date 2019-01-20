@@ -139,7 +139,7 @@ void    add_macro_parms( char * p )
     garginit();                         // resets scan_start to space after macro name  
     p = scan_start;
     p++;                                // over space between macro name and first parm
-    if( !*p ) {
+    if( *p ) {
 
         /* the name used for * is a macro because it may have to be changed -- TBD */
 
@@ -149,14 +149,14 @@ void    add_macro_parms( char * p )
         while( *p == ' ' ) {             // find first nonspace character
             p++;
         }
-        while( !*p ) {                  // as long as there are parms
+        while( *p ) {                   // as long as there are parms
             if( is_quote_char( *p ) ) { // argument is quoted
                 star0++;
                 sprintf( starbuf, "%d", star0 );
                 quote = *p;
                 pa = p;
                 pa++;
-                while( !*pa ) {
+                while( *pa ) {
                     if( (*pa == quote) && ((*(pa+1) == ' ') || (*(pa+1) == '\0')) ) {
                         break;          // matching delimiter found
                     }
@@ -169,6 +169,11 @@ void    add_macro_parms( char * p )
                 *pa = '\0';             // terminate string
                 add_symvar( &input_cbs->local_dict, starbuf, p, no_subscript, local_var );
                 *pa = c;                // restore original char at string end
+                if( *pa ) {             // space between parameters
+                    p = pa + 1;         // over space
+                } else {
+                    p = pa;             // reset p
+                }
             } else {                    // look if it is a symbolic variable definition
                 cc = getarg();
                 scan_save  = scan_start;
@@ -195,6 +200,7 @@ void    add_macro_parms( char * p )
                                 no_subscript, local_var );
                     *p = c;                // restore original char at string end
                 }
+                p = scan_start;
             }
         }
                                         // the positional parameter count
