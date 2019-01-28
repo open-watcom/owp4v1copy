@@ -189,6 +189,7 @@ extern  void    xx_tag_err( const msg_ids errid, char const * cw );
 extern  void    xx_val_line_err( const msg_ids errid, char const * cw, const char * pa );
 extern  void    xx_warn( const msg_ids errid );
 extern  void    xx_warn_att( const msg_ids errid, const char * arg );
+extern  void    xx_warn_cc( const msg_ids errid, const char * arg1, const char * arg2 );
 extern  void    xx_val_line_warn( const msg_ids errid, const char * cw, const char * pa );
 extern  void    g_err_tag( const char * tagname );
 extern  void    g_err_tag_nest( const char * tagname );

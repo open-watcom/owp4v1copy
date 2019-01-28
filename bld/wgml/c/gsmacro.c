@@ -87,8 +87,8 @@ void    add_macro_cb_entry( mac_entry * me, gtentry * ge )
 }
 
 /***************************************************************************/
-/* add macro parms from input line as local automatic symbols              */
-/* for non quoted parms try to assign local set symbols                    */
+/* add macro parameters from input line as local automatic symbols         */
+/* for non delimited parameters try to assign local set symbols            */
 /* i.e. .mac     a b c *xyz="1.8" d "1 + 2"                                */
 /*          01234 -- only 1 space after mac is ignored                     */
 /*    will give  &*=    a b c *xyz="1.8" d "1 + 2"                         */
@@ -103,11 +103,11 @@ void    add_macro_cb_entry( mac_entry * me, gtentry * ge )
 /*  conflicts  -> change define MAC_STAR_NAME in gtype.h                   */
 /*  note: .mac    "a b c" produces                                         */
 /*               &*=   "a b c"                                             */
-/*              &*1=   "a b c"                                             */
+/*              &*1="a b c"                                                */
 /*  that is, it shares characteristics of both spaces and delimiters       */
 /*  some notes on delimiters are needed, at least as applied to local      */
 /*  automatic symbols; local set symbols are documented to use the same    */
-/*  rules as symbols defined with control word SR (TBD)                    */
+/*  rules as symbols defined with control word SE (TBD)                    */
 /*  .mac "a b c" produces:                                                 */
 /*               &*="a b c"                                                */
 /*              &*0=1                                                      */
@@ -124,14 +124,15 @@ void    add_macro_cb_entry( mac_entry * me, gtentry * ge )
 /*              &*0=1                                                      */
 /*              &*1="a b"c"                                                */
 /*  while, if a space precedes "c", then "c" becomes the value of *2       */
+/*  Note: the parsing rules are a bit different from those used in         */
+/*        getarg(), so that function is not used                           */
 /***************************************************************************/
 
 void    add_macro_parms( char * p )
 {
     char        c;
     char    *   pa;
-    char        quote;
-    char    *   scan_save;
+    char        quote;                  // delimiter character at start of parameter, if any
     char        starbuf[12];
     condcode    cc;
     int         star0;
@@ -146,7 +147,7 @@ void    add_macro_parms( char * p )
         add_symvar( &input_cbs->local_dict, MAC_STAR_NAME, p, no_subscript, local_var );
         star0 = 0;
         tok_start = p;                  // save start of parameter
-        while( *p == ' ' ) {             // find first nonspace character
+        while( *p == ' ' ) {            // find first nonspace character
             p++;
         }
         while( *p ) {                   // as long as there are parms
@@ -162,24 +163,26 @@ void    add_macro_parms( char * p )
                     }
                     pa++;
                 }
-                if( !*pa || (p != tok_start) ) {    // no matching delimiter or preceded by spaces
-                    p = tok_start;      // include spaces and initial delimiter in value
+                if( *pa == quote ) {    // matching delimiter found
+                    p++;                // exclude initial delimiter
                 }
                 c = *pa;                // prepare value end
                 *pa = '\0';             // terminate string
                 add_symvar( &input_cbs->local_dict, starbuf, p, no_subscript, local_var );
                 *pa = c;                // restore original char at string end
-                if( *pa ) {             // space between parameters
-                    p = pa + 1;         // over space
-                } else {
-                    p = pa;             // reset p
+                if( *pa == quote) {     // pa was decremented above
+                    pa++;               // point to character after parameter
                 }
+                p = pa;
             } else {                    // look if it is a symbolic variable definition
-                cc = getarg();
-                scan_save  = scan_start;
-                c          = *scan_save;// prepare value end
-                *scan_save = '\0';      // terminate string
-                scan_start = tok_start; // rescan for variable
+                pa = p;
+                pa++;
+                while( *pa && (*pa != ' ') ) {
+                    pa++;
+                }
+                c          = *pa;       // prepare value end
+                *pa = '\0';             // terminate string
+                scan_start = p;         // rescan for variable
                 ProcFlags.suppress_msg = true;  // no errmsg please
                 ProcFlags.blanks_allowed = 0;   // no blanks please
 
@@ -187,20 +190,22 @@ void    add_macro_parms( char * p )
 
                 ProcFlags.suppress_msg = false; // reenable err msg
                 ProcFlags.blanks_allowed = 1;   // blanks again
-                *scan_save = c;         // restore original char at string end
-                scan_start = scan_save; // restore scan address
+                *pa = c;                // restore original char at string end
+                scan_start = p;         // restore scan address
                 if( scan_err ) {        // not variable=value format
                     cc = omit;
                     star0++;
                     sprintf( starbuf, "%d", star0 );
-                    p = tok_start + arg_flen;
-                    c = *p;                 // prepare value end
-                    *p = '\0';              // terminate string
-                    add_symvar( &input_cbs->local_dict, starbuf, tok_start,
+                    c = *pa;            // prepare value end
+                    *pa = '\0';         // terminate string
+                    add_symvar( &input_cbs->local_dict, starbuf, p,
                                 no_subscript, local_var );
-                    *p = c;                // restore original char at string end
+                    *pa = c;            // restore original char at string end
                 }
-                p = scan_start;
+                p = pa;
+            }
+            while( *p == ' ' ) {
+                p++;                // over spaces
             }
         }
                                         // the positional parameter count
