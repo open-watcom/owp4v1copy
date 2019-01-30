@@ -207,6 +207,9 @@ char    *scan_sym( char * p, symvar * sym, sub_index * subscript )
 /*  Note 1: these apply only to ', the first of which must be present      */
 /*  Note 2: these apply to all delimiters: ', ", /, |, !, ^, 0x9b and,     */
 /*          apparently, 0xdd and 0x60                                      */
+/*          the final delimiter must be followed by a space or '\0'        */
+/*          this means that 'abc'def' is a seven-character delimited value */
+/*          provided it is at the end of the line or followed by a space   */
 /*                                                                         */
 /*  Except for local symbol *, spaces are removed from the end of the line */
 /*  before further processing (so that spaces inside delimiters are not    */
@@ -270,7 +273,10 @@ void    scr_se( void )
             valstart = p;
             if( is_quote_char( *valstart ) ) {      // quotes ?
                 p++;
-                while( *p && (*valstart != *p) ) {  // look for quote end
+                while( *p ) {  // look for quote end (must match and be at eol or followed by a space)
+                    if( (*valstart == *p) && (!*(p+1) || (*(p+1) == ' ')) ) {
+                        break;
+                    }
                     ++p;
                 }
                 if( (valstart < p) && (*p == *valstart) ) { // delete quotes if more than one character
