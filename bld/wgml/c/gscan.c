@@ -216,17 +216,17 @@ static void scan_gml( void )
 
             /*******************************************************************/
             /*  When a user-defined tag which overloads a predefined tag (ie,  */
-            /*  the names are the same) is used inside a macro, whether that   */
-            /*  macro is used with a user-defined tag or not, the predefined   */
+            /*  the names are the same) is used inside a macro, provided that  */
+            /*  the macro was invoked by a user-defined tag, the predefined    */
             /*  tag is used instead by wgml 4.0.                               */
             /*                                                                 */
-            /*  Note that this allows a macro used with a user-defined tag to  */
-            /*  use that tag name without any danger of recursion, but is far  */
-            /*  more general than simply preventing recursive user-defined tag */
-            /*  definitions.                                                   */
+            /*  Note that this allows a user-defined tag, or the macros it     */
+            /*  invokes, to use that tag without any danger of recursion.      */
+            /*  It is far more general than simply preventing recursive        */
+            /*  user-defined tag definitions.                                  */
             /*******************************************************************/
 
-            if( (cb->fmflags & II_tag_mac) && ge->overload ) {
+            if( (cb->fmflags & II_tag) && ge->overload ) {
                 me = NULL;
             }
     
