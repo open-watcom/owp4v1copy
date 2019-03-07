@@ -1,22 +1,33 @@
 #include "fail.h"
 
+/*
+ * This testcase is insane. We used to have:
+ *
+ * char __based(__segname("foo_TEXT")) bar[] = "abc";
+ * int __based(__segname("foo_TEXT")) main() { ... }
+ *
+ * That destroys the MSVC 1.52c compiler (won't link result due to fix-up
+ * overflows) and it's very unclear if it should cause main() to be implicitly
+ * far or not.
+ */
+
 /* PE and ELF can't represent the necessary relocations in non-flat models */
 #if defined( _M_I86 ) || defined( __386__ ) && !defined( __NT__ ) && !defined( __UNIX__ )
 
 #define MK_FP(seg,off) (((__segment)(seg)):>((void __based(void) *)(off)))
 
 // #pragma on (dump_init)
-char __based(__segname("foo_TEXT")) bar[] = "abc";
+char __based(__segname("_CODE")) bar[] = "abc";
 
 /* Now const-fold the :> operator. */
-/* NB: This doesn't work in 32-bit mode because the data initializer 
+/* NB: This doesn't work in 32-bit mode because the data initializer
  * can't handle static initialization of 16:32 far pointers!
  */
 #ifdef _M_I86
 void __far *lp = MK_FP( 0x1234, 0x5678 );
 #endif
 
-int __based(__segname("foo_TEXT")) main()
+int main()
 {
     if( bar[0] == 'a'
      && bar[1] == 'b'
