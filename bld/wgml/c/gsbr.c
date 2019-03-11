@@ -202,12 +202,12 @@ void  scr_process_break( void )
         insert_col_main( t_element );
         t_element = NULL;
         t_el_last = NULL;
-        ProcFlags.skips_valid = false;
     }
     set_h_start();      // to stop paragraph indent from being used after a break
     ProcFlags.dd_space = false;
     ProcFlags.dd_starting = false;
     ProcFlags.para_starting = false;
+    ProcFlags.skips_valid = false;
     ProcFlags.titlep_starting = false;
     c_stop = NULL;
     post_space = 0;
