@@ -237,7 +237,7 @@ void gml_exmp( const gmltag * entry )
         cur_doc_el_group = NULL;
     }
 
-    g_post_skip = nest_cb->post_skip;   // shift post_skip to follow eXMP
+    g_post_skip = wk->post_skip;        // shift post_skip to follow eXMP
 
     ProcFlags.skips_valid = false;      // activate post_skip for next element
     t_page.cur_width = t_page.cur_left;
