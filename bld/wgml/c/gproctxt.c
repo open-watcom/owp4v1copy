@@ -1991,6 +1991,10 @@ void process_text( const char *text, font_number font )
     if( ProcFlags.zsp ) {   // for NOTE; position TBD
         post_space = 0;
     }
+    if( ProcFlags.para_starting ) { //  recognize para text
+        ProcFlags.para_starting = false;
+        ProcFlags.para_has_text = true;
+    }
     h_chars = NULL;
     n_chars = NULL;
     pword = p;                          // remember word start

@@ -219,6 +219,7 @@ global struct ProcFlags {
 
     unsigned        dd_starting         : 1;// DD after break had no text (in next scr_process_break())
     unsigned        para_starting       : 1;// :LP, :P or :PC had no text (in scr_process_break())
+    unsigned        para_has_text       : 1;// :LP, :P, :PB or :PC had text (used by PB)
     unsigned        titlep_starting     : 1;// AUTHOR or TITLE had no text (in scr_process_break())
 
     unsigned        dd_space            : 1;// insert one space before DD text

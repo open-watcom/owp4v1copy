@@ -33,35 +33,41 @@
 #include    "wgml.h"
 #include    "gvars.h"
  
- 
 /***************************************************************************/
 /*  :PB.                                                                   */
 /*                                                                         */
-/*    try to process as .br                                                */
-/*    PB outputs any following text                                        */
-/*                                                                         */
+/*  not documented in Reference Manual                                     */
+/*  Probable full name: Paragraph Break                                    */
+/*  when used after P, PB, PC, or LP: passess g_post_skip on to next       */
+/*    document element                                                     */
+/*  otherwise, uses the g_post_skip as a pre_skip                          */
 /***************************************************************************/
+
 extern  void    gml_pb( const gmltag * entry )
 {
-    char        *   p;
+    bool        in_para = ProcFlags.para_has_text;
+    char    *   p;
 
     scan_err = false;
     p = scan_start;
- 
+
     start_doc_sect();                   // if not already done
- 
-    scr_process_break();
+    scr_process_break();                // clears ProcFlags.para_has_text
+
+    if( in_para ) {
+        ProcFlags.skips_valid = true;   // keep existing skips inside paragraph
+        ProcFlags.para_has_text = true; // reset flag, still in paragraph
+    } else {
+        ProcFlags.skips_valid = false;  // convert g_post_skip to g_subs_skip
+    }
 
     if( *p == '.' ) p++;                // over '.'
-
     post_space = 0;
-    ProcFlags.skips_valid = true;       // keep existing skips
-
     if( *p ) {
         process_text( p, g_curr_font );
     }
      
     scan_start = scan_stop + 1;
-
     return;
 }
+

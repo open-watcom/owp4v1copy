@@ -207,6 +207,7 @@ void  scr_process_break( void )
     ProcFlags.dd_space = false;
     ProcFlags.dd_starting = false;
     ProcFlags.para_starting = false;
+    ProcFlags.para_has_text = false;
     ProcFlags.skips_valid = false;
     ProcFlags.titlep_starting = false;
     c_stop = NULL;

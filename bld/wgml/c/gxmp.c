@@ -192,6 +192,7 @@ void gml_exmp( const gmltag * entry )
     ProcFlags.justify = justify_save;
     t_page.cur_left = nest_cb->lm;
     t_page.max_width = nest_cb->rm;
+    g_post_skip = nest_cb->post_skip;        // shift post_skip to follow eXMP
 
     wk = nest_cb;
     nest_cb = nest_cb->prev;
@@ -236,8 +237,6 @@ void gml_exmp( const gmltag * entry )
         add_doc_el_group_to_pool( cur_doc_el_group );
         cur_doc_el_group = NULL;
     }
-
-    g_post_skip = wk->post_skip;        // shift post_skip to follow eXMP
 
     ProcFlags.skips_valid = false;      // activate post_skip for next element
     t_page.cur_width = t_page.cur_left;
