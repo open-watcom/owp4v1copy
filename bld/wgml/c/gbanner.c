@@ -253,8 +253,9 @@ static void content_reg( region_lay_tag * region )
                                                                 region->final_content[k].len );
                     }
                 }
-                strcpy_s( region->final_content[k].string, strlen( &buf ) + 1,
-                          &buf );
+                if( region->final_content[k].len >  0 ) {   // buf actually has a string
+                    strcpy_s( region->final_content[k].string, strlen( &buf ) + 1, &buf );
+                }
                 intrans( region->final_content[k].string, strlen( &buf ) + 1, region->font );
             }
         }
