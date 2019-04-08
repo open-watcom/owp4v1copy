@@ -714,6 +714,7 @@ void cop_setup( void )
     bin_driver = NULL;
     ProcFlags.has_aa_block = false;
     ProcFlags.ps_device = false;
+    ProcFlags.wh_device = false;
     wgml_font_cnt = 0;
     wgml_fonts = NULL;
 
@@ -801,6 +802,12 @@ void cop_setup( void )
 
     if( !_strnicmp( bin_device->driver_name, "ps", 2 ) ) {
         ProcFlags.ps_device = true;
+    }
+
+    /* Set ProcFlags.wh_device to "true" if the driver name begins with "whelp" or "WHELP". */
+
+    if( !_strnicmp( bin_device->driver_name, "whelp", 5 ) ) {
+        ProcFlags.wh_device = true;
     }
 
     /* Get the highest font number and reduce it by one so it contains the

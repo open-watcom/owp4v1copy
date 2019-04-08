@@ -417,7 +417,7 @@ static void wgml_tabs( void )
     static  bool                text_found  = false;    // text found after tab character
     static  text_chars      *   s_multi     = NULL;     // first part of multipart word
     static  text_line           tab_chars   = { NULL, 0, 0, 0, NULL, NULL };   // current tab markers/fill chars
-    static  text_type           c_type      = norm;     // type for current tab character
+    static  text_type           c_type      = tx_norm;  // type for current tab character
     static  font_number         c_font      = 0;        // font for current tab character
     static  uint32_t            s_width     = 0;        // space width (from tab_space)
 
@@ -457,7 +457,7 @@ static void wgml_tabs( void )
     if( !tabbing && (t_count > 0) ) {   // no current tab stop: reset state
         c_font = 0;
         c_stop = NULL;
-        c_type = norm;
+        c_type = tx_norm;
         tab_chars.first = NULL;
         tab_chars.last = NULL;
         tab_space = 0;
@@ -753,8 +753,8 @@ static void wgml_tabs( void )
             do_fc_comp();
 
             if( s_chars->prev != NULL ) {
-                if( ((s_chars->prev->type == norm) && (c_type != norm)) ||
-                     (s_chars->prev->type != norm) && (c_type == norm)) {
+                if( ((s_chars->prev->type == tx_norm) && (c_type != tx_norm)) ||
+                     (s_chars->prev->type != tx_norm) && (c_type == tx_norm)) {
                     c_chars = do_c_chars( c_chars, in_chars, NULL, 0, gap_start,
                                                         0, c_font, c_type );
                     if( tab_chars.first == NULL) {
@@ -763,7 +763,7 @@ static void wgml_tabs( void )
                     tab_chars.last = c_chars;
                 }
             } else {
-                if( c_type != norm ) {
+                if( c_type != tx_norm ) {
                     c_chars = do_c_chars( c_chars, in_chars, NULL, 0,
                                           t_page.cur_width, 0, c_font, c_type );
                     if( tab_chars.first == NULL) {
@@ -797,7 +797,7 @@ static void wgml_tabs( void )
             }
 
             if( s_chars->prev != NULL ) {
-                if( (s_chars->type == norm) && (c_type != norm) ) {
+                if( (s_chars->type == tx_norm) && (c_type != tx_norm) ) {
                     c_chars = do_c_chars( c_chars, in_chars, NULL, 0,
                                         t_page.cur_width, 0, c_font, c_type );
                     if( tab_chars.first == NULL) {
@@ -856,7 +856,7 @@ static void wgml_tabs( void )
                     tab_chars.first = c_chars;
                 }
                 tab_chars.last = c_chars;
-                if( (s_chars->type == norm) && (c_type != norm) ) {
+                if( (s_chars->type == tx_norm) && (c_type != tx_norm) ) {
                     c_chars = do_c_chars( c_chars, in_chars, NULL, 0, gap_start,
                                                         0, c_font, c_type );
                     if( tab_chars.first == NULL) {
@@ -911,8 +911,8 @@ static void wgml_tabs( void )
         }
 
         if( s_chars->prev != NULL ) {
-            if( ((s_chars->prev->type == norm) && (c_type != norm)) ||
-                 (s_chars->prev->type != norm) && (c_type == norm)) {
+            if( ((s_chars->prev->type == tx_norm) && (c_type != tx_norm)) ||
+                 (s_chars->prev->type != tx_norm) && (c_type == tx_norm)) {
                 c_chars = do_c_chars( c_chars, in_chars, NULL, 0, gap_start,
                                         0, c_font, c_type );
                 if( tab_chars.first == NULL) {
@@ -1402,7 +1402,7 @@ void insert_hard_spaces( char * spaces )
             t_line->last->next = process_word( &layout_work.note.spaces, spc_cnt, FONT0 );
             t_line->last = t_line->last->next;
         }            
-        t_line->last->type = norm;
+        t_line->last->type = tx_norm;
         t_line->last->x_address = t_page.cur_width;
         t_page.cur_width += t_line->last->width;
         if( wgml_fonts[FONT0].line_height > t_line->line_height ) {
@@ -1750,8 +1750,8 @@ void process_text( const char *text, font_number font )
 
     static      line_number     prev_lineno     = -1;
     static      macrocb     *   prev_mac        = NULL;
-    static      text_type       typ             = norm;
-    static      text_type       typn            = norm;
+    static      text_type       typ             = tx_norm;
+    static      text_type       typn            = tx_norm;
 
     /********************************************************************/
     /*  we need a started section for text output                       */
@@ -1870,7 +1870,7 @@ void process_text( const char *text, font_number font )
                 /* if no text follows, insert text_chars for post_space */
                 
                 n_chars = process_word( NULL, 0, font );
-                n_chars->type = norm;
+                n_chars->type = tx_norm;
                 t_page.cur_width += post_space;
                 post_space = 0;
                 n_chars->x_address = t_page.cur_width;
@@ -1936,7 +1936,7 @@ void process_text( const char *text, font_number font )
                 }
             } else if( ProcFlags.wrap_indent && (font != g_prev_font) ) { // font changed (INDEX see output)
                 n_chars = process_word( NULL, 0, g_prev_font );
-                n_chars->type = norm;
+                n_chars->type = tx_norm;
                 t_page.cur_width += post_space;
                 post_space = 0;
                 n_chars->x_address = t_page.cur_width;
@@ -1955,7 +1955,7 @@ void process_text( const char *text, font_number font )
         } else {                    // ".co off": increment initial spacing
             if( (post_space > 0) && (font != g_prev_font) ) { // font changed
                 n_chars = process_word( NULL, 0, g_prev_font );
-                n_chars->type = norm;
+                n_chars->type = tx_norm;
                 t_page.cur_width += post_space;
                 post_space = 0;
                 n_chars->x_address = t_page.cur_width;
@@ -1973,7 +1973,7 @@ void process_text( const char *text, font_number font )
             }
             if( !*p ) { // text is entirely spaces
                 n_chars = process_word( NULL, 0, font );
-                n_chars->type = norm;
+                n_chars->type = tx_norm;
                 t_page.cur_width += post_space;
                 post_space = 0;
                 n_chars->x_address = t_page.cur_width;
@@ -2002,15 +2002,15 @@ void process_text( const char *text, font_number font )
         if( *p == function_escape ) {   // special sub/superscript...
             switch( *(p + 1) ) {
             case function_subscript :   // start of subscript
-                typn = sub;
+                typn = tx_sub;
                 break;
             case function_superscript : // start of superscript
-                typn = sup;
+                typn = tx_sup;
                 break;
             case function_end:
             case function_sub_end:      // perhaps different action TBD
             case function_sup_end:
-                typn = norm;
+                typn = tx_norm;
                 break;
             default:
                 internal_err( __FILE__, __LINE__ );
@@ -2148,7 +2148,7 @@ void process_text( const char *text, font_number font )
                             }
                             // each line must have its own hyphen
                             h_chars = alloc_text_chars( "-", 1, 0 );
-                            h_chars->type = norm;
+                            h_chars->type = tx_norm;
                             h_chars->width = hy_width;
 
                             h_chars->x_address = t_line->last->x_address

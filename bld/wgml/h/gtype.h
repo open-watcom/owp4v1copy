@@ -968,9 +968,10 @@ typedef struct {
 /***************************************************************************/
 
 typedef enum {
-    norm = 0,       // normal text
-    sup,            // superscript text
-    sub             // subscript text
+    tx_norm = 0,    // normal text
+    tx_sup,         // superscript text
+    tx_sub,         // subscript text
+    tx_figcap,      // FIGCAP prefix ending
 } text_type;
 
 typedef enum {

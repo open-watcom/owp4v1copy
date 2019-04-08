@@ -234,7 +234,8 @@ global struct ProcFlags {
     unsigned        wrap_indent         : 1;// for index item/reference indent when line breaks
 
     unsigned        has_aa_block        : 1;// true if device defined :ABSOLUTEADDRESS
-    unsigned        ps_device           : 1;// true if device is PostScript
+    unsigned        ps_device           : 1;// true if device is PS (PostScript)
+    unsigned        wh_device           : 1;// true if device is WHELP (help file)
 
     unsigned        layout              : 1;// within :layout tag and sub tags
     unsigned        lay_specified       : 1;// LAYOUT option or :LAYOUT tag seen

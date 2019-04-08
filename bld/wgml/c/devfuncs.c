@@ -235,8 +235,8 @@ static bool             at_start                = true;
 static bool             htab_done               = false;
 static bool             page_start              = false;
 static bool             shift_done              = false;
-static page_state       current_state           = { 0, 0, 0, norm };
-static page_state       desired_state           = { 0, 0, 0, norm };
+static page_state       current_state           = { 0, 0, 0, tx_norm };
+static page_state       desired_state           = { 0, 0, 0, tx_norm };
 static uint32_t         line_pass_number        = 0;
 
 /* These are used to hold values returned by device functions. */
@@ -503,14 +503,14 @@ static void post_text_output( void )
             /* Emit the appropriate post-subscript/superscript sequence. */
 
             switch( current_state.type ) {
-            case sub:
+            case tx_sub:
                 ps_size = strlen( shift_scale );
                 ob_insert_block( shift_scale, ps_size, false, false, active_font );
 
                 ps_size = strlen( shift_rmoveto );
                 ob_insert_block( shift_rmoveto, ps_size, false, false, active_font );
                 break;                
-            case sup:
+            case tx_sup:
                 ps_size = strlen( shift_scale );
                 ob_insert_block( shift_scale, ps_size, false, false, active_font );
 
@@ -520,12 +520,12 @@ static void post_text_output( void )
                 ps_size = strlen( shift_rmoveto );
                 ob_insert_block( shift_rmoveto, ps_size, false, false, active_font );
                 break;                
-            case norm:
+            case tx_norm:
                 /* Since shift_done was true, norm is not allowed. */
             default:
                 internal_err( __FILE__, __LINE__ );
             }
-            current_state.type = norm;
+            current_state.type = tx_norm;
         }
 
     }
@@ -558,10 +558,10 @@ static void pre_text_output( void )
             /* Emit the appropriate post-subscript/superscript sequence. */
 
             switch( desired_state.type ) {
-            case norm:
+            case tx_norm:
                 shift_done = false;
                 break;
-            case sub:
+            case tx_sub:
                 ob_insert_block( " ", 1, false, false, active_font );
 
                 ps_size = wgml_fonts[active_font].shift_count;
@@ -583,7 +583,7 @@ static void pre_text_output( void )
 
                 shift_done = true;
                 break;                
-            case sup:
+            case tx_sup:
                 ob_insert_block( " ", 1, false, false, active_font );
 
                 ps_size = wgml_fonts[active_font].shift_count;

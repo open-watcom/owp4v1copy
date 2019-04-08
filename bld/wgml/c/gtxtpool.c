@@ -95,7 +95,7 @@ text_chars * alloc_text_chars( const char * text, size_t cnt, font_number font )
     curr->tab_align = al_left;
     curr->tab_pos = tt_none;
     curr->ts_width = 0;
-    curr->type = norm;
+    curr->type = tx_norm;
     curr->font = font;
     curr->width = 0;
     if( text != NULL ) {                   // text supplied
