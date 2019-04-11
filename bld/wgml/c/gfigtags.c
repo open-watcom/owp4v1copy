@@ -1105,6 +1105,7 @@ void gml_figcap( const gmltag * entry )
     char        *   p;
     size_t          count;
     size_t          current;
+    text_chars  *   marker;
 
     start_doc_sect();
     scr_process_break();
@@ -1116,6 +1117,7 @@ void gml_figcap( const gmltag * entry )
     g_curr_font = layout_work.figcap.string_font;
     set_skip_vars( &layout_work.figcap.pre_lines, NULL, NULL, spacing, g_curr_font );
 
+    ProcFlags.concat = true;            // even if was false on entry
     input_cbs->fmflags &= ~II_eol;      // prefix is never EOL
     if( pass == 1 ) {                   // only on the first pass
 
@@ -1144,18 +1146,32 @@ void gml_figcap( const gmltag * entry )
         process_text( fig_entry->prefix, g_curr_font );
     }
 
+    if( ProcFlags.wh_device ) {             // Insert a marker
+        marker = process_word( NULL, 0, g_curr_font );
+        marker->type = tx_figcap;           // mark as from prefix string
+        marker->x_address = t_page.cur_width;
+        t_line->last->next = marker;
+        marker->prev = t_line->last;
+        t_line->last = marker;
+        marker = NULL;
+    }
+
     /* Output the caption text, if any */
 
-    t_page.cur_left += (t_line->last->width + wgml_fonts[g_curr_font].spc_width );
-    if( ProcFlags.has_aa_block ) {          // matches wgml 4.0
-        t_page.max_width += 2 * tab_col;
+    if( ProcFlags.wh_device ) {                 // whelp code
+        t_page.cur_width += t_line->last->width;
+        t_page.cur_left = t_page.cur_width;
+    } else {                                    // original code
+        t_page.cur_left += (t_line->last->width + wgml_fonts[g_curr_font].spc_width );
+        if( ProcFlags.has_aa_block ) {          // matches wgml 4.0
+            t_page.max_width += 2 * tab_col;
+        }
+        t_page.cur_width = t_page.cur_left;
     }
-    t_page.cur_width = t_page.cur_left;
     g_curr_font = layout_work.figcap.font;
     if( *p ) {
         if( *p == '.' ) p++;                // possible tag end
         while( *p == ' ' ) p++;             // skip preceding spaces
-        ProcFlags.concat = true;            // even if was false on entry
         post_space = 0;                     // g_curr_left should be enough
         input_cbs->fmflags &= ~II_sol;      // prefix was SOL, so this is not
         if( pass == 1 ) {                   // only on first pass

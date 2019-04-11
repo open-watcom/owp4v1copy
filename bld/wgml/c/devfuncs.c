@@ -2483,7 +2483,7 @@ static void fb_font_switch( void )
     if( !do_now && (font_switch != NULL) )
         do_now = font_switch->do_always;
 
-    /* The third test: evaluate the :FONTSWITCH block (if it exits) as
+    /* The third test: evaluate the :FONTSWITCH block (if it exists) as
      * described in the Wiki. The trick here, of course, is to ensure that,
      * once set to "true", do_now is never reset to "false".
      */
@@ -3666,7 +3666,7 @@ void fb_binclude_support( binclude_element *in_el )
  *          does have vertical positioning information.
  *
  * Note:
- *      This function is to be used only by fb_output_text() and is extremely
+ *      This function is to be used only by fb_output_textline() and is extremely
  *          specialized. The effect is that the vertical position specified 
  *          is used to update the internal and device states.
  *      This function was added only when its need became clear while
@@ -3746,7 +3746,7 @@ void fb_enterfont( void )
  *          sent to the device.
  *
  * Note:
- *      This function is to be used only by fb_output_text(), which includes
+ *      This function is to be used only by fb_output_textline(), which includes
  *          a test ensuring that out_line contains at least one text_chars
  *          instance (that is, that out_line->first is not NULL).
  */
@@ -3796,7 +3796,7 @@ void fb_first_text_line_pass( text_line *out_line )
     for( current = current->next; current != NULL; current = current->next ) {
         desired_state.x_address = current->x_address;
         desired_state.type = current->type;
-        if( current_state.font != current->font ) {
+        if( (current_state.font != current->font) || (desired_state.type == tx_figcap) ) {
             if( wgml_fonts[current->font].font_style != NULL ) {
                 if( wgml_fonts[current->font].font_style->lineprocs == NULL ) {       
                     cur_lineproc = NULL;
@@ -4113,7 +4113,7 @@ void fb_position( uint32_t h_start, uint32_t v_start )
  *      line_pass contains the number of the current line_pass
  *
  * Note:
- *      This function is to be used only by fb_output_text(), which includes
+ *      This function is to be used only by fb_output_textline(), which includes
  *          a test ensuring that out_line contains at least one text_chars
  *          instance (that is, that out_line->first is not NULL).
  */

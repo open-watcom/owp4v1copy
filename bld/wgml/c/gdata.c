@@ -275,6 +275,7 @@ void init_pass_data( void )
 {
     bool    aa_save     = ProcFlags.has_aa_block;
     bool    ps_save     = ProcFlags.ps_device;
+    bool    wh_save     = ProcFlags.wh_device;
     int     i;
 
     memset( &ProcFlags, 0, sizeof( ProcFlags ) );
@@ -289,6 +290,7 @@ void init_pass_data( void )
     ProcFlags.in_trans  = (in_esc != ' ');// translation wanted
     ProcFlags.has_aa_block = aa_save;
     ProcFlags.ps_device = ps_save;
+    ProcFlags.wh_device = wh_save;
 
     hd_nums[hds_h0].headn = 0;          // reset used header headn numbers (numeric)
     hd_nums[hds_h1].headn = 0;

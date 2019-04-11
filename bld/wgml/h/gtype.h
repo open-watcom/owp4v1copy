@@ -971,7 +971,7 @@ typedef enum {
     tx_norm = 0,    // normal text
     tx_sup,         // superscript text
     tx_sub,         // subscript text
-    tx_figcap,      // FIGCAP prefix ending
+    tx_figcap,      // FIGCAP prefix ending (only used with WHELP)
 } text_type;
 
 typedef enum {
