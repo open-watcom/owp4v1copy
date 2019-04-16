@@ -1158,16 +1158,11 @@ void gml_figcap( const gmltag * entry )
 
     /* Output the caption text, if any */
 
-    if( ProcFlags.wh_device ) {                 // whelp code
-        t_page.cur_width += t_line->last->width;
-        t_page.cur_left = t_page.cur_width;
-    } else {                                    // original code
-        t_page.cur_left += (t_line->last->width + wgml_fonts[g_curr_font].spc_width );
-        if( ProcFlags.has_aa_block ) {          // matches wgml 4.0
-            t_page.max_width += 2 * tab_col;
-        }
-        t_page.cur_width = t_page.cur_left;
+    if( ProcFlags.ps_device ) {             // set left margin for caption text
+        t_page.cur_width += wgml_fonts[g_curr_font].spc_width;
     }
+    t_page.cur_left = t_page.cur_width;
+
     g_curr_font = layout_work.figcap.font;
     if( *p ) {
         if( *p == '.' ) p++;                // possible tag end
