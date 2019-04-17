@@ -276,6 +276,7 @@ book_multi_chapter=1
 # f_readme
 book_title=$(company) $(%BLD_VER_STR) FORTRAN 77 Getting Started
 book_objs=$(objs_gs)
+book_objs_ps=$(objs_gs_ps)
 book_incs=$(incs_gs)
 book_bmroot=$(bmroot_gs)
 book_src=f_readme
