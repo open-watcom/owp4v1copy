@@ -131,15 +131,17 @@ static void hx_header( char * h_num, char * h_text, hdsrc hn_lvl, hdsrc hds_lvl 
     /* display_heading is always "true" for section headings */
 
     if( (hds_lvl > hds_appendix) || layout_work.hx.hx_head[hds_lvl].display_heading ) {
+        t_page.cur_left = 0;
+        ProcFlags.keep_left_margin = true;  // keep left margin
         if( (hds_lvl < hds_abstract) && (layout_work.hx.hx_head[hds_lvl].number_form != none) ) {
-            ProcFlags.as_text_line = true;  // treat as <text_line>
+            ProcFlags.as_text_line = true;      // treat as <text_line>
             process_text( h_num, layout_work.hx.hx_head[hds_lvl].number_font );        
             post_space /= wgml_fonts[layout_work.hx.hx_head[hds_lvl].number_font].spc_width;     // rescale post_space to correct font
             post_space *= wgml_fonts[layout_work.hx.hx_sect[hds_lvl].text_font].spc_width;
         }
 
         if( (h_text != NULL) && (*h_text != '\0') ) {
-            ProcFlags.as_text_line = true;  // treat as <text_line>
+            ProcFlags.as_text_line = true;      // treat as <text_line>
             process_text( h_text, layout_work.hx.hx_sect[hds_lvl].text_font );        
         }
     }
