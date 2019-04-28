@@ -2678,12 +2678,16 @@ static void fb_initial_horizontal_positioning( void )
 
     x_address = desired_state.x_address;
     if( ProcFlags.has_aa_block ) {
-        fb_absoluteaddress();
+        if( current_state.y_address == desired_state.y_address ) {
+            fb_htab();
+        } else {
+            fb_absoluteaddress();
+        }
     } else {
 
         /* Spaces cannot be emitted and tabs cannot be done "backwards". */
 
-        if( current_state.x_address > desired_state.x_address) {
+        if( current_state.x_address > desired_state.x_address ) {
             internal_err( __FILE__, __LINE__ );
         }
 
@@ -3641,7 +3645,12 @@ void fb_binclude_support( binclude_element *in_el )
     }
     if( ProcFlags.ps_device ) {   // always do ABSOLUTEADDRESS block
         y_address = desired_state.y_address;
-        fb_initial_horizontal_positioning();
+        if( ProcFlags.has_aa_block ) {
+            x_address = desired_state.x_address;
+            fb_absoluteaddress();
+        } else {
+            fb_initial_horizontal_positioning();
+        }
     } else {            
         if( in_el->depth > 0 ) {    // do nothing when depth == 0
             if( current_state.y_address == desired_state.y_address ) {
@@ -3840,7 +3849,12 @@ void fb_graphic_support( graphic_element *in_el )
     desired_state.x_address = in_el->cur_left;
     df_font  = FONT0;             // matches wgml 4.0
     y_address = desired_state.y_address;
-    fb_initial_horizontal_positioning();
+    if( ProcFlags.has_aa_block ) {
+        x_address = desired_state.x_address;
+        fb_absoluteaddress();
+    } else {
+        fb_initial_horizontal_positioning();
+    }
 
     return;
 }
