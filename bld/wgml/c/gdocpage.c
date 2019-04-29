@@ -463,7 +463,7 @@ static void consolidate_array( doc_element * array[MAX_COL], uint8_t count )
 
                 while( (cur_tl_list != NULL) && (sav_tl != NULL) &&
                        (cur_tl_list->y_address == nt_el_list->v_pos) &&
-                       (sav_tl->first->x_address < nt_el_list->h_pos) ) {
+                       (cur_tl_list->first->x_address < nt_el_list->h_pos) ) {
                     sav_tl = cur_tl_list;
                     cur_tl_list = cur_tl_list->next;
                 }
