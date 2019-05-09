@@ -1675,7 +1675,6 @@ void process_line_full( text_line * a_line, bool justify )
             t_el_last->next = a_line;
             t_el_last = t_el_last->next;
         }
-        if( eol_index != NULL ) eol_index_page();
         a_line = a_line->next;
     }
     ProcFlags.line_started = false;     // line is now empty

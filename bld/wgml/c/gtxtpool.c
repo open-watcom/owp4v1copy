@@ -157,6 +157,7 @@ text_line * alloc_text_line( void )
         prev->next = NULL;
     }
 
+    curr->eol_index = NULL;
     curr->first = NULL;
     curr->last = NULL;
     curr->spacing = g_spacing;
@@ -323,12 +324,14 @@ doc_element * alloc_doc_el( element_type type )
         curr->element.binc.at_top = false;
         curr->element.binc.has_rec_type = false;
         curr->element.binc.file[0] = '\0';
+        curr->element.binc.eol_index = NULL;
         break;
     case el_dbox :
         curr->element.dbox.h_start = 0;
         curr->element.dbox.v_start = 0;
         curr->element.dbox.h_len = 0;
         curr->element.dbox.v_len = 0;
+        curr->element.dbox.eol_index = NULL;
         break;
     case el_graph :
         curr->element.graph.cur_left = 0;
@@ -341,12 +344,14 @@ doc_element * alloc_doc_el( element_type type )
         curr->element.graph.at_top = false;
         curr->element.graph.prev_font = 0;
         curr->element.graph.file[0] = '\0';
+        curr->element.graph.eol_index = NULL;
         break;
     case el_hline :
         curr->element.hline.h_start = 0;
         curr->element.hline.v_start = 0;
         curr->element.hline.h_len = 0;
         curr->element.hline.ban_adjust = false;
+        curr->element.hline.eol_index = NULL;
         break;
     case el_text :
         curr->element.text.first = NULL;
@@ -359,9 +364,11 @@ doc_element * alloc_doc_el( element_type type )
         curr->element.vline.v_start = 0;
         curr->element.vline.v_len = 0;
         curr->element.vline.twice = true;
+        curr->element.vline.eol_index = NULL;
         break;
     case el_vspace :
         curr->element.vspace.spacing = g_spacing;
+        curr->element.vspace.eol_index = NULL;
         break;
     default :
         internal_err( __FILE__, __LINE__ );

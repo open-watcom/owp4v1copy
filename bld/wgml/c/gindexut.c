@@ -175,24 +175,70 @@ void find_create_ix_e_entry( ix_h_blk * ixhwork, char * ref, size_t len,
                              ix_h_blk * seeidwork, ereftyp type )
 {
     bool                found;
-    eol_ix      *       cur_ixh;
+    eol_ix      *       cur_eol;
+    eol_ix      *   *   eol_base;
     ix_e_blk    *   *   base;
     ix_e_blk    *       ixework;
     ix_e_blk    *       ixewk;
+    text_line   *       cur_tl;
 
     switch( type ) {
         case pgmajor :
         case pgpageno :
         case pgstart :
         case pgend :
-            cur_ixh = eol_index;
-            if( cur_ixh == NULL ) {
-                cur_ixh = alloc_eol_ix( ixhwork, type );
-                eol_index = cur_ixh;
+            if( t_line != NULL) {
+                eol_base = &t_line->eol_index;
+            } else if( t_element != NULL) {
+                cur_tl = t_element->element.text.first;
+                while( cur_tl->next != NULL ) {
+                    cur_tl = cur_tl->next;    // find last text_line
+                }
+                eol_base = &cur_tl->eol_index;
+            } else if( t_page.last_col_main != NULL ) {               
+                switch( t_page.last_col_main->type ) {
+                    case el_binc :
+                        eol_base = &t_page.last_col_main->element.binc.eol_index;
+                        break;
+                    case el_dbox :
+                        eol_base = &t_page.last_col_main->element.dbox.eol_index;
+                        break;
+                    case el_graph :
+                        eol_base = &t_page.last_col_main->element.graph.eol_index;
+                        break;
+                    case el_hline :
+                        eol_base = &t_page.last_col_main->element.hline.eol_index;
+                        break;
+                    case el_text :
+                        cur_tl = t_page.last_col_main->element.text.first;
+                        while( cur_tl->next != NULL ) {
+                            cur_tl = cur_tl->next;    // find last text_line
+                        }
+                        eol_base = &cur_tl->eol_index;
+                        break;
+                    case el_vline :
+                        eol_base = &t_page.last_col_main->element.vline.eol_index;
+                        break;
+                    case el_vspace :
+                        eol_base = &t_page.last_col_main->element.vspace.eol_index;
+                        break;
+                    default :
+                        internal_err( __FILE__, __LINE__ ); // bad element type value
+                }
+            } else {                
+                internal_err( __FILE__, __LINE__ ); // no place to put index item list?
+            }
+
+            cur_eol = *eol_base;
+            if( cur_eol == NULL ) {
+                cur_eol = alloc_eol_ix( ixhwork, type );
+                *eol_base = cur_eol;
             } else {
-                while( cur_ixh->next != NULL ) cur_ixh = cur_ixh->next;
-                cur_ixh->next = alloc_eol_ix( ixhwork, type );
-            };
+                while( cur_eol->next != NULL ) {
+                    cur_eol = cur_eol->next;        // append at end of list
+                }
+                cur_eol->next = alloc_eol_ix( ixhwork, type );
+            }
             break;
         case pgmajorstring :
             base = &ixhwork->entry->major_string;
@@ -266,20 +312,14 @@ void find_create_ix_e_entry( ix_h_blk * ixhwork, char * ref, size_t len,
 /*  find or create/insert new index reference entry (at eol)               */
 /***************************************************************************/
 
-void eol_index_page( void )
+void eol_index_page( eol_ix * eol_index, uint32_t page_nr )
 {
     bool                found;
     eol_ix      *       save;
     ix_e_blk    *   *   base;
     ix_e_blk    *       ixework;
     ix_e_blk    *       ixewk;
-    uint32_t            page_nr;
 
-    if( t_page.cur_depth + t_element->depth < t_page.max_depth ) {
-        page_nr = page + 1; // line will appear on current page
-    } else {
-        page_nr = page + 2; // line will appear on next page
-    }
     while( eol_index != NULL ) {
         switch( eol_index->type ) {
             case pgmajor :

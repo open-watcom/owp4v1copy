@@ -85,11 +85,17 @@ static void do_el_list_out( doc_element * in_element )
                     }
                 }
                 ob_binclude( &in_element->element.binc );
+                if( in_element->element.binc.eol_index != NULL ) {
+                    eol_index_page( in_element->element.binc.eol_index, page );
+                }
             }
             break;
         case el_dbox :  // should only be found if DBOX block exists
             if( GlobalFlags.lastpass ) {
                 fb_dbox( &in_element->element.dbox );
+                if( in_element->element.dbox.eol_index != NULL ) {
+                    eol_index_page( in_element->element.dbox.eol_index, page );
+                }
             }
             break;
         case el_graph :
@@ -97,11 +103,17 @@ static void do_el_list_out( doc_element * in_element )
                 if( ProcFlags.ps_device ) {   // only available to PS device
                     ob_graphic( &in_element->element.graph );
                 }
+                if( in_element->element.graph.eol_index != NULL ) {
+                    eol_index_page( in_element->element.graph.eol_index, page );
+                }
             }
             break;
         case el_hline :  // should only be found if HLINE block exists
             if( GlobalFlags.lastpass ) {
                 fb_hline( &in_element->element.hline );
+                if( in_element->element.hline.eol_index != NULL ) {
+                    eol_index_page( in_element->element.hline.eol_index, page );
+                }
             }
             break;
         case el_text :
@@ -110,6 +122,9 @@ static void do_el_list_out( doc_element * in_element )
                 for( cur_line = in_element->element.text.first;
                         cur_line != NULL; cur_line = cur_line ->next ) {
                     fb_output_textline( cur_line );
+                    if( cur_line->eol_index != NULL ) {
+                        eol_index_page( cur_line->eol_index, page );
+                    }
                 }
                 ProcFlags.force_op = false;
             }
@@ -117,10 +132,18 @@ static void do_el_list_out( doc_element * in_element )
         case el_vline :  // should only be found if VLINE block exists
             if( GlobalFlags.lastpass ) {
                 fb_vline( &in_element->element.vline );
+                if( in_element->element.vline.eol_index != NULL ) {
+                    eol_index_page( in_element->element.vline.eol_index, page );
+                }
             }
             break;
         case el_vspace :
-            // do nothing, next element is positioned to skip the space
+            /* next element is positioned to skip the space */
+            if( GlobalFlags.lastpass ) {
+                if( in_element->element.vspace.eol_index != NULL ) {
+                    eol_index_page( in_element->element.vspace.eol_index, page );
+                }
+            }
             break;
         default :
             internal_err( __FILE__, __LINE__ );

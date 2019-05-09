@@ -998,11 +998,14 @@ typedef struct text_chars {                 // tabbing-related fields have comme
             char            text[1];
 } text_chars;
 
+struct eol_ix;              // forward declaration
+
 typedef struct text_line {
     struct  text_line   *   next;
             uint32_t        line_height;
             uint32_t        spacing;
             uint32_t        y_address;
+    struct  eol_ix      *   eol_index;
             text_chars  *   first;
             text_chars  *   last;
 } text_line;
@@ -1017,46 +1020,50 @@ typedef enum {
     el_vspace,      // vertical space element (blank lines and SP)
 } element_type;
 
-// struct doc_element;    // Forward declaration (uncomment if ever needed)
+// struct doc_element;    // forward declaration (uncomment if ever needed)
 
 typedef struct {
-    uint32_t        cur_left;
-    uint32_t        depth;
-    uint32_t        y_address;
-    bool            at_top;
-    bool            force_FONT0;
-    bool            has_rec_type;
-    FILE        *   fp;
-    char            file[FILENAME_MAX];
+            uint32_t        cur_left;
+            uint32_t        depth;
+            uint32_t        y_address;
+            bool            at_top;
+            bool            force_FONT0;
+            bool            has_rec_type;
+    struct  eol_ix      *   eol_index;
+            FILE        *   fp;
+            char            file[FILENAME_MAX];
 } binclude_element;
 
 typedef struct {
-    uint32_t    h_start;
-    uint32_t    v_start;
-    uint32_t    h_len;
-    uint32_t    v_len;
+            uint32_t        h_start;
+            uint32_t        v_start;
+            uint32_t        h_len;
+            uint32_t        v_len;
+    struct  eol_ix      *   eol_index;
 } dbox_element;
 
 typedef struct {
-    uint32_t        cur_left;
-    uint32_t        depth;
-    uint32_t        scale;
-    uint32_t        width;
-    uint32_t        y_address;
-    int32_t         xoff;
-    int32_t         yoff;
-    bool            at_top;
-    FILE        *   fp;
-    font_number     prev_font;
-    char            short_name[FILENAME_MAX];
-    char            file[FILENAME_MAX];
+            uint32_t        cur_left;
+            uint32_t        depth;
+            uint32_t        scale;
+            uint32_t        width;
+            uint32_t        y_address;
+            int32_t         xoff;
+            int32_t         yoff;
+            bool            at_top;
+    struct  eol_ix      *   eol_index;
+            FILE        *   fp;
+            font_number     prev_font;
+            char            short_name[FILENAME_MAX];
+            char            file[FILENAME_MAX];
 } graphic_element;
 
 typedef struct {
-    uint32_t    h_start;
-    uint32_t    v_start;
-    uint32_t    h_len;
-    bool        ban_adjust;             // hline is first line in an outer box at effective top of page
+            uint32_t        h_start;
+            uint32_t        v_start;
+            uint32_t        h_len;
+    struct  eol_ix      *   eol_index;
+            bool            ban_adjust; // hline is first line in an outer box at effective top of page
 } hline_element;
 
 typedef struct {
@@ -1067,14 +1074,16 @@ typedef struct {
 } text_element;
 
 typedef struct {
-    uint32_t    h_start;
-    uint32_t    v_start;
-    uint32_t    v_len;
-    bool        twice;
+            uint32_t        h_start;
+            uint32_t        v_start;
+            uint32_t        v_len;
+    struct  eol_ix      *   eol_index;
+            bool            twice;
 } vline_element;
 
 typedef struct {
-    uint32_t    spacing;                // this is for single-space, double-space etc
+            uint32_t        spacing;        // vertical space to be inserted
+    struct  eol_ix      *   eol_index;
 } vspace_element;
 
 typedef struct doc_element {
@@ -1083,8 +1092,8 @@ typedef struct doc_element {
             uint32_t            depth;
             uint32_t            subs_skip;
             uint32_t            top_skip;
-            uint32_t            h_pos;          // used by multicolumn support only
-            uint32_t            v_pos;          // used by multicolumn support only
+            uint32_t            h_pos;      // used by multicolumn support only
+            uint32_t            v_pos;      // used by multicolumn support only
     union {
             binclude_element    binc;
             dbox_element        dbox;

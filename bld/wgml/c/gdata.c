@@ -199,7 +199,6 @@ void init_global_vars( void )
 
     lay_files           = NULL;         // filename(s) from ( LAYout option
 
-    eol_index           = NULL;
     eol_ix_pool         = NULL;
     index_dict          = NULL;
 
