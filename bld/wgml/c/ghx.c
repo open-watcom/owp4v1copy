@@ -204,14 +204,14 @@ void gen_heading( char * h_text, char * id, hdsrc hn_lvl, hdsrc hds_lvl )
     } else {
         prefix = hd_nums[hn_lvl].hnumstr;
         headlen = strlen( hd_nums[hn_lvl].hnumstr ) + strlen( h_text ) + 2;
-    }
-    headp = (char *) mem_alloc( headlen );
-    if( (hds_lvl < hds_abstract) &&
-            (layout_work.hx.hx_head[hds_lvl].number_form != num_none) ) {
-        strcpy_s( headp, headlen, prefix );     // numbered header
-        strcat_s( headp, headlen, " " );
-    } else {
-        *headp = '\0';
+        headp = (char *) mem_alloc( headlen );
+        if( (hds_lvl < hds_abstract) &&
+                (layout_work.hx.hx_head[hds_lvl].number_form != num_none) ) {
+            strcpy_s( headp, headlen, prefix );     // numbered header
+            strcat_s( headp, headlen, " " );
+        } else {
+            *headp = '\0';
+        }
     }
     strcat_s( headp, headlen, h_text );
 
