@@ -36,6 +36,7 @@
 #include    "wgml.h"
 #include    "gvars.h"
 
+static  bool        ddhd_done       = false;
 static  bool        dl_gl_starting  = false;
 static  bool        dl_gl_first     = false;
 static  uint8_t     dl_cur_level    = 1;    // current DL list level
@@ -1202,10 +1203,8 @@ void gml_dthd( const gmltag * entry )
 
     if( dl_gl_starting ) {              // first :dthd for this list
         set_skip_vars( &nest_cb->dl_layout->pre_skip, NULL, NULL, spacing, g_curr_font );
-    } else if( !nest_cb->compact && !dl_gl_first ) {
+    } else {                            // internal :dthd
         set_skip_vars( &nest_cb->dl_layout->skip, NULL, NULL, spacing, g_curr_font );
-    } else {                            // compact
-        set_skip_vars( NULL, NULL, NULL, 1, g_curr_font );
     }
 
     ProcFlags.keep_left_margin = true;  // keep special Note indent
@@ -1276,7 +1275,9 @@ void gml_ddhd( const gmltag * entry )
         ProcFlags.dd_space = true;
     }
 
-    if( *p == '.' ) p++;                // possible tag end
+    ddhd_done = true;   // override compact if DT follows
+
+    if( *p == '.' ) p++;                // skip tag end
     while( *p == ' ' ) p++;             // skip initial spaces
     if( *p ) {
         process_text( p, g_curr_font ); // if text follows
@@ -1325,12 +1326,13 @@ void gml_dt( const gmltag * entry )
 
     if( dl_gl_starting ) {              // first :dd for this list
         set_skip_vars( &nest_cb->dl_layout->pre_skip, NULL, NULL, spacing, g_curr_font );
-    } else if( !nest_cb->compact && !dl_gl_first ) {
+    } else if( (!nest_cb->compact && !dl_gl_first) || ddhd_done ) {
         set_skip_vars( &nest_cb->dl_layout->skip, NULL, NULL, spacing, g_curr_font );
     } else {                            // compact
         set_skip_vars( NULL, NULL, NULL, 1, g_curr_font );
     }
 
+    ddhd_done = false;                  // cancel override
     ProcFlags.keep_left_margin = true;  // keep special Note indent
     ju_x_start = t_page.cur_width;
 
