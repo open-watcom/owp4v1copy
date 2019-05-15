@@ -27,14 +27,20 @@
 * Description:  define and initialize global variables for wgml
 *
 ****************************************************************************/
+
 #include    "wgml.h"
-#include    "findfile.h"
-
-#define global                          // allocate storage for global vars
-#define tag_strings                     // initialize tag names as strings
-#include    "gvars.h"
-
 #include    "swchar.h"
+
+#define global              // allocate storage for global vars
+#define tag_strings         // initialize tag names as strings
+#include "gvars.h"
+
+#define global
+#include "copfiles.h"       // allocate storage for global vars
+
+#define global
+#include "findfile.h"       // allocate storage for global vars
+
 
 /***************************************************************************/
 /*  Init some global variables                                             */

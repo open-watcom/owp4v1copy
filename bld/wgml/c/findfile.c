@@ -52,6 +52,7 @@
 #include "wgml.h"
 #include "copdir.h"
 #include "gvars.h"
+#include "findfile.h"
 
 #if 0
 /* This macro is retained in case search_file_in_dirs() is ever extended to accept
@@ -84,11 +85,6 @@ static  directory_list  cur_dir_list;
 static  directory_list  gml_lib_dirs;
 static  directory_list  gml_inc_dirs;
 static  directory_list  path_dirs;
-
-/* Define the global variables. */
-
-#define global
-#include "findfile.h"
 
 /* Local function definitions. */
 

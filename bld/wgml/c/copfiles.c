@@ -64,10 +64,6 @@
 
 #include <math.h>
 #include <time.h>
-
-#define global
-#include "copfiles.h"   // ensures globals are allocated
-
 #include "wgml.h"
 #include "copdev.h"
 #include "copdrv.h"
