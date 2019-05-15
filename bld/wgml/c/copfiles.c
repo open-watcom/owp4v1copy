@@ -61,13 +61,12 @@
 ****************************************************************************/
 
 #define __STDC_WANT_LIB_EXT1__ 1
+
 #include <math.h>
-#include <stdlib.h>
 #include <time.h>
 
 #define global
 #include "copfiles.h"   // ensures globals are allocated
-#undef  global
 
 #include "wgml.h"
 #include "copdev.h"

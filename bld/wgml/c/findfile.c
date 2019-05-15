@@ -47,11 +47,8 @@
 ****************************************************************************/
 
 #define __STDC_WANT_LIB_EXT1__ 1
-#include <errno.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
 
+#include <errno.h>
 #include "wgml.h"
 #include "copdir.h"
 #include "gvars.h"
@@ -382,7 +379,7 @@ static int try_open( char * prefix, char * filename )
         if( erc == 0 ) {
             break;
         }
-#else       // DOS, OS/2, Windows        
+#else       // DOS, OS/2, Windows
         if( erc == 0 ) {
             strlwr( buff );             // to match wgml 4.0
             break;

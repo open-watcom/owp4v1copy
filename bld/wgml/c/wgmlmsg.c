@@ -35,15 +35,12 @@
 
 #define __STDC_WANT_LIB_EXT1__  1      /* use safer C library              */
 
-#include <unistd.h>
 #include "wresall.h"
 #include "layer0.h"
 #include "global.h"
 #include "iortns.h"
 
 #include "wgml.h"
-
-
 #include "wreslang.h"
 #include "rcmem.h"
 

@@ -656,6 +656,7 @@ extern  const   lay_att     banregion_att[12];
 
 /* Reset so can be reused with other headers. */
 #undef global
+#undef tag_strings
 
 #endif  /* GVARS_H_INCLUDED */
 

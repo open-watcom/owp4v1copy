@@ -33,8 +33,6 @@
 #define global                          // allocate storage for global vars
 #define tag_strings                     // initialize tag names as strings
 #include    "gvars.h"
-#undef  global
-#undef tag_strings
 
 #include    "swchar.h"
 

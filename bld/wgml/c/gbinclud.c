@@ -27,8 +27,8 @@
 * Description:  WGML tag :BINCLUDE processing
 *
 ****************************************************************************/
+
 #define __STDC_WANT_LIB_EXT1__  1
-#include <string.h>
 
 #include    "wgml.h"
 #include    "findfile.h"
@@ -115,7 +115,7 @@ void    gml_binclude( const gmltag * entry )
                 }
                 if( ProcFlags.tag_end_found ) {
                     break;
-                }   
+                }
             } else if( !strnicmp( "reposition", p, 10 ) ) {
                 p += 10;
                 p = get_att_value( p );
@@ -153,7 +153,7 @@ void    gml_binclude( const gmltag * entry )
         } else {
             set_skip_vars( NULL, NULL, NULL, 1, g_curr_font );
             if( reposition && depth ) {                 // otherwise, element depth will be "0"
-                cur_el = init_doc_el( el_binc, depth ); 
+                cur_el = init_doc_el( el_binc, depth );
             } else {
                 cur_el = init_doc_el( el_binc, 0 );
             }

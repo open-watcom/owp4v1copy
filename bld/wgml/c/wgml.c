@@ -37,8 +37,6 @@
 
 #define __STDC_WANT_LIB_EXT1__  1       /* use safer C library             */
 
-#include <unistd.h>
-
 #include "wgml.h"
 #include "findfile.h"
 #include "gvars.h"
@@ -389,7 +387,7 @@ static  bool    test_comment( void )
 {
 
     if( *buff2 == SCR_char ) {          // test for .*  .cm
-        if( (*(buff2 + 1) == '*') || 
+        if( (*(buff2 + 1) == '*') ||
             ((tolower( *(buff2 + 1) ) == 'c') &&
              (tolower( *(buff2 + 2) ) == 'm') &&
              (*(buff2+3) == ' ')) ) {

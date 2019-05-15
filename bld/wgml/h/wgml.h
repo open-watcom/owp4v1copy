@@ -35,6 +35,7 @@
     #define __STDC_WANT_LIB_EXT1__  1   /* use safer C library             */
 #endif
 
+#include <stddef.h>
 #include <stdio.h>
 #include <setjmp.h>
 #include <string.h>
@@ -43,8 +44,14 @@
 #include <stdbool.h>
 #include <ctype.h>
 #include <limits.h>
+#if defined( __WATCOMC__ ) || !defined( __UNIX__ )
 #include <process.h>
-
+#endif
+#if defined( __WATCOMC__ ) || defined( __UNIX__ )
+    #include <unistd.h>
+#else
+    #include <io.h>
+#endif
 
 #include "copfiles.h"       // mostly for access to bin_device & wgml_fonts
 #include "gtype.h"

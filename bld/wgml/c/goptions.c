@@ -28,12 +28,12 @@
 *               several options are still ignored                 TBD
 ****************************************************************************/
 
+
+#include <fcntl.h>
 #include "wgml.h"
 #include "findfile.h"
 #include "gvars.h"
 
-#include <unistd.h>
-#include <fcntl.h>
 
 #define str( a ) # a
 

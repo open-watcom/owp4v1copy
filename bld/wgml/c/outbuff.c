@@ -57,14 +57,9 @@
 ****************************************************************************/
 
 #define __STDC_WANT_LIB_EXT1__ 1
+
 #include <ctype.h>
 #include <errno.h>
-#include <stdbool.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
-
 #include "wgml.h"
 #include "devfuncs.h"
 #include "findfile.h"
