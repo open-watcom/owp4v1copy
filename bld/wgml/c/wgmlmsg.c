@@ -35,14 +35,10 @@
 
 #define __STDC_WANT_LIB_EXT1__  1      /* use safer C library              */
 
-#include "wresall.h"
-#include "layer0.h"
-#include "global.h"
-#include "iortns.h"
-
+#include <fcntl.h>
 #include "wgml.h"
+#include "wressetr.h"
 #include "wreslang.h"
-#include "rcmem.h"
 
 #if defined( __WATCOMC__ )
 #pragma enable_message( 128 );
@@ -60,7 +56,7 @@ static unsigned MsgShift;               // 0 = english, 1000 for japanese
 /***************************************************************************/
 
 static off_t WGMLResSeek( int handle, off_t position, int where )
-/***********************************************************/
+/***************************************************************/
 /* Workaround wres bug */
 {
     if( ( where == SEEK_SET ) && ( handle == WGMLItself ) ) {
@@ -70,47 +66,44 @@ static off_t WGMLResSeek( int handle, off_t position, int where )
     }
 }
 
-
+WResSetRtns( open, close, read, write, WGMLResSeek, tell, mem_alloc, mem_free );
 
 /***************************************************************************/
 /*  initialize messages from resource file                                 */
 /***************************************************************************/
 
-int init_msgs( void )
+bool init_msgs( void )
 {
-    int         error;
+    bool        error;
     char        fname[_MAX_PATH];
 
-    error = FALSE;
+    error = false;
     if( _cmdname( fname ) == NULL ) {
-        error = TRUE;
+        error = true;
     } else {
         Instance.filename = fname;
-
-        WResRtns.seek = WGMLResSeek;
-        WResRtns.alloc = mem_alloc;
-        WResRtns.free = mem_free;
-
         OpenResFile( &Instance );
         WGMLItself = Instance.handle;
-        if( Instance.handle == -1 ) error = TRUE;
+        if( Instance.handle == -1 )
+            error = true;
         if( !error ) {
-            error = FindResources( &Instance );
+            error = ( FindResources( &Instance ) != 0 );
         }
         if( !error ) {
-            error = InitResources( &Instance );
+            error = ( InitResources( &Instance ) != 0 );
         }
         MsgShift = WResLanguage() * MSG_LANG_SPACING;
         if( !error && !get_msg( ERR_DUMMY, fname, sizeof( fname ) ) ) {
-            error = TRUE;
+            error = true;
         }
     }
     if( error ) {
-        if( Instance.handle != -1 ) CloseResFile( &Instance );
+        if( Instance.handle != -1 )
+            CloseResFile( &Instance );
         out_msg( "Resources not found\n" );
         g_suicide();
     }
-    return( 1 );
+    return( true );
 }
 
 
@@ -118,13 +111,13 @@ int init_msgs( void )
 /*  get a msg text string                                                  */
 /***************************************************************************/
 
-int get_msg( msg_ids resid, char *buff, unsigned buff_len )
+bool get_msg( msg_ids resid, char *buff, size_t buff_len )
 {
-    if( WResLoadString( &Instance, resid + MsgShift, buff, buff_len ) != 0 ) {
+    if( WResLoadString( &Instance, resid + MsgShift, buff, (int)buff_len ) != 0 ) {
         buff[0] = '\0';
-        return( 0 );
+        return( false );
     }
-    return( 1 );
+    return( true );
 }
 
 /***************************************************************************/

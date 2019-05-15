@@ -29,12 +29,11 @@ wgml_trmem = 1
 !include ../wgmlobjs.mif
 
 
-inc_dirs = -I. -I"../h" -I"$(wres_dir)/h" -I"$(wrc_dir)/h"
+inc_dirs = -I. -I"../h"
 
 res_depends = wgml.res  wgmlmsgs.gh wgmlmsge.gh
-#inc_dirs    += -I"$(wrc_dir)/$(host_os)$(host_cpu)"
 
-.c: ../c;../../watcom/c;$(trmem_dir);$(wrc_dir)/c;$(wres_dir)/c
+.c: ../c;../../watcom/c;$(trmem_dir)
 
 extra_rc_flags_os2 = -D__OS2__
 extra_rc_flags_nt  = -D__NT__
