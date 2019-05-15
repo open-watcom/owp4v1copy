@@ -30,7 +30,6 @@
 
 
 #ifndef GVARS_H_INCLUDED
-#define GVARS_H_INCLUDED
 
 #include <setjmp.h>
 #include <time.h>
@@ -162,6 +161,11 @@ typedef struct proc_flags {
 #if defined( __WATCOMC__ )
 #pragma enable_message( 128 ); // reenable: Warning! W128: 3 padding byte(s) added
 #endif
+
+#endif  /* GVARS_H_INCLUDED */
+
+#if !defined( GVARS_H_INCLUDED ) || defined( global )
+#define GVARS_H_INCLUDED
 
 #ifndef global
     #define global  extern

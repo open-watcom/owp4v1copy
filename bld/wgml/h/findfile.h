@@ -34,8 +34,7 @@
 *
 ****************************************************************************/
 
-#ifndef FINDFILE_H_INCLUDED
-#define FINDFILE_H_INCLUDED
+#if !defined( FINDFILE_H_INCLUDED ) || defined( global )
 
 #include <stdio.h>
 
@@ -55,6 +54,11 @@ global  FILE    *   try_fp;
 /* Reset so can be reused with other headers. */
 
 #undef global
+
+#endif
+
+#ifndef FINDFILE_H_INCLUDED
+#define FINDFILE_H_INCLUDED
 
 /* Extern enum declaration. */
 

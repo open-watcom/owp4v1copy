@@ -76,7 +76,6 @@
 ****************************************************************************/
 
 #ifndef COPFILE_H_INCLUDED
-#define COPFILE_H_INCLUDED
 
 #include <stdbool.h>
 #include <stddef.h>
@@ -557,6 +556,10 @@ typedef struct {
     char                    shift_height[4];
 } wgml_font;
 
+#endif  /* COPFILE_H_INCLUDED */
+
+#if !defined( COPFILE_H_INCLUDED ) || defined( global )
+#define COPFILE_H_INCLUDED
 
 /* Variable declarations. */
 
