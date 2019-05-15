@@ -27,14 +27,15 @@
 * Description:  WGML processing :DATE tag
 *
 ****************************************************************************/
+
+
 #include    "wgml.h"
-#include    "gvars.h"
- 
- 
+
+
 /***************************************************************************/
 /*  :DATE.date   tag                                                       */
 /***************************************************************************/
- 
+
 void    gml_date( const gmltag * entry )
 {
     char        *   p;
@@ -62,17 +63,17 @@ void    gml_date( const gmltag * entry )
     }
 
     if( *p ) { // date specified
-        if( GlobalFlags.firstpass  ) { 
+        if( GlobalFlags.firstpass  ) {
             add_symvar( &global_dict, "date", p, no_subscript, 0 );
         }
     } else {
         rc = find_symvar( &sys_dict, "$date", no_subscript, &dateval );
         p = dateval->value;
     }
- 
+
     scr_process_break();
     start_doc_sect();                       // if not already done
- 
+
     font_save = g_curr_font;
     g_curr_font = layout_work.date.font;
     spacing = layout_work.titlep.spacing;
@@ -83,7 +84,7 @@ void    gml_date( const gmltag * entry )
     /************************************************************/
 
     set_skip_vars( NULL, &layout_work.date.pre_skip, NULL, spacing, g_curr_font );
- 
+
     left_indent = conv_hor_unit( &layout_work.date.left_adjust, g_curr_font );
     right_indent = conv_hor_unit( &layout_work.date.right_adjust, g_curr_font );
 

@@ -27,8 +27,10 @@
 * Description:  WGML tags :HDREF :FIGREF :FNREF processing
 *
 ****************************************************************************/
+
+
 #include    "wgml.h"
-#include    "gvars.h"
+
 
 static  bool    ref_page        = false;
 static  bool    page_found      = false;
@@ -40,7 +42,7 @@ static  char    refid[ID_LEN];
 /***************************************************************************/
 
 static char * get_ref_attributes( void )
-{ 
+{
     char        *   p;
     char        *   pa;
 
@@ -111,12 +113,12 @@ static char * get_ref_attributes( void )
 /***************************************************************************/
 
 void gml_figref( const gmltag * entry )
-{ 
+{
     bool            do_page     =   false;  // default for fwd refs w/no "page" attribute
     char            buffer[11];
     char        *   p;
     char        *   ref_text;
-    ref_entry   *   cur_re;  
+    ref_entry   *   cur_re;
     size_t          bu_len;
     size_t          len;
 
@@ -152,9 +154,9 @@ void gml_figref( const gmltag * entry )
             strcpy( ref_text, def_ref );
         }
     } else {
-        len = strlen( cur_re->entry->prefix );        
+        len = strlen( cur_re->entry->prefix );
         if( do_page ) {
-            format_num( cur_re->entry->pageno, &buffer, sizeof( buffer ), 
+            format_num( cur_re->entry->pageno, &buffer, sizeof( buffer ),
                         cur_re->entry->style );
             bu_len = strlen( buffer );
             ref_text = (char *) mem_alloc( len + op_len + bu_len  + 1 );
@@ -252,7 +254,7 @@ void gml_hdref( const gmltag * entry )
     } else {
         len = strlen( cur_re->entry->text ) + 2;        // allow for quote chars
         if( do_page ) {
-            format_num( cur_re->entry->pageno, &buffer, sizeof( buffer ), 
+            format_num( cur_re->entry->pageno, &buffer, sizeof( buffer ),
                         cur_re->entry->style );
             bu_len = strlen( buffer );
             len += (op_len + bu_len );
@@ -305,10 +307,10 @@ void gml_hdref( const gmltag * entry )
 /***************************************************************************/
 
 void gml_fnref( const gmltag * entry )
-{ 
+{
     char            buffer[11];
     char        *   p;
-    ref_entry   *   cur_re;  
+    ref_entry   *   cur_re;
 
     p = get_ref_attributes();
 
@@ -323,12 +325,12 @@ void gml_fnref( const gmltag * entry )
 
     cur_re = find_refid( fn_ref_dict, refid );
     if( cur_re == NULL ) {              // undefined refid
-        process_text( "(XX)", g_curr_font ); 
+        process_text( "(XX)", g_curr_font );
     } else {
         format_num( cur_re->entry->number, &buffer, sizeof( buffer ),
                     layout_work.fnref.number_style );
         input_cbs->fmflags &= ~II_eol;
-        process_text( &buffer, layout_work.fnref.font ); 
+        process_text( &buffer, layout_work.fnref.font );
     }
 
     if( !ProcFlags.reprocess_line && *p ) {

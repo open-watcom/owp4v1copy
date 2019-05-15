@@ -30,8 +30,10 @@
 * These tags all begin/end some form of inline phrase
 *
 ****************************************************************************/
+
+
 #include    "wgml.h"
-#include    "gvars.h"
+
 
 static  char    *       double_q    = "\""; // string for output of '"'
 static  char    *       single_q    = "'";  // string for output of "'"
@@ -179,10 +181,10 @@ static void gml_e_inlne_common( const gmltag * entry, e_tags t )
         }
     } else {
         if( nest_cb->prev->font == tt_font ) {    // returning to second stack entry
-            tt_stack = nest_cb->prev;             // set tt_stack 
+            tt_stack = nest_cb->prev;             // set tt_stack
         }
         if( nest_cb == tt_stack ) {         // closing second stack entry
-            tt_stack = NULL;                // clear tt_stack 
+            tt_stack = NULL;                // clear tt_stack
         }
         nest_cb->prev->left_indent = nest_cb->left_indent;
         nest_cb->prev->right_indent = nest_cb->right_indent;

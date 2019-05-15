@@ -27,8 +27,10 @@
 * Description:  WGML tags :XMP and :eXMP and helper functions
 *
 ****************************************************************************/
+
+
 #include    "wgml.h"
-#include    "gvars.h"
+
 
 static  bool        concat_save;            // for ProcFlags.concat
 static  bool        first_xline;            // special for first xmp LINE

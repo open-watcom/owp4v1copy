@@ -26,7 +26,7 @@
 *
 * Description:  WGML tags :H0 :H1 :H2 :H3 :H4 :H5 :H6 processing
 *
-*           These tag :Hn attributes are not used in the OW docs and so 
+*           These tag :Hn attributes are not used in the OW docs and so
 *               are not implemented:
 *                   align
 *                   stitle
@@ -40,8 +40,9 @@
 /*  this allows hds_appendix values to set heading numbers for hn_lvl "1"  */
 /***************************************************************************/
 
+
 #include    "wgml.h"
-#include    "gvars.h"
+
 
 /***************************************************************************/
 /*  construct Header numbers  1.2.3.V ...                                  */
@@ -135,14 +136,14 @@ static void hx_header( char * h_num, char * h_text, hdsrc hn_lvl, hdsrc hds_lvl 
         ProcFlags.keep_left_margin = true;  // keep left margin
         if( (hds_lvl < hds_abstract) && (layout_work.hx.hx_head[hds_lvl].number_form != none) ) {
             ProcFlags.as_text_line = true;      // treat as <text_line>
-            process_text( h_num, layout_work.hx.hx_head[hds_lvl].number_font );        
+            process_text( h_num, layout_work.hx.hx_head[hds_lvl].number_font );
             post_space /= wgml_fonts[layout_work.hx.hx_head[hds_lvl].number_font].spc_width;     // rescale post_space to correct font
             post_space *= wgml_fonts[layout_work.hx.hx_sect[hds_lvl].text_font].spc_width;
         }
 
         if( (h_text != NULL) && (*h_text != '\0') ) {
             ProcFlags.as_text_line = true;      // treat as <text_line>
-            process_text( h_text, layout_work.hx.hx_sect[hds_lvl].text_font );        
+            process_text( h_text, layout_work.hx.hx_sect[hds_lvl].text_font );
         }
     }
 }
@@ -278,7 +279,7 @@ void gen_heading( char * h_text, char * id, hdsrc hn_lvl, hdsrc hds_lvl )
         /***********************************************************************/
         /* id is ambiguous, which may be confusing                             */
         /* for Hn, it is a local variable, and starts with '\0' when empty     */
-        /* for document sections, it is NULL, as it has no meaning for them    */ 
+        /* for document sections, it is NULL, as it has no meaning for them    */
         /***********************************************************************/
 
         if( (id != NULL) && *id ) {             // add this entry to fig_ref_dict
@@ -415,7 +416,7 @@ void gen_heading( char * h_text, char * id, hdsrc hn_lvl, hdsrc hds_lvl )
                 if( ((page_diff + t_page.cur_depth) > t_page.max_depth) ||
                         ((hx_depth + t_page.cur_depth) > t_page.max_depth) ) {
                     next_column();
-                    if( t_page.last_pane->cur_col == 0 ) {  // on new page 
+                    if( t_page.last_pane->cur_col == 0 ) {  // on new page
                         ProcFlags.page_ejected = true;
                     }
                 }
@@ -555,7 +556,7 @@ void gen_heading( char * h_text, char * id, hdsrc hn_lvl, hdsrc hds_lvl )
         strcpy_s( t_page.topheadsub->value, strlen( h_text ) + 1, h_text );
         ProcFlags.tophead_done = true;  // will be reset when page output
     }
-    
+
     /* Reset $BOTHEADx */
 
     if( strlen( t_page.botheadsub->value ) < strlen( h_text ) ) {     // need more room
@@ -590,7 +591,7 @@ static void gml_hx_common( const gmltag * entry, hdsrc hn_lvl )
 
     hxstr[2] = '0' + hn_lvl;
 
-    scr_process_break();                    // commit any prior text 
+    scr_process_break();                    // commit any prior text
     start_doc_sect();                       // in case not already done
 
     id[0] = '\0';                           // null string if no id found

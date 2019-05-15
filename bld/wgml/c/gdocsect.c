@@ -28,8 +28,10 @@
 *                    :GDOC, :FRONTM, :BODY, ...
 *               and special for :FIGLIST :INDEX :TOC tags
 ****************************************************************************/
+
+
 #include    "wgml.h"
-#include    "gvars.h"
+
 
 #define CHAR_FRAME_LEN 5    // works for monospaced fonts with char width 1
 
@@ -209,7 +211,7 @@ static void figlist_toc_tabs( char * fill, uint32_t size, bool setup )
         user_tabs.current = 0;
     }
 
-    return;    
+    return;
 }
 
 /***************************************************************************/
@@ -437,7 +439,7 @@ static void gen_ref_list( ix_e_blk * refs, font_number font )
             break;
         case pgsee :
             if( cur_ref->prt_text != NULL ) {
-                process_text( cur_ref->prt_text, g_curr_font );           
+                process_text( cur_ref->prt_text, g_curr_font );
             } else if( cur_ref->page_text_len > 0 ) {  // if not null string
                 process_text( cur_ref->page_text, g_curr_font );
             }
@@ -474,7 +476,7 @@ static void gen_see_list( ix_e_blk * refs, font_number font, uint32_t level,
             process_text( layout_work.index.see_string, font );
         }
         if( cur_ref->prt_text != NULL ) {
-            process_text( cur_ref->prt_text, g_curr_font );           
+            process_text( cur_ref->prt_text, g_curr_font );
         } else if( cur_ref->page_text_len > 0 ) {  // if not null string
             process_text( cur_ref->page_text, g_curr_font );
         }
@@ -496,7 +498,7 @@ static void gen_all_refs( entry_list * entry, uint32_t level, bool has_sub )
     if( entry->major_pgnum != NULL ) {  // first the numeric major references
         gen_ref_list( entry->major_pgnum, layout_work.ixmajor.font );
     }
-    
+
     if( entry->major_string != NULL ) { // then the string major references
         gen_ref_list( entry->major_string, layout_work.ixmajor.font );
     }
@@ -639,7 +641,7 @@ static void gen_index( void )
 
     /* No index is output without an index_dict or before the last pass */
 
-    if( !GlobalFlags.lastpass || (index_dict == NULL) ) return; 
+    if( !GlobalFlags.lastpass || (index_dict == NULL) ) return;
 
     in_trans_sav = ProcFlags.in_trans;
     ProcFlags.in_trans = false;         // turn off input translation
@@ -655,7 +657,7 @@ static void gen_index( void )
                 frame_line_1[frame_line_len - 1 ] = bin_device->box.top_right;
                 frame_line_2[0] = bin_device->box.vertical_line;
                 memset( &frame_line_2[1], ' ', frame_line_len - 2 );
-                frame_line_2[frame_line_len - 1 ] = bin_device->box.vertical_line;               
+                frame_line_2[frame_line_len - 1 ] = bin_device->box.vertical_line;
                 memset( &frame_line_3[1], bin_device->box.horizontal_line,
                         frame_line_len - 2 );
                 frame_line_3[0] = bin_device->box.bottom_left;
@@ -740,7 +742,7 @@ static void gen_index( void )
 
             /* Set g_subs_skip for IXHEAD */
 
-            set_skip_vars( &layout_work.ixhead.pre_skip, NULL, NULL, spacing, 
+            set_skip_vars( &layout_work.ixhead.pre_skip, NULL, NULL, spacing,
                            layout_work.ixhead.font );
 
             /* Generate IXHEAD heading */
@@ -790,7 +792,7 @@ static void gen_index( void )
 
             /* Set g_post_skip for IXHEAD */
 
-            set_skip_vars( NULL, NULL, &layout_work.ixhead.post_skip, spacing, 
+            set_skip_vars( NULL, NULL, &layout_work.ixhead.post_skip, spacing,
                            layout_work.ixhead.font );
             g_subs_skip += g_post_skip;     // added, not combined
             g_post_skip = 0;
@@ -821,8 +823,8 @@ static void gen_index( void )
         if( ixh1->entry != NULL ) {
             post_space = 0;
             if( (ixh1->entry->major_pgnum != NULL) ||
-                    (ixh1->entry->major_string != NULL) || 
-                    (ixh1->entry->normal_pgnum != NULL) || 
+                    (ixh1->entry->major_string != NULL) ||
+                    (ixh1->entry->normal_pgnum != NULL) ||
                     (ixh1->entry->normal_string != NULL) ) {    // see_string alone doesn't need the index_delim
                 process_text( layout_work.ix[0].index_delim, layout_work.ix[0].font );
             }
@@ -858,8 +860,8 @@ static void gen_index( void )
             if( ixh2->entry != NULL ) {
                 post_space = 0;
                 if( (ixh2->entry->major_pgnum != NULL) ||
-                        (ixh2->entry->major_string != NULL) || 
-                        (ixh2->entry->normal_pgnum != NULL) || 
+                        (ixh2->entry->major_string != NULL) ||
+                        (ixh2->entry->normal_pgnum != NULL) ||
                         (ixh2->entry->normal_string != NULL) ) {    // see_string alone doesn't need the index_delim
                     process_text( layout_work.ix[1].index_delim, layout_work.ix[1].font );
                 }
@@ -895,8 +897,8 @@ static void gen_index( void )
                 if( ixh3->entry != NULL ) {
                     post_space = 0;
                     if( (ixh3->entry->major_pgnum != NULL) ||
-                            (ixh3->entry->major_string != NULL) || 
-                            (ixh3->entry->normal_pgnum != NULL) || 
+                            (ixh3->entry->major_string != NULL) ||
+                            (ixh3->entry->normal_pgnum != NULL) ||
                             (ixh3->entry->normal_string != NULL) ) {    // see_string alone doesn't need the index_delim
                         process_text( layout_work.ix[2].index_delim, layout_work.ix[2].font );
                     }
@@ -952,7 +954,7 @@ static void gen_toc( void )
     reset_t_page();
 
     /* Set TOC margins and other values */
-    
+
     t_page.cur_left = 2 * conv_hor_unit( &layout_work.toc.left_adjust, g_curr_font );    // matches wgml 4.0
     t_page.max_width = t_page.page_width -
                    conv_hor_unit( &layout_work.toc.right_adjust, g_curr_font );
@@ -987,7 +989,7 @@ static void gen_toc( void )
         for( i = 0; i < 7; i++ ) {
             if( i > cur_level ) {       // all lower levels are inactive
                 levels[i] = false;
-            }                
+            }
         }
         if( cur_level < layout_work.toc.toc_levels ) {
             g_curr_font = layout_work.tochx[cur_level].font;
@@ -1161,7 +1163,7 @@ void start_doc_sect( void )
         do_layout_end_processing();
     }
 
-    scr_process_break();                // commit any prior text 
+    scr_process_break();                // commit any prior text
 
     first_section = (ProcFlags.doc_sect == doc_sect_none);
 
@@ -1308,7 +1310,7 @@ void start_doc_sect( void )
         full_col_out();                 // ensure are in last column
         ProcFlags.page_ejected = false; // this would be a good place to add a pane
         set_section_banners( ds );      // since the section begins mid-page
-        reset_bot_ban();    
+        reset_bot_ban();
     } else {
         last_page_out();                // ensure last page output
         ProcFlags.page_ejected = true;  // only first section has nothing to output
@@ -1494,7 +1496,7 @@ extern void gml_figlist( const gmltag * entry )
 {
     scr_process_break();
     figlist_toc |= gs_figlist;
-    if( pass > 1 ) { 
+    if( pass > 1 ) {
         gen_figlist();
     }
 }
@@ -1625,7 +1627,7 @@ extern void gml_toc( const gmltag * entry )
 {
     scr_process_break();
     figlist_toc |= gs_toc;
-    if( pass > 1 ) { 
+    if( pass > 1 ) {
         gen_toc();
     }
 }
@@ -1633,7 +1635,7 @@ extern void gml_toc( const gmltag * entry )
 extern void gml_egdoc( const gmltag * entry )
 {
     fwd_ref *   curr;
-    
+
     if( blank_lines > 0 ) {
         set_skip_vars( NULL, NULL, NULL, 0, 0 );    // set g_blank_lines
     }
@@ -1675,7 +1677,7 @@ extern void gml_egdoc( const gmltag * entry )
                 curr = curr->next;
             }
             if( figlist_toc ) {
-                xx_simple_warn( wng_pass_1 );   // more than one pass needed 
+                xx_simple_warn( wng_pass_1 );   // more than one pass needed
             }
         } else {                                // last pass of at least 2
             curr = fig_fwd_refs;

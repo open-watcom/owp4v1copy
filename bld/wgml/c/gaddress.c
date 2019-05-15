@@ -28,8 +28,10 @@
 *                    with helper functions
 *
 ****************************************************************************/
+
+
 #include    "wgml.h"
-#include    "gvars.h"
+
 
 static  bool            first_aline;    // special for first :ALINE
 static  font_number     font_save;      // save for font
@@ -114,14 +116,14 @@ void gml_eaddress( const gmltag * entry )
         scr_process_break();                    // commit any existing text
         if( first_aline ) {                     // empty ADDRESS block: no ALINEs
             set_skip_vars( NULL, NULL, NULL, spacing, g_curr_font);
-            g_subs_skip = 0;                    // matches wgml 4.0 
+            g_subs_skip = 0;                    // matches wgml 4.0
             t_element = init_doc_el( el_text, wgml_fonts[g_curr_font].line_height );
             t_element->element.text.first = alloc_text_line();
             t_element->element.text.first->line_height = wgml_fonts[g_curr_font].line_height;
             t_element->element.text.first->first = NULL;
             insert_col_main( t_element );
             t_element = NULL;
-            t_el_last = NULL;        
+            t_el_last = NULL;
         }
 
         if( cur_doc_el_group->first != NULL ) {

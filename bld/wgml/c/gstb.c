@@ -29,8 +29,10 @@
 *               fill strings are not implemented; fill chars are
 *
 ****************************************************************************/
+
+
 #include    "wgml.h"
-#include    "gvars.h"
+
 
 /***************************************************************************/
 /* TAB defines tab-stop positions for subsequent output lines, or a user-  */
@@ -211,7 +213,7 @@ void    scr_tb( void )
                     xx_line_err( err_right_delim, pa );
                     continue;
                 }
-                    
+
                 /* fill strings are not allowed -- yet */
 
                 if( ((quote == ' ') && (*p == '/')) ||
@@ -255,7 +257,7 @@ void    scr_tb( void )
             if( *p && (p > pa) ) {              // as needed by getnum
                 p--;                            // *p is last character of tab stop
             }
-            while( (p != pa) && !isdigit( *p ) ) { // back up over alignment 
+            while( (p != pa) && !isdigit( *p ) ) { // back up over alignment
                 p--;
             }
             pb = p + 1;
@@ -269,7 +271,7 @@ void    scr_tb( void )
                     relative = true;
                 } else {
                     xx_line_err( err_inv_tab_stop, pa );
-                }                    
+                }
             }
             if( cc == notnum ) {
                 xx_line_err( err_inv_text_before_tab, pa );
@@ -299,7 +301,7 @@ void    scr_tb( void )
                 user_tabs.current++;
             }
 
-            // Parse the alignment 
+            // Parse the alignment
 
             user_tabs.tabs[i].alignment = al_left;
             if( *p && (*p != ' ') ) {           // space ends tab stop
@@ -307,13 +309,13 @@ void    scr_tb( void )
             /* alignment characters are not allowed -- yet */
 
                 pa = p;                         // potential alignment start
-                if( (*p == 'c') || (*p == 'C') ) {                       
+                if( (*p == 'c') || (*p == 'C') ) {
                     user_tabs.tabs[i].alignment = al_center;
                     p++;
-                } else if( (*p == 'l') || (*p == 'L') ) {                       
+                } else if( (*p == 'l') || (*p == 'L') ) {
                     user_tabs.tabs[i].alignment = al_left;
                     p++;
-                } else if( (*p == 'r') || (*p == 'R') ) {                       
+                } else if( (*p == 'r') || (*p == 'R') ) {
                     user_tabs.tabs[i].alignment = al_right;
                     p++;
                 } else if( *p == '\'' ) {       // possible alignment character
@@ -329,7 +331,7 @@ void    scr_tb( void )
                             xx_line_err( err_tab_align_char, pa );
                         } else {                // 'cc with or without more text
                             xx_line_err( err_right_delim, pa );
-                        }                    
+                        }
                     } else {                    // something else
                         xx_line_err( err_inv_text_after_tab, pa );
                     }

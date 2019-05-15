@@ -29,8 +29,9 @@
 *                   interactions are only partially understood/implemented
 *
 ****************************************************************************/
+
+
 #include    "wgml.h"
-#include    "gvars.h"
 
 
 /**************************************************************************/
@@ -157,7 +158,7 @@ static void scr_style_common( style_cw_type type, style_cw_info * cw_info )
             p++;
         }
         pa = p;
-        while( *p && *p != ' ' ) {      // end of token 
+        while( *p && *p != ' ' ) {      // end of token
             p++;
         }
         len = p - pa;
@@ -251,7 +252,7 @@ static void scr_style_common( style_cw_type type, style_cw_info * cw_info )
 
     scan_restart = scan_stop + 1;
     return;
-    
+
 }
 
 void scr_bd( void )
@@ -332,4 +333,4 @@ font_number scr_style_font( font_number in_font )
     }
 
     return( font );
-}    
+}

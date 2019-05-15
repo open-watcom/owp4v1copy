@@ -30,8 +30,10 @@
 *               copy_to_nest_stack   copy input stack to nest stack
 *
 ****************************************************************************/
+
+
 #include    "wgml.h"
-#include    "gvars.h"
+
 
 /***************************************************************************/
 /*  alloc and (partially) initialize a nest_cb                             */

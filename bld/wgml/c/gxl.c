@@ -33,8 +33,10 @@
 * Note: :LIREF is not yet implemented; it might be better placed
 *       with :FIGREF, :FNREF, and :HDREF than here, depending on how it works
 ****************************************************************************/
+
+
 #include    "wgml.h"
-#include    "gvars.h"
+
 
 static  bool        ddhd_done       = false;
 static  bool        dl_gl_starting  = false;
@@ -1258,7 +1260,7 @@ void gml_ddhd( const gmltag * entry )
         ProcFlags.need_gd = false;
     } else {
         xx_nest_err_cc( err_tag_preceding_2, "DTHD", "DDHD" );
-    } 
+    }
 
     p = scan_start;
 
@@ -1385,7 +1387,7 @@ void gml_dd( const gmltag * entry )
         ProcFlags.need_gd = false;
     } else {
         xx_nest_err_cc( err_tag_preceding_2, "DT", "DD" );
-    } 
+    }
 
     p = scan_start;
 
@@ -1516,7 +1518,7 @@ void gml_gd( const gmltag * entry )
     } else {
         xx_nest_err_cc( err_tag_preceding_2, "GT", "GD" );
         ProcFlags.need_gd = false;
-    } 
+    }
 
     p = scan_start;
 

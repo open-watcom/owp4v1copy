@@ -27,14 +27,15 @@
 * Description:  WGML tags :DOCNUM processing
 *
 ****************************************************************************/
+
+
 #include    "wgml.h"
-#include    "gvars.h"
- 
+
 
 /***************************************************************************/
 /*  :docnum.docnum   tag                                                       */
 /***************************************************************************/
- 
+
 void    gml_docnum( const gmltag * entry )
 {
     char        *   buff            = NULL;
@@ -44,8 +45,8 @@ void    gml_docnum( const gmltag * entry )
     size_t          buff_len;
     uint32_t        left_indent;
     uint32_t        right_indent;
- 
- 
+
+
     if( !((ProcFlags.doc_sect == doc_sect_titlep) ||
           (ProcFlags.doc_sect_nxt == doc_sect_titlep)) ) {
         xx_nest_err_cc( err_tag_wrong_sect, entry->tagname, ":TITLEP section" );
@@ -76,7 +77,7 @@ void    gml_docnum( const gmltag * entry )
         add_symvar( &global_dict, "$docnum", p, no_subscript, 0 );
     }
     ProcFlags.docnum_tag_seen = true;
- 
+
     scr_process_break();
     start_doc_sect();                       // if not already done
 
@@ -90,7 +91,7 @@ void    gml_docnum( const gmltag * entry )
     /************************************************************/
 
     set_skip_vars( NULL, &layout_work.docnum.pre_skip, NULL, spacing, g_curr_font );
- 
+
 
     left_indent = conv_hor_unit( &layout_work.docnum.left_adjust, g_curr_font );
     right_indent = conv_hor_unit( &layout_work.docnum.right_adjust, g_curr_font );

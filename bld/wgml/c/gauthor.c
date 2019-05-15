@@ -27,14 +27,15 @@
 * Description:  WGML tags :AUTHOR processing
 *
 ****************************************************************************/
+
+
 #include    "wgml.h"
-#include    "gvars.h"
- 
+
 
 /***************************************************************************/
 /*  :author tag                                                             */
 /***************************************************************************/
- 
+
 void gml_author( const gmltag * entry )
 {
     char        *   p;
@@ -42,7 +43,7 @@ void gml_author( const gmltag * entry )
     page_pos        old_line_pos;
     uint32_t        left_indent;
     uint32_t        right_indent;
- 
+
     if( !((ProcFlags.doc_sect == doc_sect_titlep) ||
           (ProcFlags.doc_sect_nxt == doc_sect_titlep)) ) {
         xx_nest_err_cc( err_tag_wrong_sect, entry->tagname, ":TITLEP section" );
@@ -62,7 +63,7 @@ void gml_author( const gmltag * entry )
         }
         ProcFlags.author_tag_seen = true;
     }
- 
+
     scr_process_break();
     start_doc_sect();                       // if not already done
 
