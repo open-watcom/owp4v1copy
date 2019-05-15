@@ -35,10 +35,6 @@
 #include <setjmp.h>
 #include <time.h>
 
-#ifndef global
-    #define global  extern
-#endif
-
 #include "gtype.h"
 #include "gtypelay.h"
 
@@ -46,92 +42,7 @@
 #pragma enable_message( 128 ); // reenable: Warning! W128: 3 padding byte(s) added
 #endif
 
-global struct tm        doc_tm;         // document time/date
-
-global  jmp_buf     *   environment;    // var for GSuicide()
-
-global  char        *   scan_start;
-global  char        *   scan_stop;
-global  char        *   scan_char_ptr;  // used by character scanning routines
-global  char        *   scan_restart;   // used by character scanning routines
-global  bool            scan_err;       // used by character scanning routines
-global  char        *   tok_start;      // start of scanned token
-global  size_t          arg_flen;       // arg length
-global  char        *   att_start;      // (potential) attribute start
-global  size_t          val_len;        // attribute value length
-global  char        *   val_start;      // attribute value start
-global  char            quote_char;     // value is quoted by this char or \0
-global  locflags        rs_loc;         // restricted location
-
-global  int             switch_char;    // DOS switch character
-global  char        *   alt_ext;        // alternate extension
-global  char        *   def_ext;        // default extension
-
-global  char        *   master_fname;   // Primary input file name
-global  char        *   master_fname_attr;// Primary input file name attributes
-global  ulong           print_from;     // first page to print
-global  ulong           print_to;       // last page to print
-global  char        *   dev_name;       // device defined_name
-global  opt_font    *   opt_fonts;      // option FONT parameters (linked list)
-
-global  inputcb     *   input_cbs;      // GML input stack (files + macros)
-global  fnstack     *   fn_stack;       // input filename stack
-global  char        *   out_file;       // output file name
-global  char        *   out_file_attr;  // output file attributes (T:2222)
-global  unsigned        inc_level;      // include nesting level 1 = MasterFname
-global  unsigned        max_inc_level;  // maximum include level depth
-global  line_number     line_from;      // starting lineno to process
-global  line_number     line_to;        // ending lineno to process
-#define LINEFROM_DEFAULT    1
-#define LINETO_DEFAULT      (0x1000000) // 16 MiB lines should be enough
-
-global  char            gotarget[MAC_NAME_LENGTH +1];   // .go to target name
-global  int32_t         gotargetno;     // .go to line no
-
-global  int             err_count;      // Overall Errorcount
-global  int             wng_count;      // Overall warning count
-
-global  char            GML_char;       // GML Keywword start char (normally ":")
-global  char            SCR_char;       // SCRIPT keywword start char (normally ".")
-global  char            CW_sep_char;    // Control Word separator char (normally ";")
-
-global  int             CPI;            // chars per inch
-global  space_units     CPI_units;      // unit for chars per inch
-global  int             LPI;            // lines per inch
-global  space_units     LPI_units;      // unit for lines per inch
-
-global  su              bind_odd;       // Bind value for odd pages
-
-global  su              bind_even;      // Bind value for even pages
-
-global  int             passes;         // Max no of document passes
-global  int             pass;           // current document pass no
-
-global  uint32_t        apage;          // current absolute pageno &$apage
-global  uint32_t        page;           // current document pageno &$page
-global  line_number     line;           // current output lineno   &$line
-global  int32_t         lcmax;          // remaining lines on page initial
-global  int32_t         lc;             // remaining lines on page &$lc
-
-global  int32_t         hm;             // heading margin          &$hm
-global  int32_t         tm;             // top margin              &$tm
-
-global  int32_t         bm;             // bottom margin           &$bm
-global  int32_t         fm;             // footing margin          &$fm
-
-global  int32_t         lm;             // left margin             &$pagelm
-global  int32_t         rm;             // right margin            &$pagerm
-
-global  symvar      *   global_dict;    // global symbol dictionary
-global  symvar      *   sys_dict;       // global system symbol dictionary
-global  mac_entry   *   macro_dict;     // macro dictionary
-global  gtentry     *   tag_dict;       // user tag dictionary
-
-global  char            research_file_name[48]; // filename for research
-global  line_number     research_from;  // line no start for research output
-global  line_number     research_to;    // line no end   for research output
-
-global  struct GlobalFlags {
+typedef struct global_flags {
     unsigned        quiet         : 1;  // suppress product info
     unsigned        bannerprinted : 1;  // product info shown
     unsigned        wscript       : 1;  // enable WATCOM script extension
@@ -149,9 +60,9 @@ global  struct GlobalFlags {
     unsigned        freed         : 1;
     unsigned        freee         : 1;
     unsigned        research      : 1;  // -r global research mode output
-} GlobalFlags;                          // Global flags
+} global_flags;                         // Global flags
 
-global struct ProcFlags {
+typedef struct proc_flags {
     doc_section     doc_sect;           // which part are we in (FRONTM, BODY, ...
     doc_section     doc_sect_nxt;       // next section (tag already seen)
     unsigned        frontm_seen    : 1; // FRONTM tag seen
@@ -246,11 +157,104 @@ global struct ProcFlags {
 
     ju_enum         justify             : 8;// .ju on half off ...
 
-} ProcFlags;                            // processing flags
+} proc_flags;                           // processing flags
 
 #if defined( __WATCOMC__ )
 #pragma enable_message( 128 ); // reenable: Warning! W128: 3 padding byte(s) added
 #endif
+
+#ifndef global
+    #define global  extern
+#endif
+
+global struct tm        doc_tm;         // document time/date
+
+global  jmp_buf     *   environment;    // var for GSuicide()
+
+global  char        *   scan_start;
+global  char        *   scan_stop;
+global  char        *   scan_char_ptr;  // used by character scanning routines
+global  char        *   scan_restart;   // used by character scanning routines
+global  bool            scan_err;       // used by character scanning routines
+global  char        *   tok_start;      // start of scanned token
+global  size_t          arg_flen;       // arg length
+global  char        *   att_start;      // (potential) attribute start
+global  size_t          val_len;        // attribute value length
+global  char        *   val_start;      // attribute value start
+global  char            quote_char;     // value is quoted by this char or \0
+global  locflags        rs_loc;         // restricted location
+
+global  int             switch_char;    // DOS switch character
+global  char        *   alt_ext;        // alternate extension
+global  char        *   def_ext;        // default extension
+
+global  char        *   master_fname;   // Primary input file name
+global  char        *   master_fname_attr;// Primary input file name attributes
+global  ulong           print_from;     // first page to print
+global  ulong           print_to;       // last page to print
+global  char        *   dev_name;       // device defined_name
+global  opt_font    *   opt_fonts;      // option FONT parameters (linked list)
+
+global  inputcb     *   input_cbs;      // GML input stack (files + macros)
+global  fnstack     *   fn_stack;       // input filename stack
+global  char        *   out_file;       // output file name
+global  char        *   out_file_attr;  // output file attributes (T:2222)
+global  unsigned        inc_level;      // include nesting level 1 = MasterFname
+global  unsigned        max_inc_level;  // maximum include level depth
+global  line_number     line_from;      // starting lineno to process
+global  line_number     line_to;        // ending lineno to process
+#define LINEFROM_DEFAULT    1
+#define LINETO_DEFAULT      (0x1000000) // 16 MiB lines should be enough
+
+global  char            gotarget[MAC_NAME_LENGTH +1];   // .go to target name
+global  int32_t         gotargetno;     // .go to line no
+
+global  int             err_count;      // Overall Errorcount
+global  int             wng_count;      // Overall warning count
+
+global  char            GML_char;       // GML Keywword start char (normally ":")
+global  char            SCR_char;       // SCRIPT keywword start char (normally ".")
+global  char            CW_sep_char;    // Control Word separator char (normally ";")
+
+global  int             CPI;            // chars per inch
+global  space_units     CPI_units;      // unit for chars per inch
+global  int             LPI;            // lines per inch
+global  space_units     LPI_units;      // unit for lines per inch
+
+global  su              bind_odd;       // Bind value for odd pages
+
+global  su              bind_even;      // Bind value for even pages
+
+global  int             passes;         // Max no of document passes
+global  int             pass;           // current document pass no
+
+global  uint32_t        apage;          // current absolute pageno &$apage
+global  uint32_t        page;           // current document pageno &$page
+global  line_number     line;           // current output lineno   &$line
+global  int32_t         lcmax;          // remaining lines on page initial
+global  int32_t         lc;             // remaining lines on page &$lc
+
+global  int32_t         hm;             // heading margin          &$hm
+global  int32_t         tm;             // top margin              &$tm
+
+global  int32_t         bm;             // bottom margin           &$bm
+global  int32_t         fm;             // footing margin          &$fm
+
+global  int32_t         lm;             // left margin             &$pagelm
+global  int32_t         rm;             // right margin            &$pagerm
+
+global  symvar      *   global_dict;    // global symbol dictionary
+global  symvar      *   sys_dict;       // global system symbol dictionary
+global  mac_entry   *   macro_dict;     // macro dictionary
+global  gtentry     *   tag_dict;       // user tag dictionary
+
+global  char            research_file_name[48]; // filename for research
+global  line_number     research_from;  // line no start for research output
+global  line_number     research_to;    // line no end   for research output
+
+global  global_flags    GlobalFlags;    // Global flags
+
+global  proc_flags      ProcFlags;      // processing flags
 
 global  size_t          buf_size;       // default buffer size
 global  char        *   token_buf;
