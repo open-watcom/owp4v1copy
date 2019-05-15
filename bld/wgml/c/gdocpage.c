@@ -51,10 +51,8 @@
 *
 ****************************************************************************/
 
-#define __STDC_WANT_LIB_EXT1__  1      /* use safer C library              */
 
 #include "wgml.h"
-#include "gvars.h"
 
 static  uint32_t        bottom_depth;   // used in setting banners
 static  uint32_t        old_max_depth;  // used in splitting elements

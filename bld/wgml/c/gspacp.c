@@ -37,10 +37,9 @@
 *  comments are from script-tso.txt
 ****************************************************************************/
 
-#define __STDC_WANT_LIB_EXT1__  1      /* use safer C library              */
 
 #include "wgml.h"
-#include "gvars.h"
+
 
 /**************************************************************************/
 /* PAGE EJECT positions output to the top of the next physical page.      */

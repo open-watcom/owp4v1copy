@@ -28,12 +28,10 @@
 *
 ****************************************************************************/
 
-#define __STDC_WANT_LIB_EXT1__  1      /* use safer C library              */
 
 #include <errno.h>
-
 #include "wgml.h"
-#include "gvars.h"
+
 
 #define NULC    '\0'
 #define not_ok  (-1)

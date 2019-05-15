@@ -28,10 +28,9 @@
 *                   all those with only font attribute
 ****************************************************************************/
 
-#define __STDC_WANT_LIB_EXT1__  1      /* use safer C library              */
 
 #include "wgml.h"
-#include "gvars.h"
+
 
 /***************************************************************************/
 /*                     several  attributes  with only font as value        */
@@ -39,9 +38,9 @@
 /* :DT :GT :DTHD :CIT :GD :DDHD :IXPGNUM :IXMAJOR                          */
 /*                                                                         */
 /***************************************************************************/
+
 const   lay_att     xx_att[2] =
     { e_font, e_dummy_zero };
-
 
 
 void    lay_xx( const gmltag * entry )

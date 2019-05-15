@@ -27,10 +27,9 @@
 * Description: WGML implement :DL :GL :OL :SL :UL tags for LAYOUT processing
 ****************************************************************************/
 
-#define __STDC_WANT_LIB_EXT1__  1      /* use safer C library              */
 
 #include "wgml.h"
-#include "gvars.h"
+
 
 /***************************************************************************/
 /*   :DL       attributes                                                  */
@@ -555,7 +554,7 @@ void    lay_dl( const gmltag * entry )
     dl_layout->align = layout_work.dl.first->align;
     dl_layout->spacing = layout_work.dl.first->spacing;
     dl_layout->line_break = layout_work.dl.first->line_break;
-    dl_layout->level = layout_work.dl.first->level;         
+    dl_layout->level = layout_work.dl.first->level;
 
     /* Get the DL LAYOUT settings */
 
@@ -605,7 +604,7 @@ void    lay_dl( const gmltag * entry )
     }
 
     /* Now integrate the DL LAYOUT into the linked list */
-    
+
     curr_level = layout_work.dl.first;
     while( curr_level->next != NULL ) {
         if( curr_level->level >= dl_layout->level ) {
@@ -659,7 +658,7 @@ void    lay_dl( const gmltag * entry )
         dl_layout->next = curr_level->next;
         curr_level->next = dl_layout;
     }
-    
+
     scan_start = scan_stop + 1;
     return;
 }
@@ -701,10 +700,10 @@ void    lay_gl( const gmltag * entry )
     gl_layout->align = layout_work.gl.first->align;
     gl_layout->spacing = layout_work.gl.first->spacing;
     strcpy_s( gl_layout->delim, 2, layout_work.gl.first->delim );
-    gl_layout->level = layout_work.gl.first->level;         
+    gl_layout->level = layout_work.gl.first->level;
 
     /* Get the GL LAYOUT settings */
-    
+
     cc = get_lay_sub_and_value( &l_args );  // get att with value
     while( cc == pos ) {
         for( k = 0, curr = gl_att[k]; curr > 0; k++, curr = gl_att[k] ) {
@@ -751,7 +750,7 @@ void    lay_gl( const gmltag * entry )
     }
 
     /* Now integrate the GL LAYOUT into the linked list */
-    
+
     curr_level = layout_work.gl.first;
     while( curr_level->next != NULL ) {
         if( curr_level->level >= gl_layout->level ) {
@@ -805,7 +804,7 @@ void    lay_gl( const gmltag * entry )
         gl_layout->next = curr_level->next;
         curr_level->next = gl_layout;
     }
-    
+
     scan_start = scan_stop + 1;
     return;
 }
@@ -849,10 +848,10 @@ void    lay_ol( const gmltag * entry )
     ol_layout->font = layout_work.ol.first->font;
     ol_layout->number_style = layout_work.ol.first->number_style;
     ol_layout->number_font = layout_work.ol.first->number_font;
-    ol_layout->level = layout_work.ol.first->level;         
+    ol_layout->level = layout_work.ol.first->level;
 
     /* Get the OL LAYOUT settings */
-    
+
     cc = get_lay_sub_and_value( &l_args );  // get att with value
     while( cc == pos ) {
         for( k = 0, curr = ol_att[k]; curr > 0; k++, curr = ol_att[k] ) {
@@ -911,7 +910,7 @@ void    lay_ol( const gmltag * entry )
     }
 
     /* Now integrate the OL LAYOUT into the linked list */
-    
+
     curr_level = layout_work.ol.first;
     while( curr_level->next != NULL ) {
         if( curr_level->level >= ol_layout->level ) {
@@ -971,7 +970,7 @@ void    lay_ol( const gmltag * entry )
         ol_layout->next = curr_level->next;
         curr_level->next = ol_layout;
     }
-    
+
     scan_start = scan_stop + 1;
     return;
 }
@@ -1012,10 +1011,10 @@ void    lay_sl( const gmltag * entry )
     sl_layout->post_skip = layout_work.sl.first->post_skip;
     sl_layout->spacing = layout_work.sl.first->spacing;
     sl_layout->font = layout_work.sl.first->font;
-    sl_layout->level = layout_work.sl.first->level;         
+    sl_layout->level = layout_work.sl.first->level;
 
     /* Get the SL LAYOUT settings */
-    
+
     cc = get_lay_sub_and_value( &l_args );  // get att with value
     while( cc == pos ) {
         for( k = 0, curr = sl_att[k]; curr > 0; k++, curr = sl_att[k] ) {
@@ -1062,7 +1061,7 @@ void    lay_sl( const gmltag * entry )
     }
 
     /* Now integrate the SL LAYOUT into the linked list */
-    
+
     curr_level = layout_work.sl.first;
     while( curr_level->next != NULL ) {
         if( curr_level->level >= sl_layout->level ) {
@@ -1112,7 +1111,7 @@ void    lay_sl( const gmltag * entry )
         sl_layout->next = curr_level->next;
         curr_level->next = sl_layout;
     }
-    
+
     scan_start = scan_stop + 1;
     return;
 }
@@ -1157,10 +1156,10 @@ void    lay_ul( const gmltag * entry )
     ul_layout->bullet = layout_work.ul.first->bullet;
     ul_layout->bullet_translate = layout_work.ul.first->bullet_translate;
     ul_layout->bullet_font = layout_work.ul.first->bullet_font;
-    ul_layout->level = layout_work.ul.first->level;         
+    ul_layout->level = layout_work.ul.first->level;
 
     /* Get the UL LAYOUT settings */
-    
+
     cc = get_lay_sub_and_value( &l_args );  // get att with value
     while( cc == pos ) {
         for( k = 0, curr = ul_att[k]; curr > 0; k++, curr = ul_att[k] ) {
@@ -1222,7 +1221,7 @@ void    lay_ul( const gmltag * entry )
     }
 
     /* Now integrate the UL LAYOUT into the linked list */
-    
+
     curr_level = layout_work.ul.first;
     while( curr_level->next != NULL ) {
         if( curr_level->level >= ul_layout->level ) {
@@ -1285,7 +1284,7 @@ void    lay_ul( const gmltag * entry )
         ul_layout->next = curr_level->next;
         curr_level->next = ul_layout;
     }
-    
+
     scan_start = scan_stop + 1;
     return;
 }

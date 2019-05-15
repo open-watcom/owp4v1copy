@@ -27,12 +27,11 @@
 * Description:  WGML tag  :PB trial implementation
 *                         PB is not documented, so this is guessing
 ****************************************************************************/
- 
-#define __STDC_WANT_LIB_EXT1__  1      /* use safer C library              */
- 
+
+
 #include    "wgml.h"
-#include    "gvars.h"
- 
+
+
 /***************************************************************************/
 /*  :PB.                                                                   */
 /*                                                                         */
@@ -66,7 +65,7 @@ extern  void    gml_pb( const gmltag * entry )
     if( *p ) {
         process_text( p, g_curr_font );
     }
-     
+
     scan_start = scan_stop + 1;
     return;
 }

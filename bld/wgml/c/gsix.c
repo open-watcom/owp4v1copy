@@ -26,9 +26,9 @@
 *
 * Description: implement .ix (index)  script control word
 *                        only used options are implemented:
-*                               s1 
+*                               s1
 *                               s1 . ref
-*                               s1 s2 
+*                               s1 s2
 *                               s1 s2 . ref
 *                               s1 s2 s3
 *                               s1 s2 s3 . ref
@@ -45,10 +45,9 @@
 *        similarly, the "*" can be changed using control word DC
 ****************************************************************************/
 
-#define __STDC_WANT_LIB_EXT1__  1      /* use safer C library              */
 
 #include "wgml.h"
-#include "gvars.h"
+
 
 /**************************************************************************/
 /*                                                                        */
@@ -242,7 +241,7 @@ void scr_ix( void )
                 }
             }
         } else {
-            
+
             /* Check for '.' (the control word indicator) */
 
             if( *tok_start == SCR_char && arg_flen == 1  ) {
@@ -259,7 +258,7 @@ void scr_ix( void )
                     xx_warn_att( wng_unsupp_cw_opt, "PURGE" );
                 } else {
                     xx_line_err( err_bad_dp_value, tok_start );
-                }     
+                }
                 cc = getarg();                  // get next operand
             }
         }

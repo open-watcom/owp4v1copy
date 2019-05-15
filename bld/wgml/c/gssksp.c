@@ -28,10 +28,9 @@
 *
 ****************************************************************************/
 
-#define __STDC_WANT_LIB_EXT1__  1      /* use safer C library              */
 
 #include "wgml.h"
-#include "gvars.h"
+
 
 static  int32_t    vspace  = 0;                 // vertical space entered (vbus)
 
@@ -59,7 +58,7 @@ static void sksp_common( void )
             p++;
         }
         pa = p;
- 
+
         while( *p && *p != ' ' ) {          // end of word
             p++;
         }

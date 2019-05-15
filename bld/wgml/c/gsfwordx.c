@@ -30,10 +30,9 @@
 *                                                     &'wordpos( )
 ****************************************************************************/
 
-#define __STDC_WANT_LIB_EXT1__  1      /* use safer C library              */
 
 #include "wgml.h"
-#include "gvars.h"
+
 
 static  bool    is_word;          // true if word call, false if subword call
 

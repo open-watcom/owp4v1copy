@@ -36,10 +36,9 @@
 *
 ****************************************************************************/
 
-#define __STDC_WANT_LIB_EXT1__  1      /* use safer C library              */
 
 #include "wgml.h"
-#include "gvars.h"
+
 
 /***************************************************************************/
 /*  add info about macro   to LIFO input list                              */
@@ -137,7 +136,7 @@ void    add_macro_parms( char * p )
     condcode    cc;
     int         star0;
 
-    garginit();                         // resets scan_start to space after macro name  
+    garginit();                         // resets scan_start to space after macro name
     p = scan_start;
     p++;                                // over space between macro name and first parm
     if( *p ) {

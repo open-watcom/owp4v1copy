@@ -32,10 +32,9 @@
 *
 ****************************************************************************/
 
-#define __STDC_WANT_LIB_EXT1__  1      /* use safer C library              */
 
 #include "wgml.h"
-#include "gvars.h"
+
 
 static  bool    vec_pos;           // true if &'vecpos, false if &'veclastpos
 
@@ -104,7 +103,6 @@ static  condcode    scr_veclp( parm parms[MAX_FUN_PARMS], size_t parmcount,
     symsub          *   symsubval;
     symvar          *   psymvar;
     bool                suppress_msg;
-
 
 
     if( parmcount != 2 ) {

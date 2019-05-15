@@ -48,10 +48,9 @@
 *
 ****************************************************************************/
 
-#define __STDC_WANT_LIB_EXT1__  1       /* use safer C library             */
 
 #include "wgml.h"
-#include "gvars.h"
+
 
 /***************************************************************************/
 /*  parses in_su->su_txt to complete initialization of in_su               */
@@ -551,7 +550,7 @@ bool att_val_to_su( su * in_su, bool pos )
 /*      they cannot be delimited                                           */
 /*      they cannot contain whitespace                                     */
 /*      they can be expressions, provided they do not include a unit       */
-/*                                                                         */ 
+/*                                                                         */
 /*    returns cvterr: false on success (no conversion error)               */
 /*                    true on error (conversion error occurred)            */
 /***************************************************************************/
@@ -572,11 +571,11 @@ bool cw_val_to_su( char * * scanp, su * in_su )
     ps = s->su_txt;
     *ps = '\0';
     while( *p && (*p == ' ' ) ) {   // just in case
-        p++;    
+        p++;
     }
     while( *p && (*p != ' ' ) ) {
         p++;
-    }    
+    }
     len = p - pa;
     *scanp = p;                     // report back value of p
     if( (len + 1) > MAX_SU_CHAR ) {
@@ -638,11 +637,11 @@ bool lay_init_su( char * p, su * in_su )
     *ps = '\0';
 
     while( *p && (*p == ' ' ) ) {   // just in case
-        p++;    
+        p++;
     }
     while( *p && (*p != ' ' ) ) {
         p++;
-    }    
+    }
     len = p - pa;
 
     if( (len + 1) > MAX_SU_CHAR ) {                 // won't fit
@@ -907,7 +906,7 @@ char * get_att_start( char * p )
             pa = p;         // return next char after end-of-tag
             ProcFlags.tag_end_found = true;
             break;
-        }        
+        }
         if( *p == '\0' ) {              // end of line: get new line
             if( !(input_cbs->fmflags & II_eof) ) {
                 if( get_line( true ) ) {// next line for missing attribute
@@ -917,7 +916,7 @@ char * get_att_start( char * p )
                     /* so that any symbol substitutions will reflect any   */
                     /* changes made by the tag calling it                  */
                     /*******************************************************/
-                    
+
                     strcpy_s( &buf, strlen( buff2 ) + 1, buff2 );
                     process_line();
                     scan_start = buff2;
@@ -925,8 +924,8 @@ char * get_att_start( char * p )
                     if( (*scan_start == SCR_char) ||    // cw found: end-of-tag
                         (*scan_start == GML_char) ) {   // tag found: end-of-tag
                         strcpy_s( buff2, strlen( &buf ) + 1, &buf );
-                        ProcFlags.reprocess_line = true; 
-                        break;          
+                        ProcFlags.reprocess_line = true;
+                        break;
                     } else {
                         p = scan_start; // new line is part of current tag
                         continue;
@@ -1187,7 +1186,7 @@ char * int_to_roman( uint32_t n, char * r, size_t rsize )
 num_style find_pgnum_style( void )
 {
     num_style   retval;
-    
+
     /****************************************************/
     /* first restrict processing to those document      */
     /* sections that can have a page number style       */
@@ -1339,6 +1338,3 @@ void free_fwd_refs( fwd_ref * fwd_refs )
     }
     return;
 }
-
-
-

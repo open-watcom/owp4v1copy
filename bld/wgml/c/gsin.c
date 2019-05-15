@@ -28,22 +28,21 @@
 *
 *  comments are from script-tso.txt
 ****************************************************************************/
- 
-#define __STDC_WANT_LIB_EXT1__  1      /* use safer C library              */
- 
+
+
 #include "wgml.h"
-#include "gvars.h"
- 
+
+
 /***************************************************************************/
 /*  round indent to get whole characters                                   */
 /*  can be relative i.e. negative                                          */
 /***************************************************************************/
- 
+
 static  int32_t round_indent( su * work )
 {
     return( conv_hor_unit( work, g_curr_font ) * CPI / g_resh * g_resh / CPI );
 }
- 
+
 /***************************************************************************/
 /* INDENT causes  text to  be indented  with respect  to the  left and/or  */
 /* right ends of the output line.                                          */
@@ -85,7 +84,7 @@ static  int32_t round_indent( su * work )
 /*                                                                         */
 /*                                                                         */
 /***************************************************************************/
- 
+
 void    scr_in( void )
 {
     char        *   pa;
@@ -96,19 +95,19 @@ void    scr_in( void )
     su              indentwork;
     int32_t         newindent;
     int32_t         newindentr;
- 
+
     cwcurr[0] = SCR_char;
     cwcurr[1] = 'i';
     cwcurr[2] = 'n';
     cwcurr[3] = '\0';
- 
+
     p = scan_start;
 
     while( *p && *p == ' ' ) {          // next word start
         p++;
     }
     pa = p;
- 
+
     while( *p && *p != ' ' ) {          // end of word
         p++;
     }
@@ -127,7 +126,7 @@ void    scr_in( void )
         if( *pa == '*' ) {              // keep old indent value
             p = pa + 1;
         } else {
- 
+
             p = pa;
             scanerr = cw_val_to_su( &p, &indentwork );
             if( scanerr ) {
@@ -157,11 +156,11 @@ void    scr_in( void )
                 err_count++;
                 show_include_stack();
             } else {
- 
+
             /***************************************************************/
             /*  indent right is always relative or 0 for reset to default  */
             /***************************************************************/
- 
+
                 if( indentwork.su_whole + indentwork.su_dec != 0) {
                     newindentr += round_indent( &indentwork );
                 } else {
@@ -179,7 +178,7 @@ void    scr_in( void )
     }
 
     /* Reset margin(s) regardless of ProcFlags.keep_left_margin */
- 
+
     t_page.max_width = t_page.last_pane->col_width + g_indentr + nest_cb->right_indent;
     t_page.cur_left = g_indent + nest_cb->left_indent + nest_cb->align;
     t_page.cur_width = t_page.cur_left;
@@ -187,4 +186,4 @@ void    scr_in( void )
     scan_restart = p;
     return;
 }
- 
+

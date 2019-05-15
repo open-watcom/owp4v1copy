@@ -31,8 +31,6 @@
 
 #include <fcntl.h>
 #include "wgml.h"
-#include "findfile.h"
-#include "gvars.h"
 
 
 #define str( a ) # a
@@ -162,7 +160,6 @@ static  int     split_tokens( char *str )
     }
     return( cnt );
 }
-
 
 
 /***************************************************************************/

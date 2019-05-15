@@ -31,16 +31,15 @@
 *
 ****************************************************************************/
 
-#define __STDC_WANT_LIB_EXT1__  1      /* use safer C library              */
 
 #include "wgml.h"
-#include "gvars.h"
+
 
 static  bf_place        place;                  // FIG attribute used by eFIG
 static  bool            concat_save;            // for ProcFlags.concat
 static  bool            figcap_done;            // FIGCAP done for current FIG
 static  bool            page_width;             // FIG flag used by eFIG
-static  bool            splitting;              // FIG is being split   
+static  bool            splitting;              // FIG is being split
 static  bool            t_page_width    = false;// FIG will actually go into page_width section
 static  char            id[ID_LEN];             // FIG attribute used by eFIG
 static  def_frame       frame;                  // FIG attribute used by eFIG
@@ -190,7 +189,7 @@ static void draw_box( doc_el_group * in_group )
                         cur_line->next->line_height = wgml_fonts[bin_device->box.font].line_height;
                         add_risers( cur_line->next );
                         cur_line = cur_line->next;
-                    }                
+                    }
                     cur_doc_el->blank_lines = 0;
                 } else {
                     if( cur_doc_el->subs_skip > 0 ) {
@@ -369,7 +368,7 @@ static void insert_frame_line( void )
             process_text( line_buff.text, FONT0 );  // matches wgml 4.0
             scr_process_break();        // commit line
         }
-    }    
+    }
     return;
 }
 
@@ -523,7 +522,7 @@ void gml_fig( const gmltag * entry )
                     break;
                 }
                 if( !strnicmp( "page", val_start, 4 ) ) {
-                    // this will be used to set t_page_width and width below 
+                    // this will be used to set t_page_width and width below
                     page_width = true;
                 } else if( !strnicmp( "column", val_start, 6 ) ) {
                     // default value is the correct value to use
@@ -626,7 +625,7 @@ void gml_fig( const gmltag * entry )
             scr_process_break();
         }
     } else {
-        g_blank_lines = depth;      
+        g_blank_lines = depth;
         scr_process_break();
     }
 
@@ -686,7 +685,7 @@ void gml_fig( const gmltag * entry )
         }
     }
 
-    /* Now set up margins for any text inside the figure */  
+    /* Now set up margins for any text inside the figure */
 
     t_page.cur_left += left_inset;
     t_page.cur_width = t_page.cur_left;
@@ -743,7 +742,7 @@ void gml_efig( const gmltag * entry )
     rs_loc = 0;
 
     /* Done here because needed for the minimum post_skip */
-    
+
     p = scan_start;
     if( *p == '.' ) p++;                    // possible tag end
 
@@ -851,7 +850,7 @@ void gml_efig( const gmltag * entry )
                     } else {
 
                         /* the block won't fit in any column */
-                    
+
                         /* first split the block */
 
                         splitting = true;
@@ -864,7 +863,7 @@ void gml_efig( const gmltag * entry )
                             cur_el->next = NULL;
                             cur_depth = cur_el->blank_lines + cur_el->subs_skip + cur_el->depth;
                             if( cur_depth <= ((t_page.max_depth - t_page.cur_depth) -
-                                (new_group->depth + bias)) ) { 
+                                (new_group->depth + bias)) ) {
 
                                 /* the element will fit in this column */
 
@@ -877,7 +876,7 @@ void gml_efig( const gmltag * entry )
                                 new_group->depth += cur_depth;
                                 cur_doc_el_group->depth -= cur_depth;
                             } else {
-                            
+
                                 /* the element must be split */
 
                                 splittable = split_element( cur_el, (t_page.max_depth  - t_page.cur_depth)
@@ -1214,7 +1213,7 @@ void gml_figdesc( const gmltag * entry )
         process_text( ":", g_curr_font);        // uses FIGCAP font
         g_curr_font = layout_work.figdesc.font; // change to FIGDESC font
     } else {                                    // FIGCAP not present
-        scr_process_break();                    
+        scr_process_break();
         if( ProcFlags.has_aa_block ) {          // matches wgml 4.0
             t_page.max_width += tab_col;
         }

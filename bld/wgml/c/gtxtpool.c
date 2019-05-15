@@ -37,15 +37,14 @@
 *               it also provides utility functions:
 *                   init_doc_el() and clear_doc_element() to help with doc_elements
 *                   free_pool_storage() to free all the allocated memory
-*                       
-* Note: this file was originally used for the text_chars and text_line structs, 
+*
+* Note: this file was originally used for the text_chars and text_line structs,
 *       hence the file name
 ****************************************************************************/
 
-#define __STDC_WANT_LIB_EXT1__  1      /* use safer C library              */
 
 #include "wgml.h"
-#include "gvars.h"
+
 
 /***************************************************************************/
 /*  allocate / reuse and init a text_chars instance                        */
@@ -499,8 +498,6 @@ void add_eol_ix_to_pool( eol_ix * an_eol_ix )
     an_eol_ix->next = eol_ix_pool;
     eol_ix_pool = an_eol_ix;
 }
-
-
 
 
 /***************************************************************************/

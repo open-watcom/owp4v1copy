@@ -43,10 +43,9 @@
 *
 ****************************************************************************/
 
-#define __STDC_WANT_LIB_EXT1__  1      /* use safer C library              */
 
 #include "wgml.h"
-#include "gvars.h"
+
 
 static  bool            phrase_start    = false;    // current token started new phrase
 static  bool            tabbing         = false;    // current tab exists
@@ -1153,7 +1152,7 @@ static uint32_t split_text( text_chars *in_chars, uint32_t limit )
 /***************************************************************************/
 /*  justification and alignment                                            */
 /*  there are several differences between how justification and alignment  */
-/*  are done here and how they are done by wgml 4.0                        */  
+/*  are done here and how they are done by wgml 4.0                        */
 /*  Note: the description of the function in the TSO is different from     */
 /*  both how wgml 4.0 actually implements JU and this implementation       */
 /***************************************************************************/
@@ -1401,7 +1400,7 @@ void insert_hard_spaces( char * spaces )
         } else {
             t_line->last->next = process_word( &layout_work.note.spaces, spc_cnt, FONT0 );
             t_line->last = t_line->last->next;
-        }            
+        }
         t_line->last->type = tx_norm;
         t_line->last->x_address = t_page.cur_width;
         t_page.cur_width += t_line->last->width;
@@ -1513,7 +1512,7 @@ void process_line_full( text_line * a_line, bool justify )
         no_shift = (def_tab_count > 1);     // usually true if more than one default tab used
 
         /* Find the point of splitting */
-        
+
         if( a_line->last->count == 0 ) {
             test_chars = a_line->last->prev;
             while( test_chars != NULL ) {
@@ -1583,7 +1582,7 @@ void process_line_full( text_line * a_line, bool justify )
                             split_chars = NULL;     // no split if prior tab was right-aligned
                         } else if( split_chars->prev->count == 0 ) {
                             split_chars = split_chars->prev;    // use preceding marker
-                        } 
+                        }
                     }
                     break;                          // if no break here, no break at all
                 }
@@ -1625,7 +1624,7 @@ void process_line_full( text_line * a_line, bool justify )
                     while( split_chars != NULL ) {
                         split_chars->x_address -= offset;
                         if( split_chars->tab_pos == tt_user ) {
-                            split_chars->tab_pos = tt_none;     // not tabbed any longer 
+                            split_chars->tab_pos = tt_none;     // not tabbed any longer
                         }
                         split_chars = split_chars->next;
                     }
@@ -1790,7 +1789,7 @@ void process_text( const char *text, font_number font )
     count = p - text;
     p = text;                               // restore p to start of text
 
-    if( (tt_stack != NULL) 
+    if( (tt_stack != NULL)
             && (input_cbs->fmflags & II_sol)
             && ((*p == '\t') || (*p == tab_char)) ) {    // adjust parent font, see Wiki
         tt_stack->font = FONT0; // hard-wired: LAYOUT DEFAULT FONT does not affect this
@@ -1867,7 +1866,7 @@ void process_text( const char *text, font_number font )
             if( !*p && !(input_cbs->fmflags & II_eol) ) {
 
                 /* if no text follows, insert text_chars for post_space */
-                
+
                 n_chars = process_word( NULL, 0, font );
                 n_chars->type = tx_norm;
                 t_page.cur_width += post_space;
@@ -2065,7 +2064,7 @@ void process_text( const char *text, font_number font )
             /* this avoids breaking tab scopes, but it is correct?     */
             /***********************************************************/
 
-            while( !tabbing && 
+            while( !tabbing &&
                     ((int32_t)(n_chars->x_address + n_chars->width) > (int32_t)t_page.max_width) ) {
                 if( t_line == NULL ) {  // added when INDEX implemented
                     t_line = alloc_text_line();
@@ -2164,7 +2163,7 @@ void process_text( const char *text, font_number font )
                             /* Now set fmflags inside the text_chars */
 
                             flags_x_eol = input_cbs->fmflags & ~II_eol;
-                            fm_chars->fmflags = flags_x_eol;    
+                            fm_chars->fmflags = flags_x_eol;
                             input_cbs->fmflags &= ~II_sol;   // clear flag
                             fm_chars = fm_chars->next;
                             while( fm_chars != NULL ) {
@@ -2275,7 +2274,7 @@ void process_text( const char *text, font_number font )
                 /* Now set fmflags inside the text_chars */
 
                 flags_x_eol = input_cbs->fmflags & ~II_eol;
-                fm_chars->fmflags = flags_x_eol;    
+                fm_chars->fmflags = flags_x_eol;
                 input_cbs->fmflags &= ~II_sol;   // clear flag
                 fm_chars = fm_chars->next;
                 while( fm_chars != NULL ) {
@@ -2333,9 +2332,9 @@ void process_text( const char *text, font_number font )
 
         if( fm_chars->next == NULL ) {
             fm_chars->fmflags = input_cbs->fmflags;  // allow II_eol in only text_chars
-        } else {            
+        } else {
             flags_x_eol = input_cbs->fmflags & ~II_eol;
-            fm_chars->fmflags = flags_x_eol;    
+            fm_chars->fmflags = flags_x_eol;
             input_cbs->fmflags &= ~II_sol;   // clear flag
             fm_chars = fm_chars->next;
             while( fm_chars != NULL ) {
@@ -2359,14 +2358,14 @@ void process_text( const char *text, font_number font )
             pword = p;
             post_space = wgml_fonts[font].spc_width;
             if( !ProcFlags.as_text_line && stop_fnd
-                    && (cur_group_type != gt_xmp) ) {   // exclude XMP 
+                    && (cur_group_type != gt_xmp) ) {   // exclude XMP
                 post_space += wgml_fonts[font].spc_width;
             }
             p++;
             while( *p == ' ' ) {
                 if( (cur_group_type == gt_xmp) ) {   // multiple blanks
                     post_space += wgml_fonts[font].spc_width;
-                }                
+                }
                 p++;
             }
             p--;                    // back off non-space character, whatever it was
@@ -2381,7 +2380,7 @@ void process_text( const char *text, font_number font )
             pword = p;
             post_space = wgml_fonts[font].spc_width;
             if( !ProcFlags.as_text_line && stop_fnd
-                    && (cur_group_type != gt_xmp) ) {   // exclude XMP 
+                    && (cur_group_type != gt_xmp) ) {   // exclude XMP
                 post_space += wgml_fonts[font].spc_width;
             }
         }
@@ -2422,7 +2421,7 @@ void process_text( const char *text, font_number font )
                     t_line->last->next = NULL;
                     n_chars->prev = NULL;
                     scr_process_break();            // process_line_full() causes loop
-                } 
+                }
                 if( t_line == NULL ) {
                     t_line = alloc_text_line();
                 }

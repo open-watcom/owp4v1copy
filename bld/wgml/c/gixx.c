@@ -33,10 +33,9 @@
 *
 ****************************************************************************/
 
-#define __STDC_WANT_LIB_EXT1__  1      /* use safer C library              */
 
 #include    "wgml.h"
-#include    "gvars.h"
+
 
 /***************************************************************************/
 /*  :I1 - :I3  :IH1 - :IH3 :IREF common input processing                   */
@@ -63,7 +62,7 @@ static void gml_ixxx_common( const gmltag * entry, int hx_lvl )
     char        *   pgtext      = NULL;     // val_start for pg = <string> value
     char        *   printtxt    = NULL;     // val_start for print = <string> value
     char        *   seetext     = NULL;     // val_start for see = <string> value
-    char        *   txt;                    // val_start for entry value 
+    char        *   txt;                    // val_start for entry value
     condcode        cc;                     // result code
     ereftyp         pgvalue;
     getnum_block    gn;
@@ -76,7 +75,7 @@ static void gml_ixxx_common( const gmltag * entry, int hx_lvl )
     size_t          pgtextlen       = 0;    // val_len for pg = <string> value
     size_t          printtxtlen     = 0;    // val_len for print = <string> value
     size_t          seetextlen      = 0;    // val_len for see = <string> value
-    size_t          txtlen;                 // val_len for entry value 
+    size_t          txtlen;                 // val_len for entry value
 
     if( !GlobalFlags.index ) {          // index option not active
         ProcFlags.index_tag_cw_seen = true;

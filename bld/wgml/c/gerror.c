@@ -28,17 +28,14 @@
 *
 ****************************************************************************/
 
-#define __STDC_WANT_LIB_EXT1__  1      /* use safer C library              */
 
 #include "wgml.h"
-#include "gvars.h"
 #include <stdarg.h>
 
 #define MAX_ERR_LEN     1020
 
 static  char    err_buf[MAX_ERR_LEN + 2];   // +2 for \n and \0
 static  char    str_buf[MAX_ERR_LEN + 2];
-
 
 
 void g_suicide( void )
@@ -254,6 +251,3 @@ void out_msg_research( const char *msg, ... )
     }
     return;
 }
-
-
-

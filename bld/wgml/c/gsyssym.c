@@ -29,10 +29,9 @@
 *                     incomplete                               TBD
 ****************************************************************************/
 
-#define __STDC_WANT_LIB_EXT1__  1       /* use safer C library             */
 
 #include "wgml.h"
-#include "gvars.h"
+
 
 #define sys(x)  sys##x                  // construct symvar varname
 #define sysf(x) sys##x##fun             // construct access function name

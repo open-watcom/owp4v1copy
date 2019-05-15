@@ -28,11 +28,9 @@
 *                                          i.e. non production formatting
 ****************************************************************************/
 
-#define __STDC_WANT_LIB_EXT1__  1      /* use safer C library              */
 
 #include <stdarg.h>
 #include "wgml.h"
-#include "gvars.h"
 
 
 typedef struct taglist {
@@ -46,7 +44,6 @@ static  taglist *   tags = NULL;        // list of found gml tags
 static  taglist *   scrkws = NULL;      // list of found scr keywords
 static  taglist *   single_funcs = NULL;// list of found scr single letter fun
 static  taglist *   multi_funcs = NULL; // list of found scr multi letter fun
-
 
 
 void printf_research( char * msg, ... )
@@ -301,7 +298,6 @@ void    free_multi_funcs_research( void )
     }
     multi_funcs = NULL;
 }
-
 
 
 /***************************************************************************/

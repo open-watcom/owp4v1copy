@@ -33,10 +33,9 @@
 *
 ****************************************************************************/
 
-#define __STDC_WANT_LIB_EXT1__  1      /* use safer C library              */
 
 #include "wgml.h"
-#include "gvars.h"
+
 
 static char  const      stryes[] =  { "yes" };
 static char  const      strno[]  =  { "no" };
@@ -185,14 +184,14 @@ condcode    get_lay_sub_and_value( att_args * args )
         if( *p == '\0' ) {              // end of line: get new line
             if( !(input_cbs->fmflags & II_eof) ) {
                 if( get_line( true ) ) {// next line for missing attribute
- 
+
                     process_line();
                     scan_start = buff2;
                     scan_stop  = buff2 + buff2_lg;
                     if( (*scan_start == SCR_char) ||    // cw found: end-of-tag
                         (*scan_start == GML_char) ) {   // tag found: end-of-tag
-                        ProcFlags.reprocess_line = true; 
-                        break;          
+                        ProcFlags.reprocess_line = true;
+                        break;
                     } else {
                         p = scan_start; // new line is part of current tag
                         while( is_space_tab_char( *p ) ) {  // over WS to start of alleged attribute
@@ -207,7 +206,7 @@ condcode    get_lay_sub_and_value( att_args * args )
         args->len[0] = p - args->start[0];
         if( *p == '.' ) {   // end of tag
             ProcFlags.tag_end_found = true;
-            return( omit );            
+            return( omit );
         }
         if( args->len[0] < 4 ) {            // attribute name length
             xx_line_err( err_att_name_inv, pa );
@@ -533,8 +532,6 @@ void    o_default_frame( FILE * f, lay_att curr, def_frame * tm )
     }
     return;
 }
-
-
 
 
 /***************************************************************************/

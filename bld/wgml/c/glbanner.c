@@ -27,34 +27,32 @@
 * Description: WGML implement :BANNER :eBANNER  tags for LAYOUT processing
 *
 ****************************************************************************/
- 
-#define __STDC_WANT_LIB_EXT1__  1      /* use safer C library              */
- 
+
+
 #include "wgml.h"
-#include "gvars.h"
- 
- 
-    banner_lay_tag  *   curr_ban;       // also needed for glbanreg.c
-    banner_lay_tag  *   del_ban;        // ... banner to be deleted
- 
- 
+
+
+banner_lay_tag  *   curr_ban;       // also needed for glbanreg.c
+banner_lay_tag  *   del_ban;        // ... banner to be deleted
+
+
 /***************************************************************************/
 /*   :BANNER    attributes                                                 */
 /***************************************************************************/
 const   lay_att     banner_att[8] =
     { e_left_adjust, e_right_adjust, e_depth, e_place, e_refplace,
       e_docsect, e_refdoc, e_dummy_zero };
- 
+
 static  int             att_count = sizeof( banner_att ) - 1;   // omit e_dummy_zero from count
 static  bool            count[sizeof( banner_att ) - 1];
 static  int             sum_count;
 static  banner_lay_tag  wk;          // for temp storage of banner attributes
 static  bf_place        refplace;
 static  ban_docsect     refdoc;
- 
+
 static  banner_lay_tag  *   prev_ban;
 static  banner_lay_tag  *   ref_ban;    // referenced banner for copy values
- 
+
 /**********************************************************************************/
 /* Defines a page banner.  A page banner appears at the top and/or bottom         */
 /* of a page.  Information such as page numbers, running titles and the           */
@@ -149,24 +147,24 @@ static  banner_lay_tag  *   ref_ban;    // referenced banner for copy values
 /* place and docsect attributes, and delete the individual banner regions.        */
 /*                                                                                */
 /**********************************************************************************/
- 
+
 /***************************************************************************/
 /*Mark the end of a banner definition.                                     */
 /*                                                                         */
 /*:eBANNER                                                                 */
 /*                                                                         */
 /***************************************************************************/
- 
- 
+
+
 /***************************************************************************/
 /*  init banner with no values                                             */
 /***************************************************************************/
- 
+
 static  void    init_banner_wk( banner_lay_tag * ban )
 {
     char        z0[2] = "0";
     int         k;
- 
+
     ban->next = NULL;
     ban->region = NULL;
     ban->by_line = NULL;
@@ -175,31 +173,31 @@ static  void    init_banner_wk( banner_lay_tag * ban )
     ban->ban_depth = 0;
     ban->next_refnum = 1;
     ban->style = no_content;
- 
+
     lay_init_su( &z0, &(ban->left_adjust) );
     lay_init_su( &z0, &(ban->right_adjust) );
     lay_init_su( &z0, &(ban->depth) );
     ban->place = no_place;
     ban->docsect = no_ban;
- 
+
     refplace = no_place;
     refdoc = no_ban;
     curr_ban = NULL;
     prev_ban = NULL;
     ref_ban = NULL;
     del_ban = NULL;
- 
+
     for( k = 0; k < att_count; k++ ) {
         count[k] = false;
     }
     sum_count = 0;
 }
- 
- 
+
+
 /***************************************************************************/
 /*  lay_banner                                                             */
 /***************************************************************************/
- 
+
 void    lay_banner( const gmltag * entry )
 {
     att_args            l_args;
@@ -213,10 +211,10 @@ void    lay_banner( const gmltag * entry )
     region_lay_tag  *   regwknew;
     region_lay_tag  *   regwknew2;
     region_lay_tag  *   regwkold;
- 
+
     p = scan_start;
     rs_loc = banner_tag;
- 
+
     if( !GlobalFlags.firstpass ) {
         scan_start = scan_stop + 1;
         eat_lay_sub_tag();
@@ -231,10 +229,10 @@ void    lay_banner( const gmltag * entry )
     while( cc == pos ) {
         for( k = 0; k < att_count; k++ ) {
             curr = banner_att[k];
- 
+
             if( !strnicmp( att_names[curr], l_args.start[0], l_args.len[0] ) ) {
                 p = l_args.start[1];
- 
+
                 if( count[k] ) {
                     if( sum_count == att_count ) {  // all attributes found
                         xx_err( err_lay_text );  // per wgml 4.0: treat as text
@@ -276,7 +274,7 @@ void    lay_banner( const gmltag * entry )
         }
         cc = get_lay_sub_and_value( &l_args );  // get att with value
     }
- 
+
     /*******************************************************/
     /* At this point, end-of-tag has been reached and all  */
     /* attributes provided have been found and processed.  */
@@ -296,7 +294,7 @@ void    lay_banner( const gmltag * entry )
     /*******************************************************/
 
     if( (refdoc != no_ban) || (refplace != no_place) ) {    // at least one was used
-        if( ((refdoc == no_ban) && (refplace != no_place)) || 
+        if( ((refdoc == no_ban) && (refplace != no_place)) ||
                 ((refdoc != no_ban) && (refplace == no_place)) ) {
             xx_err( err_both_refs );                        // both are required if either is used
         } else if( (refdoc == wk.docsect) && (refplace == wk.place) ) { // can't reference current banner
@@ -422,7 +420,7 @@ void    lay_banner( const gmltag * entry )
         } else {
             curr_ban = mem_alloc( sizeof( banner_lay_tag ) );
             memcpy( curr_ban, &wk, sizeof( banner_lay_tag ) );
- 
+
             if( layout_work.banner == NULL ) {      // First banner initializes the list
                 layout_work.banner = curr_ban;
             } else {
@@ -470,20 +468,20 @@ void    lay_banner( const gmltag * entry )
     scan_start = scan_stop + 1;
     return;
 }
- 
- 
+
+
 /***************************************************************************/
 /*  lay_ebanner                                                            */
 /***************************************************************************/
- 
+
 void    lay_ebanner( const gmltag * entry )
 {
     banner_lay_tag  *   banwk;
     region_lay_tag  *   reg;
- 
+
     ProcFlags.lay_xxx = el_zero;        // banner no longer active
     rs_loc = 0;
- 
+
     if( !GlobalFlags.firstpass ) {
         scan_start = scan_stop + 1;
         eat_lay_sub_tag();
@@ -516,7 +514,7 @@ void    lay_ebanner( const gmltag * entry )
                 mem_free( reg );
                 reg = NULL;
             }
- 
+
             mem_free( del_ban );
             del_ban = NULL;
         } else if( curr_ban != NULL) {      // append survivor to the end of the list

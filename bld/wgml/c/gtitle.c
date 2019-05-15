@@ -27,9 +27,9 @@
 * Description:  WGML tag :TITLE processing
 *
 ****************************************************************************/
+
+
 #include    "wgml.h"
-#include    "findfile.h"
-#include    "gvars.h"
 
 
 /***************************************************************************/
@@ -106,7 +106,7 @@ void    gml_title( const gmltag * entry )
     } else {
         set_skip_vars( &layout_work.title.skip, NULL, NULL, spacing, g_curr_font );
     }
-    
+
     left_indent = conv_hor_unit( &layout_work.title.left_adjust, g_curr_font );
     right_indent = conv_hor_unit( &layout_work.title.right_adjust, g_curr_font );
 

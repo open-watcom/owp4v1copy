@@ -28,10 +28,8 @@
 *                   for :Hx, :HDREF, :FIG, :FN, :FIGREF, :FNREF tags
 ****************************************************************************/
 
-#define __STDC_WANT_LIB_EXT1__  1      /* use safer C library              */
 
 #include "wgml.h"
-#include "gvars.h"
 
 
 /***************************************************************************/

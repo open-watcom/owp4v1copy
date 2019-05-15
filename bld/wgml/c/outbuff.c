@@ -56,15 +56,13 @@
 *               not apparent. This should help in most cases.
 ****************************************************************************/
 
-#define __STDC_WANT_LIB_EXT1__ 1
 
 #include <ctype.h>
 #include <errno.h>
 #include "wgml.h"
 #include "devfuncs.h"
-#include "findfile.h"
-#include "gvars.h"
 #include "outbuff.h"
+
 
 /* Local variable declaration. */
 

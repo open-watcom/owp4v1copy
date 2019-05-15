@@ -60,7 +60,6 @@
 *               This should help in most cases.
 ****************************************************************************/
 
-#define __STDC_WANT_LIB_EXT1__ 1
 
 #include <math.h>
 #include <time.h>
@@ -70,8 +69,6 @@
 #include "copfon.h"
 #include "cophdr.h"
 #include "devfuncs.h"
-#include "findfile.h"
-#include "gvars.h"
 #include "outbuff.h"
 
 /* Static data. */

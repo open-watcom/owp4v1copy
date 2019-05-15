@@ -28,20 +28,19 @@
 *
 ****************************************************************************/
 
-#define __STDC_WANT_LIB_EXT1__  1      /* use safer C library              */
 
 #include "wgml.h"
-#include "gvars.h"
+
 
 /***************************************************************************/
 /*   :Hx    attributes                                                     */
 /***************************************************************************/
+
 const   lay_att     hx_att[18] =
     { e_group, e_indent, e_pre_top_skip, e_pre_skip, e_post_skip,
       e_spacing, e_font, e_number_font, e_number_form, e_page_position,
       e_number_style, e_page_eject, e_line_break, e_display_heading,
       e_number_reset, e_case, e_align, e_dummy_zero };
-
 
 
 /***********************************************************************************/

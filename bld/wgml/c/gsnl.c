@@ -28,10 +28,9 @@
 *
 ****************************************************************************/
 
-#define __STDC_WANT_LIB_EXT1__  1      /* use safer C library              */
 
 #include "wgml.h"
-#include "gvars.h"
+
 
 /**************************************************************************/
 /* NULL LINE is generated internally by SCRIPT each time a null input     */

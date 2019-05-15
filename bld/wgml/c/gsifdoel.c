@@ -29,10 +29,8 @@
 *               comments taken from script-tso.txt
 ****************************************************************************/
 
-#define __STDC_WANT_LIB_EXT1__  1      /* use safer C library              */
 
 #include "wgml.h"
-#include "gvars.h"
 
 
 /***************************************************************************/
@@ -572,9 +570,6 @@ void    scr_if( void )
 }
 
 
-
-
-
 /****************************************************************************/
 /* THEN causes an input line to be conditionally included depending on the  */
 /* truth value of a previous IF control word.                               */
@@ -658,7 +653,6 @@ void    scr_th( void )
 }
 
 
-
 /***************************************************************************/
 /* ELSE causes conditional processing of an input line, depending on the   */
 /* truth value of a previous IF control word.                              */
@@ -730,8 +724,6 @@ void    scr_el( void )
     scan_restart = scan_stop + 1;
     return;
 }
-
-
 
 
 /***************************************************************************/

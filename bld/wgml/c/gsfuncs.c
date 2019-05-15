@@ -37,10 +37,9 @@
 *
 ****************************************************************************/
 
-#define __STDC_WANT_LIB_EXT1__  1      /* use safer C library              */
 
 #include "wgml.h"
-#include "gvars.h"
+
 
 /***************************************************************************/
 /*    SCR multi letter functions                                           */
@@ -56,8 +55,7 @@ static  const   scrfunc scr_functions[] = {
 
 static const char   ampchar = '&';
 static bool         multiletter_function;   // parm contains function
-static bool         var_in_parm;        // parm contains variable
-
+static bool         var_in_parm;            // parm contains variable
 
 
 /****************************************************/

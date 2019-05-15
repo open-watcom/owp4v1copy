@@ -28,10 +28,9 @@
 *
 ****************************************************************************/
 
-#define __STDC_WANT_LIB_EXT1__  1      /* use safer C library              */
 
 #include "wgml.h"
-#include "gvars.h"
+
 
 extern  banner_lay_tag  *   curr_ban;   // in glbanner.c
 extern  banner_lay_tag  *   del_ban;    // in glbanner.c
@@ -394,7 +393,7 @@ void    lay_banregion( const gmltag * entry )
     /*******************************************************/
 
     if( !refnum_found ) {                               // refnum was missing
-        xx_err( err_att_missing ); 
+        xx_err( err_att_missing );
     } else if( wk.refnum > curr_ban->next_refnum ) {    // refnum must be, at most, the next value
         xx_err( err_illegal_reg_ref );
     }
@@ -485,7 +484,7 @@ void    lay_banregion( const gmltag * entry )
             /* except script_format.                               */
             /*******************************************************/
 
-            xx_err( err_all_reg_att_rqrd ); 
+            xx_err( err_all_reg_att_rqrd );
         }
         reg = mem_alloc( sizeof( region_lay_tag ) );
         memcpy( reg, &wk, sizeof( region_lay_tag ) );

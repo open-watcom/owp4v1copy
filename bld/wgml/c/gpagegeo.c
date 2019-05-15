@@ -28,10 +28,9 @@
 *
 ****************************************************************************/
 
-#define __STDC_WANT_LIB_EXT1__  1      /* use safer C library              */
 
 #include "wgml.h"
-#include "gvars.h"
+
 
 /***************************************************************************/
 /*  The page geometry and margins are set up here to match the wgml 4.0    */
@@ -316,7 +315,7 @@ static void finish_lists( void )
 
 static void preprocess_script_region( region_lay_tag * reg )
 {
-    
+
     char    *   pl;
     char        sep;
     int         k;
@@ -346,7 +345,7 @@ static void preprocess_script_region( region_lay_tag * reg )
                 /* 1 per space skipped here, although the spaces themselves    */
                 /* are removed                                                 */
                 /***************************************************************/
-                
+
                 while( *pl == ' ' ) {
                     pl++;               // remove leading spaces
                 }
@@ -470,7 +469,7 @@ static void finish_banners( void )
             /* horizontal attributes use default font */
             cur_reg->reg_indent = conv_hor_unit( &cur_reg->indent, g_curr_font );
             if( cur_reg->hoffset.su_u == SU_lay_left ) {            // left banner margin
-                cur_reg->reg_hoffset = cur_ban->ban_left_adjust; 
+                cur_reg->reg_hoffset = cur_ban->ban_left_adjust;
                 cur_reg->reg_h_type = SU_lay_left;                  // h_offset is left boundary
             } else if( cur_reg->hoffset.su_u == SU_lay_centre ) {   // banner center point
                 cur_reg->reg_hoffset = cur_ban->ban_left_adjust +
@@ -543,7 +542,7 @@ static void finish_banners( void )
                                 cur_grp->max_depth = sav_reg->reg_depth;
                             }
                             sav_reg = NULL;
-                        }                            
+                        }
                         break;
                     } else if( cur_grp->voffset > sav_reg->reg_voffset ) {  // insert/add new group
                         if( cur_grp == cur_ban->by_line ) {                 // insert before first group
@@ -740,7 +739,7 @@ static void finish_banners( void )
                         }
                         break;
                     }
-                    if( cur_ban->by_line == NULL ) {                // add new group at start                
+                    if( cur_ban->by_line == NULL ) {                // add new group at start
                         cur_ban->by_line = mem_alloc( sizeof(ban_reg_group) );
                         cur_ban->by_line->next = NULL;
                         cur_ban->by_line->first = sav_reg;
@@ -901,7 +900,7 @@ static void finish_banners( void )
                         }
                         break;
                     }
-                    if( cur_ban->by_line == NULL ) {                // add new group at start                
+                    if( cur_ban->by_line == NULL ) {                // add new group at start
                         cur_ban->by_line = mem_alloc( sizeof(ban_reg_group) );
                         cur_ban->by_line->next = NULL;
                         cur_ban->by_line->first = sav_reg;

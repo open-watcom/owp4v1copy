@@ -28,11 +28,8 @@
 *
 ****************************************************************************/
 
-#define __STDC_WANT_LIB_EXT1__  1      /* use safer C library              */
 
 #include "wgml.h"
-#include "gvars.h"
-
 
 
 /* construct symbol name and optionally subscript from input
@@ -299,7 +296,7 @@ void    scr_se( void )
 
             rc = add_symvar( working_dict, sym.name, valstart, subscript, sym.flags );
 
-        } else if( *p == '\'' ) {                   // \' without equal sign 
+        } else if( *p == '\'' ) {                   // \' without equal sign
             p++;
             while( *p && (*valstart != *p) ) {      // look for final \'
                 p++;

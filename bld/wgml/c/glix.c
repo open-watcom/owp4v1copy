@@ -28,10 +28,9 @@
 *
 ****************************************************************************/
 
-#define __STDC_WANT_LIB_EXT1__  1      /* use safer C library              */
 
 #include "wgml.h"
-#include "gvars.h"
+
 
 /***************************************************************************/
 /*   :I1 - :I3 attributes                                                  */
@@ -109,7 +108,6 @@ const   lay_att     ix_att[9] =
 /*The string_font attribute defines the font of the the see and see_also          */
 /*attribute strings defined by the :INDEX layout tag.                             */
 /**********************************************************************************/
-
 
 
 /***************************************************************************/

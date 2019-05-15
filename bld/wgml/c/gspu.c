@@ -31,10 +31,9 @@
 *  comments are from script-tso.txt
 ****************************************************************************/
 
-#define __STDC_WANT_LIB_EXT1__  1      /* use safer C library              */
 
 #include "wgml.h"
-#include "gvars.h"
+
 
 static FILE * workfile[9] =           // support for 9 workfiles SYSUSR0x.GML
     { NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL };

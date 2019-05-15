@@ -31,9 +31,7 @@
 #ifndef WGML_H_INCLUDED
 #define WGML_H_INCLUDED
 
-#ifndef __STDC_WANT_LIB_EXT1__
-    #define __STDC_WANT_LIB_EXT1__  1   /* use safer C library             */
-#endif
+#define __STDC_WANT_LIB_EXT1__  1   /* use safer C library             */
 
 #include <stddef.h>
 #include <stdio.h>
@@ -56,6 +54,8 @@
 #include "copfiles.h"       // mostly for access to bin_device & wgml_fonts
 #include "gtype.h"
 #include "gtypelay.h"
+#include "findfile.h"
+#include "gvars.h"
 
 
 #ifdef  __cplusplus

@@ -27,21 +27,18 @@
 * Description: WGML implement :DEFAULT LAYOUT tag
 *
 ****************************************************************************/
- 
-#define __STDC_WANT_LIB_EXT1__  1      /* use safer C library              */
- 
+
+
 #include "wgml.h"
-#include "gvars.h"
- 
- 
- 
+
+
 /***************************************************************************/
 /*   :DEFAULT attributes                                                   */
 /***************************************************************************/
 const   lay_att     default_att[8] =
     { e_spacing, e_columns, e_font, e_justify, e_input_esc, e_gutter,
       e_binding, e_dummy_zero };
- 
+
 /***************************************************************************/
 /*Define default characteristics for document processing.                  */
 /*                                                                         */
@@ -94,12 +91,12 @@ const   lay_att     default_att[8] =
 /*The binding value is added to the current left and right margins of those*/
 /*output pages which are odd numbered.                                     */
 /***************************************************************************/
- 
- 
+
+
 /***************************************************************************/
 /*  lay_default                                                            */
 /***************************************************************************/
- 
+
 void    lay_default( const gmltag * entry )
 {
     char        *   p;
@@ -108,10 +105,10 @@ void    lay_default( const gmltag * entry )
     lay_att         curr;
     att_args        l_args;
     int             cvterr;
- 
+
     p = scan_start;
     cvterr = false;
- 
+
     if( !GlobalFlags.firstpass ) {
         scan_start = scan_stop + 1;
         eat_lay_sub_tag();
@@ -124,10 +121,10 @@ void    lay_default( const gmltag * entry )
     while( cc == pos ) {
         cvterr = -1;
         for( k = 0, curr = default_att[k]; curr > 0; k++, curr = default_att[k] ) {
- 
+
             if( !strnicmp( att_names[curr], l_args.start[0], l_args.len[0] ) ) {
                 p = l_args.start[1];
- 
+
                 switch( curr ) {
                 case   e_spacing:
                     cvterr = i_int8( p, curr, &layout_work.defaults.spacing );

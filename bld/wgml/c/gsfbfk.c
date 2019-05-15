@@ -28,10 +28,9 @@
 *
 ****************************************************************************/
 
-#define __STDC_WANT_LIB_EXT1__  1      /* use safer C library              */
 
 #include "wgml.h"
-#include "gvars.h"
+
 
 typedef enum {
     fbk_none,   // initial value
@@ -208,7 +207,7 @@ void scr_fb( void )
     p = get_params( "FB" );
 
     switch( cur_cmd) {
-    case fbk_begin : 
+    case fbk_begin :
         g_keep_nest( "FB" );                // catch nesting errors
         ProcFlags.in_fb_fk_block = true;
         save_state();
@@ -268,7 +267,7 @@ void scr_fb( void )
     default:
         internal_err( __FILE__, __LINE__ );
         break;
-    }        
+    }
 
     scan_restart = scan_stop + 1;
     return;
@@ -331,7 +330,7 @@ void scr_fk( void )
     p = get_params( "FK" );
 
     switch( cur_cmd) {
-    case fbk_begin : 
+    case fbk_begin :
         g_keep_nest( "FK" );                // catch nesting errors
         ProcFlags.in_fb_fk_block = true;
         save_state();
@@ -391,7 +390,7 @@ void scr_fk( void )
     default:
         internal_err( __FILE__, __LINE__ );
         break;
-    }        
+    }
 
     scan_restart = scan_stop + 1;
     return;

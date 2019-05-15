@@ -43,10 +43,9 @@
 *   initial descriptive comments are from script-tso.txt
 ****************************************************************************/
 
-#define __STDC_WANT_LIB_EXT1__  1      /* use safer C library              */
 
 #include "wgml.h"
-#include "gvars.h"
+
 
 /**************************************************************************/
 /* BOX generates the horizontal lines and initiates the vertical lines of */
@@ -466,7 +465,7 @@ static void box_draw_vlines( box_col_set * hline, uint32_t subs_skip,
     }
     for( i_h = 0; i_h < hline->current; i_h++ ) { // iterate over all output columns
         cur_col_type = hline->cols[i_h].v_ind;
-        if( (stub == st_ext) || (cur_col_type == bx_v_up) 
+        if( (stub == st_ext) || (cur_col_type == bx_v_up)
              || ((stub == st_none) && (cur_col_type == bx_v_split))
              || ((stub == st_down) && (cur_col_type == bx_v_down))
              || ((cur_col_type == bx_v_new) && (cur_op == bx_none))
@@ -622,21 +621,21 @@ static void draw_box_lines( doc_element * h_line_el )
                         sav_subs_skip = 0;
                         sav_top_skip = 0;
                     } else {
-                        add_doc_el_to_pool( cur_el );        
+                        add_doc_el_to_pool( cur_el );
                         box_draw_vlines( cur_hline, sav_subs_skip +
                                     sav_blank_lines, sav_top_skip, off_stub );
                         if( ProcFlags.vline_done ) {
                             sav_blank_lines = 0;        // skips used, zero saved skips
                             sav_subs_skip = 0;
                             sav_top_skip = 0;
-                        }                            
+                        }
                     }
                     cur_el = h_line_el;
                     cur_hline = cur_hline->next;
                 }
                 break;
             default:                                // all others: just the HLINE
-                while( cur_el != NULL ) {    
+                while( cur_el != NULL ) {
                     h_line_el = h_line_el->next;
                     cur_el->next = NULL;
                     if( cur_hline->current > 1 ) {  // discard HLINEs with length 0
@@ -648,8 +647,8 @@ static void draw_box_lines( doc_element * h_line_el )
                         sav_subs_skip = 0;
                         sav_top_skip = 0;
                     } else {
-                        add_doc_el_to_pool( cur_el );        
-                    }                    
+                        add_doc_el_to_pool( cur_el );
+                    }
                     cur_el = h_line_el;
                     cur_hline = cur_hline->next;
                 }
@@ -687,7 +686,7 @@ static void draw_box_lines( doc_element * h_line_el )
                         sav_subs_skip = 0;
                         sav_top_skip = 0;
                     } else {
-                        add_doc_el_to_pool( cur_el );        
+                        add_doc_el_to_pool( cur_el );
                     }
                     if( ProcFlags.draw_v_line ) {
                         box_draw_vlines( cur_hline, 0, 0, st_up );  // draw stubs
@@ -713,7 +712,7 @@ static void draw_box_lines( doc_element * h_line_el )
                         sav_subs_skip = 0;
                         sav_top_skip = 0;
                     } else {
-                        add_doc_el_to_pool( cur_el );        
+                        add_doc_el_to_pool( cur_el );
                         box_draw_vlines( cur_hline, sav_subs_skip + sav_blank_lines,
                                                         sav_top_skip, off_stub );
                         if( ProcFlags.vline_done ) {
@@ -743,7 +742,7 @@ static void draw_box_lines( doc_element * h_line_el )
                         sav_subs_skip = 0;
                         sav_top_skip = 0;
                     } else {
-                        add_doc_el_to_pool( cur_el );        
+                        add_doc_el_to_pool( cur_el );
                     }
                     cur_el = h_line_el;
                     cur_hline = cur_hline->next;
@@ -808,13 +807,13 @@ static void  box_line_element( bool add_depth )
     case el_text:
         cur_doc_el_group->first = cur_el->next;
         cur_el->next = NULL;
-        insert_col_main( cur_el );   
+        insert_col_main( cur_el );
         cur_el = cur_doc_el_group->first;  // resume processing
         break;
     default:
         cur_doc_el_group->first = cur_el->next;
         cur_el->next = NULL;
-        insert_col_main( cur_el );   
+        insert_col_main( cur_el );
         cur_el = cur_doc_el_group->first;  // resume processing
         break;
     }
@@ -878,8 +877,8 @@ static void  do_char_device( void )
         add_doc_el_group_to_pool( cur_doc_el_group );
         cur_doc_el_group = NULL;
     }
-   
-    if( (box_line->next != NULL) && (cur_op == bx_off) && !box_line->had_cols ) {    
+
+    if( (box_line->next != NULL) && (cur_op == bx_off) && !box_line->had_cols ) {
         box_blank_lines( 1 );
     } else {
 
@@ -913,7 +912,7 @@ static void  do_char_device( void )
                     cur_chars->next = alloc_text_chars( NULL, len, bin_device->box.font );
                     cur_chars->next->prev = cur_chars;
                     cur_chars = cur_chars->next;
-                } 
+                }
                 box_el->element.text.first->last = cur_chars;
                 cur_chars->x_address = cur_hline->cols[0].col - box_col_width;
 
@@ -1053,7 +1052,7 @@ static void do_line_device( void )
     }
     hl_depth = def_height - v_offset;
 
-                                                            
+
     /************************************************************************/
     /* this code does what wgml 4.0 does in a limited context:              */
     /* when the text last output used a font other than font "0", even if   */
@@ -1070,7 +1069,7 @@ static void do_line_device( void )
     /* provided that there is only one doc_element on the page and it       */
     /* matches the characteristics of the empty doc_element: it is the only */
     /* doc_element in t_page.cur_col->main, ir is a text element, it has a  */
-    /* text_line, and that text_line has no text_chars, ie, is empty        */ 
+    /* text_line, and that text_line has no text_chars, ie, is empty        */
     /************************************************************************/
 
     do_v_adjust = ProcFlags.col_started;
@@ -1098,7 +1097,7 @@ static void do_line_device( void )
 
     if( cur_doc_el_group != NULL ) {
         while( cur_doc_el_group->first != NULL ) {
-            if( cur_doc_el_group->depth <= max_depth ) {   // doc_elements will all fit    
+            if( cur_doc_el_group->depth <= max_depth ) {   // doc_elements will all fit
                 cur_el = cur_doc_el_group->first;
                 if( cur_el != NULL ) {
                     while( (cur_el != NULL)
@@ -1117,7 +1116,7 @@ static void do_line_device( void )
                         box_line_element( check_el == NULL );
                     }
                 }
-            } else {                            // finish off current column 
+            } else {                            // finish off current column
                 next_column();
                 max_depth = t_page.max_depth;
             }
@@ -1200,7 +1199,7 @@ static void do_line_device( void )
                 cur_el->element.hline.h_start = h_offset;
             } else {
                 cur_el->element.hline.h_start = h_vl_offset;
-            }        
+            }
             if( cur_hline->current > 1) {   // if only one column, default is correct
                 cur_el->element.hline.h_len =
                                     (cur_hline->cols[cur_hline->current - 1].col -
@@ -1559,7 +1558,7 @@ static void merge_lines( void )
             }
             prev_temp = prev_temp->next;
             if( prev_temp != NULL ) {
-  
+
                 /* set up next eoc_line member in cur_temp */
 
                 cur_temp->next = alloc_box_col_set();
@@ -1818,7 +1817,7 @@ static void merge_lines( void )
                         box_temp = box_temp->next;
                         box_col = 0;
                     }
-                }                            
+                }
 
                 cur_temp = cur_temp->next;      // end of segment per condition above
                 if( cur_temp != NULL ) {
@@ -2048,7 +2047,7 @@ static void merge_lines( void )
                         if( prev_temp != NULL ) {
                             prev_col = 0;
                         }
-                    }                
+                    }
                 } else if( cur_temp->cols[cur_col].col < prev_temp->cols[prev_col].col ) {
                     while( (cur_temp->cols[cur_col].col < prev_temp->cols[prev_col].col)
                             && (cur_col < cur_temp->current) ) {
@@ -2087,7 +2086,7 @@ static void merge_lines( void )
                         if( cur_temp != NULL) {
                             cur_col = 0;
                         }
-                    }                
+                    }
                 } else {        // both have the same column
                     while( (cur_temp->cols[cur_col].col == prev_temp->cols[prev_col].col)
                             && ((cur_col < cur_temp->current)
@@ -2252,7 +2251,7 @@ void scr_bx( void )
     int                 prev_col;
     size_t              len;
     su                  boxcolwork;
-    
+
     start_doc_sect();                   // if not already done
 
     ProcFlags.box_cols_cur = false;     // new BX line: no box column list yet
@@ -2363,7 +2362,7 @@ void scr_bx( void )
                 if( cur_col <= 0 ) {        // treat as "+0" to minimize mischief
                     cur_col = prev_col;
                 }
-                cur_temp->cols[cur_temp->current].col = cur_col; 
+                cur_temp->cols[cur_temp->current].col = cur_col;
                 prev_col = cur_col;
             } else {
                 xx_line_err( err_spc_not_valid, pa );
@@ -2405,9 +2404,9 @@ void scr_bx( void )
                 }
                 prev_temp = prev_temp->next;
                 if( prev_temp != NULL ) {
-  
+
                     /* set up next box_line->next member in box_temp */
-  
+
                     box_temp->next = alloc_box_col_set();
                     box_temp = box_temp->next;
                     while( box_temp->length < prev_temp->length) {
@@ -2425,10 +2424,10 @@ void scr_bx( void )
     case bx_off :
     case bx_on :
         merge_lines();
-        break;    
+        break;
     default :
         internal_err( __FILE__, __LINE__ );
-        break;    
+        break;
     }
 
     /* set the ProcFlags specific to BX */
@@ -2458,7 +2457,7 @@ void scr_bx( void )
             do_char_device();
         } else {
             do_line_device();
-        }    
+        }
     }
 
     if( prev_line != NULL ) {
@@ -2512,7 +2511,7 @@ void scr_bx( void )
         box_line = box_line->next;
         stack_temp->next = NULL;
         if( stack_temp->first != NULL ) {
-            add_box_col_set_to_pool( stack_temp->first );        
+            add_box_col_set_to_pool( stack_temp->first );
             stack_temp->first = NULL;
         }
         add_box_col_stack_to_pool( stack_temp );
@@ -2604,7 +2603,7 @@ void scr_bx( void )
             add_box_col_set_to_pool( cur_temp );
         }
 
-        add_box_col_set_to_pool( box_line->first );        
+        add_box_col_set_to_pool( box_line->first );
         box_line->first = NULL;
 
     }

@@ -28,10 +28,9 @@
 *
 ****************************************************************************/
 
-#define __STDC_WANT_LIB_EXT1__  1      /* use safer C library              */
 
 #include "wgml.h"
-#include "gvars.h"
+
 
 /***************************************************************************/
 /*   :TOC    attributes                                                      */
@@ -80,7 +79,6 @@ const   lay_att     toc_att[7] =
 /*fill_string This attribute accepts a string value which is used to 'fill' the    */
 /*line between the text and the page number.                                       */
 /***********************************************************************************/
-
 
 
 /***************************************************************************/

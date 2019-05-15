@@ -38,8 +38,6 @@
 #include "wgml.h"
 #include "copdir.h"
 #include "cophdr.h"
-#include "findfile.h"
-#include "gvars.h"
 
 /* Global function definitions. */
 

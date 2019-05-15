@@ -30,10 +30,9 @@
 *
 ****************************************************************************/
 
-#define __STDC_WANT_LIB_EXT1__  1      /* use safer C library              */
 
 #include "wgml.h"
-#include "gvars.h"
+
 
 /***************************************************************************/
 /*  find an index item number reference in index_dict                      */
@@ -43,7 +42,7 @@ static bool find_num_ref( ix_e_blk * * base, uint32_t page_nr )
 {
     bool            retval  = false;
     ix_e_blk    *   cur_ieh;
-    ix_e_blk    *   old_ieh = NULL;     // will hold entry to insert after 
+    ix_e_blk    *   old_ieh = NULL;     // will hold entry to insert after
 
     cur_ieh = *base;                    // starting point is value passed
     while( cur_ieh != NULL ) {
@@ -78,7 +77,7 @@ static bool find_string_ref( char * ref, uint32_t len, ix_e_blk * * base )
     int             comp_len;           // compare length for searching existing entries
     int             comp_res;           // compare result
     ix_e_blk    *   cur_ieh;
-    ix_e_blk    *   old_ieh = NULL;     // will hold entry to insert after 
+    ix_e_blk    *   old_ieh = NULL;     // will hold entry to insert after
 
     cur_ieh = *base;                   // starting point is value passed
     while( cur_ieh != NULL ) {
@@ -127,7 +126,7 @@ static bool find_index_item( char * item, uint32_t len, ix_h_blk ** entry )
     int             comp_len;           // compare length for searching existing entries
     int             comp_res;           // compare result
     ix_h_blk    *   cur_ixh;
-    ix_h_blk    *   old_ixh = NULL;     // will hold entry to insert after 
+    ix_h_blk    *   old_ixh = NULL;     // will hold entry to insert after
 
     cur_ixh = *entry;                   // starting point is value passed
     while( cur_ixh != NULL ) {
@@ -195,7 +194,7 @@ void find_create_ix_e_entry( ix_h_blk * ixhwork, char * ref, size_t len,
                     cur_tl = cur_tl->next;    // find last text_line
                 }
                 eol_base = &cur_tl->eol_index;
-            } else if( t_page.last_col_main != NULL ) {               
+            } else if( t_page.last_col_main != NULL ) {
                 switch( t_page.last_col_main->type ) {
                     case el_binc :
                         eol_base = &t_page.last_col_main->element.binc.eol_index;
@@ -225,7 +224,7 @@ void find_create_ix_e_entry( ix_h_blk * ixhwork, char * ref, size_t len,
                     default :
                         internal_err( __FILE__, __LINE__ ); // bad element type value
                 }
-            } else {                
+            } else {
                 internal_err( __FILE__, __LINE__ ); // no place to put index item list?
             }
 

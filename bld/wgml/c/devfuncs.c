@@ -171,12 +171,10 @@
 *               Wiki.
 ****************************************************************************/
 
-#define __STDC_WANT_LIB_EXT1__  1
 
 #include <conio.h>
 #include "wgml.h"
 #include "devfuncs.h"
-#include "gvars.h"
 #include "outbuff.h"
 
 /* Macros. */

@@ -28,19 +28,18 @@
 *
 ****************************************************************************/
 
-#define __STDC_WANT_LIB_EXT1__  1      /* use safer C library              */
 
 #include "wgml.h"
-#include "gvars.h"
+
 
 /***************************************************************************/
 /*   :ABSTRACT and :PREFACE attributes                                     */
 /***************************************************************************/
+
 const   lay_att     abspref_att[11] =
     { e_post_skip, e_pre_top_skip, e_font, e_spacing, e_header,
       e_abstract_string, e_preface_string, e_page_eject, e_page_reset,
       e_columns, e_dummy_zero };
-
 
 
 /**********************************************************************************/

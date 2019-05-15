@@ -29,10 +29,8 @@
 *   see comment in wgml.c
 ****************************************************************************/
 
-#define __STDC_WANT_LIB_EXT1__  1      /* use safer C library              */
 
 #include "wgml.h"
-#include "gvars.h"
 
 
 /*  split_input
