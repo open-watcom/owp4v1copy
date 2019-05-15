@@ -216,15 +216,7 @@ void gml_exmp( const gmltag * entry )
         }
 
         if( (cur_doc_el_group->depth + t_page.cur_depth) > t_page.max_depth ) {
-
-            /*  the block won't fit on this page */
-
-            if( cur_doc_el_group->depth  <= t_page.max_depth ) {
-
-                /*  the block will be in the next column */
-
-                next_column();
-            }
+            next_column();  //  the block won't fit on this page (or in this column)
         }
 
         while( cur_doc_el_group->first != NULL ) {
