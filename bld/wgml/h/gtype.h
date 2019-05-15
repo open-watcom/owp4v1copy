@@ -411,7 +411,7 @@ typedef enum {
     def_tag         = 32,               // marks DDHD, DD, GD
     ip_start_tag    = 64,               // marks CIT, HP0, HP1, HP2, HP3, SF, Q
     ip_end_tag      = 128,              // marks eCIT, eHP0, eHP1, eHP2, eHP3, eSF, eQ
-    li_lp_tag       = 256,              // marks LI LP 
+    li_lp_tag       = 256,              // marks LI LP
 } locflags;
 
 typedef struct gmltag {
@@ -802,19 +802,13 @@ typedef enum functs {
 /*  tags and controlwords as enums for distinction during processing       */
 /***************************************************************************/
 
-#undef pickg
-#define pickg( name, length, routine, gmlflags, locflags )  t_##name,
-
-#undef picklab
-#define picklab( name, routine, flags )  t_label,
-
-#undef picks
-#define picks( name, routine, flags )  t_##name,
-
 typedef enum e_tags {
     t_NONE,
-#include "gtags.h"
-//  #include "gscrcws.h" TBD
+    #define pickg( name, length, routine, gmlflags, locflags )  t_##name,
+    #include "gtags.h"
+//    #define picklab( name, routine, flags )  t_label,
+//    #define picks( name, routine, flags )  t_##name,
+//    #include "gscrcws.h" TBD
     t_MAX                               // the last one for range check
 } e_tags;
 
@@ -1224,7 +1218,7 @@ typedef struct {
 /***************************************************************************/
 /*  moved from the :BANREGION attribute values in gtypelay.h for use here  */
 /***************************************************************************/
- 
+
 typedef enum content_enum {
     no_content          =  0,
     author_content,
@@ -1267,12 +1261,12 @@ typedef enum content_enum {
     tophead_content,
     max_content                         // keep as last entry
 } content_enum;
- 
+
 /***************************************************************************/
 /*  definitions for number style                                           */
 /*  moved from gtypelay.h to avoid inclusion circularity                   */
 /***************************************************************************/
- 
+
 typedef enum num_style {
     h_style     = 0x0001,               // hindu-arabic
     a_style     = 0x0002,               // lowercase alphabetic
@@ -1285,7 +1279,7 @@ typedef enum num_style {
     xpa_style   = 0x0200,               // only left parenthesis
     xpb_style   = 0x0400                // only right parenthesis
 } num_style;
- 
+
 /***************************************************************************/
 /*  Structures for storing index information from IX control word          */
 /*  and In IHn IREF tags                                                   */
@@ -1331,7 +1325,7 @@ typedef struct {
 typedef struct ix_h_blk {                   // index header with index term text
     struct  ix_h_blk    *   next;           // next ix header block same level
     struct  ix_h_blk    *   lower;          // first ix hdr block next lower level
-            entry_list  *   entry;          // set of pointers to ix entry block 
+            entry_list  *   entry;          // set of pointers to ix entry block
             uint32_t        ix_lvl;         // index level 1 - 3
             size_t          ix_term_len;    // index term length
             char        *   ix_term;        // index term
@@ -1391,7 +1385,7 @@ typedef enum page_pos {         // needed here to avoid gtypelay.h circularity
     pos_center,
     pos_centre = pos_center
 } page_pos;
- 
+
 /***************************************************************************/
 /*  Structure for storing figure/heading information from :FIG, :FIGCAP,   */
 /*  :Fn, :Hn tags                                                          */
@@ -1460,7 +1454,7 @@ typedef struct fwd_ref {
 /********************************************************************************/
 /*  enum and struct for use with script styles                                  */
 /*   used for .BD, .BI, .UL, .US and others as they are implemented             */
-/*   related functions &'bold() etc may also need to use them, if implemented   */                
+/*   related functions &'bold() etc may also need to use them, if implemented   */
 /********************************************************************************/
 
 typedef enum {

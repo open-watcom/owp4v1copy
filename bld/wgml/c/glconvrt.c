@@ -39,12 +39,11 @@
 /* Layout attributes as character strings                                  */
 /***************************************************************************/
 
-#define pick( name, funci, funco, result ) { #name },
-
 const   char    att_names[e_dummy_max + 1][18] = {
 //   18 is enough for longest attribute name  ( extract_threshold )
-     { "DUMMY" },                       // enum zero not used
-#include "glayutil.h"
+    { "DUMMY" },                       // enum zero not used
+    #define pick( name, funci, funco, result ) { #name },
+    #include "glayutil.h"
 };
 
 
@@ -611,7 +610,7 @@ static  void    put_lay_dl( FILE * layfile, layout_data * lay )
     lay_att             curr;
 
     dl_layout = lay->dl.first;
-    
+
     while( dl_layout != NULL ) {
         fprintf_s( layfile, ":DL\n" );
 
@@ -1388,7 +1387,7 @@ static  void    put_lay_ol( FILE * layfile, layout_data * lay )
     ol_lay_level    *   ol_layout;
 
     ol_layout = lay->ol.first;
-    
+
     while( ol_layout != NULL ) {
         fprintf_s( layfile, ":OL\n" );
 
@@ -1523,7 +1522,7 @@ static  void    put_lay_sl( FILE * layfile, layout_data * lay )
     sl_lay_level    *   sl_layout;
 
     sl_layout = lay->sl.first;
-    
+
     while( sl_layout != NULL ) {
         fprintf_s( layfile, ":SL\n" );
 
@@ -1757,7 +1756,7 @@ static  void    put_lay_ul( FILE * layfile, layout_data * lay )
     ul_lay_level    *   ul_layout;
 
     ul_layout = lay->ul.first;
-    
+
     while( ul_layout != NULL ) {
         fprintf_s( layfile, ":UL\n" );
 

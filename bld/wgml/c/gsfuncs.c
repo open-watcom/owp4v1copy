@@ -46,13 +46,9 @@
 /*    SCR multi letter functions                                           */
 /***************************************************************************/
 
-#define pick( name, length, parms, optparms, routine ) \
-            { #name, length, parms, optparms, routine },
-
 static  const   scrfunc scr_functions[] = {
-
-#include "gsfuncs.h"
-
+    #define pick( name, length, parms, optparms, routine )  { #name, length, parms, optparms, routine },
+    #include "gsfuncs.h"
     { " ", 0, 0, 0, NULL }              // end
 };
 

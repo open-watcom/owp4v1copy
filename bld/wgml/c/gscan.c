@@ -38,64 +38,47 @@
 /*    GML tags                                                             */
 /***************************************************************************/
 
-#define pickg( name, length, routine, gmlflags, locflags ) { #name, length, routine, gmlflags, locflags },
-
 static  const   gmltag  gml_tags[] = {
-
-#include "gtags.h"
+    #define pickg( name, length, routine, gmlflags, locflags ) { #name, length, routine, gmlflags, locflags },
+    #include "gtags.h"
     { "   ", 0, NULL, 0, 0 }            // end
 
 };
 
 #define GML_TAGMAX  (sizeof( gml_tags ) / sizeof( gml_tags[0] ) - 1)
 
-#undef pick
-
-
 /***************************************************************************/
 /*    GML layout tags                                                      */
 /***************************************************************************/
 
-#define pick( name, length, routine, gmlflags, locflags ) { #name, length, routine, gmlflags, locflags },
-
 static  const   gmltag  lay_tags[] = {
-
-#include "gtagslay.h"
+    #define pick( name, length, routine, gmlflags, locflags ) { #name, length, routine, gmlflags, locflags },
+    #include "gtagslay.h"
     { "   ", 0, NULL, 0, 0 }            // end
 
 };
 
 #define LAY_TAGMAX  (sizeof( lay_tags ) / sizeof( lay_tags[0] ) - 1)
 
-#undef pick
-
 
 /***************************************************************************/
 /*    SCR control words                                                    */
 /***************************************************************************/
 
-#define picks( name, routine, flags) { #name, routine, flags },
-#define picklab( name, routine, flags) { #name, routine, flags },
-
 static  const   scrtag  scr_tags[] = {
-
-#include "gscrcws.h"
-
+    #define picks( name, routine, flags) { #name, routine, flags },
+    #define picklab( name, routine, flags) { #name, routine, flags },
+    #include "gscrcws.h"
     { "  ", NULL, 0   }                 // end
 };
 
 #define SCR_TAGMAX  (sizeof( scr_tags ) / sizeof( scr_tags[0] ) - 1)
 
-#undef pick
-#undef pickg
-#undef picklab
-#undef picks
-
 void set_overload( gtentry * in_gt )
 {
     int     k;
     uint8_t len;        // user tag name max length is 15
-    
+
     in_gt->overload = false;
     len = strlen( in_gt->name );
     for( k = 0; k < GML_TAGMAX; ++k ) {
@@ -229,7 +212,7 @@ static void scan_gml( void )
             if( (cb->fmflags & II_tag) && ge->overload ) {
                 me = NULL;
             }
-    
+
         }
     }
     if( me != NULL ) {                  // usertag and coresponding macro ok
@@ -259,7 +242,7 @@ static void scan_gml( void )
                             lay_tags[k].gmlproc( &lay_tags[k] );
                         } else if( rs_loc == banner_tag ) {
                             xx_tag_err( err_tag_expected, "eBANNER" );
-                        } else {    // rs_loc == banreg_tag    
+                        } else {    // rs_loc == banreg_tag
                             xx_tag_err( err_tag_expected, "eBANREGION" );
                         }
                         processed = true;
@@ -1005,7 +988,7 @@ char * get_text_line( char * p )
         if( *p == '.' ) {
             p++;                        // possible tag end
         }
-        if( *p == '\0' ) {              // get new line 
+        if( *p == '\0' ) {              // get new line
             while( *p == '\0' ) {
                 if( !(input_cbs->fmflags & II_eof) ) {
                     if( get_line( true ) ) {    // next line for text
@@ -1023,7 +1006,7 @@ char * get_text_line( char * p )
             use_current = true;
         }
     } else {
-        ProcFlags.reprocess_line = false; 
+        ProcFlags.reprocess_line = false;
     }
     if( !use_current ) {                // not on same line as tag
         while( *p == ' ' ) p++;         // skip initial spaces

@@ -184,7 +184,7 @@ global struct ProcFlags {
     unsigned        CW_indented         : 1;// scr cw line was indented
     unsigned        CW_sep_ignore       : 1;// ignore scr cw separator
     unsigned        in_macro_define     : 1;// macro definition active
-    unsigned        in_fb_fk_block      : 1;// inside FB/FK block     
+    unsigned        in_fb_fk_block      : 1;// inside FB/FK block
     unsigned        in_figcap           : 1;// FIGCAP in progress
     unsigned        suppress_msg        : 1;// suppress error msg (during scanning)
     unsigned        blanks_allowed      : 1;// blanks allowed (during scanning)
@@ -227,7 +227,7 @@ global struct ProcFlags {
     unsigned        need_ddhd           : 1;// DTHD seen; DDHD must be next tag
     unsigned        need_gd             : 1;// GT seen; GD must be next tag
     unsigned        need_li_lp          : 1;// top of list/need LI/LP (OL,SL,UL)
-    unsigned        need_tag            : 1;// need tag now, not text 
+    unsigned        need_tag            : 1;// need tag now, not text
     unsigned        need_text           : 1;// need text now, not tag or cw/macro
     unsigned        no_var_impl_err     : 1;// suppress err_var_not_impl msg
     unsigned        tophead_done        : 1;// tophead symbol set
@@ -308,7 +308,7 @@ global  ffh_entry   *   hd_list;        // list of headings in order encountered
 global  hd_num_data     hd_nums[hds_appendix];  // heading hierarchy numbering
 
 // index support
-global  bool            ixhlvl[2];      // true for levels that exist 
+global  bool            ixhlvl[2];      // true for levels that exist
 global  eol_ix      *   eol_ix_pool;    // eol_ix pool
 global  ix_h_blk    *   index_dict;     // index structure dictionary
 global  ix_h_blk    *   ixhtag[3];      // current entry for each level in index
@@ -408,22 +408,19 @@ global script_style_info    script_style;   // BD/US etc scope control
 /***************************************************************************/
 /*  tagnames as strings for msg display                                    */
 /***************************************************************************/
-
-#define pickg( name, length, routine, gmlflags, locflags )  { #name },
-
 global char str_tags[t_MAX + 1][10]
 #if defined(tag_strings)
-   = {
-     { "NONE" },
-#include "gtags.h"
-//  #include "gscrcws.h" TBD
-     { "MAX" }
+  = {
+    { "NONE" },
+    #define pickg( name, length, routine, gmlflags, locflags )  { #name },
+    #include "gtags.h"
+//    #define picklab( name, routine, flags )  extern void routine( void );
+//    #define picks( name, routine, flags )  extern void routine( void );
+//    #include "gscrcws.h" TBD
+    { "MAX" }
 }
 #endif
 ;
-#undef pickg
-#undef xmystr
-#undef mystr
 
 /***************************************************************************/
 /* The tab lists.                                                          */

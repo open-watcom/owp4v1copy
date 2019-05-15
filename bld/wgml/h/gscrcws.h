@@ -32,6 +32,9 @@
 #ifndef picks
     #error macro picks not defined
 #endif
+#ifndef picklab
+    #error macro picklab not defined
+#endif
 //  control  routine    flags
 //     word  name
 // lower case

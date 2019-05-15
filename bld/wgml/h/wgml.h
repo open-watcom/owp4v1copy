@@ -490,11 +490,7 @@ extern  void    show_include_stack( void );
  * prototypes for the gml tag processing routines
  */
 
-#ifdef pickg
-    #undef pickg
-#endif
 #define pickg( name, length, routine, gmlflags, locflags )  extern void routine( const gmltag * entry );
-
 #include "gtags.h"
 
 /*
@@ -502,7 +498,6 @@ extern  void    show_include_stack( void );
  */
 
 #define pick( name, length, routine, gmlflags, locflags )  extern void routine( const gmltag * entry );
-
 #include "gtagslay.h"
 
 /*
@@ -510,27 +505,19 @@ extern  void    show_include_stack( void );
  */
 
 /*          for input scanning              */
-#define pick( name, funci, funco, restype ) \
-    extern  bool    funci( char * buf, lay_att attr, restype * result );
-
+#define pick( name, funci, funco, restype )     extern  bool    funci( char * buf, lay_att attr, restype * result );
 #include "glayutil.h"
 
 /*          for output via :convert tag     */
-#define pick( name, funci, funco, restype ) \
-    extern  void    funco( FILE * f, lay_att attr, restype * in );
-
+#define pick( name, funci, funco, restype )     extern  void    funco( FILE * f, lay_att attr, restype * in );
 #include "glayutil.h"
 
 /*
  * prototypes for the script control word processing routines
  */
 
-#undef picklab
 #define picklab( name, routine, flags )  extern void routine( void );
-
-#undef picks
 #define picks( name, routine, flags )  extern void routine( void );
-
 #include "gscrcws.h"
 
 /*
@@ -539,7 +526,6 @@ extern  void    show_include_stack( void );
 
 #define pick( name, length, mand_parms, opt_parms, routine ) \
     extern condcode routine( parm parms[MAX_FUN_PARMS], size_t parm_count, char * * ppval, int32_t valsize );
-
 #include "gsfuncs.h"
 
 

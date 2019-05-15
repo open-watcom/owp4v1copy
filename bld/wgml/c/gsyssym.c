@@ -39,84 +39,70 @@
 #define sys0(x) sys##x##0               // construct subscript 0 name
 #define syss(x) sys##x##str             // construct name for string value
 
-#define pica( var, next, flag )    pick( var, next, flag )
-#define picc( var, next, flag )    pick( var, next, flag )
-#define picl( var, next, flag )    pick( var, next, flag )
 
 /***************************************************************************/
 /*  declare dictionary entries for system variables                        */
 /***************************************************************************/
 
-#define pick( var, next, flag ) static symvar sys( var );
+#define picka( var, next, flag )    pickk( var, next, flag )
+#define pickc( var, next, flag )    pickk( var, next, flag )
+#define pickl( var, next, flag )    pickk( var, next, flag )
+#define pickk( var, next, flag ) static symvar sys( var );
 #include "gsyssym.h"
-#undef pick
 
-#define pick( var, next, flag ) static symsub sys0( var );
+#define picka( var, next, flag )    pickk( var, next, flag )
+#define pickc( var, next, flag )    pickk( var, next, flag )
+#define pickl( var, next, flag )    pickk( var, next, flag )
+#define pickk( var, next, flag ) static symsub sys0( var );
 #include "gsyssym.h"
-#undef pick
-#undef pica
-#undef picc
-#undef picl
 
 /***************************************************************************/
 /*  declare the access functions for system variables                      */
 /***************************************************************************/
 
-#define pica( var, next, flag )
-#define picc( var, next, flag ) picl( var, next, flag )
-#define pick( var, next, flag ) picl( var, next, flag )
-#define picl( var, next, flag ) static void sysf( var )( symvar * entry );
+#define picka( var, next, flag )
+#define pickc( var, next, flag )    pickl( var, next, flag )
+#define pickk( var, next, flag )    pickl( var, next, flag )
+#define pickl( var, next, flag ) static void sysf( var )( symvar * entry );
 #include "gsyssym.h"
-#undef pick
-#undef pica
-#undef picc
-#undef picl
 
 /***************************************************************************/
 /*  define char strings to hold the values of some system variables        */
 /***************************************************************************/
 
-#define pica( var, next, flag )
-#define pick( var, next, flag )
-#define picc( var, next, flag ) static char syss( var )[2];             // for single char values as string
-#define picl( var, next, flag ) static char syss( var )[MAX_L_AS_STR];  // for long as string and sysbxchar
+#define picka( var, next, flag )
+#define pickk( var, next, flag )
+#define pickc( var, next, flag ) static char syss( var )[2];             // for single char values as string
+#define pickl( var, next, flag ) static char syss( var )[MAX_L_AS_STR];  // for long as string and sysbxchar
 #include "gsyssym.h"
-#undef pick
-#undef pica
-#undef picc
-#undef picl
 
 /***************************************************************************/
 /*  define the dictionary for the system variables                         */
 /*  The dictionary is built at compile time                                */
-/*  pica:       no access function, no separate string value               */
-/*  picc:          access function,    separate string value 2 chars       */
-/*  picl:          access function,    separate string value 12 chars      */
-/*  pick:          access function, no separate string value               */
+/*  picka:      no access function, no separate string value               */
+/*  pickc:         access function,    separate string value 2 chars       */
+/*  pickl:         access function,    separate string value 12 chars      */
+/*  pickk:         access function, no separate string value               */
 /*                                  or 2 predefined values  ON OFF         */
 /***************************************************************************/
 
-#define picc( var, next, flag )     picl( var, next, flag )
-#define picl( var, next, flag )     \
-static symvar sys( var ) = {        \
-    &sys( next ), "$" #var, 0L, 0L, NULL, &sys0( var ), sysf( var ), flag };\
-static symsub sys0( var ) = { NULL, &sys( var ), no_subscript, &syss( var ) };
+#define pickc( var, next, flag )    pickl( var, next, flag )
 
-#define pica( var, next, flag )     \
-static symvar sys( var ) = {        \
-    &sys( next ), "$" #var, 0L, 0L, NULL, &sys0( var ), NULL, flag };\
-static symsub sys0( var ) = { NULL, &sys( var ), no_subscript, NULL };
+#define pickl( var, next, flag )        \
+        static symvar sys( var ) = {    \
+            &sys( next ), "$" #var, 0L, 0L, NULL, &sys0( var ), sysf( var ), flag }; \
+        static symsub sys0( var ) = { NULL, &sys( var ), no_subscript, &syss( var ) };
 
-#define pick( var, next, flag )     \
-static symvar sys( var ) = {        \
-    &sys( next ), "$" #var, 0L, 0L, NULL, &sys0( var ), sysf( var ), flag };\
-static symsub sys0( var ) = { NULL, &sys( var ), no_subscript, NULL };
+#define picka( var, next, flag )        \
+        static symvar sys( var ) = {    \
+            &sys( next ), "$" #var, 0L, 0L, NULL, &sys0( var ), NULL, flag }; \
+        static symsub sys0( var ) = { NULL, &sys( var ), no_subscript, NULL };
 
+#define pickk( var, next, flag )        \
+        static symvar sys( var ) = {    \
+            &sys( next ), "$" #var, 0L, 0L, NULL, &sys0( var ), sysf( var ), flag }; \
+        static symsub sys0( var ) = { NULL, &sys( var ), no_subscript, NULL };
 #include "gsyssym.h"
-#undef pick
-#undef pica
-#undef picc
-#undef picl
 
 
 /***************************************************************************/
