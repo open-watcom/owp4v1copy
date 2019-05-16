@@ -40,7 +40,6 @@ static  const   gmltag  gml_tags[] = {
     #define pickg( name, length, routine, gmlflags, locflags ) { #name, length, routine, gmlflags, locflags },
     #include "gtags.h"
     { "   ", 0, NULL, 0, 0 }            // end
-
 };
 
 #define GML_TAGMAX  (sizeof( gml_tags ) / sizeof( gml_tags[0] ) - 1)
