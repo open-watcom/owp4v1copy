@@ -1307,7 +1307,7 @@ typedef struct ix_e_blk {                   // index entry for pagenos / text
         struct {
             uint32_t        page_no;        // pageno is number
             num_style       style;          // page number style defined by banner, if any
-        } pageno;
+        } pagenum;
     } u;
             ereftyp          entry_typ;     // selects page_no or page_text (IX, In), or no reference (IHn)
 } ix_e_blk;

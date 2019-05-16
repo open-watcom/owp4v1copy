@@ -190,7 +190,7 @@ void    lay_ix( const gmltag * entry )
                     break;
                 case   e_index_delim:
                     cvterr = i_xx_string( p, curr,
-                                          &layout_work.ix[ix_l].index_delim );
+                                          layout_work.ix[ix_l].index_delim );
                     break;
                 case   e_string_font:
                     if( ix_l < 2 ) {

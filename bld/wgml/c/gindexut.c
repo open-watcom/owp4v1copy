@@ -46,11 +46,11 @@ static bool find_num_ref( ix_e_blk * * base, uint32_t page_nr )
 
     cur_ieh = *base;                    // starting point is value passed
     while( cur_ieh != NULL ) {
-        if( page_nr > cur_ieh->u.pageno.page_no ) {       // new is later in list
+        if( page_nr > cur_ieh->u.pagenum.page_no ) {       // new is later in list
             old_ieh = cur_ieh;
             cur_ieh = cur_ieh->next;
             continue;
-        } else if( page_nr < cur_ieh->u.pageno.page_no ) {// new is earlier in list
+        } else if( page_nr < cur_ieh->u.pagenum.page_no ) {// new is earlier in list
             *base = old_ieh;           // use old_ixh as insert point
             break;                     // entry found, and is in *entry
         } else {                       // must be equal
@@ -362,8 +362,8 @@ void eol_index_page( eol_ix * eol_index, uint32_t page_nr )
             ixewk->next = NULL;
             ixewk->entry_typ = eol_index->type;
             ixewk->prt_text = NULL;
-            ixewk->u.pageno.page_no = page_nr;
-            ixewk->u.pageno.style = find_pgnum_style();
+            ixewk->u.pagenum.page_no = page_nr;
+            ixewk->u.pagenum.style = find_pgnum_style();
 
             if( *base == NULL ) {
                 if( ixework != NULL ) {         // displace prior reference list head
