@@ -143,7 +143,7 @@ void gml_fn( const gmltag * entry )
                 cur_ref = mem_alloc( sizeof( ref_entry ) );
                 init_ref_entry( cur_ref, id );
                 cur_ref->flags = rf_ffh;
-                cur_ref->entry = fn_entry;
+                cur_ref->u.ffh.entry = fn_entry;
                 add_ref_entry( &fn_ref_dict, cur_ref );
             } else {
                 dup_id_err( cur_ref->id, "footnote" );

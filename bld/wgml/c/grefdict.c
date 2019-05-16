@@ -205,21 +205,21 @@ void    print_ref_dict( ref_entry * dict, const char * type )
             for( wk = dict; wk != NULL; wk = wk->next ) {
                 len = strlen( wk->id );
                 if( withnumber ) {
-                    out_msg( "%4ld ID='%s'%spage %-3ld text='%s'\n", wk->entry->number,
-                             wk->id, &fill[len], wk->entry->pageno, wk->entry->text );
+                    out_msg( "%4ld ID='%s'%spage %-3ld text='%s'\n", wk->u.ffh.entry->number,
+                             wk->id, &fill[len], wk->u.ffh.entry->pageno, wk->u.ffh.entry->text );
                 } else {
                     out_msg( "ID='%s'%spage %-3ld text='%s'\n", wk->id,
-                            &fill[len], wk->entry->pageno, wk->entry->text );
+                            &fill[len], wk->u.ffh.entry->pageno, wk->u.ffh.entry->text );
                 }
                 cnt++;
             }
         } else {                        // "INDEX"
             for( wk = dict; wk != NULL; wk = wk->next ) {
                 len = strlen( wk->id );
-                if( wk->hblk->prt_term != NULL ) {
-                    text = wk->hblk->prt_term;
+                if( wk->u.ix.hblk->prt_term != NULL ) {
+                    text = wk->u.ix.hblk->prt_term;
                 } else {
-                    text = wk->hblk->ix_term;
+                    text = wk->u.ix.hblk->ix_term;
                 }
                 out_msg( "ID='%s'%s'%s'\n", wk->id,
                          &fill[len], text );

@@ -36,7 +36,7 @@
 /*  Setup for both proc_p_c() and do_force_pc()                            */
 /***************************************************************************/
 
-void p_pc_setup( p_lay_tag * p_pc )
+static void p_pc_setup( p_lay_tag * p_pc )
 {
     ProcFlags.keep_left_margin = true;  // special Note indent
     start_doc_sect();                   // if not already done
@@ -65,7 +65,7 @@ void p_pc_setup( p_lay_tag * p_pc )
 /*  :P. :PC common routine                                                 */
 /***************************************************************************/
 
-void proc_p_pc( p_lay_tag * p_pc )
+static void proc_p_pc( p_lay_tag * p_pc )
 {
     char    *   p;
 

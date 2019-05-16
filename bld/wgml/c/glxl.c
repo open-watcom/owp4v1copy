@@ -617,28 +617,28 @@ void    lay_dl( const gmltag * entry )
 
         /* Only items changed from the level 1 layout are to be copied */
 
-        if( strcmp( &dl_layout->left_indent.su_txt,
-                &layout_work.dl.first->left_indent.su_txt ) != 0 ) {
+        if( strcmp( dl_layout->left_indent.su_txt,
+                layout_work.dl.first->left_indent.su_txt ) != 0 ) {
             curr_level->left_indent = dl_layout->left_indent;
         }
-        if( strcmp( &dl_layout->right_indent.su_txt,
-                &layout_work.dl.first->right_indent.su_txt ) != 0 ) {
+        if( strcmp( dl_layout->right_indent.su_txt,
+                layout_work.dl.first->right_indent.su_txt ) != 0 ) {
             curr_level->right_indent = dl_layout->right_indent;
         }
-        if( strcmp( &dl_layout->pre_skip.su_txt,
-                &layout_work.dl.first->pre_skip.su_txt ) != 0 ) {
+        if( strcmp( dl_layout->pre_skip.su_txt,
+                layout_work.dl.first->pre_skip.su_txt ) != 0 ) {
             curr_level->pre_skip = dl_layout->pre_skip;
         }
-        if( strcmp( &dl_layout->skip.su_txt,
-                &layout_work.dl.first->skip.su_txt ) != 0 ) {
+        if( strcmp( dl_layout->skip.su_txt,
+                layout_work.dl.first->skip.su_txt ) != 0 ) {
             curr_level->skip = dl_layout->skip;
         }
-        if( strcmp( &dl_layout->post_skip.su_txt,
-                &layout_work.dl.first->post_skip.su_txt ) != 0 ) {
+        if( strcmp( dl_layout->post_skip.su_txt,
+                layout_work.dl.first->post_skip.su_txt ) != 0 ) {
             curr_level->post_skip = dl_layout->post_skip;
         }
-        if( strcmp( &dl_layout->align.su_txt,
-                &layout_work.dl.first->align.su_txt ) != 0 ) {
+        if( strcmp( dl_layout->align.su_txt,
+                layout_work.dl.first->align.su_txt ) != 0 ) {
             curr_level->align = dl_layout->align;
         }
         if( dl_layout->spacing != layout_work.dl.first->spacing ) {
@@ -763,28 +763,28 @@ void    lay_gl( const gmltag * entry )
 
         /* Only items changed from the level 1 layout are to be copied */
 
-        if( strcmp( &gl_layout->left_indent.su_txt,
-                &layout_work.gl.first->left_indent.su_txt ) != 0 ) {
+        if( strcmp( gl_layout->left_indent.su_txt,
+                layout_work.gl.first->left_indent.su_txt ) != 0 ) {
             curr_level->left_indent = gl_layout->left_indent;
         }
-        if( strcmp( &gl_layout->right_indent.su_txt,
-                &layout_work.gl.first->right_indent.su_txt ) != 0 ) {
+        if( strcmp( gl_layout->right_indent.su_txt,
+                layout_work.gl.first->right_indent.su_txt ) != 0 ) {
             curr_level->right_indent = gl_layout->right_indent;
         }
-        if( strcmp( &gl_layout->pre_skip.su_txt,
-                &layout_work.gl.first->pre_skip.su_txt ) != 0 ) {
+        if( strcmp( gl_layout->pre_skip.su_txt,
+                layout_work.gl.first->pre_skip.su_txt ) != 0 ) {
             curr_level->pre_skip = gl_layout->pre_skip;
         }
-        if( strcmp( &gl_layout->skip.su_txt,
-                &layout_work.gl.first->skip.su_txt ) != 0 ) {
+        if( strcmp( gl_layout->skip.su_txt,
+                layout_work.gl.first->skip.su_txt ) != 0 ) {
             curr_level->skip = gl_layout->skip;
         }
-        if( strcmp( &gl_layout->post_skip.su_txt,
-                &layout_work.gl.first->post_skip.su_txt ) != 0 ) {
+        if( strcmp( gl_layout->post_skip.su_txt,
+                layout_work.gl.first->post_skip.su_txt ) != 0 ) {
             curr_level->post_skip = gl_layout->post_skip;
         }
-        if( strcmp( &gl_layout->align.su_txt,
-                &layout_work.gl.first->align.su_txt ) != 0 ) {
+        if( strcmp( gl_layout->align.su_txt,
+                layout_work.gl.first->align.su_txt ) != 0 ) {
             curr_level->align = gl_layout->align;
         }
         if( gl_layout->spacing != layout_work.gl.first->spacing ) {
@@ -923,28 +923,28 @@ void    lay_ol( const gmltag * entry )
 
         /* Only items changed from the level 1 layout are to be copied */
 
-        if( strcmp( &ol_layout->left_indent.su_txt,
-                &layout_work.ol.first->left_indent.su_txt ) != 0 ) {
+        if( strcmp( ol_layout->left_indent.su_txt,
+                layout_work.ol.first->left_indent.su_txt ) != 0 ) {
             curr_level->left_indent = ol_layout->left_indent;
         }
-        if( strcmp( &ol_layout->right_indent.su_txt,
-                &layout_work.ol.first->right_indent.su_txt ) != 0 ) {
+        if( strcmp( ol_layout->right_indent.su_txt,
+                layout_work.ol.first->right_indent.su_txt ) != 0 ) {
             curr_level->right_indent = ol_layout->right_indent;
         }
-        if( strcmp( &ol_layout->pre_skip.su_txt,
-                &layout_work.ol.first->pre_skip.su_txt ) != 0 ) {
+        if( strcmp( ol_layout->pre_skip.su_txt,
+                layout_work.ol.first->pre_skip.su_txt ) != 0 ) {
             curr_level->pre_skip = ol_layout->pre_skip;
         }
-        if( strcmp( &ol_layout->skip.su_txt,
-                &layout_work.ol.first->skip.su_txt ) != 0 ) {
+        if( strcmp( ol_layout->skip.su_txt,
+                layout_work.ol.first->skip.su_txt ) != 0 ) {
             curr_level->skip = ol_layout->skip;
         }
-        if( strcmp( &ol_layout->post_skip.su_txt,
-                &layout_work.ol.first->post_skip.su_txt ) != 0 ) {
+        if( strcmp( ol_layout->post_skip.su_txt,
+                layout_work.ol.first->post_skip.su_txt ) != 0 ) {
             curr_level->post_skip = ol_layout->post_skip;
         }
-        if( strcmp( &ol_layout->align.su_txt,
-                &layout_work.ol.first->align.su_txt ) != 0 ) {
+        if( strcmp( ol_layout->align.su_txt,
+                layout_work.ol.first->align.su_txt ) != 0 ) {
             curr_level->align = ol_layout->align;
         }
         if( ol_layout->spacing != layout_work.ol.first->spacing ) {
@@ -1074,24 +1074,24 @@ void    lay_sl( const gmltag * entry )
 
         /* Only items changed from the level 1 layout are to be copied */
 
-        if( strcmp( &sl_layout->left_indent.su_txt,
-                &layout_work.sl.first->left_indent.su_txt ) != 0 ) {
+        if( strcmp( sl_layout->left_indent.su_txt,
+                layout_work.sl.first->left_indent.su_txt ) != 0 ) {
             curr_level->left_indent = sl_layout->left_indent;
         }
-        if( strcmp( &sl_layout->right_indent.su_txt,
-                &layout_work.sl.first->right_indent.su_txt ) != 0 ) {
+        if( strcmp( sl_layout->right_indent.su_txt,
+                layout_work.sl.first->right_indent.su_txt ) != 0 ) {
             curr_level->right_indent = sl_layout->right_indent;
         }
-        if( strcmp( &sl_layout->pre_skip.su_txt,
-                &layout_work.sl.first->pre_skip.su_txt ) != 0 ) {
+        if( strcmp( sl_layout->pre_skip.su_txt,
+                layout_work.sl.first->pre_skip.su_txt ) != 0 ) {
             curr_level->pre_skip = sl_layout->pre_skip;
         }
-        if( strcmp( &sl_layout->skip.su_txt,
-                &layout_work.sl.first->skip.su_txt ) != 0 ) {
+        if( strcmp( sl_layout->skip.su_txt,
+                layout_work.sl.first->skip.su_txt ) != 0 ) {
             curr_level->skip = sl_layout->skip;
         }
-        if( strcmp( &sl_layout->post_skip.su_txt,
-                &layout_work.sl.first->post_skip.su_txt ) != 0 ) {
+        if( strcmp( sl_layout->post_skip.su_txt,
+                layout_work.sl.first->post_skip.su_txt ) != 0 ) {
             curr_level->post_skip = sl_layout->post_skip;
         }
         if( sl_layout->spacing != layout_work.sl.first->spacing ) {
@@ -1234,28 +1234,28 @@ void    lay_ul( const gmltag * entry )
 
         /* Only items changed from the level 1 layout are to be copied */
 
-        if( strcmp( &ul_layout->left_indent.su_txt,
-                &layout_work.ul.first->left_indent.su_txt ) != 0 ) {
+        if( strcmp( ul_layout->left_indent.su_txt,
+                layout_work.ul.first->left_indent.su_txt ) != 0 ) {
             curr_level->left_indent = ul_layout->left_indent;
         }
-        if( strcmp( &ul_layout->right_indent.su_txt,
-                &layout_work.ul.first->right_indent.su_txt ) != 0 ) {
+        if( strcmp( ul_layout->right_indent.su_txt,
+                layout_work.ul.first->right_indent.su_txt ) != 0 ) {
             curr_level->right_indent = ul_layout->right_indent;
         }
-        if( strcmp( &ul_layout->pre_skip.su_txt,
-                &layout_work.ul.first->pre_skip.su_txt ) != 0 ) {
+        if( strcmp( ul_layout->pre_skip.su_txt,
+                layout_work.ul.first->pre_skip.su_txt ) != 0 ) {
             curr_level->pre_skip = ul_layout->pre_skip;
         }
-        if( strcmp( &ul_layout->skip.su_txt,
-                &layout_work.ul.first->skip.su_txt ) != 0 ) {
+        if( strcmp( ul_layout->skip.su_txt,
+                layout_work.ul.first->skip.su_txt ) != 0 ) {
             curr_level->skip = ul_layout->skip;
         }
-        if( strcmp( &ul_layout->post_skip.su_txt,
-                &layout_work.ul.first->post_skip.su_txt ) != 0 ) {
+        if( strcmp( ul_layout->post_skip.su_txt,
+                layout_work.ul.first->post_skip.su_txt ) != 0 ) {
             curr_level->post_skip = ul_layout->post_skip;
         }
-        if( strcmp( &ul_layout->align.su_txt,
-                &layout_work.ul.first->align.su_txt ) != 0 ) {
+        if( strcmp( ul_layout->align.su_txt,
+                layout_work.ul.first->align.su_txt ) != 0 ) {
             curr_level->align = ul_layout->align;
         }
         if( ul_layout->spacing != layout_work.ul.first->spacing ) {

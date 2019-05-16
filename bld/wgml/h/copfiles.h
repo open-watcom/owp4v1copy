@@ -124,7 +124,7 @@ typedef struct {
 
 typedef struct {
     uint16_t            count;
-    uint8_t *           text;
+    const char *        text;
 } code_text;
 
 /* These structs are unique to the top-level struct cop_device. */
@@ -232,7 +232,7 @@ typedef struct {
 typedef struct {
     bool                is_fontvalue;
     uint16_t            count;
-    uint8_t *           text;
+    const char *        text;
 } init_text;
 
 /* To hold the data from the InitBlock struct. */
@@ -277,7 +277,7 @@ typedef struct {
 typedef struct {
     uint16_t            advance;
     uint16_t            count;
-    uint8_t *           text;
+    const char *        text;
 } newline_block;
 
 /* To hold the data extracted from a NewlineFuncs struct. */
@@ -366,7 +366,7 @@ typedef struct {
 typedef struct {
     uint32_t            thickness;
     uint16_t            count;
-    uint8_t *           text;
+    const char *        text;
 } line_block;
 
 /* This struct is unique to the top-level struct cop_font. */
@@ -532,7 +532,7 @@ typedef struct cop_font {
 typedef struct {
     size_t              current;
     size_t              length;
-    char                *text;
+    char  *             text;
 } record_buffer;
 
 /* This struct implements the wgml_font struct in the Wiki. */

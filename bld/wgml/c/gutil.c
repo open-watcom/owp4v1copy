@@ -91,7 +91,7 @@
 /*                    true on error (conversion error occurred)            */
 /***************************************************************************/
 
-const bool internal_to_su( su *in_su, bool tag, const char *base )
+static const bool internal_to_su( su *in_su, bool tag, const char *base )
 {
     bool        cvterr  = true;
     bool        is_cp   = false;

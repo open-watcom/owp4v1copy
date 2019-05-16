@@ -98,13 +98,13 @@
 /* string start / end characters Possible incomplete list*/
 #define d_q     '\"'                    // change also is_quote_char()
 #define s_q     '\''                    // in gargutil.c
-#define cent    0x9b                    // if list is extended
+#define cent    '\x9b'                  // if list is extended
 #define excl    '!'
 #define not_c   '^'
 #define slash   '/'
 #define vbar1   '|'
-#define vbar2   0xdd
-#define l_q     0x60
+#define vbar2   '\xdd'
+#define l_q     '\x60'
 
 typedef uint32_t    line_number;
 
@@ -787,14 +787,14 @@ typedef enum lay_sub {
 /***************************************************************************/
 
 typedef enum functs {
-    function_escape         = 0xfd,
-    function_end            = 0x01,
+    function_escape         = '\xfd',
+    function_end            = '\x01',
 
-    function_subscript      = 0x02,
-    function_sub_end        = 0x03,
+    function_subscript      = '\x02',
+    function_sub_end        = '\x03',
 
-    function_superscript    = 0x04,
-    function_sup_end        = 0x05
+    function_superscript    = '\x04',
+    function_sup_end        = '\x05'
 } functs;
 
 
@@ -857,7 +857,7 @@ typedef struct tag_cb {
         struct  ol_lay_level    *   ol_layout;  // current OL LAYOUT record
         struct  sl_lay_level    *   sl_layout;  // current SL LAYOUT record
         struct  ul_lay_level    *   ul_layout;  // current UL LAYOUT record
-    };
+    } u;
     uint32_t                li_number;      // current list item no
     uint32_t                lm;             // left margin on entry
     uint32_t                rm;             // max width on entry
@@ -1303,12 +1303,12 @@ typedef struct ix_e_blk {                   // index entry for pagenos / text
         struct {
             char        *   page_text;      // reference is text (IX ref, pg string, see/seeid string)
             size_t          page_text_len;  // reference text length
-        };
+        } pageref;
         struct {
             uint32_t        page_no;        // pageno is number
             num_style       style;          // page number style defined by banner, if any
-        };
-    };
+        } pageno;
+    } u;
             ereftyp          entry_typ;     // selects page_no or page_text (IX, In), or no reference (IHn)
 } ix_e_blk;
 
@@ -1433,12 +1433,12 @@ typedef struct ref_entry {
     union {
         struct {
             ffh_entry   *   entry;          // detail for FIG, FN, or Hx entry
-        };
+        } ffh;
         struct {
             ix_h_blk    *   hblk;           // detail for IX, In, IHn, or IREF entry
             ix_h_blk    *   base;           // attachment point for hblk, if any
-        };
-    };
+        } ix;
+    } u;
 } ref_entry;
 
 /***************************************************************************/

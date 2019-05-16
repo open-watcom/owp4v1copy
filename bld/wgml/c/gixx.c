@@ -337,7 +337,7 @@ static void gml_ixxx_common( const gmltag * entry, int hx_lvl )
         /***********************************************************************/
 
             if( refidseen && (refwk != NULL) ) {
-                ixhwk = refwk->hblk;
+                ixhwk = refwk->u.ix.hblk;
             } else {
                 ixhwk = ixhtag[hx_lvl];
             }
@@ -369,12 +369,12 @@ static void gml_ixxx_common( const gmltag * entry, int hx_lvl )
             case 2 :
             case 3 :
                 if( refidseen && (refwk != NULL) ) {
-                    if( hx_lvl > refwk->hblk->ix_lvl ) {
-                        ixhbase = refwk->hblk;
-                        ixhwork = refwk->hblk->lower;
+                    if( hx_lvl > refwk->u.ix.hblk->ix_lvl ) {
+                        ixhbase = refwk->u.ix.hblk;
+                        ixhwork = refwk->u.ix.hblk->lower;
                     } else {
-                        ixhbase = refwk->base;
-                        ixhwork = refwk->hblk;
+                        ixhbase = refwk->u.ix.base;
+                        ixhwork = refwk->u.ix.hblk;
                     }
                 } else {
                     ixhbase = ixhtag[hx_lvl - 1];
@@ -444,8 +444,8 @@ static void gml_ixxx_common( const gmltag * entry, int hx_lvl )
             if( ixhwk->entry == NULL ) {
                 init_entry_list( ixhwk );
             }
-            find_create_ix_e_entry( ixhwk, seeidwk->hblk->ix_term,
-                                    seeidwk->hblk->ix_term_len, seeidwk->hblk, pgsee );
+            find_create_ix_e_entry( ixhwk, seeidwk->u.ix.hblk->ix_term,
+                                    seeidwk->u.ix.hblk->ix_term_len, seeidwk->u.ix.hblk, pgsee );
         }
 
         if( seeseen ) {
@@ -464,8 +464,8 @@ static void gml_ixxx_common( const gmltag * entry, int hx_lvl )
                     refwork = (ref_entry *) mem_alloc( sizeof( ref_entry ) ) ;
                     init_ref_entry( refwork, id );
                     refwork->flags = rf_ix;
-                    refwork->hblk = NULL;
-                    refwork->base = NULL;
+                    refwork->u.ix.hblk = NULL;
+                    refwork->u.ix.base = NULL;
                     add_ref_entry( &ix_ref_dict, refwork );
                 } else {                            // duplicate id
                     dup_id_err( refwork->id, "figure" );
@@ -475,8 +475,8 @@ static void gml_ixxx_common( const gmltag * entry, int hx_lvl )
                 if( refwork == NULL ) {         // shouldn't happen
                     xx_tag_err( err_id_undefined, id );
                 } else {
-                    refwork->hblk = ixhwk;
-                    refwork->base = ixhtag[hx_lvl - 1];
+                    refwork->u.ix.hblk = ixhwk;
+                    refwork->u.ix.base = ixhtag[hx_lvl - 1];
                 }
             }
         }

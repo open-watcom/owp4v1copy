@@ -57,8 +57,8 @@
  */
 
 typedef struct {
-    uint16_t    count;
-    uint8_t *   buffer;
+    uint16_t        count;
+    const char *    buffer;
 } p_buffer;
 
 /* To hold the data extracted from the CodeBlock struct. This is the CodeBlock

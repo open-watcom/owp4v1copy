@@ -46,11 +46,11 @@ static bool find_num_ref( ix_e_blk * * base, uint32_t page_nr )
 
     cur_ieh = *base;                    // starting point is value passed
     while( cur_ieh != NULL ) {
-        if( page_nr > cur_ieh->page_no ) {       // new is later in list
+        if( page_nr > cur_ieh->u.pageno.page_no ) {       // new is later in list
             old_ieh = cur_ieh;
             cur_ieh = cur_ieh->next;
             continue;
-        } else if( page_nr < cur_ieh->page_no ) {// new is earlier in list
+        } else if( page_nr < cur_ieh->u.pageno.page_no ) {// new is earlier in list
             *base = old_ieh;           // use old_ixh as insert point
             break;                     // entry found, and is in *entry
         } else {                       // must be equal
@@ -82,10 +82,10 @@ static bool find_string_ref( char * ref, uint32_t len, ix_e_blk * * base )
     cur_ieh = *base;                   // starting point is value passed
     while( cur_ieh != NULL ) {
         comp_len = len;
-        if( comp_len > cur_ieh->page_text_len ) {
-            comp_len = cur_ieh->page_text_len;
+        if( comp_len > cur_ieh->u.pageref.page_text_len ) {
+            comp_len = cur_ieh->u.pageref.page_text_len;
         }
-        comp_res = strnicmp( ref, cur_ieh->page_text, len );
+        comp_res = strnicmp( ref, cur_ieh->u.pageref.page_text, len );
         if( comp_res > 0 ) {    // new is later in alphabet
             old_ieh = cur_ieh;
             cur_ieh = cur_ieh->next;
@@ -94,11 +94,11 @@ static bool find_string_ref( char * ref, uint32_t len, ix_e_blk * * base )
             *base = old_ieh;            // use old_ixh as insert point
             break;                      // entry found, and is in *entry
         } else {                        // must be equal
-            if( len == cur_ieh->page_text_len ) {
+            if( len == cur_ieh->u.pageref.page_text_len ) {
                 *base = cur_ieh;        // use cur_ixh as insert point
                 retval = true;
                 break;                  // entry found, and is in *entry
-            } else if( len > cur_ieh->page_text_len ) { // new is later in alphabet
+            } else if( len > cur_ieh->u.pageref.page_text_len ) { // new is later in alphabet
                 old_ieh = cur_ieh;
                 cur_ieh = cur_ieh->next;
                 continue;
@@ -282,10 +282,10 @@ void find_create_ix_e_entry( ix_h_blk * ixhwork, char * ref, size_t len,
             ixewk->prt_text[0] = '\0';
             strcpy_s( ixewk->prt_text, seeidwork->prt_term_len + 1, seeidwork->prt_term );
         }
-        ixewk->page_text = mem_alloc( len + 1);
-        memcpy_s( ixewk->page_text, len + 1, ref, len );
-        ixewk->page_text[len] = '\0';
-        ixewk->page_text_len = len;
+        ixewk->u.pageref.page_text = mem_alloc( len + 1);
+        memcpy_s( ixewk->u.pageref.page_text, len + 1, ref, len );
+        ixewk->u.pageref.page_text[len] = '\0';
+        ixewk->u.pageref.page_text_len = len;
 
         if( *base == NULL ) {
             if( ixework != NULL ) {         // displace prior reference list head
@@ -362,8 +362,8 @@ void eol_index_page( eol_ix * eol_index, uint32_t page_nr )
             ixewk->next = NULL;
             ixewk->entry_typ = eol_index->type;
             ixewk->prt_text = NULL;
-            ixewk->page_no = page_nr;
-            ixewk->style = find_pgnum_style();
+            ixewk->u.pageno.page_no = page_nr;
+            ixewk->u.pageno.style = find_pgnum_style();
 
             if( *base == NULL ) {
                 if( ixework != NULL ) {         // displace prior reference list head
@@ -468,7 +468,7 @@ static void free_ix_e_entries( ix_e_blk * e )
     while( ew != NULL ) {
         ewk = ew->next;
         if( ew->entry_typ >= pgstring ) {
-            mem_free( ew->page_text );
+            mem_free( ew->u.pageref.page_text );
         }
         mem_free( ew );
         ew = ewk;

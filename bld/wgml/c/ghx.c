@@ -288,7 +288,7 @@ void gen_heading( char * h_text, char * id, hdsrc hn_lvl, hdsrc hds_lvl )
                 cur_ref = (ref_entry *) mem_alloc( sizeof( ref_entry ) );
                 init_ref_entry( cur_ref, id );
                 cur_ref->flags = rf_ffh;
-                cur_ref->entry = hd_entry;
+                cur_ref->u.ffh.entry = hd_entry;
                 add_ref_entry( &hd_ref_dict, cur_ref );
             } else {                // duplicate id
                 dup_id_err( cur_ref->id, "heading" );

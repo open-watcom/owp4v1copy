@@ -185,11 +185,11 @@ p_buffer * get_p_buffer( FILE * in_file )
 
     /* Allocate the out_buffer. */
 
-    out_buffer = mem_alloc( sizeof( p_buffer ) + 80 * p_count );
-
+    current = mem_alloc( sizeof( p_buffer ) + 80 * p_count );
+    out_buffer = (p_buffer *)current;
+    current += sizeof( p_buffer );
+    out_buffer->buffer = current;
     out_buffer->count = 80 * p_count;
-    out_buffer->buffer = (char *)out_buffer + sizeof( p_buffer );
-    current = out_buffer->buffer;
 
     /* Now get the data into the out_buffer. */
 

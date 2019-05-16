@@ -387,12 +387,12 @@ static void gen_ref_list( ix_e_blk * refs, font_number font )
             ProcFlags.ct = true;
             post_space = wgml_fonts[font].spc_width;
         case pgstring :
-            if( cur_ref->page_text[0] != '\0' ) {     // if not null string
-                process_text( cur_ref->page_text, font );
+            if( cur_ref->u.pageref.page_text[0] != '\0' ) {     // if not null string
+                process_text( cur_ref->u.pageref.page_text, font );
             }
             break;
         case pgstart :
-            format_num( cur_ref->page_no, &buffer, sizeof( buffer ), cur_ref->style );
+            format_num( cur_ref->u.pageno.page_no, &buffer, sizeof( buffer ), cur_ref->u.pageno.style );
             process_text( buffer, font );
             ProcFlags.ct = true;
             post_space = 0;
@@ -403,7 +403,7 @@ static void gen_ref_list( ix_e_blk * refs, font_number font )
             } else {
                 ProcFlags.ct = true;
                 post_space = 0;
-                format_num( cur_ref->page_no, &buffer, sizeof( buffer ), cur_ref->style );
+                format_num( cur_ref->u.pageno.page_no, &buffer, sizeof( buffer ), cur_ref->u.pageno.style );
                 process_text( buffer, font );
             }
             break;
@@ -413,24 +413,24 @@ static void gen_ref_list( ix_e_blk * refs, font_number font )
             ProcFlags.ct = true;
             post_space = 0;
         case pgpageno :
-            format_num( cur_ref->page_no, &buffer, sizeof( buffer ), cur_ref->style );
+            format_num( cur_ref->u.pageno.page_no, &buffer, sizeof( buffer ), cur_ref->u.pageno.style );
             process_text( buffer, font );
             if( cur_ref->next != NULL ) {                   // done if last page number
-                predict = cur_ref->page_no;
+                predict = cur_ref->u.pageno.page_no;
                 predict++;
-                if( cur_ref->next->page_no == predict ) {   // sequence detected
+                if( cur_ref->next->u.pageno.page_no == predict ) {   // sequence detected
                     ProcFlags.ct = true;
                     post_space = 0;
                     process_text( ixjval->value, font );
                     cur_ref = cur_ref->next;                // find final page number in sequence
                     while( cur_ref->next != NULL ) {
                         predict++;
-                        if( cur_ref->next->page_no != predict ) {
+                        if( cur_ref->next->u.pageno.page_no != predict ) {
                             break;
                         }
                         cur_ref = cur_ref->next;
                     }
-                    format_num( cur_ref->page_no, &buffer, sizeof( buffer ), cur_ref->style );
+                    format_num( cur_ref->u.pageno.page_no, &buffer, sizeof( buffer ), cur_ref->u.pageno.style );
                     ProcFlags.ct = true;
                     post_space = 0;
                     process_text( buffer, font );
@@ -440,8 +440,8 @@ static void gen_ref_list( ix_e_blk * refs, font_number font )
         case pgsee :
             if( cur_ref->prt_text != NULL ) {
                 process_text( cur_ref->prt_text, g_curr_font );
-            } else if( cur_ref->page_text_len > 0 ) {  // if not null string
-                process_text( cur_ref->page_text, g_curr_font );
+            } else if( cur_ref->u.pageref.page_text_len > 0 ) {  // if not null string
+                process_text( cur_ref->u.pageref.page_text, g_curr_font );
             }
             break;
         default:
@@ -477,8 +477,8 @@ static void gen_see_list( ix_e_blk * refs, font_number font, uint32_t level,
         }
         if( cur_ref->prt_text != NULL ) {
             process_text( cur_ref->prt_text, g_curr_font );
-        } else if( cur_ref->page_text_len > 0 ) {  // if not null string
-            process_text( cur_ref->page_text, g_curr_font );
+        } else if( cur_ref->u.pageref.page_text_len > 0 ) {  // if not null string
+            process_text( cur_ref->u.pageref.page_text, g_curr_font );
         }
         cur_ref = cur_ref->next;
     }

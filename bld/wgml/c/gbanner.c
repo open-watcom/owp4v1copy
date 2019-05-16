@@ -651,7 +651,7 @@ static  void    out_ban_common( banner_lay_tag * ban, bool top )
     /***************************************************************************/
     /* For each region in the banner, fully resolve all symbols/functions      */
     /* Then determine how much of the text will fit and (for now) cut it off   */
-    /* at the last space before that point.                                    */ 
+    /* at the last space before that point.                                    */
     /* When multiline regions are implemented then, if the region has enough   */
     /* space for another line, create a new region with the remainder of the   */
     /* text and insert it at the proper position in cur_grp (voffset will      */
@@ -786,7 +786,7 @@ static  void    out_ban_common( banner_lay_tag * ban, bool top )
                     if( old_doc_el->element.text.first == NULL ) {
                         cur_line = alloc_text_line();
                         old_doc_el->element.text.first = cur_line;
-                    } else {    
+                    } else {
                         cur_line->next = alloc_text_line();
                         cur_line = cur_line->next;
                     }
@@ -859,7 +859,7 @@ static  void    out_ban_common( banner_lay_tag * ban, bool top )
                             cur_line->last->next->prev = cur_line->last;
                             cur_line->last = cur_line->last->next;
                         }
-                        cur_line->last->x_address = t_page.page_left + cur_region->final_content[0].hoffset; 
+                        cur_line->last->x_address = t_page.page_left + cur_region->final_content[0].hoffset;
                     }
                     cur_p = cur_region->final_content[1].string;
                     if( (cur_p != NULL) && *cur_p ) {
@@ -873,7 +873,7 @@ static  void    out_ban_common( banner_lay_tag * ban, bool top )
                             cur_line->last->next->prev = cur_line->last;
                             cur_line->last = cur_line->last->next;
                         }
-                        cur_line->last->x_address = t_page.page_left + cur_region->final_content[1].hoffset; 
+                        cur_line->last->x_address = t_page.page_left + cur_region->final_content[1].hoffset;
                     }
                     cur_p = cur_region->final_content[2].string;
                     if( (cur_p != NULL) && *cur_p ) {
@@ -887,7 +887,7 @@ static  void    out_ban_common( banner_lay_tag * ban, bool top )
                             cur_line->last->next->prev = cur_line->last;
                             cur_line->last = cur_line->last->next;
                         }
-                        cur_line->last->x_address = t_page.page_left + cur_region->final_content[2].hoffset; 
+                        cur_line->last->x_address = t_page.page_left + cur_region->final_content[2].hoffset;
                     }
                 } else {
                     for( k = 0; k < 3; ++k ) {          // for all region parts
@@ -920,7 +920,7 @@ static  void    out_ban_common( banner_lay_tag * ban, bool top )
                             cur_line->last->next->prev = cur_line->last;
                             cur_line->last = cur_line->last->next;
                         }
-                        cur_line->last->x_address = t_page.page_left + cur_region->final_content[k].hoffset; 
+                        cur_line->last->x_address = t_page.page_left + cur_region->final_content[k].hoffset;
                     }
                 }
                 if( top ) {

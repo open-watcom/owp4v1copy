@@ -209,7 +209,7 @@ typedef struct default_lay_tag {
     int8_t          columns;            // positive integer
     font_number     font;               // non-negative integer
     bool            justify;            // yes / no  -> bool
-    uint8_t         input_esc;          // none or quoted char
+    char            input_esc;          // none or quoted char
 } default_lay_tag;
 
 /***************************************************************************/
