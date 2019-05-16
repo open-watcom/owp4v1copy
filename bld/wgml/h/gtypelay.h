@@ -708,7 +708,7 @@ typedef struct gl_lay_level {
     su              post_skip;          // vertical space unit
     su              align;              // horizontal space unit
     int8_t          spacing;            // positive integer
-    char            delim[2];           // delimiter char as string
+    char            delim;              // delimiter char
     int8_t          level;              // level of this tag
 } gl_lay_level;
 

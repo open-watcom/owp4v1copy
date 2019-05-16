@@ -982,7 +982,7 @@ static  void    put_lay_gl( FILE * layfile, layout_data * lay )
                 o_space_unit( layfile, curr, &gl_layout->align );
                 break;
             case   e_delim:
-                o_char( layfile, curr, gl_layout->delim );
+                o_char( layfile, curr, &gl_layout->delim );
                 break;
             default:
                 internal_err( __FILE__, __LINE__ );

@@ -1506,6 +1506,7 @@ void gml_gt( const gmltag * entry )
 void gml_gd( const gmltag * entry )
 {
     char    *   p;
+    char        delim[2];
 
     if( ProcFlags.need_gd ) {
         ProcFlags.need_gd = false;
@@ -1524,7 +1525,9 @@ void gml_gd( const gmltag * entry )
 
     ProcFlags.ct = true;
     post_space = 0;
-    process_text( nest_cb->u.gl_layout->delim, g_curr_font );
+    delim[0] = nest_cb->u.gl_layout->delim;
+    delim[1] = '\0';
+    process_text( delim, g_curr_font );
 
     g_curr_font = layout_work.gd.font;
 

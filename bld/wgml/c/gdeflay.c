@@ -686,7 +686,7 @@ void    init_def_lay( void )
     lay_init_su( n1, &layout_work.gl.first->post_skip );
     lay_init_su( z0, &layout_work.gl.first->align );
     layout_work.gl.first->spacing = 1;
-    strcpy_s( layout_work.gl.first->delim, 2, ":" );
+    layout_work.gl.first->delim = ':';
 
     /***********************************************************************/
     /*  :BANNER     values                                                 */
