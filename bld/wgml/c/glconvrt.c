@@ -982,7 +982,7 @@ static  void    put_lay_gl( FILE * layfile, layout_data * lay )
                 o_space_unit( layfile, curr, &gl_layout->align );
                 break;
             case   e_delim:
-                o_char( layfile, curr, &gl_layout->delim );
+                o_char( layfile, curr, gl_layout->delim );
                 break;
             default:
                 internal_err( __FILE__, __LINE__ );
@@ -1139,7 +1139,7 @@ static  void    put_lay_ix( FILE * layfile, layout_data * lay )
                 o_space_unit( layfile, curr, &lay->ix[lvl].wrap_indent );
                 break;
             case   e_index_delim:
-                o_xx_string( layfile, curr, &lay->ix[lvl].index_delim );
+                o_xx_string( layfile, curr, lay->ix[lvl].index_delim );
                 break;
             case   e_string_font:
                 if( lvl < 2 ) {         // :I3 has no string font

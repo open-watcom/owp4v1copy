@@ -737,7 +737,8 @@ void    lay_gl( const gmltag * entry )
                     i_space_unit( p, curr, &gl_layout->align );
                     break;
                 case   e_delim:
-                    i_char( p, curr, &gl_layout->delim );
+                    i_char( p, curr, gl_layout->delim );
+                    gl_layout->delim[1] = '\0';
                     break;
                 default:
                     internal_err( __FILE__, __LINE__ );

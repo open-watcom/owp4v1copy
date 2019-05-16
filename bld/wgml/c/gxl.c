@@ -1524,7 +1524,7 @@ void gml_gd( const gmltag * entry )
 
     ProcFlags.ct = true;
     post_space = 0;
-    process_text( &nest_cb->u.gl_layout->delim, g_curr_font );
+    process_text( nest_cb->u.gl_layout->delim, g_curr_font );
 
     g_curr_font = layout_work.gd.font;
 
