@@ -50,7 +50,7 @@ wgml.exe: $(res_depends) $(objs) $(libs) $(__MAKEFILES__)
 
 msgfiles = ../h/wgmlerr.msg ../h/wgml.msg
 
-$(name).res : wgmlmsgs.gh ../h/wgmlmsg.h $(msgfiles) ../h/wgml.rc
+$(name).res : wgmlmsgs.gh $(msgfiles) ../h/wgml.rc
         $(rc_aui) $(extra_rc_flags) $]@ -fo=$@
 
 wgmlmsgs.gh : $(msgfiles)
