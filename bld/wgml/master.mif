@@ -44,19 +44,17 @@ extra_c_flags_gmemory = $(trmem_cover_cflags)
 
 libs     += $(wres_lib)
 
-
 wgml.exe: $(res_depends) $(objs) $(libs) $(__MAKEFILES__)
     $(linker) name $^@ $(lflags) op map file { $(objs) } lib { $(libs) }
     wstrip -q -a -r $@ . wgml.res
 
-$(name).res : wgmlmsgs.gh ../h/wgml.msg ../h/wgmlmsg.h ../h/wgmlerr.msg ../h/wgml.rc
-        $(rc_aui) $(extra_rc_flags) -I"$(wrc_dir)/h" $]@ -fo=$@
+msgfiles = ../h/wgmlerr.msg ../h/wgml.msg
 
-rcmsg.gh : $(wrc_dir)/h/rc.msg
-        $(awk) -v rcbase=800 -f $(misc_dir)/msgtoh.awk $[@ > $^@
+$(name).res : wgmlmsgs.gh ../h/wgmlmsg.h $(msgfiles) ../h/wgml.rc
+        $(rc_aui) $(extra_rc_flags) $]@ -fo=$@
 
-wgmlmsgs.gh : ../h/wgmlerr.msg ../h/wgml.msg
+wgmlmsgs.gh : $(msgfiles)
         $(awk) -v base=000 -f ../makemdef.awk $< > $^@
 
-wgmlmsge.gh : ../h/wgmlerr.msg ../h/wgml.msg
+wgmlmsge.gh : $(msgfiles)
         $(awk) -v base=000 -f ../msgtoenm.awk $< > $^@
