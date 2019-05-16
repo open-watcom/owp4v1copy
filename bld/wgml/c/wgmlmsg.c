@@ -85,10 +85,10 @@ bool init_msgs( void )
         if( Instance.handle == -1 )
             error = true;
         if( !error ) {
-            error = FindResources( &Instance );
+            error = ( FindResources( &Instance ) != );
         }
         if( !error ) {
-            error = InitResources( &Instance );
+            error = ( InitResources( &Instance ) != );
         }
         MsgShift = WResLanguage() * MSG_LANG_SPACING;
         if( !error && !get_msg( ERR_DUMMY, fname, sizeof( fname ) ) ) {
@@ -96,7 +96,8 @@ bool init_msgs( void )
         }
     }
     if( error ) {
-        if( Instance.handle != -1 ) CloseResFile( &Instance );
+        if( Instance.handle != -1 )
+            CloseResFile( &Instance );
         out_msg( "Resources not found\n" );
         g_suicide();
     }
