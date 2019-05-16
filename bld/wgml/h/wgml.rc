@@ -2,7 +2,6 @@
 
 #include "wgmlmsgs.gh"
 #include "wreslang.h"
-/*#include "rcmsg.gh"*/
 
 STRINGTABLE
 BEGIN
@@ -13,7 +12,6 @@ BEGIN
 
 #include "wgmlerr.msg"
 #include "wgml.msg"
-/*#include "rc.msg"*/
 
 #undef pick
 #define pick( code, e_string, j_string )  \
@@ -21,6 +19,5 @@ BEGIN
 
 #include "wgmlerr.msg"
 #include "wgml.msg"
-/*#include "rc.msg"    */
 
 END
