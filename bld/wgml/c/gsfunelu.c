@@ -98,9 +98,9 @@ static char *scr_single_func_l( char * in, char * end, char * * result )
                               &symsubval );
         }
         if( rc == 2 ) {
-            sprintf( *result, "%d", strlen( symsubval->value ) );
+            len = strlen( symsubval->value );
         } else {
-            sprintf( *result, "%d", strlen( symvar_entry.name ) );
+            len = strlen( symvar_entry.name );
         }
     } else {                            // string
         pchar = in + 3;
@@ -109,8 +109,8 @@ static char *scr_single_func_l( char * in, char * end, char * * result )
             len++;
             pchar++;
         }
-        sprintf( *result, "%d", len );
     }
+    sprintf( *result, "%d", len );
     *result  += strlen( *result );
     **result = '\0';
 
@@ -307,7 +307,7 @@ static char *scr_single_func_w( char * in, char * end, char * * result )
 
 static char *scr_single_func_x( char * in, char * end, char * * result )
 {
-    bool        accept;        
+    bool        accept;
     char        c;
     char    *   pchar;
 
@@ -352,7 +352,7 @@ static char *scr_single_func_x( char * in, char * end, char * * result )
             }
         }
     }
-    
+
     return( pchar );
 }
 
@@ -402,7 +402,7 @@ static char *scr_single_func_unsupport( char * in, char * * result )
 char *scr_single_funcs( char * in, char * end, char * * result )
 {
     char            *   pw;
-  
+
     if( *(in + 2) == '\'' ) {
         switch( *(in + 1) ) {
         case  'e' :                     // exist function
