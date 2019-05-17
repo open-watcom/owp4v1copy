@@ -166,10 +166,10 @@ void    scr_label( void )
         err_count++;
         g_err( err_missing_name, "" );
         if( input_cbs->fmflags & II_tag_mac ) {
-            utoa( input_cbs->s.m->lineno, linestr, 10 );
+            ulongtodec( input_cbs->s.m->lineno, linestr );
             g_info( inf_mac_line, linestr, input_cbs->s.m->mac->name );
         } else {
-            utoa( input_cbs->s.f->lineno, linestr, 10 );
+            ulongtodec( input_cbs->s.f->lineno, linestr );
             g_info( inf_file_line, linestr, input_cbs->s.f->filename );
         }
         show_include_stack();
@@ -192,7 +192,7 @@ void    scr_label( void )
                     scan_err = true;
                     err_count++;
                     g_err( err_label_line, gn.resultstr );
-                    utoa( input_cbs->s.m->lineno, linestr, 10 );
+                    ulongtodec( input_cbs->s.m->lineno, linestr );
                     g_info( inf_mac_line, linestr, input_cbs->s.m->mac->name );
                     show_include_stack();
                     return;
@@ -202,7 +202,7 @@ void    scr_label( void )
                     scan_err = true;
                     err_count++;
                     g_err( err_label_line, gn.resultstr );
-                    utoa( input_cbs->s.f->lineno, linestr, 10 );
+                    ulongtodec( input_cbs->s.f->lineno, linestr );
                     g_info( inf_file_line, linestr, input_cbs->s.f->filename );
                     show_include_stack();
                     return;
@@ -214,7 +214,7 @@ void    scr_label( void )
             } else {
                 wng_count++;
                 g_warn( wng_label_num );
-                utoa( input_cbs->s.f->lineno, linestr, 10 );
+                ulongtodec( input_cbs->s.f->lineno, linestr );
                 g_info( inf_file_line, linestr, input_cbs->s.f->filename );
                 show_include_stack();
             }
@@ -237,7 +237,7 @@ void    scr_label( void )
                 if( len >  MAC_NAME_LENGTH ) {
                     err_count++;
                     g_err( err_sym_long, token_buf );
-                    utoa( input_cbs->s.f->lineno, linestr, 10 );
+                    ulongtodec( input_cbs->s.f->lineno, linestr );
                     g_info( inf_file_line, linestr, input_cbs->s.f->filename );
                     show_include_stack();
                     token_buf[MAC_NAME_LENGTH] = '\0';
@@ -253,7 +253,7 @@ void    scr_label( void )
                             scan_err = true;
                             err_count++;
                             g_err( err_label_dup, token_buf );
-                            utoa( input_cbs->s.m->lineno, linestr, 10 );
+                            ulongtodec( input_cbs->s.m->lineno, linestr );
                             g_info( inf_mac_line, linestr,
                                      input_cbs->s.m->mac->name );
                             show_include_stack();
@@ -277,7 +277,7 @@ void    scr_label( void )
                             scan_err = true;
                             err_count++;
                             g_err( err_label_dup, token_buf );
-                            utoa( input_cbs->s.f->lineno, linestr, 10 );
+                            ulongtodec( input_cbs->s.f->lineno, linestr );
                             g_info( inf_file_line, linestr,
                                     input_cbs->s.f->filename );
                             show_include_stack();
@@ -299,10 +299,10 @@ void    scr_label( void )
                 err_count++;
                 g_err( err_missing_name, "" );
                 if( input_cbs->fmflags & II_tag_mac ) {
-                    utoa( input_cbs->s.m->lineno, linestr, 10 );
+                    ulongtodec( input_cbs->s.m->lineno, linestr );
                     g_info( inf_mac_line, linestr, input_cbs->s.m->mac->name );
                 } else {
-                    utoa( input_cbs->s.f->lineno, linestr, 10 );
+                    ulongtodec( input_cbs->s.f->lineno, linestr );
                     g_info( inf_file_line, linestr, input_cbs->s.f->filename );
                 }
                 show_include_stack();
@@ -386,10 +386,10 @@ void    scr_go( void )
         err_count++;
         g_err( err_missing_name, "" );
         if( input_cbs->fmflags & II_tag_mac ) {
-            utoa( input_cbs->s.m->lineno, linestr, 10 );
+            ulongtodec( input_cbs->s.m->lineno, linestr );
             g_info( inf_mac_line, linestr, input_cbs->s.m->mac->name );
         } else {
-            utoa( input_cbs->s.f->lineno, linestr, 10 );
+            ulongtodec( input_cbs->s.f->lineno, linestr );
             g_info( inf_file_line, linestr, input_cbs->s.f->filename );
         }
         show_include_stack();
@@ -419,10 +419,10 @@ void    scr_go( void )
             err_count++;
             g_err( err_label_zero );
             if( input_cbs->fmflags & II_tag_mac ) {
-                utoa( input_cbs->s.m->lineno, linestr, 10 );
+                ulongtodec( input_cbs->s.m->lineno, linestr );
                 g_info( inf_mac_line, linestr, input_cbs->s.m->mac->name );
             } else {
-                utoa( input_cbs->s.f->lineno, linestr, 10 );
+                ulongtodec( input_cbs->s.f->lineno, linestr );
                 g_info( inf_file_line, linestr, input_cbs->s.f->filename );
             }
             show_include_stack();
@@ -441,10 +441,10 @@ void    scr_go( void )
             err_count++;
             g_err( err_sym_long, tok_start );
             if( input_cbs->fmflags & II_tag_mac ) {
-                utoa( input_cbs->s.m->lineno, linestr, 10 );
+                ulongtodec( input_cbs->s.m->lineno, linestr );
                 g_info( inf_mac_line, linestr, input_cbs->s.m->mac->name );
             } else {
-                utoa( input_cbs->s.f->lineno, linestr, 10 );
+                ulongtodec( input_cbs->s.f->lineno, linestr );
                 g_info( inf_file_line, linestr, input_cbs->s.f->filename );
             }
             show_include_stack();

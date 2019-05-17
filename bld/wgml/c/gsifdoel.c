@@ -424,10 +424,10 @@ void    scr_if( void )
             err_count++;
             g_err( err_if_term );
             if( input_cbs->fmflags & II_tag_mac ) {
-                utoa( input_cbs->s.m->lineno, linestr, 10 );
+                ulongtodec( input_cbs->s.m->lineno, linestr );
                 g_info( inf_mac_line, linestr, input_cbs->s.m->mac->name );
             } else {
-                utoa( input_cbs->s.f->lineno, linestr, 10 );
+                ulongtodec( input_cbs->s.f->lineno, linestr );
                 g_info( inf_file_line, linestr, input_cbs->s.f->filename );
             }
             show_include_stack();
@@ -438,10 +438,10 @@ void    scr_if( void )
             err_count++;
             g_err( err_if_relop );
             if( input_cbs->fmflags & II_tag_mac ) {
-                utoa( input_cbs->s.m->lineno, linestr, 10 );
+                ulongtodec( input_cbs->s.m->lineno, linestr );
                 g_info( inf_mac_line, linestr, input_cbs->s.m->mac->name );
             } else {
-                utoa( input_cbs->s.f->lineno, linestr, 10 );
+                ulongtodec( input_cbs->s.f->lineno, linestr );
                 g_info( inf_file_line, linestr, input_cbs->s.f->filename );
             }
             show_include_stack();
@@ -466,10 +466,10 @@ void    scr_if( void )
                 scan_err = true;
                 g_err( err_if_nesting );
                 if( input_cbs->fmflags & II_tag_mac ) {
-                    utoa( input_cbs->s.m->lineno, linestr, 10 );
+                    ulongtodec( input_cbs->s.m->lineno, linestr );
                     g_info( inf_mac_line, linestr, input_cbs->s.m->mac->name );
                 } else {
-                    utoa( input_cbs->s.f->lineno, linestr, 10 );
+                    ulongtodec( input_cbs->s.f->lineno, linestr );
                     g_info( inf_file_line, linestr, input_cbs->s.f->filename );
                 }
                 show_include_stack();
@@ -621,10 +621,10 @@ void    scr_th( void )
         scan_err = true;
         g_err( err_if_then );
         if( input_cbs->fmflags & II_tag_mac ) {
-            utoa( input_cbs->s.m->lineno, linestr, 10 );
+            ulongtodec( input_cbs->s.m->lineno, linestr );
             g_info( inf_mac_line, linestr, input_cbs->s.m->mac->name );
         } else {
-            utoa( input_cbs->s.f->lineno, linestr, 10 );
+            ulongtodec( input_cbs->s.f->lineno, linestr );
             g_info( inf_file_line, linestr, input_cbs->s.f->filename );
         }
         show_ifcb( "then", cb );
@@ -696,10 +696,10 @@ void    scr_el( void )
         scan_err = true;
         g_err( err_if_else );
         if( input_cbs->fmflags & II_tag_mac ) {
-            utoa( input_cbs->s.m->lineno, linestr, 10 );
+            ulongtodec( input_cbs->s.m->lineno, linestr );
             g_info( inf_mac_line, linestr, input_cbs->s.m->mac->name );
         } else {
-            utoa( input_cbs->s.f->lineno, linestr, 10 );
+            ulongtodec( input_cbs->s.f->lineno, linestr );
             g_info( inf_file_line, linestr, input_cbs->s.f->filename );
         }
         show_ifcb( "else", cb );
@@ -763,10 +763,10 @@ void    scr_do( void )
             scan_err = true;
             g_err( err_if_do );
             if( input_cbs->fmflags & II_tag_mac ) {
-                utoa( input_cbs->s.m->lineno, linestr, 10 );
+                ulongtodec( input_cbs->s.m->lineno, linestr );
                 g_info( inf_mac_line, linestr, input_cbs->s.m->mac->name );
             } else {
-                utoa( input_cbs->s.f->lineno, linestr, 10 );
+                ulongtodec( input_cbs->s.f->lineno, linestr );
                 g_info( inf_file_line, linestr, input_cbs->s.f->filename );
             }
             show_ifcb( "dobegin", cb );
@@ -808,10 +808,10 @@ void    scr_do( void )
                     scan_err = true;
                     g_err( err_if_do_end );
                     if( input_cbs->fmflags & II_tag_mac ) {
-                        utoa( input_cbs->s.m->lineno, linestr, 10 );
+                        ulongtodec( input_cbs->s.m->lineno, linestr );
                         g_info( inf_mac_line, linestr, input_cbs->s.m->mac->name );
                     } else {
-                        utoa( input_cbs->s.f->lineno, linestr, 10 );
+                        ulongtodec( input_cbs->s.f->lineno, linestr );
                         g_info( inf_file_line, linestr, input_cbs->s.f->filename );
                     }
                     show_ifcb( "doend", cb );
@@ -835,10 +835,10 @@ void    scr_do( void )
             scan_err = true;
             g_err( err_if_do_fun );
             if( input_cbs->fmflags & II_tag_mac ) {
-                utoa( input_cbs->s.m->lineno, linestr, 10 );
+                ulongtodec( input_cbs->s.m->lineno, linestr );
                 g_info( inf_mac_line, linestr, input_cbs->s.m->mac->name );
             } else {
-                utoa( input_cbs->s.f->lineno, linestr, 10 );
+                ulongtodec( input_cbs->s.f->lineno, linestr );
                 g_info( inf_file_line, linestr, input_cbs->s.f->filename );
             }
             show_include_stack();

@@ -832,7 +832,7 @@ char * format_num( uint32_t n, char * r, size_t rsize, num_style ns )
         }
         break;
     case h_style :                      // arabic
-        ultoa( n, p, 10 );
+        ulongtodec( n, p );
         pos1 = strlen( p );
         pos += pos1;
         if( pos >= rsize ) {
@@ -1343,17 +1343,17 @@ void free_fwd_refs( fwd_ref * fwd_refs )
 /*  functions converting number to string                                  */
 /***************************************************************************/
 
-int numtohex( unsigned long value, char *buffer )
+int ulongtohex( unsigned long value, char *buffer )
 {
     return( sprintf( buffer, "%lx", value ) );
 }
 
-int unumtodec( unsigned long value, char *buffer )
+int ulongtodec( unsigned long value, char *buffer )
 {
     return( sprintf( buffer, "%lu", value ) );
 }
 
-int snumtodec( long value, char *buffer )
+int slongtodec( long value, char *buffer )
 {
     return( sprintf( buffer, "%ld", value ) );
 }

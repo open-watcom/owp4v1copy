@@ -107,10 +107,10 @@ condcode    scr_width( parm parms[MAX_FUN_PARMS], size_t parmcount, char * * res
             default:
                 g_err( err_func_parm, "2 (type)" );
                 if( input_cbs->fmflags & II_tag_mac ) {
-                    utoa( input_cbs->s.m->lineno, linestr, 10 );
+                    ulongtodec( input_cbs->s.m->lineno, linestr );
                     g_info( inf_mac_line, linestr, input_cbs->s.m->mac->name );
                 } else {
-                    utoa( input_cbs->s.f->lineno, linestr, 10 );
+                    ulongtodec( input_cbs->s.f->lineno, linestr );
                     g_info( inf_file_line, linestr, input_cbs->s.f->filename );
                 }
                 err_count++;

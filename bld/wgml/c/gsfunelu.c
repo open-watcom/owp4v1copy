@@ -370,10 +370,10 @@ static char *scr_single_func_unsupport( char * in, char * * result )
     charstr[1] = '\0';
     g_warn( wng_func_unsupport, charstr );
     if( input_cbs->fmflags & II_tag_mac ) {
-        utoa( input_cbs->s.m->lineno, linestr, 10 );
+        ulongtodec( input_cbs->s.m->lineno, linestr );
         g_info( inf_mac_line, linestr, input_cbs->s.m->mac->name );
     } else {
-        utoa( input_cbs->s.f->lineno, linestr, 10 );
+        ulongtodec( input_cbs->s.f->lineno, linestr );
         g_info( inf_file_line, linestr, input_cbs->s.f->filename );
     }
 

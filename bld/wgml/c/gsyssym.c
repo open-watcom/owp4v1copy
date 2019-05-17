@@ -177,7 +177,7 @@ static void sysadoddfun( symvar * e )
 
 static void sysapagefun( symvar * e )   // absolute page
 {
-    utoa( apage, sysapagestr, 10 );
+    ulongtodec( apage, sysapagestr );
     return;
 }
 
@@ -195,7 +195,7 @@ static void sysbfontsfun( symvar * e )
 
 static void sysbmfun( symvar * e )
 {
-    utoa( bm, sysbmstr, 10 );
+    ulongtodec( bm, sysbmstr );
     return;
 }
 
@@ -231,7 +231,7 @@ static void syscccfun( symvar * e )
 
 static void syscdfun( symvar * e )      // column count
 {
-    ultoa( g_cd, syscdstr, 10 );
+    ulongtodec( g_cd, syscdstr );
     return;
 }
 
@@ -249,7 +249,7 @@ static void syscharsfun( symvar * e )
 
 static void sysclfun( symvar * e )      // column length
 {
-    ultoa( g_cl, sysclstr, 10 );
+    ulongtodec( g_cl, sysclstr );
     return;
 }
 
@@ -289,7 +289,7 @@ static void syscpcfun( symvar * e )
 
 static void syscpifun( symvar * e )     // cpi chars per inch
 {
-    utoa( CPI, syscpistr, 10 );
+    ulongtodec( CPI, syscpistr );
     return;
 }
 
@@ -369,13 +369,13 @@ static void sysfkcfun( symvar * e )
 
 static void sysflnestfun( symvar * e )  // include level file/macro
 {
-    utoa( inc_level, sysflneststr, 10 );
+    ulongtodec( inc_level, sysflneststr );
     return;
 }
 
 static void sysfmfun( symvar * e )
 {
-    utoa( fm, sysfmstr, 10 );
+    ulongtodec( fm, sysfmstr );
     return;
 }
 
@@ -425,7 +425,7 @@ static void sysfnumfun( symvar * e )// lineno of current input file not macro
             l = wk->s.f->lineno;
         }
     }
-    ultoa( l, e->sub_0->value, 10 );
+    ulongtodec( l, e->sub_0->value );
     return;
 }
 
@@ -443,7 +443,7 @@ static void sysfsfun( symvar * e )
 
 static void sysgutterfun( symvar * e )  // gutter
 {
-    ultoa( g_gutter, sysgutterstr, 10 );
+    ulongtodec( g_gutter, sysgutterstr );
     return;
 }
 
@@ -455,7 +455,7 @@ static void syshifun( symvar * e )
 
 static void syshmfun( symvar * e )
 {
-    utoa( hm, syshmstr, 10 );
+    ulongtodec( hm, syshmstr );
     return;
 }
 
@@ -507,16 +507,16 @@ static void sysinfun( symvar * e )      // .in indent value
     if( t_indent < 0 ) {
         t_indent++;                     // to match wmgl 4.0
     }
-    ltoa( t_indent, sysinstr, 10 );     // in chars
+    slongtodec( t_indent, sysinstr );   // in chars
     return;
 }
 
 static void sysinrfun( symvar * e )     // .in indentr indent right value
 {
     if( nest_cb == NULL ) {
-        ltoa( g_ll + ((g_indentr * CPI) / g_resh), sysinrstr, 10 );
+        slongtodec( g_ll + ((g_indentr * CPI) / g_resh), sysinrstr );
     } else {
-        ltoa( g_ll + (((g_indentr + nest_cb->right_indent) * CPI) / g_resh), sysinrstr, 10 );
+        slongtodec( g_ll + (((g_indentr + nest_cb->right_indent) * CPI) / g_resh), sysinrstr );
     }
     return;
 }
@@ -557,7 +557,7 @@ static void syslayoutfun( symvar * e ) // LAYOUT cmdline option or :LAYOUT tag s
 
 static void syslcfun( symvar * e )      // remaining linecount on page
 {
-    utoa( lc, syslcstr, 10 );
+    ulongtodec( lc, syslcstr );
     return;
 }
 
@@ -575,13 +575,13 @@ static void syslinbfun( symvar * e )
 
 static void syslinefun( symvar * e )    // current lineno on page
 {
-    utoa( line, syslinestr, 10 );
+    ulongtodec( line, syslinestr );
     return;
 }
 
 static void sysllfun( symvar * e )
 {
-    ultoa( g_ll, sysllstr, 10 );
+    ulongtodec( g_ll, sysllstr );
     return;
 }
 
@@ -598,7 +598,7 @@ static void syslnumfun( symvar * e )  // lineno of current input file / macro
             l = input_cbs->s.m->lineno;
         }
     }
-    ultoa( l, e->sub_0->value, 10 );
+    ulongtodec( l, e->sub_0->value );
     return;
 }
 
@@ -664,37 +664,37 @@ static void sysoutfun( symvar * e )
 
 static void syspagefun( symvar * e )    // pageno in body
 {
-    utoa( page, syspagestr, 10 );
+    ulongtodec( page, syspagestr );
     return;
 }
 
 static void syspagedfun( symvar * e )   // page depth
 {
-    ultoa( g_page_depth, syspagedstr, 10 );
+    ulongtodec( g_page_depth, syspagedstr );
     return;
 }
 
 static void syspagelmfun( symvar * e )  // page left margin
 {
-    ultoa( lm, syspagelmstr, 10 );
+    ulongtodec( lm, syspagelmstr );
     return;
 }
 
 static void syspagermfun( symvar * e )  // page right margin
 {
-    ultoa( rm, syspagermstr, 10 );
+    ulongtodec( rm, syspagermstr );
     return;
 }
 
 static void syspgnumafun( symvar * e )  // pagenumber
 {
-    ultoa( page, syspgnumastr, 10 );
+    ulongtodec( page, syspgnumastr );
     return;
 }
 
 static void syspgnumadfun( symvar * e ) // pagenumber.
 {
-    ultoa( page, syspgnumadstr, 10 );
+    ulongtodec( page, syspgnumadstr );
     strcat( syspgnumadstr, "." );
     return;
 }
@@ -753,13 +753,13 @@ static void sysplsfun( symvar * e )
 
 static void syspnfun( symvar * e )      // page no
 {
-    ultoa( page, syspnstr, 10 );
+    ulongtodec( page, syspnstr );
     return;
 }
 
 static void sysppagefun( symvar * e )   // page no
 {
-    ultoa( page, sysppagestr, 10 );
+    ulongtodec( page, sysppagestr );
     return;
 }
 
@@ -808,13 +808,13 @@ static void sysrecnofun( symvar * e )   // recno current input file / macro
 
 static void sysreshfun( symvar * e )    // horiz base units
 {
-    utoa( g_resh, sysreshstr, 10 );
+    ulongtodec( g_resh, sysreshstr );
     return;
 }
 
 static void sysresvfun( symvar * e )    // vert base units
 {
-    utoa( g_resv, sysresvstr, 10 );
+    ulongtodec( g_resv, sysresvstr );
     return;
 }
 
@@ -909,7 +909,7 @@ static void systermtfun( symvar * e )
 
 static void systmfun( symvar * e )
 {
-    utoa( tm, systmstr, 10 );
+    ulongtodec( tm, systmstr );
     return;
 }
 

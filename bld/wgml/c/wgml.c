@@ -237,7 +237,7 @@ static  void    del_input_cb_entry( void )
     if( wk->if_cb != NULL ) {
 //      if( wk->if_cb->if_level > 0 ) {
 //          char linestr[MAX_L_AS_STR];
-//          utoa( wk->if_cb->if_level, linestr, 10 );
+//          ulongtodec( wk->if_cb->if_level, linestr );
 //          g_err( err_if_level, linestr );
 //          show_include_stack();
 //          err_count++;
@@ -524,7 +524,7 @@ static  void    proc_input( char * filename )
                     err_count++;
                     if( input_cbs->fmflags & II_tag_mac ) {
                         if( gotargetno > 0 ) {
-                            utoa( gotargetno, linestr, 10 );
+                            ulongtodec( gotargetno, linestr );
                             g_err( err_goto, linestr,
                                    input_cbs->s.m->mac->name );
                         } else {
@@ -679,30 +679,30 @@ static  void    print_stats( clock_t duration_ticks )
 
     g_info_lm( inf_stat_0 );
 
-    utoa( pass, linestr, 10 );
+    ulongtodec( pass, linestr );
     if( pass == passes ) {
         linestr2[0] = '\0';
     } else {
         strcpy( linestr2, "of " );
-        utoa( passes, linestr2 + 3, 10 );
+        ulongtodec( passes, linestr2 + 3 );
     }
     g_info_lm( inf_stat_1, linestr, linestr2 );
 
-    utoa( max_inc_level, linestr, 10 );
+    ulongtodec( max_inc_level, linestr );
     g_info_lm( inf_stat_2, linestr );
 
-    utoa( err_count, linestr, 10 );
+    ulongtodec( err_count, linestr );
     g_info_lm( inf_stat_3, linestr );
 
-    utoa( wng_count, linestr, 10 );
+    ulongtodec( wng_count, linestr );
     g_info_lm( inf_stat_4, linestr );
 
-    utoa( err_count ? 8 : wng_count ? 4 : 0, linestr, 10 );
+    ulongtodec( err_count ? 8 : wng_count ? 4 : 0, linestr );
     g_info_lm( inf_stat_5, linestr );
 
     peak = mem_get_peak_usage();
     if( peak ) {
-        ultoa( peak, linestr, 10 );
+        ulongtodec( peak, linestr );
         g_info_lm( inf_stat_6, linestr );
     }
 
@@ -829,9 +829,9 @@ int main( int argc, char * argv[] )
 
         rc = find_symvar( &sys_dict, "$passof", no_subscript, &passofval );
         rc = find_symvar( &sys_dict, "$passno", no_subscript, &passnoval );
-        utoa( passes, passofval->value, 10 );   // fill no of passes
+        ulongtodec( passes, passofval->value );  // fill no of passes
 
-        set_default_extension( master_fname );// make this extension first choice
+        set_default_extension( master_fname );  // make this extension first choice
 
         init_def_lay();                 // set default layout values
 
@@ -852,7 +852,7 @@ int main( int argc, char * argv[] )
         for( pass = 1; pass <= passes; pass++ ) {
 
             init_pass();
-            utoa( pass, passnoval->value, 10 ); // fill current passno
+            ulongtodec( pass, passnoval->value );    // fill current passno
 
             g_info_lm( INF_PASS_1, passnoval->value, passofval->value,
                     GlobalFlags.research ? "research" : "normal" );

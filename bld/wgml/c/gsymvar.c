@@ -313,7 +313,7 @@ static  bool    check_subscript( sub_index sub )
             // SC--076 Subscript index must be between -1000000 and 1000000
             char    linestr[MAX_L_AS_STR];
 
-            ltoa( sub, linestr, 10 );
+            slongtodec( sub, linestr );
             g_err( ERR_SUB_OUT_OF_RANGE, linestr );
             show_include_stack();
             err_count++;

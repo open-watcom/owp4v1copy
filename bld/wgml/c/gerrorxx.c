@@ -86,12 +86,12 @@ void file_mac_info( void )
 
     if( input_cbs != NULL ) {
         if( input_cbs->fmflags & II_tag_mac ) {
-            utoa( input_cbs->s.m->lineno, linestr, 10 );
-            utoa( input_cbs->s.m->mac->lineno, linemac, 10 );
+            ulongtodec( input_cbs->s.m->lineno, linestr );
+            ulongtodec( input_cbs->s.m->mac->lineno, linemac );
             g_info( err_inf_mac_def, linestr, input_cbs->s.m->mac->name,
                     linemac, input_cbs->s.m->mac->mac_file_name);
         } else {
-            utoa( input_cbs->s.f->lineno, linestr, 10 );
+            ulongtodec( input_cbs->s.f->lineno, linestr );
             g_info( inf_file_line, linestr, input_cbs->s.f->filename );
         }
     }
@@ -113,12 +113,12 @@ void file_mac_info_nest( void )
 
     if( input_cbs != NULL ) {
         if( input_cbs->fmflags & II_tag_mac ) {
-            utoa( input_cbs->s.m->lineno, linestr, 10 );
-            utoa( input_cbs->s.m->mac->lineno, linemac, 10 );
+            ulongtodec( input_cbs->s.m->lineno, linestr );
+            ulongtodec( input_cbs->s.m->mac->lineno, linemac );
             g_info( err_inf_mac_def, linestr, input_cbs->s.m->mac->name,
                     linemac, input_cbs->s.m->mac->mac_file_name);
         } else {
-            utoa( input_cbs->s.f->lineno, linestr, 10 );
+            ulongtodec( input_cbs->s.f->lineno, linestr );
             g_info( inf_file_line, linestr, input_cbs->s.f->filename );
         }
 
@@ -128,15 +128,15 @@ void file_mac_info_nest( void )
         while( nw != NULL ) {
             switch( nw->nest_flag & II_input ) {
             case    II_file:
-                utoa( nw->lineno, linestr, 10 );
+                ulongtodec( nw->lineno, linestr );
                 g_info( inf_file_line, linestr, nw->s.filename );
                 break;
             case    II_tag :
                 g_info( err_inf_tag, nw->s.mt.tag_m->name );
                 // fallthrough
             case    II_macro :
-                utoa( nw->lineno, linestr, 10 );
-                utoa( nw->s.mt.m->lineno, linemac, 10 );
+                ulongtodec( nw->lineno, linestr );
+                ulongtodec( nw->s.mt.m->lineno, linemac );
                 g_info( err_inf_mac_def, linestr, nw->s.mt.m->name,
                         linemac, nw->s.mt.m->mac_file_name);
                 break;
@@ -265,10 +265,10 @@ void numb_err( void )
 
     err_count++;
     if( input_cbs->fmflags & II_tag_mac ) {
-        utoa( input_cbs->s.m->lineno, linestr, 10 );
+        ulongtodec( input_cbs->s.m->lineno, linestr );
         g_err( ERR_PU_NUM, linestr, "macro", input_cbs->s.m->mac->name );
     } else {
-        utoa( input_cbs->s.f->lineno, linestr, 10 );
+        ulongtodec( input_cbs->s.f->lineno, linestr );
         g_err( ERR_PU_NUM, linestr, "file", input_cbs->s.f->filename );
     }
     show_include_stack();

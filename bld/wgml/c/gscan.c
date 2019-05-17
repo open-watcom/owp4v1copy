@@ -121,11 +121,11 @@ static void scan_gml( void )
         err_count++;
         // SC--009 The tagname is too long
         if( cb->fmflags & II_tag_mac ) {
-            utoa( cb->s.m->lineno, linestr, 10 );
+            ulongtodec( cb->s.m->lineno, linestr );
             g_err( err_tag_name, tok_start + 1, linestr, "macro",
                    cb->s.m->mac->name );
         } else {
-            utoa( cb->s.f->lineno, linestr, 10 );
+            ulongtodec( cb->s.f->lineno, linestr );
             g_err( err_tag_name, tok_start + 1, linestr, "file",
                    cb->s.f->filename );
         }
@@ -176,12 +176,12 @@ static void scan_gml( void )
             // SC--037: The macro 'xxxxxx' for the gml tag 'yyyyy'
             //          is not defined
             if( cb->fmflags & II_tag_mac ) {
-                utoa( cb->s.m->lineno, linestr, 10 );
+                ulongtodec( cb->s.m->lineno, linestr );
                 g_err( err_tag_macro,
                          ge->macname, ge->name,
                          linestr, "macro", cb->s.m->mac->name );
             } else {
-                utoa( cb->s.f->lineno, linestr, 10 );
+                ulongtodec( cb->s.f->lineno, linestr );
                 g_err( err_tag_macro,
                          ge->macname, ge->name,
                          linestr, "file", cb->s.f->filename );
@@ -725,10 +725,10 @@ condcode    test_process( ifcb * cb )
     }
     if( cc == no ) {                    // cc not set program logic error
         if( input_cbs->fmflags & II_tag_mac ) {
-            utoa( input_cbs->s.m->lineno, linestr, 10 );
+            ulongtodec( input_cbs->s.m->lineno, linestr );
             g_err( err_if_intern, linestr, "macro", input_cbs->s.m->mac->name );
         } else {
-            utoa( input_cbs->s.f->lineno, linestr, 10 );
+            ulongtodec( input_cbs->s.f->lineno, linestr );
             g_err( err_if_intern,
                      linestr, "file", input_cbs->s.f->filename );
         }

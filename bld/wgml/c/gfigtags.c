@@ -1128,7 +1128,7 @@ void gml_figcap( const gmltag * entry )
         /* Now build, save, and output the prefix */
 
         count = strlen( layout_work.figcap.string );
-        ultoa( fig_entry->number, buffer, 10 );
+        ulongtodec( fig_entry->number, buffer );
         count += strlen( buffer );
         count ++;                       // for the delimiter character
         prefix = (char *) mem_alloc( count + 1);

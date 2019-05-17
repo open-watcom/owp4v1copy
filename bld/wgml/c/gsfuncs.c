@@ -200,10 +200,10 @@ static  void    err_info( char * * result )
     char                linestr[MAX_L_AS_STR];
 
     if( input_cbs->fmflags & II_tag_mac ) {
-        utoa( input_cbs->s.m->lineno, linestr, 10 );
+        ulongtodec( input_cbs->s.m->lineno, linestr );
         g_info( inf_mac_line, linestr, input_cbs->s.m->mac->name );
     } else {
-        utoa( input_cbs->s.f->lineno, linestr, 10 );
+        ulongtodec( input_cbs->s.f->lineno, linestr );
         g_info( inf_file_line, linestr, input_cbs->s.f->filename );
     }
     err_count++;

@@ -1922,9 +1922,9 @@ static void *df_add( void )
 
 static void *df_decimal( void )
 {
-    char        *value = NULL;
-    parameters  my_parameters;
-    uintptr_t   first;
+    void            *value;
+    parameters      my_parameters;
+    long            first;
 
     /* Extract parameter offset. */
 
@@ -1933,12 +1933,13 @@ static void *df_decimal( void )
     /* Now get the parameter. */
 
     current_df_data.current = current_df_data.base + my_parameters.first;
-    first = (uintptr_t)process_parameter();
+    first = (long)(intptr_t)process_parameter();
 
     /* Convert and return the value. */
 
     value = mem_alloc( 12 );
-    return( (void *)_ltoa( first, value, 10 ) );
+    slongtodec( first, value );
+    return( value );
 }
 
 /* Function df_divide().
@@ -2047,9 +2048,9 @@ static void *df_getstrsymbol( void )
 
 static void *df_hex( void )
 {
-    char        *value = NULL;
-    parameters  my_parameters;
-    uintptr_t   first;
+    void            *value;
+    parameters      my_parameters;
+    unsigned long   first;
 
     /* Extract parameter offset. */
 
@@ -2058,12 +2059,13 @@ static void *df_hex( void )
     /* Now get the parameter. */
 
     current_df_data.current = current_df_data.base + my_parameters.first;
-    first = (uintptr_t)process_parameter();
+    first = (unsigned long)(uintptr_t)process_parameter();
 
     /* Convert and return a pointer to the parameter */
 
     value = mem_alloc( 9 );
-    return( (void *)_ltoa( first, value, 16 ) );
+    ulongtohex( first, value );
+    return( value );
 }
 
 /* Function df_lower().

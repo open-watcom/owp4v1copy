@@ -101,9 +101,6 @@ extern  bool        is_stop_char( char c );
 extern  bool        is_symbol_char( char c );
 extern  char        parse_char( const char *pa, size_t len );
 extern  void        unquote_if_quoted( char **a, char **z );
-extern  int         numtohex( unsigned long value, char *buffer );
-extern  int         unumtodec( unsigned long value, char *buffer );
-extern  int         snumtodec( long value, char *buffer );
 
 /* gbanner.c                            */
 extern  void        out_ban_bot( void );
@@ -504,6 +501,9 @@ extern  char        *   int_to_roman( uint32_t n, char * r, size_t rsize );
 extern  bool            lay_init_su( char * p, su * in_su );
 extern  size_t          len_to_trail_space( const char *p , size_t len );
 extern  char        *   skip_to_quote( char * p, char quote );
+extern  int             ulongtohex( unsigned long value, char *buffer );
+extern  int             ulongtodec( unsigned long value, char *buffer );
+extern  int             slongtodec( long value, char *buffer );
 
 
 /* outbuff.c                            */
