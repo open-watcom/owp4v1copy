@@ -1395,10 +1395,10 @@ void insert_hard_spaces( char * spaces )
     spc_cnt = strlen( spaces );
     if( spc_cnt > 0 ) {
         if( t_line == NULL ) {
-            t_line->first = process_word( &layout_work.note.spaces, spc_cnt, FONT0 );
+            t_line->first = process_word( layout_work.note.spaces, spc_cnt, FONT0 );
             t_line->last = t_line->first;
         } else {
-            t_line->last->next = process_word( &layout_work.note.spaces, spc_cnt, FONT0 );
+            t_line->last->next = process_word( layout_work.note.spaces, spc_cnt, FONT0 );
             t_line->last = t_line->last->next;
         }
         t_line->last->type = tx_norm;
