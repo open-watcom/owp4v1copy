@@ -1353,7 +1353,7 @@ static void do_line_device( void )
 
     if( ((cur_op == bx_off) || ((cur_op == bx_on) && !ProcFlags.box_cols_cur)) &&
             (t_page.max_depth == t_page.cur_depth) ) {
-        next_column;
+        next_column();
         max_depth = t_page.max_depth;
     }
 
