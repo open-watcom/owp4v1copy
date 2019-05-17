@@ -224,20 +224,20 @@ void    scr_se( void )
     symvar          sym;
     symvar      * * working_dict;
 
-    subscript = no_subscript;           // not subscripted
+    subscript = no_subscript;                       // not subscripted
     scan_err = false;
     p = scan_sym( scan_start, &sym, &subscript );
 
-    if(  sym.name != MAC_STAR_NAME ) {  // remove trailing blanks from all symbols but *
+    if( strcmp( sym.name, MAC_STAR_NAME ) ) {       // remove trailing blanks from all symbols but *
         valstart = p;
-        while( *p ) {                   // find end of line
+        while( *p ) {                               // find end of line
             p++;
         }
         p--;
         while( (valstart < p) && (*p == ' ') ) {    // find last non-space character
             p--;
         }
-        *++p = '\0';                    // mark end of line
+        *++p = '\0';                                // mark end of line
         p = valstart;
     }
 
