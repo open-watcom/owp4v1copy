@@ -103,8 +103,8 @@ static  char    * find_end_of_parm( char * pchar, char * pend )
     instring[1] = false;
     finished = false;
     test_for_quote = true;
+    c = '\0';
     cm1 = '\0';
-    cm2 = '\0';
     for(  ; *pchar != '\0' ; pchar++ ) {
         cm2 = cm1;
         cm1 = c;
