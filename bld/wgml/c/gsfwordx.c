@@ -166,7 +166,8 @@ static  condcode    scr_xx_word( parm parms[MAX_FUN_PARMS], size_t parmcount,
 
     pval = tok_start;                   // start word
 
-    if( len == 0 ) {                 // default word count = to end of string
+    if( len == 0 ) {                    // default word count = to end of string
+        ptok = pend;
         for( ; pval <= ptok; pval++ ) { // copy rest of words
             if( ressize <= 0 ) {
                 break;
