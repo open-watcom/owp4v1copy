@@ -166,12 +166,12 @@ void    lay_backbod( const gmltag * entry )
                     break;
                 case   e_body_string:
                     if( x_tag == el_body ) {
-                        cvterr = i_xx_string( p, curr, &(bb->string) );
+                        cvterr = i_xx_string( p, curr, bb->string );
                     }
                     break;
                 case   e_backm_string:
                     if( x_tag == el_backm ) {
-                        cvterr = i_xx_string( p, curr, &(bb->string) );
+                        cvterr = i_xx_string( p, curr, bb->string );
                     }
                     break;
                 case   e_page_eject:

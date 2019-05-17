@@ -156,7 +156,7 @@ void gml_figref( const gmltag * entry )
     } else {
         len = strlen( cur_re->u.ffh.entry->prefix );
         if( do_page ) {
-            format_num( cur_re->u.ffh.entry->pageno, &buffer, sizeof( buffer ),
+            format_num( cur_re->u.ffh.entry->pageno, buffer, sizeof( buffer ),
                         cur_re->u.ffh.entry->style );
             bu_len = strlen( buffer );
             ref_text = (char *) mem_alloc( len + op_len + bu_len  + 1 );
@@ -254,7 +254,7 @@ void gml_hdref( const gmltag * entry )
     } else {
         len = strlen( cur_re->u.ffh.entry->text ) + 2;        // allow for quote chars
         if( do_page ) {
-            format_num( cur_re->u.ffh.entry->pageno, &buffer, sizeof( buffer ),
+            format_num( cur_re->u.ffh.entry->pageno, buffer, sizeof( buffer ),
                         cur_re->u.ffh.entry->style );
             bu_len = strlen( buffer );
             len += (op_len + bu_len );
@@ -327,10 +327,10 @@ void gml_fnref( const gmltag * entry )
     if( cur_re == NULL ) {              // undefined refid
         process_text( "(XX)", g_curr_font );
     } else {
-        format_num( cur_re->u.ffh.entry->number, &buffer, sizeof( buffer ),
+        format_num( cur_re->u.ffh.entry->number, buffer, sizeof( buffer ),
                     layout_work.fnref.number_style );
         input_cbs->fmflags &= ~II_eol;
-        process_text( &buffer, layout_work.fnref.font );
+        process_text( buffer, layout_work.fnref.font );
     }
 
     if( !ProcFlags.reprocess_line && *p ) {

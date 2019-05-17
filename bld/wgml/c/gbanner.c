@@ -238,10 +238,10 @@ static void content_reg( region_lay_tag * region )
     if( region->script_format ) {
         for( k = 0; k < 3; ++k ) {
             if( region->script_region[k].string != NULL ) {
-                strcpy_s( &buf, strlen(region->script_region[k].string) + 1,
+                strcpy_s( buf, strlen(region->script_region[k].string) + 1,
                           region->script_region[k].string );
-                while( resolve_symvar_functions( &buf ) ); // loop until return shows no substitution done
-                while( region->final_content[k].len < strlen( &buf ) ) {
+                while( resolve_symvar_functions( buf ) ); // loop until return shows no substitution done
+                while( region->final_content[k].len < strlen( buf ) ) {
                     if( region->final_content[k].string == NULL ) {
                         region->final_content[k].len = str_size;
                         region->final_content[k].string = mem_alloc( str_size );
@@ -252,309 +252,309 @@ static void content_reg( region_lay_tag * region )
                     }
                 }
                 if( region->final_content[k].len >  0 ) {   // buf actually has a string
-                    strcpy_s( region->final_content[k].string, strlen( &buf ) + 1, &buf );
-                    intrans( region->final_content[k].string, strlen( &buf ) + 1, region->font );
+                    strcpy_s( region->final_content[k].string, strlen( buf ) + 1, buf );
+                    intrans( region->final_content[k].string, strlen( buf ) + 1, region->font );
                 }
             }
         }
     } else {    // not script format only normal string or keyword
         switch( region->contents.content_type ) {
         case   string_content:
-            strcpy_s( &buf, strlen(region->contents.string) + 1, region->contents.string );
-            while( resolve_symvar_functions( &buf ) ); // loop until return shows no substitution done
+            strcpy_s( buf, strlen(region->contents.string) + 1, region->contents.string );
+            while( resolve_symvar_functions( buf ) ); // loop until return shows no substitution done
             break;
         case author_content :
             rc = find_symvar( &global_dict, "$author", no_subscript, &symsubval );
             if( rc == 2 ) {
-                strcpy_s( &buf, strlen(symsubval->value) + 1, symsubval->value );
+                strcpy_s( buf, strlen(symsubval->value) + 1, symsubval->value );
             } else {
-                strcpy_s( &buf, strlen("author") + 1, "author" );
+                strcpy_s( buf, strlen("author") + 1, "author" );
             }
             break;
         case bothead_content :
             rc = find_symvar( &global_dict, "$bothead", no_subscript, &symsubval );
             if( rc == 2 ) {
-                strcpy_s( &buf, strlen(symsubval->value) + 1, symsubval->value );
+                strcpy_s( buf, strlen(symsubval->value) + 1, symsubval->value );
             } else {
-                strcpy_s( &buf, strlen("$bothead") + 1, "$bothead" );
+                strcpy_s( buf, strlen("$bothead") + 1, "$bothead" );
             }
             break;
         case date_content :
             /* This matches what wgml 4.0 actually does */
             rc = find_symvar( &global_dict, "date", no_subscript, &symsubval );
             if( rc == 2 ){  // tag DATE used
-                strcpy_s( &buf, strlen(symsubval->value) + 1, symsubval->value );
+                strcpy_s( buf, strlen(symsubval->value) + 1, symsubval->value );
             } else {        // tag DATE not used
                 rc = find_symvar( &global_dict, "$date", no_subscript, &symsubval );
                 if( rc == 2 ) {
-                    strcpy_s( &buf, strlen(symsubval->value) + 1, symsubval->value );
+                    strcpy_s( buf, strlen(symsubval->value) + 1, symsubval->value );
                 } else {
-                    strcpy_s( &buf, strlen("$date") + 1, "$date" );
+                    strcpy_s( buf, strlen("$date") + 1, "$date" );
                 }
             }
             break;
         case docnum_content :
             rc = find_symvar( &global_dict, "$docnum", no_subscript, &symsubval );
             if( rc == 2 ) {
-                strcpy_s( &buf, strlen(symsubval->value) + 1, symsubval->value );
+                strcpy_s( buf, strlen(symsubval->value) + 1, symsubval->value );
             } else {
-                strcpy_s( &buf, strlen("$docnum") + 1, "$docnum" );
+                strcpy_s( buf, strlen("$docnum") + 1, "$docnum" );
             }
             break;
         case head0_content :
             rc = find_symvar( &global_dict, "$head0", no_subscript, &symsubval );
             if( rc == 2 ) {
-                strcpy_s( &buf, strlen(symsubval->value) + 1, symsubval->value );
+                strcpy_s( buf, strlen(symsubval->value) + 1, symsubval->value );
             } else {
-                strcpy_s( &buf, strlen("$head0") + 1, "$head0" );
+                strcpy_s( buf, strlen("$head0") + 1, "$head0" );
             }
             break;
         case head1_content :
             rc = find_symvar( &global_dict, "$head1", no_subscript, &symsubval );
             if( rc == 2 ) {
-                strcpy_s( &buf, strlen(symsubval->value) + 1, symsubval->value );
+                strcpy_s( buf, strlen(symsubval->value) + 1, symsubval->value );
             } else {
-                strcpy_s( &buf, strlen("$head1") + 1, "$head1" );
+                strcpy_s( buf, strlen("$head1") + 1, "$head1" );
             }
             break;
         case head2_content :
             rc = find_symvar( &global_dict, "$head2", no_subscript, &symsubval );
             if( rc == 2 ) {
-                strcpy_s( &buf, strlen(symsubval->value) + 1, symsubval->value );
+                strcpy_s( buf, strlen(symsubval->value) + 1, symsubval->value );
             } else {
-                strcpy_s( &buf, strlen("$head2") + 1, "$head2" );
+                strcpy_s( buf, strlen("$head2") + 1, "$head2" );
             }
             break;
         case head3_content :
             rc = find_symvar( &global_dict, "$head3", no_subscript, &symsubval );
             if( rc == 2 ) {
-                strcpy_s( &buf, strlen(symsubval->value) + 1, symsubval->value );
+                strcpy_s( buf, strlen(symsubval->value) + 1, symsubval->value );
             } else {
-                strcpy_s( &buf, strlen("$head3") + 1, "$head3" );
+                strcpy_s( buf, strlen("$head3") + 1, "$head3" );
             }
             break;
         case head4_content :
             rc = find_symvar( &global_dict, "$head4", no_subscript, &symsubval );
             if( rc == 2 ) {
-                strcpy_s( &buf, strlen(symsubval->value) + 1, symsubval->value );
+                strcpy_s( buf, strlen(symsubval->value) + 1, symsubval->value );
             } else {
-                strcpy_s( &buf, strlen("$head4") + 1, "$head4" );
+                strcpy_s( buf, strlen("$head4") + 1, "$head4" );
             }
             break;
         case head5_content :
             rc = find_symvar( &global_dict, "$head5", no_subscript, &symsubval );
             if( rc == 2 ) {
-                strcpy_s( &buf, strlen(symsubval->value) + 1, symsubval->value );
+                strcpy_s( buf, strlen(symsubval->value) + 1, symsubval->value );
             } else {
-                strcpy_s( &buf, strlen("$head5") + 1, "$head5" );
+                strcpy_s( buf, strlen("$head5") + 1, "$head5" );
             }
             break;
         case head6_content :
             rc = find_symvar( &global_dict, "$head6", no_subscript, &symsubval );
             if( rc == 2 ) {
-                strcpy_s( &buf, strlen(symsubval->value) + 1, symsubval->value );
+                strcpy_s( buf, strlen(symsubval->value) + 1, symsubval->value );
             } else {
-                strcpy_s( &buf, strlen("$head6") + 1, "$head6" );
+                strcpy_s( buf, strlen("$head6") + 1, "$head6" );
             }
             break;
         case headnum0_content :
             rc = find_symvar( &global_dict, "$hnum0", no_subscript, &symsubval );
             if( rc == 2 ) {
-                strcpy_s( &buf, strlen(symsubval->value) + 1, symsubval->value );
+                strcpy_s( buf, strlen(symsubval->value) + 1, symsubval->value );
             } else {
-                strcpy_s( &buf, strlen("$hnum0") + 1, "$hnum0" );
+                strcpy_s( buf, strlen("$hnum0") + 1, "$hnum0" );
             }
             break;
         case headnum1_content :
             rc = find_symvar( &global_dict, "$hnum1", no_subscript, &symsubval );
             if( rc == 2 ) {
-                strcpy_s( &buf, strlen(symsubval->value) + 1, symsubval->value );
+                strcpy_s( buf, strlen(symsubval->value) + 1, symsubval->value );
             } else {
-                strcpy_s( &buf, strlen("$hnum1") + 1, "$hnum1" );
+                strcpy_s( buf, strlen("$hnum1") + 1, "$hnum1" );
             }
             break;
         case headnum2_content :
             rc = find_symvar( &global_dict, "$hnum2", no_subscript, &symsubval );
             if( rc == 2 ) {
-                strcpy_s( &buf, strlen(symsubval->value) + 1, symsubval->value );
+                strcpy_s( buf, strlen(symsubval->value) + 1, symsubval->value );
             } else {
-                strcpy_s( &buf, strlen("$hnum2") + 1, "$hnum2" );
+                strcpy_s( buf, strlen("$hnum2") + 1, "$hnum2" );
             }
             break;
         case headnum3_content :
             rc = find_symvar( &global_dict, "$hnum3", no_subscript, &symsubval );
             if( rc == 2 ) {
-                strcpy_s( &buf, strlen(symsubval->value) + 1, symsubval->value );
+                strcpy_s( buf, strlen(symsubval->value) + 1, symsubval->value );
             } else {
-                strcpy_s( &buf, strlen("$hnum3") + 1, "$hnum3" );
+                strcpy_s( buf, strlen("$hnum3") + 1, "$hnum3" );
             }
             break;
         case headnum4_content :
             rc = find_symvar( &global_dict, "$hnum4", no_subscript, &symsubval );
             if( rc == 2 ) {
-                strcpy_s( &buf, strlen(symsubval->value) + 1, symsubval->value );
+                strcpy_s( buf, strlen(symsubval->value) + 1, symsubval->value );
             } else {
-                strcpy_s( &buf, strlen("$hnum4") + 1, "$hnum4" );
+                strcpy_s( buf, strlen("$hnum4") + 1, "$hnum4" );
             }
             break;
         case headnum5_content :
             rc = find_symvar( &global_dict, "$hnum5", no_subscript, &symsubval );
             if( rc == 2 ) {
-                strcpy_s( &buf, strlen(symsubval->value) + 1, symsubval->value );
+                strcpy_s( buf, strlen(symsubval->value) + 1, symsubval->value );
             } else {
-                strcpy_s( &buf, strlen("$hnum5") + 1, "$hnum5" );
+                strcpy_s( buf, strlen("$hnum5") + 1, "$hnum5" );
             }
             break;
         case headnum6_content :
             rc = find_symvar( &global_dict, "$hnum6", no_subscript, &symsubval );
             if( rc == 2 ) {
-                strcpy_s( &buf, strlen(symsubval->value) + 1, symsubval->value );
+                strcpy_s( buf, strlen(symsubval->value) + 1, symsubval->value );
             } else {
-                strcpy_s( &buf, strlen("$hnum6") + 1, "$hnum6" );
+                strcpy_s( buf, strlen("$hnum6") + 1, "$hnum6" );
             }
             break;
         case headtext0_content :
             rc = find_symvar( &global_dict, "$htext0", no_subscript, &symsubval );
             if( rc == 2 ) {
-                strcpy_s( &buf, strlen(symsubval->value) + 1, symsubval->value );
+                strcpy_s( buf, strlen(symsubval->value) + 1, symsubval->value );
             } else {
-                strcpy_s( &buf, strlen("$htext0") + 1, "$htext0" );
+                strcpy_s( buf, strlen("$htext0") + 1, "$htext0" );
             }
             break;
         case headtext1_content :
             rc = find_symvar( &global_dict, "$htext1", no_subscript, &symsubval );
             if( rc == 2 ) {
-                strcpy_s( &buf, strlen(symsubval->value) + 1, symsubval->value );
+                strcpy_s( buf, strlen(symsubval->value) + 1, symsubval->value );
             } else {
-                strcpy_s( &buf, strlen("$htext1") + 1, "$htext1" );
+                strcpy_s( buf, strlen("$htext1") + 1, "$htext1" );
             }
             break;
         case headtext2_content :
             rc = find_symvar( &global_dict, "$htext2", no_subscript, &symsubval );
             if( rc == 2 ) {
-                strcpy_s( &buf, strlen(symsubval->value) + 1, symsubval->value );
+                strcpy_s( buf, strlen(symsubval->value) + 1, symsubval->value );
             } else {
-                strcpy_s( &buf, strlen("$htext2") + 1, "$htext2" );
+                strcpy_s( buf, strlen("$htext2") + 1, "$htext2" );
             }
             break;
         case headtext3_content :
             rc = find_symvar( &global_dict, "$htext3", no_subscript, &symsubval );
             if( rc == 2 ) {
-                strcpy_s( &buf, strlen(symsubval->value) + 1, symsubval->value );
+                strcpy_s( buf, strlen(symsubval->value) + 1, symsubval->value );
             } else {
-                strcpy_s( &buf, strlen("$htext3") + 1, "$htext3" );
+                strcpy_s( buf, strlen("$htext3") + 1, "$htext3" );
             }
             break;
         case headtext4_content :
             rc = find_symvar( &global_dict, "$htext4", no_subscript, &symsubval );
             if( rc == 2 ) {
-                strcpy_s( &buf, strlen(symsubval->value) + 1, symsubval->value );
+                strcpy_s( buf, strlen(symsubval->value) + 1, symsubval->value );
             } else {
-                strcpy_s( &buf, strlen("$htext4") + 1, "$htext4" );
+                strcpy_s( buf, strlen("$htext4") + 1, "$htext4" );
             }
             break;
         case headtext5_content :
             rc = find_symvar( &global_dict, "$htext5", no_subscript, &symsubval );
             if( rc == 2 ) {
-                strcpy_s( &buf, strlen(symsubval->value) + 1, symsubval->value );
+                strcpy_s( buf, strlen(symsubval->value) + 1, symsubval->value );
             } else {
-                strcpy_s( &buf, strlen("$htext5") + 1, "$htext5" );
+                strcpy_s( buf, strlen("$htext5") + 1, "$htext5" );
             }
             break;
         case headtext6_content :
             rc = find_symvar( &global_dict, "$htext6", no_subscript, &symsubval );
             if( rc == 2 ) {
-                strcpy_s( &buf, strlen(symsubval->value) + 1, symsubval->value );
+                strcpy_s( buf, strlen(symsubval->value) + 1, symsubval->value );
             } else {
-                strcpy_s( &buf, strlen("$htext6") + 1, "$htext6" );
+                strcpy_s( buf, strlen("$htext6") + 1, "$htext6" );
             }
             break;
         case pgnuma_content :
             rc = find_symvar( &global_dict, "$pgnuma", no_subscript, &symsubval );
             if( rc == 2 ) {
-                strcpy_s( &buf, strlen(symsubval->value) + 1, symsubval->value );
+                strcpy_s( buf, strlen(symsubval->value) + 1, symsubval->value );
             } else {
-                strcpy_s( &buf, strlen("$pgnuma") + 1, "$pgnuma" );
+                strcpy_s( buf, strlen("$pgnuma") + 1, "$pgnuma" );
             }
             break;
         case pgnumad_content :
             rc = find_symvar( &global_dict, "$pgnumad", no_subscript, &symsubval );
             if( rc == 2 ) {
-                strcpy_s( &buf, strlen(symsubval->value) + 1, symsubval->value );
+                strcpy_s( buf, strlen(symsubval->value) + 1, symsubval->value );
             } else {
-                strcpy_s( &buf, strlen("$pgnumad") + 1, "$pgnumad" );
+                strcpy_s( buf, strlen("$pgnumad") + 1, "$pgnumad" );
             }
             break;
         case pgnumc_content :
             rc = find_symvar( &global_dict, "$pgnumc", no_subscript, &symsubval );
             if( rc == 2 ) {
-                strcpy_s( &buf, strlen(symsubval->value) + 1, symsubval->value );
+                strcpy_s( buf, strlen(symsubval->value) + 1, symsubval->value );
             } else {
-                strcpy_s( &buf, strlen("$pgnumc") + 1, "$pgnumc" );
+                strcpy_s( buf, strlen("$pgnumc") + 1, "$pgnumc" );
             }
             break;
         case pgnumcd_content :
             rc = find_symvar( &global_dict, "$pgnumcd", no_subscript, &symsubval );
             if( rc == 2 ) {
-                strcpy_s( &buf, strlen(symsubval->value) + 1, symsubval->value );
+                strcpy_s( buf, strlen(symsubval->value) + 1, symsubval->value );
             } else {
-                strcpy_s( &buf, strlen("$pgnumcd") + 1, "$pgnumcd" );
+                strcpy_s( buf, strlen("$pgnumcd") + 1, "$pgnumcd" );
             }
             break;
         case pgnumr_content :
             rc = find_symvar( &global_dict, "$pgnumr", no_subscript, &symsubval );
             if( rc == 2 ) {
-                strcpy_s( &buf, strlen(symsubval->value) + 1, symsubval->value );
+                strcpy_s( buf, strlen(symsubval->value) + 1, symsubval->value );
             } else {
-                strcpy_s( &buf, strlen("$pgnumr") + 1, "$pgnumr" );
+                strcpy_s( buf, strlen("$pgnumr") + 1, "$pgnumr" );
             }
             break;
         case pgnumrd_content :
             rc = find_symvar( &global_dict, "$pgnumrd", no_subscript, &symsubval );
             if( rc == 2 ) {
-                strcpy_s( &buf, strlen(symsubval->value) + 1, symsubval->value );
+                strcpy_s( buf, strlen(symsubval->value) + 1, symsubval->value );
             } else {
-                strcpy_s( &buf, strlen("$pgnumrd") + 1, "$pgnumrd" );
+                strcpy_s( buf, strlen("$pgnumrd") + 1, "$pgnumrd" );
             }
             break;
         case sec_content :
             rc = find_symvar( &global_dict, "$sec", no_subscript, &symsubval );
             if( rc == 2 ) {
-                strcpy_s( &buf, strlen(symsubval->value) + 1, symsubval->value );
+                strcpy_s( buf, strlen(symsubval->value) + 1, symsubval->value );
             } else {
-                strcpy_s( &buf, strlen("$sec") + 1, "$sec" );
+                strcpy_s( buf, strlen("$sec") + 1, "$sec" );
             }
             break;
         case stitle_content :
             rc = find_symvar( &global_dict, "$stitle", no_subscript, &symsubval );
             if( rc == 2 ) {
-                strcpy_s( &buf, strlen(symsubval->value) + 1, symsubval->value );
+                strcpy_s( buf, strlen(symsubval->value) + 1, symsubval->value );
             } else {
-                strcpy_s( &buf, strlen("$stitle") + 1, "$stitle" );
+                strcpy_s( buf, strlen("$stitle") + 1, "$stitle" );
             }
             break;
         case title_content :
             rc = find_symvar( &global_dict, "$title", no_subscript, &symsubval );
             if( rc == 2 ) {
-                strcpy_s( &buf, strlen(symsubval->value) + 1, symsubval->value );
+                strcpy_s( buf, strlen(symsubval->value) + 1, symsubval->value );
             } else {
-                strcpy_s( &buf, strlen("$title") + 1, "$title" );
+                strcpy_s( buf, strlen("$title") + 1, "$title" );
             }
             break;
         case time_content :
             rc = find_symvar( &global_dict, "$time", no_subscript, &symsubval );
             if( rc == 2 ) {
-                strcpy_s( &buf, strlen(symsubval->value) + 1, symsubval->value );
+                strcpy_s( buf, strlen(symsubval->value) + 1, symsubval->value );
             } else {
-                strcpy_s( &buf, strlen("$time") + 1, "$time" );
+                strcpy_s( buf, strlen("$time") + 1, "$time" );
             }
             break;
         case tophead_content :
             rc = find_symvar( &global_dict, "$tophead", no_subscript, &symsubval );
             if( rc == 2 ) {
-                strcpy_s( &buf, strlen(symsubval->value) + 1, symsubval->value );
+                strcpy_s( buf, strlen(symsubval->value) + 1, symsubval->value );
             } else {
-                strcpy_s( &buf, strlen("$tophead") + 1, "$tophead" );
+                strcpy_s( buf, strlen("$tophead") + 1, "$tophead" );
             }
             break;
         case no_content :                   // empty region
@@ -565,7 +565,7 @@ static void content_reg( region_lay_tag * region )
         /* still not script format only normal string or keyword */
         if( buf[0] != '\0' ) {       // assign to final_content depending on region_position
             if( region->region_position == pos_left ) {
-                while( region->final_content[0].len < strlen( &buf ) ) {
+                while( region->final_content[0].len < strlen( buf ) ) {
                     if( region->final_content[0].string == NULL ) {
                         region->final_content[0].len = str_size;
                         region->final_content[0].string = mem_alloc( str_size );
@@ -574,10 +574,10 @@ static void content_reg( region_lay_tag * region )
                         mem_realloc( region->final_content[0].string, region->final_content[0].len );
                     }
                 }
-                strcpy_s( region->final_content[0].string, strlen( &buf ) + 1, &buf );
-                intrans( region->final_content[0].string, strlen( &buf ) + 1, region->font );
+                strcpy_s( region->final_content[0].string, strlen( buf ) + 1, buf );
+                intrans( region->final_content[0].string, strlen( buf ) + 1, region->font );
             } else if( region->region_position == pos_center ) {
-                while( region->final_content[1].len < strlen( &buf ) ) {
+                while( region->final_content[1].len < strlen( buf ) ) {
                     if( region->final_content[1].string == NULL ) {
                         region->final_content[1].len = str_size;
                         region->final_content[1].string = mem_alloc( str_size );
@@ -586,10 +586,10 @@ static void content_reg( region_lay_tag * region )
                         mem_realloc( region->final_content[1].string, region->final_content[1].len );
                     }
                 }
-                strcpy_s( region->final_content[1].string, strlen( &buf ) + 1, &buf );
-                intrans( region->final_content[1].string, strlen( &buf ) + 1, region->font );
+                strcpy_s( region->final_content[1].string, strlen( buf ) + 1, buf );
+                intrans( region->final_content[1].string, strlen( buf ) + 1, region->font );
             } else if( region->region_position == pos_right ) {
-                while( region->final_content[2].len < strlen( &buf ) ) {
+                while( region->final_content[2].len < strlen( buf ) ) {
                     if( region->final_content[2].string == NULL ) {
                         region->final_content[2].len = str_size;
                         region->final_content[2].string = mem_alloc( str_size );
@@ -598,10 +598,10 @@ static void content_reg( region_lay_tag * region )
                         mem_realloc( region->final_content[2].string, region->final_content[2].len );
                     }
                 }
-                strcpy_s( region->final_content[2].string, strlen( &buf ) + 1, &buf );
-                intrans( region->final_content[2].string, strlen( &buf ) + 1, region->font );
+                strcpy_s( region->final_content[2].string, strlen( buf ) + 1, buf );
+                intrans( region->final_content[2].string, strlen( buf ) + 1, region->font );
             } else {                                // position left if unknown
-                while( region->final_content[0].len < strlen( &buf ) ) {
+                while( region->final_content[0].len < strlen( buf ) ) {
                     if( region->final_content[0].string == NULL ) {
                         region->final_content[0].len = str_size;
                         region->final_content[0].string = mem_alloc( str_size );
@@ -610,8 +610,8 @@ static void content_reg( region_lay_tag * region )
                         mem_realloc( region->final_content[0].string, region->final_content[0].len );
                     }
                 }
-                strcpy_s( region->final_content[0].string, strlen( &buf ) + 1, &buf );
-                intrans( region->final_content[0].string, strlen( &buf ) + 1, region->font );
+                strcpy_s( region->final_content[0].string, strlen( buf ) + 1, buf );
+                intrans( region->final_content[0].string, strlen( buf ) + 1, region->font );
             }
         }
     }

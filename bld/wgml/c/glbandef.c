@@ -58,9 +58,9 @@ void    banner_defaults( void )
     ban->next = NULL;
     ban->region = NULL;
     ban->by_line = NULL;
-    lay_init_su( &z0, &(ban->left_adjust) );
-    lay_init_su( &z0, &(ban->right_adjust) );
-    lay_init_su( &n3, &(ban->depth) );
+    lay_init_su( z0, &(ban->left_adjust) );
+    lay_init_su( z0, &(ban->right_adjust) );
+    lay_init_su( n3, &(ban->depth) );
     ban->place = bottom_place;
     ban->docsect = head0_ban;
     ban->ban_left_adjust = 0;
@@ -77,11 +77,11 @@ void    banner_defaults( void )
     reg->reg_width = 0;
     reg->reg_voffset = 0;
     reg->reg_depth = 0;
-    lay_init_su( &z0, &(reg->indent) );
-    lay_init_su( &leftc, &(reg->hoffset) );
-    lay_init_su( &extendc, &(reg->width) );
-    lay_init_su( &n2, &(reg->voffset) );
-    lay_init_su( &n1, &(reg->depth) );
+    lay_init_su( z0, &(reg->indent) );
+    lay_init_su( leftc, &(reg->hoffset) );
+    lay_init_su( extendc, &(reg->width) );
+    lay_init_su( n2, &(reg->voffset) );
+    lay_init_su( n1, &(reg->depth) );
     reg->font = 0;
     reg->refnum = 1;
     reg->region_position = pos_left;
@@ -134,7 +134,7 @@ void    banner_defaults( void )
     memcpy( ban, wk, sizeof( banner_lay_tag ) );
     wk->next = ban;
 
-    lay_init_su( &n4, &(ban->depth) );
+    lay_init_su( n4, &(ban->depth) );
     ban->docsect = abstract_ban;
     ban->style = pgnumr_content;
 
@@ -143,7 +143,7 @@ void    banner_defaults( void )
     reg = regwk;
     ban->region = reg;
     reg->next = NULL;
-    lay_init_su( &n3, &(reg->voffset) );
+    lay_init_su( n3, &(reg->voffset) );
     reg->region_position = pos_center;
     reg->script_format = false;
     reg->contents.content_type = pgnumr_content;
@@ -174,7 +174,7 @@ void    banner_defaults( void )
     memcpy( ban, wk, sizeof( banner_lay_tag ) );
     wk->next = ban;
 
-    lay_init_su( &n3, &(ban->depth) );
+    lay_init_su( n3, &(ban->depth) );
     ban->place = top_place;
     ban->docsect = toc_ban;
     ban->style = no_content;
@@ -184,7 +184,7 @@ void    banner_defaults( void )
     reg = regwk;
     ban->region = reg;
     reg->next = NULL;
-    lay_init_su( &n1, &(reg->voffset) );
+    lay_init_su( n1, &(reg->voffset) );
     reg->font = 3;
     reg->contents.content_type = string_content;
     strcpy_s( reg->contents.string, sizeof( "Table of Contents" ),
@@ -244,7 +244,7 @@ void    banner_defaults( void )
     reg = regwk;
     ban->region = reg;
     reg->next = NULL;
-    lay_init_su( &z0, &(reg->voffset) );
+    lay_init_su( z0, &(reg->voffset) );
     reg->region_position = pos_left;
     reg->font = 0;
     reg->pouring = no_pour;

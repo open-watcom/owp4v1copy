@@ -310,7 +310,7 @@ void    lay_appendix( const gmltag * entry )
                                        &layout_work.hx.hx_sect[hds_appendix].header );
                     break;
                 case   e_appendix_string:
-                    cvterr = i_xx_string( p, curr, &layout_work.appendix.string );
+                    cvterr = i_xx_string( p, curr, layout_work.appendix.string );
                     break;
                 case   e_page_reset:
                     cvterr = i_yes_no( p, curr, &layout_work.appendix.page_reset );

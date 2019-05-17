@@ -133,8 +133,7 @@ void    lay_toc( const gmltag * entry )
                     cvterr = i_int8( p, curr, &layout_work.toc.toc_levels );
                     break;
                 case   e_fill_string:
-                    cvterr = i_xx_string( p, curr,
-                                          &layout_work.toc.fill_string );
+                    cvterr = i_xx_string( p, curr, layout_work.toc.fill_string );
                     break;
                 default:
                     out_msg( "WGML logic error.\n");

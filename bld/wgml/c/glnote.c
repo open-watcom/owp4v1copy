@@ -158,7 +158,7 @@ void    lay_note( const gmltag * entry )
                     cvterr = i_int8( p, curr, &layout_work.note.spacing );
                     break;
                 case   e_note_string:
-                    cvterr = i_xx_string( p, curr, &layout_work.note.string );
+                    cvterr = i_xx_string( p, curr, layout_work.note.string );
                     break;
                 default:
                     out_msg( "WGML logic error.\n");

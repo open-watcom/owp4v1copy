@@ -39,6 +39,10 @@
 #include "wgml.h"
 #include "banner.h"
 
+#ifndef __WATCOMC__
+#include "clibext.h"
+#endif
+
 
 /***************************************************************************/
 /*  Usage info and end program                                             */
@@ -777,6 +781,10 @@ int main( int argc, char * argv[] )
     clock_t     start_time;
     clock_t     end_time;
 
+#ifndef __WATCOMC__
+    _argc = argc;
+    _argv = argv;
+#endif
 
 //   #undef TRMEM                         // activate to disable TRMEM
 

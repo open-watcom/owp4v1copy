@@ -130,8 +130,7 @@ void    lay_figcap( const gmltag * entry )
                     }
                     break;
                 case   e_figcap_string:
-                    cvterr = i_xx_string( p, curr,
-                                            &layout_work.figcap.string );
+                    cvterr = i_xx_string( p, curr, layout_work.figcap.string );
                     break;
                 case   e_string_font:
                     cvterr = i_font_number( p, curr, &layout_work.figcap.string_font );

@@ -1024,7 +1024,7 @@ void    do_layout_end_processing( void )
 
         /* If a note_string exists, split it into text and spaces */
 
-        txt_cnt = strlen( &layout_work.note.string );
+        txt_cnt = strlen( layout_work.note.string );
         if( txt_cnt > 0 ) {
             spc_cnt = 0;
             while( layout_work.note.string[txt_cnt - 1] == ' ' ) {

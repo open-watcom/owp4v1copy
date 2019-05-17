@@ -96,13 +96,13 @@ static void gml_inline_common( const gmltag * entry, int level, e_tags t )
             if( ProcFlags.force_pc ) {
                 do_force_pc( single_q );
             } else {
-                process_text( p, g_curr_font );
+                process_text( single_q, g_curr_font );
             }
         } else {
             if( ProcFlags.force_pc ) {
                 do_force_pc( double_q );
             } else {
-                process_text( p, g_curr_font );
+                process_text( double_q, g_curr_font );
             }
         }
         quote_lvl++;

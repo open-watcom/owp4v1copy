@@ -192,18 +192,17 @@ void    lay_index( const gmltag * entry )
                     cvterr = i_int8( p, curr, &layout_work.index.columns );
                     break;
                 case   e_see_string:
-                    cvterr = i_xx_string( p, curr, &layout_work.index.see_string );
+                    cvterr = i_xx_string( p, curr, layout_work.index.see_string );
                     break;
                 case   e_see_also_string:
-                    cvterr = i_xx_string( p, curr,
-                                                &layout_work.index.see_also_string );
+                    cvterr = i_xx_string( p, curr, layout_work.index.see_also_string );
                     break;
                 case   e_header:
                     cvterr = i_yes_no( p, curr,
                                         &layout_work.hx.hx_sect[hds_index].header );
                     break;
                 case   e_index_string:
-                    cvterr = i_xx_string( p, curr, &layout_work.index.index_string );
+                    cvterr = i_xx_string( p, curr, layout_work.index.index_string );
                     break;
                 case   e_page_eject:
                     cvterr = i_page_eject( p, curr,

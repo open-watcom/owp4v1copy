@@ -63,6 +63,10 @@
 #include "devfuncs.h"
 #include "outbuff.h"
 
+#ifndef __WATCOMC__
+#include "clibext.h"
+#endif
+
 
 /* Local variable declaration. */
 
@@ -927,7 +931,7 @@ static void set_out_file_attr( void )
 
             /* Use default if bin_driver->rec_spec is missing. */
 
-            size_t len = 1 + strlen( "t:132" );
+            len = 1 + strlen( "t:132" );
             out_file_attr = mem_alloc( len );
             strcpy_s( out_file_attr, len, "t:132" );
         }

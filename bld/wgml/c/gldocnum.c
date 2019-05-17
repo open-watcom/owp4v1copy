@@ -96,8 +96,7 @@ void    lay_docnum( const gmltag * entry )
                                            &layout_work.docnum.pre_skip );
                     break;
                 case   e_docnum_string:
-                    cvterr = i_xx_string( p, curr,
-                                          &layout_work.docnum.string );
+                    cvterr = i_xx_string( p, curr, layout_work.docnum.string );
                     break;
                 default:
                     out_msg( "WGML logic error.\n");

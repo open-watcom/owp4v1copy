@@ -238,10 +238,10 @@ static  void    init_banregion_wk( region_lay_tag * reg )
     reg->reg_width = 0;
     reg->reg_voffset = 0;
     reg->reg_depth = 0;
-    lay_init_su( &z0, &(reg->indent) );
-    lay_init_su( &z0, &(reg->hoffset) );
-    lay_init_su( &z0, &(reg->width) );
-    lay_init_su( &z0, &(reg->depth) );
+    lay_init_su( z0, &(reg->indent) );
+    lay_init_su( z0, &(reg->hoffset) );
+    lay_init_su( z0, &(reg->width) );
+    lay_init_su( z0, &(reg->depth) );
     reg->font = 0;
     reg->refnum = 0;
     reg->region_position = pos_left;
@@ -370,7 +370,7 @@ void    lay_banregion( const gmltag * entry )
                     case   e_contents:
                         if( l_args.quoted ) {
                             wk.contents.content_type = string_content;
-                            i_xx_string( p, curr, &wk.contents.string );
+                            i_xx_string( p, curr, wk.contents.string );
                         } else {
                             i_content( p, curr, &wk.contents );
                         }

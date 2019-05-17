@@ -174,9 +174,9 @@ static  void    init_banner_wk( banner_lay_tag * ban )
     ban->next_refnum = 1;
     ban->style = no_content;
 
-    lay_init_su( &z0, &(ban->left_adjust) );
-    lay_init_su( &z0, &(ban->right_adjust) );
-    lay_init_su( &z0, &(ban->depth) );
+    lay_init_su( z0, &(ban->left_adjust) );
+    lay_init_su( z0, &(ban->right_adjust) );
+    lay_init_su( z0, &(ban->depth) );
     ban->place = no_place;
     ban->docsect = no_ban;
 

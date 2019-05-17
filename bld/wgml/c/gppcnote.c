@@ -129,7 +129,7 @@ extern void gml_note( const gmltag * entry )
     ProcFlags.keep_left_margin = true;  // keep special Note indent
 
     if( strlen(layout_work.note.string) > 0 ) {
-        process_text( &layout_work.note.text, layout_work.note.font );
+        process_text( layout_work.note.text, layout_work.note.font );
     }
     insert_hard_spaces( layout_work.note.spaces );
 

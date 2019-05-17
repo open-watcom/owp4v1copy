@@ -1127,14 +1127,14 @@ void gml_figcap( const gmltag * entry )
 
         /* Now build, save, and output the prefix */
 
-        count = strlen(&layout_work.figcap.string);
-        ultoa( fig_entry->number, &buffer, 10 );
-        count += strlen(&buffer);
+        count = strlen( layout_work.figcap.string );
+        ultoa( fig_entry->number, buffer, 10 );
+        count += strlen( buffer );
         count ++;                       // for the delimiter character
         prefix = (char *) mem_alloc( count + 1);
-        strcpy_s( prefix, count, &layout_work.figcap.string);
+        strcpy_s( prefix, count, layout_work.figcap.string );
         current = strlen( prefix );
-        strcat_s( &prefix[current], count - current, &buffer);
+        strcat_s( &prefix[current], count - current, buffer );
         current = strlen( prefix );
         prefix[current] = layout_work.figcap.delim;
         prefix[current + 1] = '\0';
@@ -1171,7 +1171,7 @@ void gml_figcap( const gmltag * entry )
         if( pass == 1 ) {                   // only on first pass
             current = strlen( p );
             fig_entry->text = (char *) mem_alloc( current + 1);
-            strcpy_s(fig_entry->text, current + 1, p );
+            strcpy_s( fig_entry->text, current + 1, p );
         }
         ProcFlags.in_figcap = true;
         process_text( p, g_curr_font );     // if text follows

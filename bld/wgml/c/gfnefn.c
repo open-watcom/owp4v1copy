@@ -164,10 +164,10 @@ void gml_fn( const gmltag * entry )
 //skip
 //frame
 
-    format_num( fn_entry->number, &buffer, sizeof( buffer ),
+    format_num( fn_entry->number, buffer, sizeof( buffer ),
                                                         layout_work.fn.number_style );
     input_cbs->fmflags &= ~II_eol;          // prefix is never EOL
-    process_text( &buffer, layout_work.fn.number_font ); // FN prefix
+    process_text( buffer, layout_work.fn.number_font ); // FN prefix
     t_page.cur_left = nest_cb->lm + conv_hor_unit( &layout_work.fn.align, g_curr_font );
     t_page.cur_width = t_page.cur_left;
     ProcFlags.keep_left_margin = true;  // keep special indent

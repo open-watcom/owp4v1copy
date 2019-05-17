@@ -392,7 +392,7 @@ static void gen_ref_list( ix_e_blk * refs, font_number font )
             }
             break;
         case pgstart :
-            format_num( cur_ref->u.pagenum.page_no, &buffer, sizeof( buffer ), cur_ref->u.pagenum.style );
+            format_num( cur_ref->u.pagenum.page_no, buffer, sizeof( buffer ), cur_ref->u.pagenum.style );
             process_text( buffer, font );
             ProcFlags.ct = true;
             post_space = 0;
@@ -403,7 +403,7 @@ static void gen_ref_list( ix_e_blk * refs, font_number font )
             } else {
                 ProcFlags.ct = true;
                 post_space = 0;
-                format_num( cur_ref->u.pagenum.page_no, &buffer, sizeof( buffer ), cur_ref->u.pagenum.style );
+                format_num( cur_ref->u.pagenum.page_no, buffer, sizeof( buffer ), cur_ref->u.pagenum.style );
                 process_text( buffer, font );
             }
             break;
@@ -413,7 +413,7 @@ static void gen_ref_list( ix_e_blk * refs, font_number font )
             ProcFlags.ct = true;
             post_space = 0;
         case pgpageno :
-            format_num( cur_ref->u.pagenum.page_no, &buffer, sizeof( buffer ), cur_ref->u.pagenum.style );
+            format_num( cur_ref->u.pagenum.page_no, buffer, sizeof( buffer ), cur_ref->u.pagenum.style );
             process_text( buffer, font );
             if( cur_ref->next != NULL ) {                   // done if last page number
                 predict = cur_ref->u.pagenum.page_no;
@@ -430,7 +430,7 @@ static void gen_ref_list( ix_e_blk * refs, font_number font )
                         }
                         cur_ref = cur_ref->next;
                     }
-                    format_num( cur_ref->u.pagenum.page_no, &buffer, sizeof( buffer ), cur_ref->u.pagenum.style );
+                    format_num( cur_ref->u.pagenum.page_no, buffer, sizeof( buffer ), cur_ref->u.pagenum.style );
                     ProcFlags.ct = true;
                     post_space = 0;
                     process_text( buffer, font );
@@ -596,7 +596,7 @@ static void gen_figlist( void )
             g_curr_font = FONT0;
             figlist_toc_tabs( layout_work.figlist.fill_string, size, true );
             process_text( "$", g_curr_font );
-            format_num( curr->pageno, &buffer, sizeof( buffer ), curr->style );
+            format_num( curr->pageno, buffer, sizeof( buffer ), curr->style );
             strcpy_s( postfix, 12, "$" );           // insert tab characters
             strcat_s( postfix, 12, buffer );        // append page number
             g_curr_font = layout_work.flpgnum.font;
@@ -1040,7 +1040,7 @@ static void gen_toc( void )
             g_curr_font = FONT0;
             figlist_toc_tabs( layout_work.toc.fill_string, size, true );
             process_text( "$", g_curr_font );
-            format_num( curr->pageno, &buffer, sizeof( buffer ), curr->style );
+            format_num( curr->pageno, buffer, sizeof( buffer ), curr->style );
             strcpy_s( postfix, 12, "$" );           // insert tab characters
             strcat_s( postfix, 12, buffer );        // append page number
             g_curr_font = layout_work.tocpgnum.font;
@@ -1202,7 +1202,7 @@ void start_doc_sect( void )
         page_s = layout_work.hx.hx_sect[hds_abstract].spacing;
         header = layout_work.hx.hx_sect[hds_abstract].header;
         if( header ) {
-            h_text = &layout_work.abstract.string;
+            h_text = layout_work.abstract.string;
             hds_lvl = hds_abstract;
         }
         lvl_reset = false;
@@ -1215,7 +1215,7 @@ void start_doc_sect( void )
         page_s = layout_work.hx.hx_sect[hds_preface].spacing;
         header = layout_work.hx.hx_sect[hds_preface].header;
         if( header ) {
-            h_text = &layout_work.preface.string;
+            h_text = layout_work.preface.string;
             hds_lvl = hds_preface;
         }
         lvl_reset = false;
@@ -1228,7 +1228,7 @@ void start_doc_sect( void )
         page_s = layout_work.hx.hx_sect[hds_body].spacing;
         header = layout_work.hx.hx_sect[hds_body].header;
         if( header ) {
-            h_text = &layout_work.body.string;
+            h_text = layout_work.body.string;
             hds_lvl = hds_body;
         }
         lvl_reset = true;
@@ -1253,7 +1253,7 @@ void start_doc_sect( void )
         page_s = layout_work.hx.hx_sect[hds_backm].spacing;
         header = layout_work.hx.hx_sect[hds_backm].header;
         if( header ) {
-            h_text = &layout_work.backm.string;
+            h_text = layout_work.backm.string;
             hds_lvl = hds_backm;
         }
         lvl_reset = true;
@@ -1265,7 +1265,7 @@ void start_doc_sect( void )
         page_s = layout_work.hx.hx_sect[hds_index].spacing;
         header = layout_work.hx.hx_sect[hds_index].header;
         if( header ) {
-            h_text = &layout_work.index.index_string;
+            h_text = layout_work.index.index_string;
             hds_lvl = hds_index;
         }
         lvl_reset = false;
