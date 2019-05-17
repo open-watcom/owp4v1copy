@@ -1338,3 +1338,22 @@ void free_fwd_refs( fwd_ref * fwd_refs )
     }
     return;
 }
+
+/***************************************************************************/
+/*  functions converting number to string                                  */
+/***************************************************************************/
+
+int numtohex( unsigned long value, char *buffer )
+{
+    return( sprintf( buffer, "%lx", value ) );
+}
+
+int unumtodec( unsigned long value, char *buffer )
+{
+    return( sprintf( buffer, "%lu", value ) );
+}
+
+int snumtodec( long value, char *buffer )
+{
+    return( sprintf( buffer, "%ld", value ) );
+}
