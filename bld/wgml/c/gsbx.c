@@ -229,14 +229,17 @@ static void box_blank_lines( uint32_t lines )
 {
     box_col_set *   cur_hline;
     doc_element *   blank_el;
-    int             i;
-    int             i_b;        // box_line index
+    uint32_t        i;
+    uint32_t        i_b;        // box_line index
     text_chars  *   cur_chars;
     text_line   *   cur_blank;
 
     if( lines == 0 ) {          // why are we here?
         return;
     }
+
+    cur_blank = NULL;
+    cur_chars = NULL;
 
     blank_el = alloc_doc_el( el_text );
     blank_el->depth = lines + g_spacing;
@@ -297,13 +300,14 @@ static void box_char_element( doc_element * cur_el ) {
 
     bool            h_done;
     box_col_set *   cur_hline;
-    int             i_b;                // box_line index
+    uint32_t        i_b;                // box_line index
     text_chars  *   cur_chars   = NULL; // current text_chars in cur_text
     text_chars  *   new_chars;          // text_chars to be inserted into cur_text
     text_line   *   cur_text;           // current text_line
     uint32_t        cur_pos;            // current box column position (hbus)
     uint32_t        last_pos;           // last text_char text end position (hbus)
 
+    last_pos = 0;
     switch( cur_el->type ) {
     case el_text:
         if( cur_el->element.text.bx_h_done ) {
@@ -451,7 +455,7 @@ static void box_draw_vlines( box_col_set * hline, uint32_t subs_skip,
     bool            first_done;
     bx_v_ind        cur_col_type;
     doc_element *   v_line_el;
-    int             i_h;                    // hline index
+    uint32_t        i_h;                    // hline index
     uint32_t        cur_depth;              // local box_depth (keeps box_depth unchanged)
 
     cur_depth = box_depth;
@@ -834,7 +838,7 @@ static void  do_char_device( void )
     doc_element *   box_el;             // holds the box line itself, for char devices
     doc_element *   cur_el;
     int             i;                  // overall index
-    int             i_b;                // box_line index
+    uint32_t        i_b;                // box_line index
     size_t          len;
     text_chars  *   cur_chars   = NULL; // current text_chars in cur_text
     uint32_t        cur_col;            // current column (not hbus)
@@ -1037,6 +1041,8 @@ static void do_line_device( void )
     doc_element *   h_line_el;
     uint32_t        h_offset;
     uint32_t        prev_height;
+
+    h_line_el = NULL;
 
     /********************************************************/
     /* this code does not do what wgml 4.0 does             */
@@ -1534,8 +1540,8 @@ static void merge_lines( void )
     box_col_set *   eoc_save;
     box_col_set *   prev_temp;
     int             box_col;
-    int             cur_col;
-    int             prev_col;
+    uint32_t        cur_col;
+    uint32_t        prev_col;
 
     if( prev_line == NULL ) {
         eoc_save = NULL;
@@ -2245,12 +2251,14 @@ void scr_bx( void )
     box_col_stack   *   stack_temp;
     char            *   p;
     char            *   pa;
-    int                 box_col;
-    int                 cur_col;
-    int                 i;
-    int                 prev_col;
+    uint32_t            box_col;
+    uint32_t            cur_col;
+    uint32_t            i;
+    uint32_t            prev_col;
     size_t              len;
     su                  boxcolwork;
+    int32_t             boxcol_cur;
+    int32_t             boxcol_prev;
 
     start_doc_sect();                   // if not already done
 
@@ -2320,7 +2328,7 @@ void scr_bx( void )
         cur_temp = alloc_box_col_set();
         cur_line = cur_temp;
         first_col = true;                   // first column not yet found
-        prev_col = 0;
+        boxcol_prev = 0;
         while( *p ) {
             if( cur_temp->current == cur_temp->length ) {
                 resize_box_cols( cur_temp );
@@ -2346,24 +2354,23 @@ void scr_bx( void )
             }
             pa = p;
             if( !cw_val_to_su( &p, &boxcolwork ) ) {
-                cur_col = conv_hor_unit( &boxcolwork, g_curr_font );
-                if( cur_col <= 0 ) {
+                boxcol_cur = conv_hor_unit( &boxcolwork, g_curr_font );
+                if( boxcol_cur <= 0 ) {
                     xx_line_err( err_inv_box_pos, pa );
                 } else if( first_col ) {   // no prior column
                     first_col = false;
                 } else {
                     if( boxcolwork.su_relative ) {
-                        cur_col += prev_col;
+                        boxcol_cur += boxcol_prev;
                     }
-                    if( cur_col <= prev_col ) {
+                    if( boxcol_cur <= boxcol_prev ) {
                         xx_line_err( err_box_bad_order, pa );
                     }
                 }
-                if( cur_col <= 0 ) {        // treat as "+0" to minimize mischief
-                    cur_col = prev_col;
+                if( boxcol_cur > 0 ) {        // treat as "+0" to minimize mischief
+                    boxcol_prev = boxcol_cur;
                 }
-                cur_temp->cols[cur_temp->current].col = cur_col;
-                prev_col = cur_col;
+                cur_temp->cols[cur_temp->current].col = boxcol_prev;
             } else {
                 xx_line_err( err_spc_not_valid, pa );
             }
