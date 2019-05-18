@@ -91,6 +91,11 @@ static void g_msg_var( msg_ids errornum, int sev, va_list arglist )
     char            *   start;
     char            *   end;
 
+    if( errornum == ERR_DUMMY ) {
+        /* dont print anything */
+        return;
+    }
+
     switch( sev ) {
 #if 0
     case SEV_INFO:
@@ -115,27 +120,23 @@ static void g_msg_var( msg_ids errornum, int sev, va_list arglist )
         break;
     }
 
-    switch( errornum ) {
-    case ERR_STR_NOT_FOUND:
+    if( errornum == ERR_STR_NOT_FOUND ) {
         /* this message means the error strings cannot be obtained from
          * the exe so its text is hard coded */
-        sprintf( err_buf, "%s %d: %nResource strings not found", prefix,
-                    errornum, &len );
-        break;
-    case ERR_DUMMY:
-        /* dont print anything */
-        return;
-    default:
+        strcpy( err_buf, "Resource strings not found" );
+    } else {
         get_msg( errornum, err_buf, sizeof( err_buf ) );
-        vsprintf( str_buf, err_buf, arglist );
-        if( *prefix == '\0' ) {
-            // no prefix and errornumber
-            sprintf( err_buf, "%n%s", &len, str_buf );
-        } else {
-            sprintf( err_buf, "%s %d: %n%s", prefix, errornum, &len, str_buf );
-        }
-        break;
     }
+    vsprintf( str_buf, err_buf, arglist );
+    len = 0;
+    err_buf[0] = '\0';
+    if( *prefix != '\0' ) {
+        len = sprintf( err_buf, "%s %d: ", prefix, errornum );
+        if( len < 0 ) {
+            len = 0;
+        }
+    }
+    strcat( err_buf + len, str_buf );
 
     if( !supp_line ) {    // save points to the ":" or is NULL
         save = strchr( err_buf, ':' );
