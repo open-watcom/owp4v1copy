@@ -33,7 +33,7 @@
 
 static unsigned char hex( unsigned char c )
 {
-    static const unsigned char htab[16] = "0123456789ABCDEF";
+    static const unsigned char htab[] = "0123456789ABCDEF";
 
     if( c < 16 ) {
         return( htab[c] );
