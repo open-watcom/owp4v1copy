@@ -100,7 +100,7 @@ void gml_xmp( const gmltag * entry )
                 if( att_val_to_su( &cur_su, true ) ) {
                     break;
                 }
-                depth = conv_vert_unit( &cur_su, spacing, g_curr_font );
+                depth = conv_vert_unit( &cur_su, g_text_spacing, g_curr_font );
                 if( ProcFlags.tag_end_found ) {
                     break;
                 }
@@ -128,10 +128,10 @@ void gml_xmp( const gmltag * entry )
     t_page.cur_width = t_page.cur_left;
     ProcFlags.keep_left_margin = true;  // keep special indent
 
-    spacing = layout_work.xmp.spacing;
+    g_text_spacing = layout_work.xmp.spacing;
 
     set_skip_vars( NULL, &layout_work.xmp.pre_skip, &layout_work.xmp.post_skip,
-                                                            spacing, g_curr_font );
+                                                            g_text_spacing, g_curr_font );
 
     nest_cb->post_skip = g_post_skip;   // shift post_skip to follow eXMP
     g_post_skip = 0;

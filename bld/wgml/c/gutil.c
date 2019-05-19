@@ -716,16 +716,16 @@ int32_t conv_hor_unit( su * s, font_number font )
     return( ds );
 }
 
-int32_t conv_vert_unit( su *s, uint32_t spc, font_number font )
+int32_t conv_vert_unit( su *s, uint32_t text_spacing, font_number font )
 {
     int32_t         ds;
     int32_t         fp;
     unsigned char   space;
 
-    if( spc > 0 ) {                     // if spacing valid use it
-        space = spc;
+    if( text_spacing > 0 ) {            // if spacing valid use it
+        space = text_spacing;
     } else {
-        space = spacing;                // else default
+        space = g_text_spacing;         // else default
     }
     switch( s->su_u ) {
     case SU_chars_lines :

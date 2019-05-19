@@ -98,13 +98,13 @@ void    gml_title( const gmltag * entry )
 
     font_save = g_curr_font;
     g_curr_font = layout_work.title.font;
-    spacing = layout_work.titlep.spacing;
+    g_text_spacing = layout_work.titlep.spacing;
 
     if( !ProcFlags.title_tag_top ) {    // first TITLE tag
-        set_skip_vars( NULL, &layout_work.title.pre_top_skip, NULL, spacing, g_curr_font );
+        set_skip_vars( NULL, &layout_work.title.pre_top_skip, NULL, g_text_spacing, g_curr_font );
         ProcFlags.title_tag_top = true;
     } else {
-        set_skip_vars( &layout_work.title.skip, NULL, NULL, spacing, g_curr_font );
+        set_skip_vars( &layout_work.title.skip, NULL, NULL, g_text_spacing, g_curr_font );
     }
 
     left_indent = conv_hor_unit( &layout_work.title.left_adjust, g_curr_font );

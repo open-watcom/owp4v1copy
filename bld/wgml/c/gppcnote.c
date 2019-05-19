@@ -51,7 +51,7 @@ static void p_pc_setup( p_lay_tag * p_pc )
 
     g_cur_threshold = layout_work.widow.threshold; // standard threshold
 
-    set_skip_vars( &(p_pc->pre_skip), NULL, &(p_pc->post_skip), spacing,
+    set_skip_vars( &(p_pc->pre_skip), NULL, &(p_pc->post_skip), g_text_spacing,
                     g_curr_font );
 
     ProcFlags.para_starting = true;     // for next break, not this tag's break
@@ -121,7 +121,7 @@ extern void gml_note( const gmltag * entry )
 
     font_save = g_curr_font;
     set_skip_vars( &layout_work.note.pre_skip, NULL, &layout_work.note.post_skip,
-                    spacing, layout_work.note.font );
+                    g_text_spacing, layout_work.note.font );
 
     t_page.cur_left += conv_hor_unit( &layout_work.note.left_indent, layout_work.note.font );
     t_page.cur_width = t_page.cur_left;
@@ -133,10 +133,10 @@ extern void gml_note( const gmltag * entry )
     }
     insert_hard_spaces( layout_work.note.spaces );
 
-    spacing = layout_work.note.spacing;
+    g_text_spacing = layout_work.note.spacing;
     g_curr_font = layout_work.defaults.font;
 
-    set_skip_vars( NULL, NULL, NULL, spacing, g_curr_font );
+    set_skip_vars( NULL, NULL, NULL, g_text_spacing, g_curr_font );
     if( *p == '.' ) p++;                // over '.'
     while( *p == ' ' ) p++;             // skip initial space
     if( *p ) {                          // if text follows

@@ -385,10 +385,10 @@ global  uint32_t    g_blank_lines;      // blank lines (in vertical base units)
 global  uint32_t    g_post_skip;        // post_skip
 global  uint32_t    g_subs_skip;        // subs_skip
 global  uint32_t    g_top_skip;         // top_skip
+global  uint32_t    g_text_spacing;     // spacing between lines (line count)
 global  uint32_t    g_spacing;          // spacing (in vertical base units)
 global  int32_t     g_skip;             // .sk skip value (in vbus)
 global  int32_t     g_space;            // .sp space value (in vbus)
-global  uint32_t    spacing;            // spacing between lines (line count)
 
 global  uint32_t    post_space;         // spacing within a line
 global  uint32_t    ju_x_start;         // .. formatting

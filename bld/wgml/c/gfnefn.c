@@ -108,12 +108,12 @@ void gml_fn( const gmltag * entry )
     t_page.cur_width = t_page.cur_left;
     ProcFlags.keep_left_margin = true;      // keep special indent
 
-    spacing = layout_work.fn.spacing;
+    g_text_spacing = layout_work.fn.spacing;
 
     if( t_page.last_pane->cols->footnote == NULL ) {   // pre_lines affects first FN on page only
-        set_skip_vars( NULL, &layout_work.fn.pre_lines, NULL, spacing, g_curr_font );
+        set_skip_vars( NULL, &layout_work.fn.pre_lines, NULL, g_text_spacing, g_curr_font );
     } else {
-        set_skip_vars( NULL, NULL, NULL, spacing, g_curr_font );
+        set_skip_vars( NULL, NULL, NULL, g_text_spacing, g_curr_font );
     }
 
     sav_group_type = cur_group_type;

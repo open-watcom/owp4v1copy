@@ -559,8 +559,8 @@ static void gen_figlist( void )
         if( curr->flags & ffh_figcap ) {    // no FIGCAP used, no FIGLIST output
             g_curr_font = FONT0;            // wgml 4.0 uses font 0
             if( ProcFlags.col_started ) {   // not on first entry
-                spacing = layout_work.figlist.spacing;
-                set_skip_vars( NULL, NULL, NULL, spacing, g_curr_font );
+                g_text_spacing = layout_work.figlist.spacing;
+                set_skip_vars( NULL, NULL, NULL, g_text_spacing, g_curr_font );
             }
             t_page.cur_left = 0;
             t_page.cur_width = t_page.cur_left;
@@ -580,10 +580,10 @@ static void gen_figlist( void )
                     t_page.max_width -= 3 * tab_col;
                 }
                 if( !ProcFlags.col_started ) {      // first entry wrapping
-                    spacing = layout_work.figlist.spacing;
+                    g_text_spacing = layout_work.figlist.spacing;
                 }
                 set_skip_vars( &layout_work.figlist.skip, NULL, NULL,
-                               spacing, g_curr_font );
+                               g_text_spacing, g_curr_font );
                 process_text( curr->text, g_curr_font );// caption text
                 if( ProcFlags.has_aa_block ) {       // matches wgml 4.0
                     t_page.max_width += tab_col;
@@ -742,7 +742,7 @@ static void gen_index( void )
 
             /* Set g_subs_skip for IXHEAD */
 
-            set_skip_vars( &layout_work.ixhead.pre_skip, NULL, NULL, spacing,
+            set_skip_vars( &layout_work.ixhead.pre_skip, NULL, NULL, g_text_spacing,
                            layout_work.ixhead.font );
 
             /* Generate IXHEAD heading */
@@ -792,22 +792,22 @@ static void gen_index( void )
 
             /* Set g_post_skip for IXHEAD */
 
-            set_skip_vars( NULL, NULL, &layout_work.ixhead.post_skip, spacing,
+            set_skip_vars( NULL, NULL, &layout_work.ixhead.post_skip, g_text_spacing,
                            layout_work.ixhead.font );
             g_subs_skip += g_post_skip;     // added, not combined
             g_post_skip = 0;
         }
 
         if( first[0] ) {                    // first entry in group
-            spacing = layout_work.hx.hx_sect[hds_index].spacing;
+            g_text_spacing = layout_work.hx.hx_sect[hds_index].spacing;
             set_skip_vars( &layout_work.ix[0].skip, NULL, NULL,
-                           spacing, layout_work.ix[0].font );
+                           g_text_spacing, layout_work.ix[0].font );
             first[0] = false;
         } else {
-            spacing = 1;
+            g_text_spacing = 1;
             set_skip_vars( &layout_work.ix[0].pre_skip, NULL,
                            &layout_work.ix[0].post_skip,
-                           spacing, layout_work.ix[0].font );
+                           g_text_spacing, layout_work.ix[0].font );
         }
         t_page.cur_width += indent[0];
         ProcFlags.wrap_indent = true;
@@ -836,15 +836,15 @@ static void gen_index( void )
         first[1] = true;
         while( ixh2 != NULL ) {     // level 2
             if( first[1] ) {                    // first entry in group
-                spacing = layout_work.hx.hx_sect[hds_index].spacing;
+                g_text_spacing = layout_work.hx.hx_sect[hds_index].spacing;
                 set_skip_vars( &layout_work.ix[1].skip, NULL, NULL,
-                               spacing, layout_work.ix[1].font );
+                               g_text_spacing, layout_work.ix[1].font );
                 first[1] = false;
             } else {
-                spacing = 1;
+                g_text_spacing = 1;
                 set_skip_vars( &layout_work.ix[1].pre_skip, NULL,
                                &layout_work.ix[1].post_skip,
-                               spacing, layout_work.ix[1].font );
+                               g_text_spacing, layout_work.ix[1].font );
             }
             t_page.cur_width += indent[1];
             ProcFlags.wrap_indent = true;
@@ -873,15 +873,15 @@ static void gen_index( void )
             first[2] = true;
             while( ixh3 != NULL ) {     // level 3
                 if( first[2] ) {                    // first entry in group
-                    spacing = layout_work.hx.hx_sect[hds_index].spacing;
+                    g_text_spacing = layout_work.hx.hx_sect[hds_index].spacing;
                     set_skip_vars( &layout_work.ix[2].skip, NULL, NULL,
-                                   spacing, layout_work.ix[2].font );
+                                   g_text_spacing, layout_work.ix[2].font );
                     first[2] = false;
                 } else {
-                    spacing = 1;
+                    g_text_spacing = 1;
                     set_skip_vars( &layout_work.ix[2].pre_skip, NULL,
                                    &layout_work.ix[2].post_skip,
-                                   spacing, layout_work.ix[2].font );
+                                   g_text_spacing, layout_work.ix[2].font );
                 }
                 t_page.cur_width += indent[2];
                 ProcFlags.wrap_indent = true;
@@ -994,14 +994,14 @@ static void gen_toc( void )
         if( cur_level < layout_work.toc.toc_levels ) {
             g_curr_font = layout_work.tochx[cur_level].font;
             if( levels[cur_level] && !curr->abs_pre ) {
-                spacing = layout_work.toc.spacing;
+                g_text_spacing = layout_work.toc.spacing;
                 set_skip_vars( &layout_work.tochx[cur_level].skip, NULL, NULL,
-                               spacing, g_curr_font );
+                               g_text_spacing, g_curr_font );
             } else {
-                spacing = 1;
+                g_text_spacing = 1;
                 set_skip_vars( &layout_work.tochx[cur_level].pre_skip, NULL,
                                &layout_work.tochx[cur_level].post_skip,
-                               spacing, g_curr_font );
+                               g_text_spacing, g_curr_font );
             }
             t_page.cur_left = indent[cur_level];
             t_page.cur_width = t_page.cur_left;
@@ -1017,8 +1017,8 @@ static void gen_toc( void )
                 t_line = alloc_text_line();         // capture spacing if no prefix
             }
             if( !levels[cur_level] ) {
-                spacing = layout_work.toc.spacing;
-                set_skip_vars( NULL, NULL, NULL, spacing, g_curr_font );
+                g_text_spacing = layout_work.toc.spacing;
+                set_skip_vars( NULL, NULL, NULL, g_text_spacing, g_curr_font );
             }
             if( curr->text != NULL ) {
                 t_page.max_width -= size;
@@ -1339,7 +1339,7 @@ void start_doc_sect( void )
     if( page_r ) {
         page = 0;
     }
-    spacing = page_s;
+    g_text_spacing = page_s;
 
     /* Reset all heading numbers for ABSTRACT, BODY, APPENDIX and BACKM */
 

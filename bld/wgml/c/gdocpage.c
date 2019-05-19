@@ -2148,13 +2148,13 @@ void reset_t_page( void )
 /***************************************************************************/
 
 void set_skip_vars( su * pre_skip, su * pre_top_skip, su * post_skip,
-                    uint32_t spacing, font_number font )
+                    uint32_t text_spacing, font_number font )
 {
     int32_t skiptop;
     int32_t skippost;
     int32_t skippre;
 
-    g_spacing = (spacing - 1) * wgml_fonts[font].line_height;
+    g_spacing = (text_spacing - 1) * wgml_fonts[font].line_height;
     g_blank_lines = g_blank_text_lines * wgml_fonts[font].line_height;
     if( g_blank_text_lines > 0 ) {
         g_blank_lines += (g_blank_text_lines - 1) * g_spacing;
@@ -2185,13 +2185,13 @@ void set_skip_vars( su * pre_skip, su * pre_top_skip, su * post_skip,
     }
 
     if( pre_skip != NULL ) {
-        skippre = conv_vert_unit( pre_skip, spacing, font );
+        skippre = conv_vert_unit( pre_skip, text_spacing, font );
     } else {
         skippre = 0;
     }
 
     if( pre_top_skip != NULL ) {
-        skiptop = conv_vert_unit( pre_top_skip, spacing, font );
+        skiptop = conv_vert_unit( pre_top_skip, text_spacing, font );
     } else {
         skiptop = 0;
     }
@@ -2224,7 +2224,7 @@ void set_skip_vars( su * pre_skip, su * pre_top_skip, su * post_skip,
     g_top_skip += skiptop;
 
     if( post_skip != NULL ) {
-        g_post_skip = conv_vert_unit( post_skip, spacing, font );
+        g_post_skip = conv_vert_unit( post_skip, text_spacing, font );
     } else {
         g_post_skip = 0;
     }

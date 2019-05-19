@@ -97,7 +97,7 @@ static void update_headnumx( hdsrc hn_lvl, hdsrc hds_lvl )
 
 static void hx_header( char * h_num, char * h_text, hdsrc hn_lvl, hdsrc hds_lvl )
 {
-    spacing = layout_work.hx.hx_sect[hds_lvl].spacing;
+    g_text_spacing = layout_work.hx.hx_sect[hds_lvl].spacing;
 
     /* text_font is used for setting the skips */
 
@@ -725,7 +725,7 @@ static void gml_hx_common( const gmltag * entry, hdsrc hn_lvl )
     /*  creation of actual heading                                         */
     /***********************************************************************/
 
-    sav_spacing = spacing;
+    sav_spacing = g_text_spacing;
 
     p = get_text_line( p );
 
@@ -754,7 +754,7 @@ static void gml_hx_common( const gmltag * entry, hdsrc hn_lvl )
         gen_heading( "", id, hn_lvl, hds_lvl );
     }
 
-    spacing = sav_spacing;
+    g_text_spacing = sav_spacing;
     return;
 }
 

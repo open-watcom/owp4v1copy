@@ -2449,7 +2449,7 @@ void scr_bx( void )
     max_depth = t_page.max_depth - t_page.cur_depth;        // maximum depth available
 
     if( !ProcFlags.no_bx_hline || (cur_op == bx_set) ) {
-        set_skip_vars( NULL, NULL, NULL, spacing, bin_device->box.font );
+        set_skip_vars( NULL, NULL, NULL, g_text_spacing, bin_device->box.font );
 
         /************************************************************/
         /* This will cause the box to be drawn with BOX characters  */

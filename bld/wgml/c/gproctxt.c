@@ -1664,7 +1664,7 @@ void process_line_full( text_line * a_line, bool justify )
 
         if( t_element == NULL ) {
             if( !ProcFlags.skips_valid) {
-                set_skip_vars( NULL, NULL, NULL, spacing, g_curr_font );
+                set_skip_vars( NULL, NULL, NULL, g_text_spacing, g_curr_font );
             }
             t_element = init_doc_el( el_text, a_line->line_height );
             t_element->element.text.first = a_line;

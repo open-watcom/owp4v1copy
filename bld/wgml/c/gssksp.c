@@ -49,8 +49,9 @@ static void sksp_common( void )
     char        *   pa;
     size_t          len;
     su              spskwork;
-    uint32_t        line_spacing    = spacing;  // forced to "1" if A (ABS) is used with integer
+    uint32_t        line_spacing;
 
+    line_spacing = g_text_spacing;  // forced to "1" if A (ABS) is used with integer
     p = scan_start;
 
     if( *p ) {

@@ -62,7 +62,7 @@ void scr_pp( void )
 
     /* SK */
     g_skip = 1;
-    set_skip_vars( NULL, NULL, NULL, spacing, g_curr_font );
+    set_skip_vars( NULL, NULL, NULL, g_text_spacing, g_curr_font );
 
     /* CC 2 */
     if( (wgml_fonts[g_curr_font].line_height + t_page.cur_depth) > t_page.max_depth ) {

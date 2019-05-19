@@ -431,8 +431,8 @@ void gml_fig( const gmltag * entry )
     place = layout_work.fig.default_place;
     max_width = t_page.last_pane->col_width;// default value regardless of number of columns
     g_curr_font = layout_work.fig.font;
-    spacing_save = spacing;
-    spacing = layout_work.fig.spacing;
+    spacing_save = g_text_spacing;
+    g_text_spacing = layout_work.fig.spacing;
 
     if( *p == '.' ) {
         /* already at tag end */
@@ -452,7 +452,7 @@ void gml_fig( const gmltag * entry )
                 if( att_val_to_su( &cur_su, true ) ) {
                     break;
                 }
-                depth = conv_vert_unit( &cur_su, spacing, g_curr_font );
+                depth = conv_vert_unit( &cur_su, g_text_spacing, g_curr_font );
                 if( ProcFlags.tag_end_found ) {
                     break;
                 }
@@ -547,7 +547,7 @@ void gml_fig( const gmltag * entry )
         }
     }
 
-    set_skip_vars( &layout_work.fig.pre_skip, NULL, NULL, spacing, g_curr_font );
+    set_skip_vars( &layout_work.fig.pre_skip, NULL, NULL, g_text_spacing, g_curr_font );
 
     /* Only page-width top figs on multi-column pages actually go into the page_width section */
 
@@ -753,7 +753,7 @@ void gml_efig( const gmltag * entry )
     t_page.cur_left = nest_cb->left_indent; // reset various values in case needed for frame
     t_page.max_width += right_inset;
     ProcFlags.concat = false;
-    set_skip_vars( NULL, NULL, &layout_work.fig.post_skip, spacing, layout_work.fig.font );
+    set_skip_vars( NULL, NULL, &layout_work.fig.post_skip, g_text_spacing, layout_work.fig.font );
 
     raw_p_skip = g_post_skip;           // save for future use
 
@@ -1081,7 +1081,7 @@ void gml_efig( const gmltag * entry )
     if( pass > 1 ) {                    // not on first pass
         fig_entry = fig_entry->next;    // get to next FIG
     }
-    spacing = spacing_save;
+    g_text_spacing = spacing_save;
     scan_start = scan_stop + 1;
     return;
 }
@@ -1114,7 +1114,7 @@ void gml_figcap( const gmltag * entry )
     p = scan_start;
 
     g_curr_font = layout_work.figcap.string_font;
-    set_skip_vars( &layout_work.figcap.pre_lines, NULL, NULL, spacing, g_curr_font );
+    set_skip_vars( &layout_work.figcap.pre_lines, NULL, NULL, g_text_spacing, g_curr_font );
 
     ProcFlags.concat = true;            // even if was false on entry
     input_cbs->fmflags &= ~II_eol;      // prefix is never EOL
@@ -1218,7 +1218,7 @@ void gml_figdesc( const gmltag * entry )
             t_page.max_width += tab_col;
         }
         g_curr_font = layout_work.figdesc.font;
-        set_skip_vars( &layout_work.figdesc.pre_lines, NULL, NULL, spacing, g_curr_font );
+        set_skip_vars( &layout_work.figdesc.pre_lines, NULL, NULL, g_text_spacing, g_curr_font );
     }
 
     nest_cb->font = g_curr_font;        // support font changes inside description

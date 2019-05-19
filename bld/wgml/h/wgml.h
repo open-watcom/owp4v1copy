@@ -133,7 +133,7 @@ extern  void        next_column( void );
 extern  void        reset_bot_ban( void );
 extern  void        reset_t_page( void );
 extern  void        reset_top_ban( void );
-extern  void        set_skip_vars( su * pre_skip, su * pre_top_skip, su * post_skip, uint32_t spacing, font_number font );
+extern  void        set_skip_vars( su * pre_skip, su * pre_top_skip, su * post_skip, uint32_t text_spacing, font_number font );
 extern  bool        split_element( doc_element * a_element, uint32_t req_depth );
 extern  void        text_col_out( void );
 
@@ -485,7 +485,7 @@ extern  bool        process_tag( gtentry * ge, mac_entry * me );
 /* gutil.c                              */
 extern  bool            att_val_to_su( su * spaceunit, bool pos );
 extern  int32_t         conv_hor_unit( su * spaceunit, font_number font );
-extern  int32_t         conv_vert_unit( su * spaceunit, uint32_t spacing, font_number font );
+extern  int32_t         conv_vert_unit( su * spaceunit, uint32_t text_spacing, font_number font );
 extern  bool            cw_val_to_su( char * * scaninput, su * spaceunit );
 extern  num_style       find_pgnum_style( void );
 extern  char        *   format_num( uint32_t n, char * r, size_t rsize, num_style ns );

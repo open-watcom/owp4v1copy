@@ -107,7 +107,7 @@ void  scr_process_break( void )
             process_line_full( t_line, ((ProcFlags.justify != ju_off) &&
                 (ProcFlags.justify != ju_on) && (ProcFlags.justify != ju_half)) );
         }
-        set_skip_vars( NULL, NULL, NULL, spacing, g_curr_font );
+        set_skip_vars( NULL, NULL, NULL, g_text_spacing, g_curr_font );
         g_subs_skip = wgml_fonts[g_curr_font].line_height;
         t_line = alloc_text_line();
         t_line->line_height = wgml_fonts[g_curr_font].line_height;
@@ -160,7 +160,7 @@ void  scr_process_break( void )
         }
         t_el_last = NULL;
     } else if( ProcFlags.titlep_starting ) {    // TITLE : no text before break
-        set_skip_vars( NULL, NULL, NULL, spacing, g_curr_font);
+        set_skip_vars( NULL, NULL, NULL, g_text_spacing, g_curr_font);
         g_subs_skip = 0;                        // matches wgml 4.0
         t_element = init_doc_el( el_text, wgml_fonts[g_curr_font].line_height );
         t_element->element.text.first = alloc_text_line();
@@ -174,7 +174,7 @@ void  scr_process_break( void )
         /* Putting set_skip_vars() first can affect the result of the if() */
 
         if( (g_line_indent > 0) || (g_blank_lines > 0) ) {
-            set_skip_vars( NULL, NULL, NULL, spacing, g_curr_font);
+            set_skip_vars( NULL, NULL, NULL, g_text_spacing, g_curr_font);
 
             t_element = init_doc_el( el_text, wgml_fonts[g_curr_font].line_height );
             if( g_line_indent == 0 ) {  // special case
@@ -192,7 +192,7 @@ void  scr_process_break( void )
             t_element = NULL;
             t_el_last = NULL;
         } else {
-            set_skip_vars( NULL, NULL, NULL, spacing, g_curr_font);
+            set_skip_vars( NULL, NULL, NULL, g_text_spacing, g_curr_font);
         }
     } else if( g_blank_lines > 0 ) {            // arbitrary blank space
         t_element = init_doc_el( el_vspace, 0 );

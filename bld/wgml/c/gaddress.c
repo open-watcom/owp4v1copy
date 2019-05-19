@@ -62,7 +62,7 @@ void gml_address( const gmltag * entry )
     nest_cb->lm = t_page.cur_left;
     nest_cb->rm = t_page.max_width;
 
-    spacing = layout_work.titlep.spacing;
+    g_text_spacing = layout_work.titlep.spacing;
 
     /************************************************************/
     /*  pre_skip is treated as pre_top_skip because             */
@@ -70,7 +70,7 @@ void gml_address( const gmltag * entry )
     /*  this is not what the docs say                           */
     /************************************************************/
 
-    set_skip_vars( NULL, &layout_work.address.pre_skip, NULL, spacing, g_curr_font );
+    set_skip_vars( NULL, &layout_work.address.pre_skip, NULL, g_text_spacing, g_curr_font );
 
     old_line_pos = line_position;
     sav_group_type = cur_group_type;
@@ -115,7 +115,7 @@ void gml_eaddress( const gmltag * entry )
 
         scr_process_break();                    // commit any existing text
         if( first_aline ) {                     // empty ADDRESS block: no ALINEs
-            set_skip_vars( NULL, NULL, NULL, spacing, g_curr_font);
+            set_skip_vars( NULL, NULL, NULL, g_text_spacing, g_curr_font);
             g_subs_skip = 0;                    // matches wgml 4.0
             t_element = init_doc_el( el_text, wgml_fonts[g_curr_font].line_height );
             t_element->element.text.first = alloc_text_line();
@@ -187,7 +187,7 @@ void gml_aline( const gmltag * entry )
     start_doc_sect();                       // if not already done
 
     g_curr_font = layout_work.address.font;
-    spacing = layout_work.titlep.spacing;
+    g_text_spacing = layout_work.titlep.spacing;
     if( !first_aline ) {
 
         /************************************************************/
@@ -196,7 +196,7 @@ void gml_aline( const gmltag * entry )
         /*  this is not what the docs say                           */
         /************************************************************/
 
-        set_skip_vars( NULL, &layout_work.aline.skip, NULL, spacing, g_curr_font );
+        set_skip_vars( NULL, &layout_work.aline.skip, NULL, g_text_spacing, g_curr_font );
     }
 
     t_page.cur_left += nest_cb->left_indent;

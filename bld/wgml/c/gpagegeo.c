@@ -1073,7 +1073,7 @@ void    do_layout_end_processing( void )
 
     /* These items must be done at this point on every pass */
 
-    spacing = layout_work.defaults.spacing;
+    g_text_spacing = layout_work.defaults.spacing;
     ProcFlags.fb_document_done = true;  // done on pass 1
 }
 

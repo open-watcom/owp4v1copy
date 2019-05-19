@@ -50,7 +50,7 @@ void init_nest_cb( void )
     wk->c_tag = t_NONE;
     wk->p_stack = NULL;
     wk->u.dl_layout = NULL;             // clears all pointers in union
-    wk->spacing = spacing;              // save spacing on entry
+    wk->spacing = g_text_spacing;       // save spacing on entry
 
     if( nest_cb == NULL ) {             // if first one set defaults
         wk->align        = 0;

@@ -107,7 +107,7 @@ void    gml_graphic( const gmltag * entry )
                 if( att_val_to_su( &cur_su, true ) ) {
                     break;
                 }
-                depth = conv_vert_unit( &cur_su, spacing, g_curr_font );
+                depth = conv_vert_unit( &cur_su, g_text_spacing, g_curr_font );
                 if( depth == 0 ) {
                     xx_line_err( err_inv_depth_graphic_1, val_start );
                 }
@@ -194,7 +194,7 @@ void    gml_graphic( const gmltag * entry )
                 if( att_val_to_su( &cur_su, false ) ) {
                     break;
                 }
-                yoff = conv_vert_unit( &cur_su, spacing, g_curr_font );
+                yoff = conv_vert_unit( &cur_su, g_text_spacing, g_curr_font );
                 if( ProcFlags.tag_end_found ) {
                     break;
                 }

@@ -67,7 +67,7 @@ void gml_lq( const gmltag * entry )
 
     nest_cb->font = g_curr_font;
     g_curr_font = layout_work.lq.font;
-    spacing = (int8_t) layout_work.lq.spacing;
+    g_text_spacing = (int8_t) layout_work.lq.spacing;
 
     set_skip_vars( &layout_work.lq.pre_skip, NULL, NULL, 1, g_curr_font );
 

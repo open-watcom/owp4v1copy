@@ -76,14 +76,14 @@ void    gml_date( const gmltag * entry )
 
     font_save = g_curr_font;
     g_curr_font = layout_work.date.font;
-    spacing = layout_work.titlep.spacing;
+    g_text_spacing = layout_work.titlep.spacing;
 
     /************************************************************/
     /*  pre_skip is treated as pre_top_skip because it is       */
     /*  always used at the top of the page, despite the docs    */
     /************************************************************/
 
-    set_skip_vars( NULL, &layout_work.date.pre_skip, NULL, spacing, g_curr_font );
+    set_skip_vars( NULL, &layout_work.date.pre_skip, NULL, g_text_spacing, g_curr_font );
 
     left_indent = conv_hor_unit( &layout_work.date.left_adjust, g_curr_font );
     right_indent = conv_hor_unit( &layout_work.date.right_adjust, g_curr_font );
