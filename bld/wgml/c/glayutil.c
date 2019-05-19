@@ -640,7 +640,7 @@ void    o_int8( FILE * f, lay_att curr, const int8_t * tm )
     return;
 }
 
-bool    i_uint8( char *p, lay_att curr, uint8_t *tm )
+bool    i_spacing( char *p, lay_att curr, text_space *tm )
 {
     int wk;
 
@@ -653,7 +653,7 @@ bool    i_uint8( char *p, lay_att curr, uint8_t *tm )
     return( false );
 }
 
-void    o_uint8( FILE * f, lay_att curr, const uint8_t *tm )
+void    o_spacing( FILE * f, lay_att curr, const text_space *tm )
 {
     unsigned wk = *tm;
 

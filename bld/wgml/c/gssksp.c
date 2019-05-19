@@ -49,11 +49,12 @@ static void sksp_common( void )
     char        *   pa;
     size_t          len;
     su              spskwork;
-    uint32_t        line_spacing;
+    text_space      text_spacing;
 
-    line_spacing = g_text_spacing;  // forced to "1" if A (ABS) is used with integer
+    spskwork.su_u = SU_undefined;
+    text_spacing = g_text_spacing;          // set spacing to default
+
     p = scan_start;
-
     if( *p ) {
         while( *p == ' ' ) {
             p++;
@@ -86,6 +87,7 @@ static void sksp_common( void )
                     if( !memicmp( p, "abs", len ) ) {   // wgml 4.0 matches 'a', 'ab', 'abs' only
                         a_seen = true;
                         p = pa;
+                        text_spacing = 1;               // forced to single spacing if A (ABS)
                         continue;
                     }
                 }
@@ -107,30 +109,15 @@ static void sksp_common( void )
     }
 
     if( !scanerr ) {
-        if( spskwork.su_u == SU_chars_lines ) {     // processing for integers
-            vspace = spskwork.su_whole;
-
-            if( vspace == 0 ) {                     // no vertical space value specified
-                vspace = 1;                         // set default value
-            }
-
-            if( vspace <= -1 ) {
-                ProcFlags.overprint = true;     // enable overprint
-                vspace = 0;                     // avoid evaluating negative spacing
+        if( spskwork.su_u == SU_chars_lines ) {  // processing for integers
+            if( spskwork.su_whole < 0 ) {
+                ProcFlags.overprint = true;             // enable overprint
+                vspace = 0;                             // avoid evaluating negative spacing
             } else {
-                ProcFlags.overprint = false;    // disable overprint
-            }
-
-            if( (vspace > 0) && (spskwork.su_u == SU_chars_lines) ) { // special processing for integers
-                if( a_seen ) {
-                    line_spacing = 1;               // with abs always single spacing
-                }
-                vspace = (line_spacing * spskwork.su_whole * (int32_t)bin_device->vertical_base_units ) / LPI;
+                ProcFlags.overprint = false;            // disable overprint
+                vspace = ( text_spacing * spskwork.su_whole * (int32_t)bin_device->vertical_base_units ) / LPI;
             }
         } else {
-            if( vspace == 0 ) {                     // no vertical space value specified
-                vspace = 1;                         // set default value
-            }
             vspace = conv_vert_unit( &spskwork, 1, g_curr_font );
         }
     }
@@ -196,11 +183,11 @@ void    scr_sk( void )
 {
     scr_process_break();
     sksp_common();                  // set vspace
-    if( vspace > g_skip ) {         // merge with existing value
+    if( g_skip < vspace ) {         // merge with existing value
         g_skip = vspace;
     }
 
-    if( (g_blank_text_lines > 0) || g_space > 0 ) {
+    if( ( g_blank_text_lines > 0 ) || g_space > 0 ) {
         ProcFlags.sk_2nd = true;
     }
 
@@ -229,7 +216,7 @@ void    scr_sp( void )
 {
     scr_process_break();
     sksp_common();                  // set vspace
-    if( vspace > g_space ) {        // merge with existing value
+    if( g_space < vspace ) {        // merge with existing value
         g_space = vspace;
     }
 

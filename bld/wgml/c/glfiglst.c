@@ -126,7 +126,7 @@ void    lay_figlist( const gmltag * entry )
                                            &layout_work.figlist.skip );
                     break;
                 case   e_spacing:
-                    cvterr = i_int8( p, curr, &layout_work.figlist.spacing );
+                    cvterr = i_spacing( p, curr, &layout_work.figlist.spacing );
                     break;
                 case   e_columns:
                     cvterr = i_int8( p, curr, &layout_work.figlist.columns );

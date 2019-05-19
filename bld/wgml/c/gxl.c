@@ -266,7 +266,7 @@ void gml_dl( const gmltag * entry )
     nest_cb->lm = t_page.cur_left;
     nest_cb->rm = t_page.max_width;
 
-    g_text_spacing = (int8_t) nest_cb->u.dl_layout->spacing;
+    g_text_spacing = nest_cb->u.dl_layout->spacing;
 
     scan_start = scan_stop + 1;
     return;
@@ -371,7 +371,7 @@ void gml_gl( const gmltag * entry )
     nest_cb->lm = t_page.cur_left;
     nest_cb->rm = t_page.max_width;
 
-    g_text_spacing = (int8_t) nest_cb->u.gl_layout->spacing;
+    g_text_spacing = nest_cb->u.gl_layout->spacing;
 
     scan_start = scan_stop + 1;
     return;
@@ -462,7 +462,7 @@ void gml_ol( const gmltag * entry )
     nest_cb->lm = t_page.cur_left;
     nest_cb->rm = t_page.max_width;
 
-    g_text_spacing = (int8_t) nest_cb->u.ol_layout->spacing;
+    g_text_spacing = nest_cb->u.ol_layout->spacing;
 
     scan_start = scan_stop + 1;
     return;
@@ -551,7 +551,7 @@ void gml_sl( const gmltag * entry )
     nest_cb->lm = t_page.cur_left;
     nest_cb->rm = t_page.max_width;
 
-    g_text_spacing = (int8_t) nest_cb->u.sl_layout->spacing;
+    g_text_spacing = nest_cb->u.sl_layout->spacing;
 
     scan_start = scan_stop + 1;
     return;
@@ -641,7 +641,7 @@ void gml_ul( const gmltag * entry )
     nest_cb->lm = t_page.cur_left;
     nest_cb->rm = t_page.max_width;
 
-    g_text_spacing = (int8_t) nest_cb->u.ul_layout->spacing;
+    g_text_spacing = nest_cb->u.ul_layout->spacing;
 
     scan_start = scan_stop + 1;
     return;
@@ -1132,7 +1132,7 @@ void    gml_lp( const gmltag * entry )
     nest_cb->lm = t_page.cur_left;
     nest_cb->rm = t_page.max_width;
 
-    g_text_spacing = (int8_t) layout_work.lp.spacing;
+    g_text_spacing = layout_work.lp.spacing;
 
     ProcFlags.keep_left_margin = true;  // keep indent
     post_space = 0;

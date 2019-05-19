@@ -48,7 +48,7 @@ static  ju_enum         justify_save;           // for ProcFlags.justify
 static  uint32_t        depth           = 0;    // FIG attribute used by eFIG
 static  uint32_t        left_inset;             // offset from frame to contents
 static  uint32_t        right_inset;            // offset from frame to contents
-static  uint32_t        spacing_save;           // for spacing
+static  text_space      spacing_save;           // for spacing
 static  uint32_t        width           = 0;    // FIG attribute used by eFIG
 
 /***************************************************************************/

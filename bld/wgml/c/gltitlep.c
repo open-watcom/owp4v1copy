@@ -73,7 +73,7 @@ void    lay_titlep( const gmltag * entry )
 
                 switch( curr ) {
                 case   e_spacing:
-                    cvterr = i_int8( p, curr, &layout_work.titlep.spacing );
+                    cvterr = i_spacing( p, curr, &layout_work.titlep.spacing );
                     break;
                 case   e_columns:
                     cvterr = i_int8( p, curr, &layout_work.titlep.columns );

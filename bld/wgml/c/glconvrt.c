@@ -81,7 +81,7 @@ static  void    put_lay_abspref( FILE * layfile, abspref_lay_tag * ap,
             o_font_number( layfile, curr, &apsect->text_font );
             break;
         case   e_spacing:
-            o_int8( layfile, curr, &apsect->spacing );
+            o_spacing( layfile, curr, &apsect->spacing );
             break;
         case   e_header:
             o_yes_no( layfile, curr, &apsect->header );
@@ -209,7 +209,7 @@ static  void    put_lay_appendix( FILE * layfile, layout_data * lay )
             o_space_unit( layfile, curr, &lay->hx.hx_sect[hds_appendix].post_skip );
             break;
         case   e_spacing:
-            o_int8( layfile, curr, &lay->hx.hx_sect[hds_appendix].spacing );
+            o_spacing( layfile, curr, &lay->hx.hx_sect[hds_appendix].spacing );
             break;
         case   e_font:
             o_font_number( layfile, curr, &lay->hx.hx_sect[hds_appendix].text_font );
@@ -570,7 +570,7 @@ static  void    put_lay_default( FILE * layfile, layout_data * lay )
 
         switch( curr ) {
         case   e_spacing:
-            o_int8( layfile, curr, &lay->defaults.spacing );
+            o_spacing( layfile, curr, &lay->defaults.spacing );
             break;
         case   e_columns:
             o_int8( layfile, curr, &lay->defaults.columns );
@@ -631,7 +631,7 @@ static  void    put_lay_dl( FILE * layfile, layout_data * lay )
                 o_space_unit( layfile, curr, &dl_layout->skip );
                 break;
             case   e_spacing:
-                o_int8( layfile, curr, &dl_layout->spacing );
+                o_spacing( layfile, curr, &dl_layout->spacing );
                 break;
             case   e_post_skip:
                 o_space_unit( layfile, curr, &dl_layout->post_skip );
@@ -717,7 +717,7 @@ static  void    put_lay_fig( FILE * layfile, layout_data * lay )
             o_space_unit( layfile, curr, &lay->fig.post_skip );
             break;
         case   e_spacing:
-            o_int8( layfile, curr, &lay->fig.spacing );
+            o_spacing( layfile, curr, &lay->fig.spacing );
             break;
         case   e_font:
             o_font_number( layfile, curr, &lay->fig.font );
@@ -822,7 +822,7 @@ static  void    put_lay_figlist( FILE * layfile, layout_data * lay )
             o_space_unit( layfile, curr, &lay->figlist.skip );
             break;
         case   e_spacing:
-            o_int8( layfile, curr, &lay->figlist.spacing );
+            o_spacing( layfile, curr, &lay->figlist.spacing );
             break;
         case   e_columns:
             o_int8( layfile, curr, &lay->figlist.columns );
@@ -891,7 +891,7 @@ static  void    put_lay_fn( FILE * layfile, layout_data * lay )
             o_space_unit( layfile, curr, &lay->fn.skip );
             break;
         case   e_spacing:
-            o_int8( layfile, curr, &lay->fn.spacing );
+            o_spacing( layfile, curr, &lay->fn.spacing );
             break;
         case   e_font:
             o_font_number( layfile, curr, &lay->fn.font );
@@ -973,7 +973,7 @@ static  void    put_lay_gl( FILE * layfile, layout_data * lay )
                 o_space_unit( layfile, curr, &gl_layout->skip );
                 break;
             case   e_spacing:
-                o_int8( layfile, curr, &gl_layout->spacing );
+                o_spacing( layfile, curr, &gl_layout->spacing );
                 break;
             case   e_post_skip:
                 o_space_unit( layfile, curr, &gl_layout->post_skip );
@@ -1026,7 +1026,7 @@ static  void    put_lay_hx( FILE * layfile, layout_data * lay )
                 o_space_unit( layfile, curr, &lay->hx.hx_sect[lvl].post_skip );
                 break;
             case   e_spacing:
-                o_int8( layfile, curr, &lay->hx.hx_sect[lvl].spacing );
+                o_spacing( layfile, curr, &lay->hx.hx_sect[lvl].spacing );
                 break;
             case   e_font:
                 o_font_number( layfile, curr, &lay->hx.hx_sect[lvl].text_font );
@@ -1181,7 +1181,7 @@ static  void    put_lay_index( FILE * layfile, layout_data * lay )
             o_space_unit( layfile, curr, &lay->index.right_adjust );
             break;
         case   e_spacing:
-            o_int8( layfile, curr, &lay->hx.hx_sect[hds_index].spacing );
+            o_spacing( layfile, curr, &lay->hx.hx_sect[hds_index].spacing );
             break;
         case   e_columns:
             o_int8( layfile, curr, &lay->index.columns );
@@ -1284,7 +1284,7 @@ static  void    put_lay_lp( FILE * layfile, layout_data * lay )
             o_space_unit( layfile, curr, &lay->lp.post_skip );
             break;
         case   e_spacing:
-            o_int8( layfile, curr, &lay->lp.spacing );
+            o_spacing( layfile, curr, &lay->lp.spacing );
             break;
         default:
             internal_err( __FILE__, __LINE__ );
@@ -1320,7 +1320,7 @@ static  void    put_lay_lq( FILE * layfile, layout_data * lay )
             o_space_unit( layfile, curr, &lay->lq.post_skip );
             break;
         case   e_spacing:
-            o_int8( layfile, curr, &lay->lq.spacing );
+            o_spacing( layfile, curr, &lay->lq.spacing );
             break;
         case   e_font:
             o_font_number( layfile, curr, &lay->lq.font );
@@ -1359,7 +1359,7 @@ static  void    put_lay_note( FILE * layfile, layout_data * lay )
             o_space_unit( layfile, curr, &lay->note.post_skip );
             break;
         case   e_spacing:
-            o_int8( layfile, curr, &lay->note.spacing );
+            o_spacing( layfile, curr, &lay->note.spacing );
             break;
         case   e_font:
             o_font_number( layfile, curr, &lay->note.font );
@@ -1408,7 +1408,7 @@ static  void    put_lay_ol( FILE * layfile, layout_data * lay )
                 o_space_unit( layfile, curr, &ol_layout->skip );
                 break;
             case   e_spacing:
-                o_int8( layfile, curr, &ol_layout->spacing );
+                o_spacing( layfile, curr, &ol_layout->spacing );
                 break;
             case   e_post_skip:
                 o_space_unit( layfile, curr, &ol_layout->post_skip );
@@ -1543,7 +1543,7 @@ static  void    put_lay_sl( FILE * layfile, layout_data * lay )
                 o_space_unit( layfile, curr, &sl_layout->skip );
                 break;
             case   e_spacing:
-                o_int8( layfile, curr, &sl_layout->spacing );
+                o_spacing( layfile, curr, &sl_layout->spacing );
                 break;
             case   e_post_skip:
                 o_space_unit( layfile, curr, &sl_layout->post_skip );
@@ -1614,7 +1614,7 @@ static  void    put_lay_titlep( FILE * layfile, layout_data * lay )
 
         switch( curr ) {
         case   e_spacing:
-            o_int8( layfile, curr, &lay->titlep.spacing );
+            o_spacing( layfile, curr, &lay->titlep.spacing );
             break;
         case   e_columns:
             o_int8( layfile, curr, &lay->titlep.columns );
@@ -1647,7 +1647,7 @@ static  void    put_lay_toc( FILE * layfile, layout_data * lay )
             o_space_unit( layfile, curr, &lay->toc.right_adjust );
             break;
         case   e_spacing:
-            o_int8( layfile, curr, &lay->toc.spacing );
+            o_spacing( layfile, curr, &lay->toc.spacing );
             break;
         case   e_columns:
             o_int8( layfile, curr, &lay->toc.columns );
@@ -1777,7 +1777,7 @@ static  void    put_lay_ul( FILE * layfile, layout_data * lay )
                 o_space_unit( layfile, curr, &ul_layout->skip );
                 break;
             case   e_spacing:
-                o_int8( layfile, curr, &ul_layout->spacing );
+                o_spacing( layfile, curr, &ul_layout->spacing );
                 break;
             case   e_post_skip:
                 o_space_unit( layfile, curr, &ul_layout->post_skip );
@@ -1857,7 +1857,7 @@ static  void    put_lay_xmp( FILE * layfile, layout_data * lay )
             o_space_unit( layfile, curr, &lay->xmp.post_skip );
             break;
         case   e_spacing:
-            o_int8( layfile, curr, &lay->xmp.spacing );
+            o_spacing( layfile, curr, &lay->xmp.spacing );
             break;
         case   e_font:
             o_font_number( layfile, curr, &lay->xmp.font );

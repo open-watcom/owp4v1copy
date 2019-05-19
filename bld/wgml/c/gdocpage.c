@@ -2148,16 +2148,22 @@ void reset_t_page( void )
 /***************************************************************************/
 
 void set_skip_vars( su * pre_skip, su * pre_top_skip, su * post_skip,
-                    uint32_t text_spacing, font_number font )
+                    text_space text_spacing, font_number font )
 {
     int32_t skiptop;
     int32_t skippost;
     int32_t skippre;
 
-    g_spacing = (text_spacing - 1) * wgml_fonts[font].line_height;
+    g_spacing = 0;
+    if( text_spacing == 0 ) {
+        text_spacing = g_text_spacing;
+    }
+    if( text_spacing > 0 ) {
+        g_spacing = ( text_spacing - 1 ) * wgml_fonts[font].line_height;
+    }
     g_blank_lines = g_blank_text_lines * wgml_fonts[font].line_height;
     if( g_blank_text_lines > 0 ) {
-        g_blank_lines += (g_blank_text_lines - 1) * g_spacing;
+        g_blank_lines += ( g_blank_text_lines - 1 ) * g_spacing;
     }
     g_blank_lines += g_space;
     g_blank_text_lines = 0;

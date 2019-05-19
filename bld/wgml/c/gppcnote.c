@@ -51,8 +51,7 @@ static void p_pc_setup( p_lay_tag * p_pc )
 
     g_cur_threshold = layout_work.widow.threshold; // standard threshold
 
-    set_skip_vars( &(p_pc->pre_skip), NULL, &(p_pc->post_skip), g_text_spacing,
-                    g_curr_font );
+    set_skip_vars( &(p_pc->pre_skip), NULL, &(p_pc->post_skip), g_text_spacing, g_curr_font );
 
     ProcFlags.para_starting = true;     // for next break, not this tag's break
 

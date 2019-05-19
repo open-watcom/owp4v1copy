@@ -141,7 +141,7 @@ void    lay_xmp( const gmltag * entry )
                     cvterr = i_space_unit( p, curr, &layout_work.xmp.post_skip );
                     break;
                 case   e_spacing:
-                    cvterr = i_int8( p, curr, &layout_work.xmp.spacing );
+                    cvterr = i_spacing( p, curr, &layout_work.xmp.spacing );
                     break;
                 case   e_font:
                     cvterr = i_font_number( p, curr, &layout_work.xmp.font );

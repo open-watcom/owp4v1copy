@@ -133,7 +133,7 @@ extern  void        next_column( void );
 extern  void        reset_bot_ban( void );
 extern  void        reset_t_page( void );
 extern  void        reset_top_ban( void );
-extern  void        set_skip_vars( su * pre_skip, su * pre_top_skip, su * post_skip, uint32_t text_spacing, font_number font );
+extern  void        set_skip_vars( su * pre_skip, su * pre_top_skip, su * post_skip, text_space text_spacing, font_number font );
 extern  bool        split_element( doc_element * a_element, uint32_t req_depth );
 extern  void        text_col_out( void );
 
@@ -241,8 +241,8 @@ extern  bool        i_int32( char * p, lay_att curr, int32_t * tm );
 extern  void        o_int32( FILE * f, lay_att curr, const int32_t * tm );
 extern  bool        i_int8( char * p, lay_att curr, int8_t * tm );
 extern  void        o_int8( FILE * f, lay_att curr, const int8_t * tm );
-extern  bool        i_uint8( char *p, lay_att curr, uint8_t *tm );
-extern  void        o_uint8( FILE * f, lay_att curr, const uint8_t *tm );
+extern  bool        i_spacing( char *p, lay_att curr, text_space *tm );
+extern  void        o_spacing( FILE * f, lay_att curr, const text_space *tm );
 extern  bool        i_font_number( char *p, lay_att curr, font_number *tm );
 extern  void        o_font_number( FILE * f, lay_att curr, const font_number *tm );
 extern  bool        i_number_form( char * p, lay_att curr, num_form * tm );
@@ -485,7 +485,7 @@ extern  bool        process_tag( gtentry * ge, mac_entry * me );
 /* gutil.c                              */
 extern  bool            att_val_to_su( su * spaceunit, bool pos );
 extern  int32_t         conv_hor_unit( su * spaceunit, font_number font );
-extern  int32_t         conv_vert_unit( su * spaceunit, uint32_t text_spacing, font_number font );
+extern  int32_t         conv_vert_unit( su * spaceunit, text_space text_spacing, font_number font );
 extern  bool            cw_val_to_su( char * * scaninput, su * spaceunit );
 extern  num_style       find_pgnum_style( void );
 extern  char        *   format_num( uint32_t n, char * r, size_t rsize, num_style ns );

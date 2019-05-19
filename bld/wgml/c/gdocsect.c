@@ -1153,7 +1153,7 @@ void start_doc_sect( void )
     int                 k;
     page_ej             page_e;         // page eject tag
     uint32_t            page_c;         // page columns
-    uint32_t            page_s;         // page spacing
+    text_space          page_s;         // page spacing
 
 
     if( ProcFlags.start_section ) {

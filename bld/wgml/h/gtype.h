@@ -107,6 +107,8 @@
 #define l_q     '\x60'
 
 typedef uint32_t    line_number;
+typedef uint8_t     text_space;
+typedef uint32_t    units_space;
 
 /***************************************************************************/
 /*  Space units Horiz + Vert              to be redesigned      TBD        */
@@ -867,7 +869,7 @@ typedef struct tag_cb {
     uint32_t                post_skip;      // current attribute value
     uint32_t                tsize;          // current attribute value
     uint32_t                xl_pre_skip;    // parent list pre_skip value (used by LP)
-    uint8_t                 spacing;        // spacing on entry (not spacing per layout)
+    text_space              spacing;        // spacing on entry (not spacing per layout)
     uint8_t                 headhi;         // current attribute value
     uint8_t                 termhi;         // current attribute value
     font_number             font;           // font on entry
@@ -997,7 +999,7 @@ struct eol_ix;              // forward declaration
 typedef struct text_line {
     struct  text_line   *   next;
             uint32_t        line_height;
-            uint32_t        spacing;
+            units_space     spacing;
             uint32_t        y_address;
     struct  eol_ix      *   eol_index;
             text_chars  *   first;
@@ -1076,7 +1078,7 @@ typedef struct {
 } vline_element;
 
 typedef struct {
-            uint32_t        spacing;        // vertical space to be inserted
+            units_space     spacing;        // vertical space to be inserted
     struct  eol_ix      *   eol_index;
 } vspace_element;
 

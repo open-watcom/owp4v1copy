@@ -716,22 +716,19 @@ int32_t conv_hor_unit( su * s, font_number font )
     return( ds );
 }
 
-int32_t conv_vert_unit( su *s, uint32_t text_spacing, font_number font )
+int32_t conv_vert_unit( su *s, text_space text_spacing, font_number font )
 {
     int32_t         ds;
     int32_t         fp;
-    unsigned char   space;
 
-    if( text_spacing > 0 ) {            // if spacing valid use it
-        space = text_spacing;
-    } else {
-        space = g_text_spacing;         // else default
+    if( text_spacing == 0 ) {   // if spacing invalid then use default
+        text_spacing = g_text_spacing;
     }
     switch( s->su_u ) {
     case SU_chars_lines :
     case SU_ems :
         // no decimals, use spacing, round negative values down
-        ds = space * s->su_whole * wgml_fonts[font].line_height;
+        ds = text_spacing * s->su_whole * wgml_fonts[font].line_height;
         if( ds < 0 ) {
             ds++;
         }

@@ -252,8 +252,7 @@ void    lay_appendix( const gmltag * entry )
                                     &layout_work.hx.hx_sect[hds_appendix].post_skip );
                     break;
                 case   e_spacing:
-                    cvterr = i_int8( p, curr,
-                                    &layout_work.hx.hx_sect[hds_appendix].spacing );
+                    cvterr = i_spacing( p, curr, &layout_work.hx.hx_sect[hds_appendix].spacing );
                     break;
                 case   e_font:
                     cvterr = i_font_number( p, curr,

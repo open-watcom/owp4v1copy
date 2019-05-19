@@ -124,7 +124,7 @@ void    lay_toc( const gmltag * entry )
                                            &layout_work.toc.right_adjust );
                     break;
                 case   e_spacing:
-                    cvterr = i_int8( p, curr, &layout_work.toc.spacing );
+                    cvterr = i_spacing( p, curr, &layout_work.toc.spacing );
                     break;
                 case   e_columns:
                     cvterr = i_int8( p, curr, &layout_work.toc.columns );

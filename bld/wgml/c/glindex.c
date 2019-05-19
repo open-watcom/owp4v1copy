@@ -185,8 +185,7 @@ void    lay_index( const gmltag * entry )
                     cvterr = i_space_unit( p, curr, &layout_work.index.right_adjust );
                     break;
                 case   e_spacing:
-                    cvterr = i_int8( p, curr,
-                                        &layout_work.hx.hx_sect[hds_index].spacing );
+                    cvterr = i_spacing( p, curr, &layout_work.hx.hx_sect[hds_index].spacing );
                     break;
                 case   e_columns:
                     cvterr = i_int8( p, curr, &layout_work.index.columns );

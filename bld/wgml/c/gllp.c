@@ -137,7 +137,7 @@ void    lay_lp( const gmltag * entry )
                     cvterr = i_space_unit( p, curr, &layout_work.lp.post_skip );
                     break;
                 case   e_spacing:
-                    cvterr = i_int8( p, curr, &layout_work.lp.spacing );
+                    cvterr = i_spacing( p, curr, &layout_work.lp.spacing );
                     break;
                 default:
                     out_msg( "WGML logic error.\n");

@@ -585,7 +585,7 @@ static void gml_hx_common( const gmltag * entry, hdsrc hn_lvl )
     char        *   p;
     char        *   pa;
     hdsrc           hds_lvl;
-    uint32_t        sav_spacing;
+    text_space      sav_spacing;
 
     static char     hxstr[4]    = ":HX";
 

@@ -582,7 +582,7 @@ void    lay_dl( const gmltag * entry )
                     i_space_unit( p, curr, &dl_layout->skip );
                     break;
                 case   e_spacing:
-                    i_int8( p, curr, &dl_layout->spacing );
+                    i_spacing( p, curr, &dl_layout->spacing );
                     break;
                 case   e_post_skip:
                     i_space_unit( p, curr, &dl_layout->post_skip );
@@ -728,7 +728,7 @@ void    lay_gl( const gmltag * entry )
                     i_space_unit( p, curr, &gl_layout->skip );
                     break;
                 case   e_spacing:
-                    i_int8( p, curr, &gl_layout->spacing );
+                    i_spacing( p, curr, &gl_layout->spacing );
                     break;
                 case   e_post_skip:
                     i_space_unit( p, curr, &gl_layout->post_skip );
@@ -876,7 +876,7 @@ void    lay_ol( const gmltag * entry )
                     i_space_unit( p, curr, &ol_layout->skip );
                     break;
                 case   e_spacing:
-                    i_int8( p, curr, &ol_layout->spacing );
+                    i_spacing( p, curr, &ol_layout->spacing );
                     break;
                 case   e_post_skip:
                     i_space_unit( p, curr, &ol_layout->post_skip );
@@ -1039,7 +1039,7 @@ void    lay_sl( const gmltag * entry )
                     i_space_unit( p, curr, &sl_layout->skip );
                     break;
                 case   e_spacing:
-                    i_int8( p, curr, &sl_layout->spacing );
+                    i_spacing( p, curr, &sl_layout->spacing );
                     break;
                 case   e_post_skip:
                     i_space_unit( p, curr, &sl_layout->post_skip );
@@ -1184,7 +1184,7 @@ void    lay_ul( const gmltag * entry )
                     i_space_unit( p, curr, &ul_layout->skip );
                     break;
                 case   e_spacing:
-                    i_int8( p, curr, &ul_layout->spacing );
+                    i_spacing( p, curr, &ul_layout->spacing );
                     break;
                 case   e_post_skip:
                     i_space_unit( p, curr, &ul_layout->post_skip );

@@ -155,7 +155,7 @@ void    lay_note( const gmltag * entry )
                     }
                     break;
                 case   e_spacing:
-                    cvterr = i_int8( p, curr, &layout_work.note.spacing );
+                    cvterr = i_spacing( p, curr, &layout_work.note.spacing );
                     break;
                 case   e_note_string:
                     cvterr = i_xx_string( p, curr, layout_work.note.string );

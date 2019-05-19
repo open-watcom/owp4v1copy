@@ -180,7 +180,7 @@ void gml_exmp( const gmltag * entry )
 
     /* Ensure blank lines at end of XMP use correct font */
 
-    if( (g_blank_lines == 0) && (g_blank_text_lines != 0) ) {
+    if( (g_blank_lines == 0) && (g_blank_text_lines > 0) ) {
         g_blank_lines = g_blank_text_lines * wgml_fonts[layout_work.xmp.font].line_height;
     }
     g_blank_text_lines = 0;
