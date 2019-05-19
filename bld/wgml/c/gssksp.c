@@ -199,7 +199,7 @@ void    scr_sk( void )
         g_skip = vspace;
     }
 
-    if( (blank_lines > 0) || g_space > 0 ) {
+    if( (g_blank_text_lines > 0) || g_space > 0 ) {
         ProcFlags.sk_2nd = true;
     }
 

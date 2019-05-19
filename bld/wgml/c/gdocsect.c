@@ -1414,7 +1414,7 @@ extern void gml_abstract( const gmltag * entry )
         xx_line_err( err_doc_sec_expected_1, tok_start );
         return;
     }
-    if( blank_lines > 0 ) {
+    if( g_blank_text_lines > 0 ) {
         set_skip_vars( NULL, NULL, NULL, 0, 0 );    // set g_blank_lines
     }
     scr_process_break();
@@ -1432,7 +1432,7 @@ extern void gml_abstract( const gmltag * entry )
 
 extern void gml_appendix( const gmltag * entry )
 {
-    if( blank_lines > 0 ) {
+    if( g_blank_text_lines > 0 ) {
         set_skip_vars( NULL, NULL, NULL, 0, 0 );    // set g_blank_lines
     }
     scr_process_break();
@@ -1452,7 +1452,7 @@ extern void gml_backm( const gmltag * entry )
         do_layout_end_processing();
     }
 
-    if( blank_lines > 0 ) {
+    if( g_blank_text_lines > 0 ) {
         set_skip_vars( NULL, NULL, NULL, 0, 0 );    // set g_blank_lines
     }
     scr_process_break();
@@ -1470,7 +1470,7 @@ extern void gml_backm( const gmltag * entry )
 
 extern void gml_body( const gmltag * entry )
 {
-    if( blank_lines > 0 ) {
+    if( g_blank_text_lines > 0 ) {
         set_skip_vars( NULL, NULL, NULL, 0, 0 );    // set g_blank_lines
     }
     scr_process_break();
@@ -1560,7 +1560,7 @@ extern void gml_preface( const gmltag * entry )
         xx_line_err( err_doc_sec_expected_1, tok_start );
         return;
     }
-    if( blank_lines > 0 ) {
+    if( g_blank_text_lines > 0 ) {
         set_skip_vars( NULL, NULL, NULL, 0, 0 );    // set g_blank_lines
     }
     scr_process_break();
@@ -1636,7 +1636,7 @@ extern void gml_egdoc( const gmltag * entry )
 {
     fwd_ref *   curr;
 
-    if( blank_lines > 0 ) {
+    if( g_blank_text_lines > 0 ) {
         set_skip_vars( NULL, NULL, NULL, 0, 0 );    // set g_blank_lines
     }
     scr_process_break();                        // outputs last element in file

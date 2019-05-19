@@ -38,7 +38,7 @@
 *               insert_page_width       insert doc_element into t_page.page_width
 *               last_col_out            force output of all pending columns
 *               last_page_out           force output of all pending pages
-*               next_column             move to next column 
+*               next_column             move to next column
 *               reset_bot_ban           reset t_page.bottom_banner and related externs
 *               reset_t_page            reset t_page and related externs
 *               reset_top_ban           reset t_page.top_banner and related externs
@@ -61,7 +61,7 @@ static  uint32_t        top_depth;      // used in setting banners
 /***************************************************************************/
 /*  does the actual output to the device                                   */
 /***************************************************************************/
- 
+
 static void do_el_list_out( doc_element * in_element )
 {
     doc_element *   save;
@@ -149,7 +149,7 @@ static void do_el_list_out( doc_element * in_element )
         }
         save = in_element->next;
         in_element->next = NULL;            // clear only current element
-        add_doc_el_to_pool( in_element ); 
+        add_doc_el_to_pool( in_element );
         in_element = save;
     }
 
@@ -163,7 +163,7 @@ static void do_el_list_out( doc_element * in_element )
 /*        implemented as several relatively simple steps rather than as    */
 /*        fewer relatively complicated steps                               */
 /***************************************************************************/
- 
+
 static void consolidate_array( doc_element * array[MAX_COL], uint8_t count )
 {
     bool                done;
@@ -279,7 +279,7 @@ static void consolidate_array( doc_element * array[MAX_COL], uint8_t count )
                 nt_el[i] = nt_el[i]->next;
                 cur_v_el->next = NULL;
             }
-        }        
+        }
 
         done = true;
         for( i = 0; i < count; i++ ) {
@@ -305,7 +305,7 @@ static void consolidate_array( doc_element * array[MAX_COL], uint8_t count )
             } else {
                 cur_nt_el_list->next = cur_v_el;
                 cur_nt_el_list = cur_nt_el_list->next;
-            }                
+            }
         } else if( cur_v_el->next->v_pos == top_pos ) {
             while( cur_v_el != NULL) {
                 sav_nt_el = NULL;
@@ -326,7 +326,7 @@ static void consolidate_array( doc_element * array[MAX_COL], uint8_t count )
                         } else {
                             cur_nt_el_list->next = cur_h_el;
                             cur_nt_el_list = cur_nt_el_list->next;
-                        }                
+                        }
                     } else if( sav_nt_el == NULL ) {
                         sav_nt_el = cur_h_el;
                     }
@@ -363,7 +363,7 @@ static void consolidate_array( doc_element * array[MAX_COL], uint8_t count )
                 }
                 te_el[i]->element.text.first = te_el[i]->element.text.first->next;
                 cur_tl[i]->next = NULL;
-            }                    
+            }
             sav_el = te_el[i];
             te_el[i] = te_el[i]->next;
             sav_el->next = NULL;
@@ -507,7 +507,7 @@ static void consolidate_array( doc_element * array[MAX_COL], uint8_t count )
                                 nt_el_list = nt_el_list->next;
                             }
                         } else {
-                            while( (nt_el_list != NULL) && 
+                            while( (nt_el_list != NULL) &&
                                    (cur_tl_list->y_address > nt_el_list->v_pos) ) {
                                 sav_nt_el = nt_el_list;
                                 nt_el_list = nt_el_list->next;
@@ -532,7 +532,7 @@ static void consolidate_array( doc_element * array[MAX_COL], uint8_t count )
                                 nt_el_list = nt_el_list->next;
                             }
                         } else {
-                            while( (nt_el_list != NULL) && 
+                            while( (nt_el_list != NULL) &&
                                    (cur_tl_list->y_address > nt_el_list->v_pos) ) {
                                 sav_nt_el = nt_el_list;
                                 nt_el_list = nt_el_list->next;
@@ -837,7 +837,7 @@ static void set_positions( doc_element * list, uint32_t h_start, uint32_t v_star
 /*  if any, in each pane's page_width field as if it were, in fact, in the */
 /*  first column of that pane                                              */
 /***************************************************************************/
- 
+
 static void do_doc_panes_out( void )
 {
     doc_element *       out_el[MAX_COL];
@@ -1006,7 +1006,7 @@ static void update_column( void )
         if( bin_driver->y_positive == 0) {
             t_page.cur_col->fig_top += cur_group->depth;
         } else {
-            t_page.cur_col->fig_top -= cur_group->depth; 
+            t_page.cur_col->fig_top -= cur_group->depth;
         }
         t_page.max_depth -= cur_group->depth;
         n_page.col_bot = n_page.col_bot->next;
@@ -1032,7 +1032,7 @@ static void update_column( void )
             if( t_page.cur_depth + cur_group->depth > t_page.max_depth ) {
                 while( (cur_group->first != NULL) &&
                         (t_page.cur_depth + cur_group->first->depth <= t_page.max_depth) ) {
-                    cur_el = cur_group->first; 
+                    cur_el = cur_group->first;
                     if( t_page.cur_col->footnote == NULL ) {
                         t_page.cur_col->footnote = cur_el;
                     } else {
@@ -1043,10 +1043,10 @@ static void update_column( void )
                     cur_el->next = NULL;
                     if( bin_driver->y_positive == 0) {
                         t_page.cur_col->fig_top += cur_el->depth;
-                        t_page.cur_col->fn_top += cur_el->depth; 
+                        t_page.cur_col->fn_top += cur_el->depth;
                     } else {
-                        t_page.cur_col->fig_top -= cur_el->depth; 
-                        t_page.cur_col->fn_top -= cur_el->depth; 
+                        t_page.cur_col->fig_top -= cur_el->depth;
+                        t_page.cur_col->fn_top -= cur_el->depth;
                     }
                     t_page.max_depth -= cur_el->depth;
                     cur_group->depth -= cur_el->depth;
@@ -1066,8 +1066,8 @@ static void update_column( void )
                     t_page.cur_col->fig_top += cur_group->depth;
                     t_page.cur_col->fn_top += cur_group->depth;
                 } else {
-                    t_page.cur_col->fig_top -= cur_group->depth; 
-                    t_page.cur_col->fn_top -= cur_group->depth; 
+                    t_page.cur_col->fig_top -= cur_group->depth;
+                    t_page.cur_col->fn_top -= cur_group->depth;
                 }
                 t_page.max_depth -= cur_group->depth;
             }
@@ -1213,7 +1213,7 @@ static void update_column( void )
             /*  the current page and then exits the loop after adjusting    */
             /*  the element field values as needed                          */
             /****************************************************************/
-        
+
             if( cur_el->blank_lines > 0 ) {
                 if( (t_page.cur_depth + cur_el->blank_lines) >= t_page.max_depth ) {
                     cur_el->blank_lines -= (t_page.max_depth - t_page.cur_depth);
@@ -1562,9 +1562,9 @@ void insert_col_bot( doc_el_group * a_group )
         a_group->first = NULL;
         add_doc_el_group_to_pool( a_group );
         if( bin_driver->y_positive == 0) {
-            t_page.cur_col->fig_top += depth; 
+            t_page.cur_col->fig_top += depth;
         } else {
-            t_page.cur_col->fig_top -= depth; 
+            t_page.cur_col->fig_top -= depth;
         }
         t_page.max_depth -= depth;
     } else {
@@ -1588,7 +1588,7 @@ void insert_col_fn( doc_el_group * a_group )
 {
     doc_element *   cur_el;
     uint32_t        depth;
-    
+
     /****************************************************************/
     /*  if it fits, put the footnote on the current page            */
     /*  if it does not fit, and it is the firt, split it            */
@@ -1599,7 +1599,7 @@ void insert_col_fn( doc_el_group * a_group )
     if( (t_page.cur_depth + depth) > t_page.max_depth ) {
         while( (a_group->first != NULL) &&
                 (t_page.cur_depth + a_group->first->depth <= (t_page.max_depth)) ) {
-            cur_el = a_group->first; 
+            cur_el = a_group->first;
             if( t_page.cur_col->footnote == NULL ) {
                 t_page.cur_col->footnote = cur_el;
             } else {
@@ -1610,10 +1610,10 @@ void insert_col_fn( doc_el_group * a_group )
             cur_el->next = NULL;
             if( bin_driver->y_positive == 0) {
                 t_page.cur_col->fig_top += cur_el->depth;
-                t_page.cur_col->fn_top += cur_el->depth; 
+                t_page.cur_col->fn_top += cur_el->depth;
             } else {
-                t_page.cur_col->fig_top -= cur_el->depth; 
-                t_page.cur_col->fn_top -= cur_el->depth; 
+                t_page.cur_col->fig_top -= cur_el->depth;
+                t_page.cur_col->fn_top -= cur_el->depth;
             }
             t_page.max_depth -= cur_el->depth;
             a_group->depth -= cur_el->depth;
@@ -1703,7 +1703,7 @@ void insert_col_main( doc_element * a_element )
     /*  combinations                                                */
     /*  element field values are adjusted as needed                 */
     /****************************************************************/
-        
+
     if( a_element->blank_lines > 0 ) {
         if( (t_page.cur_depth + a_element->blank_lines) >= t_page.max_depth ) {
             a_element->blank_lines -= (t_page.max_depth - t_page.cur_depth);
@@ -1765,7 +1765,7 @@ void insert_col_main( doc_element * a_element )
         /*      they do count ... and start a new page                  */
         /****************************************************************/
 
-        if( (a_element->type == el_text) && a_element->element.text.overprint && 
+        if( (a_element->type == el_text) && a_element->element.text.overprint &&
                                         (t_page.cur_depth != t_page.max_depth) ) {
             depth = cur_skip;
         } else {
@@ -1815,7 +1815,7 @@ void insert_col_main( doc_element * a_element )
             n_page.last_col_main = n_page.last_col_main->next;
         }
         text_col_out();
-    } 
+    }
 
     return;
 }
@@ -1860,7 +1860,7 @@ void insert_col_width( doc_el_group * a_group )
                 n_page.last_col_width->next = a_group;
             }
             n_page.last_col_width = a_group;
-        }        
+        }
     } else {
         if( n_page.col_width == NULL ) {
             n_page.col_width = a_group;
@@ -1919,7 +1919,7 @@ void insert_page_width( doc_el_group * a_group )
                 n_page.last_page_width->next = a_group;
             }
             n_page.last_page_width = a_group;
-        }        
+        }
     } else {
         internal_err( __FILE__, __LINE__ );
     }
@@ -1934,7 +1934,7 @@ void insert_page_width( doc_el_group * a_group )
 /*  Note: may need to be expanded to consider doc_elements accumulated by  */
 /*  the various tags and control words that accumulate doc_elements        */
 /***************************************************************************/
- 
+
 void last_col_out( void )
 {
     full_col_out();
@@ -1975,7 +1975,7 @@ void last_col_out( void )
 /*  Note: may need to be expanded to consider doc_elements accumulated by  */
 /*  the various tags and control words that accumulate doc_elements        */
 /***************************************************************************/
- 
+
 void last_page_out( void )
 {
     full_col_out();
@@ -2024,7 +2024,7 @@ void reset_bot_ban( void )
     } else {
         old_depth = 0;
     }
-    
+
     t_page.bottom_banner = sect_ban_bot[!(page & 1)];
 
     if( t_page.bottom_banner != NULL ) {
@@ -2155,12 +2155,12 @@ void set_skip_vars( su * pre_skip, su * pre_top_skip, su * post_skip,
     int32_t skippre;
 
     g_spacing = (spacing - 1) * wgml_fonts[font].line_height;
-    g_blank_lines = blank_lines * wgml_fonts[font].line_height;
-    if( blank_lines > 0 ) {
-        g_blank_lines += (blank_lines - 1) * g_spacing;
+    g_blank_lines = g_blank_text_lines * wgml_fonts[font].line_height;
+    if( g_blank_text_lines > 0 ) {
+        g_blank_lines += (g_blank_text_lines - 1) * g_spacing;
     }
     g_blank_lines += g_space;
-    blank_lines = 0;
+    g_blank_text_lines = 0;
 
     /* SK can tell if it follows SP or blank lines, but not if it precedes them */
 
@@ -2168,7 +2168,7 @@ void set_skip_vars( su * pre_skip, su * pre_top_skip, su * post_skip,
         if( g_blank_lines > g_skip ) {
             g_skip = 0;                 // use g_blank_lines
         } else {
-            g_top_skip += g_blank_lines;// use g_blank_lines at top of page        
+            g_top_skip += g_blank_lines;// use g_blank_lines at top of page
             g_blank_lines = 0;          // use SK skip elsewhere
         }
     } else {
@@ -2218,7 +2218,7 @@ void set_skip_vars( su * pre_skip, su * pre_top_skip, su * post_skip,
 
     if( skippost > skippre ) {  // final merger per Wiki
         skippre = skippost;
-    }    
+    }
 
     g_subs_skip = skippre;
     g_top_skip += skiptop;
@@ -2265,7 +2265,7 @@ bool split_element( doc_element * a_element, uint32_t req_depth )
     case el_hline :
     case el_vline :
     case el_vspace :
-        splittable = false;     
+        splittable = false;
         break;
     case el_text :
 

@@ -380,7 +380,7 @@ global  uint32_t    g_ll;               // line length
 global  uint32_t    g_cd;               // no of columns
 global  uint32_t    g_gutter;           // space between columns
 
-global  uint32_t    blank_lines;        // blank lines (line count)
+global  uint32_t    g_blank_text_lines; // blank lines (line count)
 global  uint32_t    g_blank_lines;      // blank lines (in vertical base units)
 global  uint32_t    g_post_skip;        // post_skip
 global  uint32_t    g_subs_skip;        // subs_skip

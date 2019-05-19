@@ -848,7 +848,7 @@ void    scan_line( void )
                     if( scan_start < scan_stop ) {
                         g_err_tag_rsloc( rs_loc, scan_start );
                     } else {
-                        blank_lines++;
+                        g_blank_text_lines++;
                     }
                 } else {
                     if( ProcFlags.force_pc ) {
@@ -859,7 +859,7 @@ void    scan_line( void )
                 }
             }
         } else if( !ProcFlags.concat && (*buff2 == '\0') ) {    // blank line found with concatenation off
-            blank_lines++;
+            g_blank_text_lines++;
         }
 
         /*******************************************************************/

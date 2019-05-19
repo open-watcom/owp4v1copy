@@ -2393,7 +2393,7 @@ void process_text( const char *text, font_number font )
     /***********************************************************************/
 
     if( !ProcFlags.concat && (post_space > 0) && (t_line->first == NULL) ) {
-        blank_lines++;
+        g_blank_text_lines++;
     }
 
     if( t_line->first != NULL ) {           // something in the line
