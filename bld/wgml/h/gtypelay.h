@@ -413,12 +413,12 @@ typedef struct figdesc_lay_tag {
 /***************************************************************************/
 
 typedef struct figlist_lay_tag {
-    su              left_adjust;        // horizontal space unit
-    su              right_adjust;       // horizontal space unit
-    su              skip;               // vertical space unit
-    text_space      spacing;            // positive integer
-    int8_t          columns;            // positive integer
-    int8_t          toc_levels;         // non-negative integer
+    su              left_adjust;            // horizontal space unit
+    su              right_adjust;           // horizontal space unit
+    su              skip;                   // vertical space unit
+    text_space      spacing;                // positive integer
+    int8_t          columns;                // positive integer
+    int8_t          toc_levels;             // non-negative integer
     xx_str          fill_string[str_size];  // special string
 } figlist_lay_tag;
 

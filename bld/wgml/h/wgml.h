@@ -52,10 +52,8 @@
 #endif
 
 #include "copfiles.h"       // mostly for access to bin_device & wgml_fonts
-#include "gtype.h"
-#include "gtypelay.h"
-#include "findfile.h"
 #include "gvars.h"
+#include "findfile.h"
 
 
 #ifdef  __cplusplus

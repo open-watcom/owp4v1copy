@@ -374,8 +374,7 @@ static void gen_ref_list( ix_e_blk * refs, font_number font )
     ix_e_blk    *   cur_ref;
     uint32_t        predict     = 0;
 
-    cur_ref = refs;
-    while( cur_ref != NULL ) {
+    for( cur_ref = refs; cur_ref != NULL; cur_ref = cur_ref->next ) {
         ProcFlags.ct = true;
         post_space = 0;
         if( ref_done ) {
@@ -397,7 +396,8 @@ static void gen_ref_list( ix_e_blk * refs, font_number font )
             ProcFlags.ct = true;
             post_space = 0;
             process_text( ixjval->value, font );
-            while( cur_ref->entry_typ != pgend ) cur_ref = cur_ref->next;
+            while( cur_ref->entry_typ != pgend )
+                cur_ref = cur_ref->next;
             if( cur_ref == NULL ) {
                 xx_simple_err( err_open_page_range );
             } else {
@@ -422,13 +422,12 @@ static void gen_ref_list( ix_e_blk * refs, font_number font )
                     ProcFlags.ct = true;
                     post_space = 0;
                     process_text( ixjval->value, font );
-                    cur_ref = cur_ref->next;                // find final page number in sequence
-                    while( cur_ref->next != NULL ) {
+                    // find final page number in sequence
+                    for( cur_ref = cur_ref->next; cur_ref->next != NULL; cur_ref = cur_ref->next ) {
                         predict++;
                         if( cur_ref->next->u.pagenum.page_no != predict ) {
                             break;
                         }
-                        cur_ref = cur_ref->next;
                     }
                     format_num( cur_ref->u.pagenum.page_no, buffer, sizeof( buffer ), cur_ref->u.pagenum.style );
                     ProcFlags.ct = true;
@@ -449,7 +448,6 @@ static void gen_ref_list( ix_e_blk * refs, font_number font )
             break;
         }
         ref_done = true;
-        cur_ref = cur_ref->next;
     }
 
     return;
@@ -464,8 +462,7 @@ static void gen_see_list( ix_e_blk * refs, font_number font, uint32_t level,
 {
     ix_e_blk    *   cur_ref;
 
-    cur_ref = refs;
-    while( cur_ref != NULL ) {
+    for( cur_ref = refs; cur_ref != NULL; cur_ref = cur_ref->next ) {
         scr_process_break();
         t_page.cur_width += wrap[level];
         ProcFlags.ct = true;
@@ -480,7 +477,6 @@ static void gen_see_list( ix_e_blk * refs, font_number font, uint32_t level,
         } else if( cur_ref->u.pageref.page_text_len > 0 ) {  // if not null string
             process_text( cur_ref->u.pageref.page_text, g_curr_font );
         }
-        cur_ref = cur_ref->next;
     }
 
     return;
@@ -554,8 +550,7 @@ static void gen_figlist( void )
     justify_save = ProcFlags.justify;
     ProcFlags.justify = ju_off;
     ProcFlags.keep_left_margin = true;  // keep all indents while outputting text
-    curr = fig_list;
-    while( curr != NULL ) {
+    for( curr = fig_list; curr != NULL; curr = curr->next ) {
         if( curr->flags & ffh_figcap ) {    // no FIGCAP used, no FIGLIST output
             g_curr_font = FONT0;            // wgml 4.0 uses font 0
             if( ProcFlags.col_started ) {   // not on first entry
@@ -604,7 +599,6 @@ static void gen_figlist( void )
             figlist_toc_tabs( layout_work.figlist.fill_string, size, false );
         }
         scr_process_break();                // ensure line break
-        curr = curr->next;
     }
 
     ProcFlags.concat = concat_save;
@@ -983,8 +977,7 @@ static void gen_toc( void )
     justify_save = ProcFlags.justify;
     ProcFlags.justify = ju_off;
     ProcFlags.keep_left_margin = true;  // keep all indents while outputting text
-    curr = hd_list;
-    while( curr != NULL ) {
+    for( curr = hd_list; curr != NULL; curr = curr->next ) {
         cur_level = curr->number;
         for( i = 0; i < 7; i++ ) {
             if( i > cur_level ) {       // all lower levels are inactive
@@ -1049,7 +1042,6 @@ static void gen_toc( void )
         }
         scr_process_break();                        // ensure line break
         levels[cur_level] = true;                   // first entry of level done
-        curr = curr->next;
     }
 
     ProcFlags.concat = concat_save;
@@ -1649,53 +1641,48 @@ extern void gml_egdoc( const gmltag * entry )
             if( figlist_toc & gs_figlist ) {    // only if FIGLIST was found
                 gen_figlist();
             }
-            curr = fig_fwd_refs;
-            while( curr != NULL ) {     // output figure forward/undefined references
+            // output figure forward/undefined references
+            for( curr = fig_fwd_refs; curr != NULL; curr = curr->next ) {
                 if( find_refid( fig_ref_dict, curr->id ) != NULL ) {
                     fwd_id_warn( curr->id, "figure" );
                 } else {
                     undef_id_warn( curr->id, "Figure" );
                 }
-                curr = curr->next;
             }
-            curr = hd_fwd_refs;
-            while( curr != NULL ) { // output header forward/undefined references
+            // output header forward/undefined references
+            for( curr = hd_fwd_refs; curr != NULL; curr = curr->next ) {
                 if( find_refid( hd_ref_dict, curr->id ) != NULL ) {
                     fwd_id_warn( curr->id, "heading" );
                 } else {
                     undef_id_warn( curr->id, "Heading" );
                 }
-                curr = curr->next;
             }
-            curr = fn_fwd_refs;
-            while( curr != NULL ) { // output footnote forward/undefined references
+            // output footnote forward/undefined references
+            for( curr = fn_fwd_refs; curr != NULL; curr = curr->next ) {
                 if( find_refid( fn_ref_dict, curr->id ) != NULL ) {
                     fwd_id_warn( curr->id, "footnote" );
                 } else {
                     undef_id_warn( curr->id, "Footnote" );
                 }
-                curr = curr->next;
             }
             if( figlist_toc ) {
-                xx_simple_warn( wng_pass_1 );   // more than one pass needed
+                xx_simple_warn( wng_pass_1 );       // more than one pass needed
             }
-        } else {                                // last pass of at least 2
-            curr = fig_fwd_refs;
-            while( curr != NULL ) { // output figure undefined/page change references
+        } else {                                    // last pass of at least 2
+            // output figure undefined/page change references
+            for( curr = fig_fwd_refs; curr != NULL; curr = curr->next ) {
                 fwd_id_warn( curr->id, "figure" );
-                curr = curr->next;
             }
-            curr = hd_fwd_refs;
-            while( curr != NULL ) { // output header undefined/page changereferences
+            // output header undefined/page change references
+            for( curr = hd_fwd_refs; curr != NULL; curr = curr->next ) {
                 fwd_id_warn( curr->id, "heading" );
-                curr = curr->next;
             }
             if( ProcFlags.new_pagenr ) {
-                xx_simple_warn( wng_pass_many );// at least one more pass needed
+                xx_simple_warn( wng_pass_many );    // at least one more pass needed
             }
         }
         if( !GlobalFlags.index && ProcFlags.index_tag_cw_seen ) {   // index option needed
-            xx_simple_warn( wng_index_opt );                // give hint to activate index
+            xx_simple_warn( wng_index_opt );                        // give hint to activate index
         }
     }
 
