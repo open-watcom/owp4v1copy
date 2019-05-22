@@ -126,6 +126,7 @@ typedef struct proc_flags {
     unsigned        top_line            : 1;// determines if current line is at top of page
     unsigned        vline_done          : 1;// determines if a vertical line was done
     unsigned        keep_left_margin    : 1;// for indent NOTE tag paragraph
+    unsigned        skip_blank_line     : 1;// for XMP/eXMP blocks in macros -- scope TBD
 
     unsigned        dd_starting         : 1;// DD after break had no text (in next scr_process_break())
     unsigned        para_starting       : 1;// :LP, :P or :PC had no text (in scr_process_break())

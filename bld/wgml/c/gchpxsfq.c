@@ -87,10 +87,6 @@ static void gml_inline_common( const gmltag * entry, int level, e_tags t )
         }
     }
 
-//// this won't work: if the virtual PC is needed, the quote must be positioned by it
-//// this requires a gml_pc() that can take a character string
-//// iow, PC must be refactored
-
     if( t == t_Q ) {                            // Q/eQ inserts quote char
         if( (quote_lvl % 2) ) {
             if( ProcFlags.force_pc ) {

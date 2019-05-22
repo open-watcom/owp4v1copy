@@ -153,11 +153,14 @@ void gml_xmp( const gmltag * entry )
         scr_process_break();
     }
 
-    if( !ProcFlags.reprocess_line && *p ) {
+    if( !ProcFlags.reprocess_line && *p ) { // text after tag
         if( *p == '.' ) p++;                // possible tag end
         if( *p ) {
             process_text( p, g_curr_font);  // if text follows
         }
+    }
+    if( input_cbs->fmflags & II_macro ) {   // only when in macro -- TBD: user tags also?
+        ProcFlags.skip_blank_line = true;
     }
     scan_start = scan_stop + 1;
     return;

@@ -851,11 +851,19 @@ void    scan_line( void )
                         g_blank_text_lines++;
                     }
                 } else {
-                    if( ProcFlags.force_pc ) {
-                        do_force_pc( scan_start );
-                    } else {
-                        process_text( scan_start, g_curr_font );
+
+                    /* This test skips blank lines at the top of xmp blocks inside macros */
+
+                    if( !(ProcFlags.skip_blank_line && (*scan_start == ' ') &&
+                            ((scan_stop - scan_start) == 1) &&
+                            (input_cbs->fmflags & II_file)) ) {
+                        if( ProcFlags.force_pc ) {
+                            do_force_pc( scan_start );
+                        } else {
+                            process_text( scan_start, g_curr_font );
+                        }
                     }
+                    ProcFlags.skip_blank_line = false;
                 }
             }
         } else if( !ProcFlags.concat && (*buff2 == '\0') ) {    // blank line found with concatenation off
