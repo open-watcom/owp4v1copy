@@ -503,7 +503,7 @@ bool    get_line( bool display_line )
 
     if( !(input_cbs->fmflags & II_eof) ) {
         if( display_line && GlobalFlags.firstpass
-            && input_cbs->fmflags & II_research ) {
+            && (input_cbs->fmflags & II_research) ) {
             printf( "%s\n", buff2 );
         }
     }

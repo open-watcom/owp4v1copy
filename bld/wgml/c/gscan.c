@@ -137,7 +137,7 @@ static void scan_gml( void )
         return;
     }
 
-    if( GlobalFlags.firstpass && cb->fmflags & II_research ) {
+    if( GlobalFlags.firstpass && (cb->fmflags & II_research) ) {
 
         if(  stricmp( tok_start + 1, "cmt" ) ) {   // quiet for :cmt.
 
@@ -523,7 +523,7 @@ static void     scan_script( void )
     }
 
     if( me != NULL ) {                  // macro found
-        if( GlobalFlags.firstpass && cb->fmflags & II_research ) {
+        if( GlobalFlags.firstpass && (cb->fmflags & II_research) ) {
             if( cb->fmflags & II_tag_mac ) {
                 printf_research( "L%d    %c%s macro found in macro %s(%d)\n\n",
                                  inc_level, SCR_char, token_buf,
@@ -541,7 +541,7 @@ static void     scan_script( void )
         scan_restart = scan_stop + 1;
     } else if( !ProcFlags.literal ) {    // try script controlword if not in LI
         cwfound = false;
-        if( cb->fmflags & II_research && GlobalFlags.firstpass ) {
+        if( (cb->fmflags & II_research) && GlobalFlags.firstpass ) {
             if( cb->fmflags & II_tag_mac ) {
                 printf_research( "L%d    %c%s CW found in macro %s(%d)\n\n",
                                  inc_level, SCR_char, token_buf,
@@ -612,7 +612,7 @@ condcode    test_process( ifcb * cb )
 #ifdef DEBTESTPROC
     int     start_level = cb->if_level;
 
-    if( input_cbs->fmflags & II_research && GlobalFlags.firstpass
+    if( (input_cbs->fmflags & II_research) && GlobalFlags.firstpass
         && cb->if_level ) {
         show_ifcb( "Anf teif", cb );
     }
@@ -647,7 +647,7 @@ condcode    test_process( ifcb * cb )
         }
 
 #ifdef DEBTESTPROC
-        if( input_cbs->fmflags & II_research && GlobalFlags.firstpass
+        if( (input_cbs->fmflags & II_research) && GlobalFlags.firstpass
             && (start_level || cb->if_level) ) {
             char * txt = (cc == pos ? "EX1 pos" : "EX1 no" );
 
@@ -662,7 +662,7 @@ condcode    test_process( ifcb * cb )
         if( cb->if_flags[cb->if_level].ifcwdo ) {   // if  .do
             cc = pos;
 #ifdef DEBTESTPROC
-        if( input_cbs->fmflags & II_research && GlobalFlags.firstpass
+        if( (input_cbs->fmflags & II_research) && GlobalFlags.firstpass
                 && (start_level || cb->if_level) ) {
                 char * txt = (cc == pos ? "Edo pos" : "Edo no" );
 
@@ -738,7 +738,7 @@ condcode    test_process( ifcb * cb )
         err_count++;
     }
 #ifdef DEBTESTPROC
-    if( input_cbs->fmflags & II_research && GlobalFlags.firstpass
+    if( (input_cbs->fmflags & II_research) && GlobalFlags.firstpass
         && (start_level || cb->if_level) ) {
         char * txt = (cc == pos ? "EX3 pos" : "EX3 no" );
 
@@ -829,7 +829,7 @@ void    scan_line( void )
         /*******************************************************************/
 
         if( (*scan_start != '\0') && (scan_start <= scan_stop) ) {
-            if( input_cbs->fmflags & II_research && GlobalFlags.firstpass ) {
+            if( (input_cbs->fmflags & II_research) && GlobalFlags.firstpass ) {
                 g_info_lm( inf_text_line, scan_start );
             }
             if( ProcFlags.layout ) {    // LAYOUT active: should not happen
@@ -883,7 +883,7 @@ void    scan_line( void )
                 scr_process_break();
             }
         }
-    } else if( input_cbs->fmflags & II_research && GlobalFlags.firstpass ) {
+    } else if( (input_cbs->fmflags & II_research) && GlobalFlags.firstpass ) {
         g_info_lm( inf_skip_line );     // show skipped line
     }
     if( ProcFlags.literal ) {

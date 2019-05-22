@@ -290,7 +290,7 @@ char  * scr_multi_funcs( char * in, char * end, char ** result, int32_t valsize 
             && !stricmp( fn, scr_functions[k].fname ) ) {
 
             found = true;
-            if( input_cbs->fmflags & II_research && GlobalFlags.firstpass ) {
+            if( (input_cbs->fmflags & II_research) && GlobalFlags.firstpass ) {
                 out_msg( " Function %s found\n", scr_functions[k].fname );
                 add_multi_func_research( fn );
             }
@@ -327,7 +327,7 @@ char  * scr_multi_funcs( char * in, char * end, char ** result, int32_t valsize 
             *ps = '\0';
             parms[k].e = ps - 1;
             parms[k].a = resbuf;
-            if( input_cbs->fmflags & II_research && GlobalFlags.firstpass ) {
+            if( (input_cbs->fmflags & II_research) && GlobalFlags.firstpass ) {
                 out_msg( " Function %s parm %s found\n",
                          scr_functions[funcind].fname, resbuf );
             }
@@ -335,7 +335,7 @@ char  * scr_multi_funcs( char * in, char * end, char ** result, int32_t valsize 
             resolve_symvar_functions( resbuf );
 
             parms[k].e = resbuf + strnlen_s( resbuf, buf_size ) - 1;
-            if( input_cbs->fmflags & II_research && GlobalFlags.firstpass ) {
+            if( (input_cbs->fmflags & II_research) && GlobalFlags.firstpass ) {
                 out_msg( " Function      parm %s return\n", resbuf );
             }
         } else {
@@ -379,7 +379,7 @@ char  * scr_multi_funcs( char * in, char * end, char ** result, int32_t valsize 
 
                 parms[m + k].e = ps - 1;
                 parms[m + k].a = resbuf;
-                if( input_cbs->fmflags & II_research && GlobalFlags.firstpass ) {
+                if( (input_cbs->fmflags & II_research) && GlobalFlags.firstpass ) {
                     out_msg( " Function %s parm %s found\n",
                              scr_functions[funcind].fname, resbuf );
                 }
@@ -387,7 +387,7 @@ char  * scr_multi_funcs( char * in, char * end, char ** result, int32_t valsize 
                 resolve_symvar_functions( resbuf );
 
                 parms[m + k].e = resbuf + strnlen_s( resbuf, buf_size ) - 1;
-                if( input_cbs->fmflags & II_research && GlobalFlags.firstpass ) {
+                if( (input_cbs->fmflags & II_research) && GlobalFlags.firstpass ) {
                     out_msg( " Function      parm %s return\n", resbuf );
                 }
             } else {

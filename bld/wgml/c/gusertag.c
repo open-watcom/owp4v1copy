@@ -390,7 +390,7 @@ bool        process_tag( gtentry * ge, mac_entry * me )
             }
         }
 
-        if( input_cbs->fmflags & II_research && GlobalFlags.firstpass ) {
+        if( (input_cbs->fmflags & II_research) && GlobalFlags.firstpass ) {
             print_sym_dict( input_cbs->local_dict );
         }
     } else {                            // user-defined tag has no attributes
@@ -460,7 +460,7 @@ bool        process_tag( gtentry * ge, mac_entry * me )
             }
         }
 
-        if( input_cbs->fmflags & II_research && GlobalFlags.firstpass ) {
+        if( (input_cbs->fmflags & II_research) && GlobalFlags.firstpass ) {
             print_sym_dict( input_cbs->local_dict );
         }
     }

@@ -2273,7 +2273,7 @@ bool split_element( doc_element * a_element, uint32_t req_depth )
 
         /* Error if first line will not fit on any page */
 
-        if( (cur_line->line_height + cur_line->units_spacing) > old_max_depth ) {
+        if( ( cur_line->line_height + cur_line->units_spacing ) > old_max_depth ) {
             xx_err( err_text_line_too_deep );
             break;
         }
@@ -2281,7 +2281,7 @@ bool split_element( doc_element * a_element, uint32_t req_depth )
         if( g_cur_threshold == 1 ) {                // simplest case
 
             while( cur_line != NULL ) {
-                if( (cur_depth + cur_line->line_height + cur_line->units_spacing) > req_depth ) {
+                if( ( cur_depth + cur_line->line_height + cur_line->units_spacing ) > req_depth ) {
                     break;
                 }
                 cur_depth += cur_line->line_height + cur_line->units_spacing;

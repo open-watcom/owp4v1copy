@@ -467,7 +467,7 @@ int add_symvar_addr( symvar * * dict, char * name, char * val,
             if( !ok ) {
                 rc = 3;
             } else {
-                if( GlobalFlags.firstpass && input_cbs->fmflags & II_research ) {
+                if( GlobalFlags.firstpass && (input_cbs->fmflags & II_research) ) {
                     if( rc < 3 ) {
                         print_sym_entry( new, &dummyi, &dummyi );
                     }
@@ -480,7 +480,7 @@ int add_symvar_addr( symvar * * dict, char * name, char * val,
             if( !ok ) {
                 rc = 3;
             } else {
-                if( GlobalFlags.firstpass && input_cbs->fmflags & II_research ) {
+                if( GlobalFlags.firstpass && (input_cbs->fmflags & II_research) ) {
                     if( rc < 3 ) {
                         print_sym_entry( new, &dummyi, &dummyi );
                     }
@@ -493,7 +493,7 @@ int add_symvar_addr( symvar * * dict, char * name, char * val,
             if( !ok ) {
                 rc = 3;
             } else {
-                if( GlobalFlags.firstpass && input_cbs->fmflags & II_research ) {
+                if( GlobalFlags.firstpass && (input_cbs->fmflags & II_research) ) {
                     if( rc < 3 ) {
                         print_sym_entry( newsub->base, &dummyi, &dummyi );
                     }
@@ -511,7 +511,7 @@ int add_symvar_addr( symvar * * dict, char * name, char * val,
                 strcpy_s( newsub->value, strlen( val ) + 1, val );
             }
             *sub = newsub;
-            if( GlobalFlags.firstpass && input_cbs->fmflags & II_research ) {
+            if( GlobalFlags.firstpass && (input_cbs->fmflags & II_research) ) {
                 if( rc < 3 ) {
                     print_sym_entry( newsub->base, &dummyi, &dummyi );
                 }

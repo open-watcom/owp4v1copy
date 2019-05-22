@@ -413,7 +413,7 @@ bool resolve_symvar_functions( char * buf )
                 /*                                                         */
                 /***********************************************************/
 
-                if( GlobalFlags.firstpass && input_cbs->fmflags & II_research ) {
+                if( GlobalFlags.firstpass && (input_cbs->fmflags & II_research) ) {
                     add_single_func_research( pchar + 1 );
                 }
 
@@ -505,7 +505,7 @@ bool resolve_symvar_functions( char * buf )
             }
             if( rc == 2 ) {             // variable found + resolved
                 ProcFlags.substituted = true;
-                    
+
                 /* Split when called from process_line, not when called to get a parameter */
 
                 if( !ProcFlags.CW_sep_ignore && (buf == buff2) &&
@@ -704,7 +704,7 @@ void process_line( void )
 
     buff2_lg = strnlen_s( buff2, buf_size );
 
-    if( input_cbs->fmflags & II_research && GlobalFlags.firstpass &&
+    if( (input_cbs->fmflags & II_research) && GlobalFlags.firstpass &&
         anything_substituted ) {
         g_info_lm( inf_subst_line, buff2 ); // show line with substitution(s)
     }

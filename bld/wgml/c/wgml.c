@@ -512,7 +512,7 @@ static  void    proc_input( char * filename )
 
             ic = input_cbs->if_cb;      // .if .th .el controlblock
 
-            if( GlobalFlags.firstpass && input_cbs->fmflags & II_research ) {
+            if( GlobalFlags.firstpass && (input_cbs->fmflags & II_research) ) {
                 show_ifcb( "procin 1", ic );
             }
 
@@ -558,7 +558,7 @@ static  void    proc_input( char * filename )
                         ic->if_level--; // pop .if stack one level
 
                         if( GlobalFlags.firstpass &&
-                            input_cbs->fmflags & II_research ) {
+                            (input_cbs->fmflags & II_research) ) {
                             show_ifcb( "procin -1", ic );
                         }
                     }
@@ -569,7 +569,7 @@ static  void    proc_input( char * filename )
                     ic->if_flags[ic->if_level].ifelse = false;// not in else
 
                     if( GlobalFlags.firstpass &&
-                        input_cbs->fmflags & II_research ) {
+                        (input_cbs->fmflags & II_research) ) {
                         show_ifcb( "procin 2", ic );
                     }
                 }
@@ -593,7 +593,7 @@ static  void    proc_input( char * filename )
                     }
                 }
                 if( ProcFlags.in_macro_define ) {
-                    if( input_cbs->fmflags & II_research && GlobalFlags.firstpass ) {
+                    if( (input_cbs->fmflags & II_research) && GlobalFlags.firstpass ) {
                         g_info_lm( inf_skip_line );
                     }
                     continue;           // skip processing
@@ -605,7 +605,7 @@ static  void    proc_input( char * filename )
                     if( test_macro_xxxx( "begin" ) ) {
                         ProcFlags.in_macro_define = true;
                     }
-                    if( input_cbs->fmflags & II_research &&
+                    if( (input_cbs->fmflags & II_research) &&
                         GlobalFlags.firstpass ) {
                         g_info_lm( inf_skip_line );
                     }

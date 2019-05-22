@@ -721,8 +721,8 @@ int32_t conv_vert_unit( su *s, text_space text_spacing, font_number font )
     int32_t         ds;
     int32_t         fp;
 
-    if( text_spacing == 0 ) {   // if spacing invalid then use default
-        text_spacing = g_text_spacing;
+    if( !( text_spacing > 0 ) ) {       // if spacing valid use it
+        text_spacing = g_text_spacing;  // else default
     }
     switch( s->su_u ) {
     case SU_chars_lines :

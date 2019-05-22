@@ -211,7 +211,7 @@ void    add_macro_parms( char * p )
         add_symvar( &input_cbs->local_dict, "0", starbuf, no_subscript, local_var );
     }
 
-    if( input_cbs->fmflags & II_research && GlobalFlags.firstpass ) {
+    if( (input_cbs->fmflags & II_research) && GlobalFlags.firstpass ) {
         print_sym_dict( input_cbs->local_dict );
     }
 }
@@ -532,7 +532,7 @@ void    scr_dm( void )
 
         add_macro_entry( &macro_dict, me );
 
-        if( cb->fmflags & II_research && GlobalFlags.firstpass ) {
+        if( (cb->fmflags & II_research) && GlobalFlags.firstpass ) {
             ulongtodec( macro_line_count, linestr );
             g_info( inf_mac_defined, macname, linestr );
         }
