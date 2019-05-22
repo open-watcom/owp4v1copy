@@ -1670,7 +1670,7 @@ void process_line_full( text_line * a_line, bool justify )
             t_element->element.text.first = a_line;
             t_el_last = t_element->element.text.first;
         } else {
-            t_element->depth += a_line->line_height + a_line->spacing;
+            t_element->depth += a_line->line_height + a_line->units_spacing;
             t_el_last->next = a_line;
             t_el_last = t_el_last->next;
         }

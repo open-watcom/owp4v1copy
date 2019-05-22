@@ -159,7 +159,7 @@ text_line * alloc_text_line( void )
     curr->eol_index = NULL;
     curr->first = NULL;
     curr->last = NULL;
-    curr->spacing = g_spacing;
+    curr->units_spacing = g_units_spacing;
     curr->line_height = 0;
     curr->next = NULL;
     curr->y_address = 0;
@@ -366,7 +366,7 @@ doc_element * alloc_doc_el( element_type type )
         curr->element.vline.eol_index = NULL;
         break;
     case el_vspace :
-        curr->element.vspace.spacing = g_spacing;
+        curr->element.vspace.units_spacing = g_units_spacing;
         curr->element.vspace.eol_index = NULL;
         break;
     default :
@@ -668,8 +668,8 @@ doc_element * init_doc_el( element_type type, uint32_t depth )
     curr = alloc_doc_el( type );
 
     curr->depth = depth;
-    curr->blank_lines = g_blank_lines;
-    g_blank_lines = 0;
+    curr->blank_lines = g_blank_units_lines;
+    g_blank_units_lines = 0;
     curr->subs_skip = g_subs_skip;
     g_subs_skip = 0;
     curr->top_skip = g_top_skip;
@@ -679,7 +679,7 @@ doc_element * init_doc_el( element_type type, uint32_t depth )
         curr->element.text.overprint = ProcFlags.overprint;
         ProcFlags.overprint = false;
     } else if( type == el_vspace ) {      // spacing applies to vertical space elements
-        curr->element.vspace.spacing = g_spacing;
+        curr->element.vspace.units_spacing = g_units_spacing;
     }
 
     ProcFlags.skips_valid = false;

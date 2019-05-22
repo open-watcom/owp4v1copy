@@ -622,7 +622,7 @@ void    o_int32( FILE * f, lay_att curr, const int32_t * tm )
 
 bool    i_int8( char * p, lay_att curr, int8_t * tm )
 {
-    int32_t     wk;
+    long    wk;
 
     wk = strtol( p, NULL, 10 );
     if( abs( wk ) > 255 ) {
@@ -642,7 +642,7 @@ void    o_int8( FILE * f, lay_att curr, const int8_t * tm )
 
 bool    i_spacing( char *p, lay_att curr, text_space *tm )
 {
-    int wk;
+    long wk;
 
     curr = curr;
     wk = strtol( p, NULL, 10 );

@@ -149,7 +149,7 @@ void gml_xmp( const gmltag * entry )
     ProcFlags.justify = ju_off;
 
     if( depth > 0 ) {
-        g_blank_lines = depth;
+        g_blank_units_lines = depth;
         scr_process_break();
     }
 
@@ -180,8 +180,8 @@ void gml_exmp( const gmltag * entry )
 
     /* Ensure blank lines at end of XMP use correct font */
 
-    if( (g_blank_lines == 0) && (g_blank_text_lines > 0) ) {
-        g_blank_lines = g_blank_text_lines * wgml_fonts[layout_work.xmp.font].line_height;
+    if( (g_blank_units_lines == 0) && (g_blank_text_lines > 0) ) {
+        g_blank_units_lines = g_blank_text_lines * wgml_fonts[layout_work.xmp.font].line_height;
     }
     g_blank_text_lines = 0;
 
@@ -209,7 +209,7 @@ void gml_exmp( const gmltag * entry )
         cur_doc_el_group->next = NULL;
 
         if( cur_doc_el_group->first->type == el_text ) {            // only text has spacing
-            cur_doc_el_group->first->element.text.first->spacing = 0;   // no spacing on first line
+            cur_doc_el_group->first->element.text.first->units_spacing = 0;   // no spacing on first line
         }
 
         if( cur_doc_el_group->first != NULL ) {

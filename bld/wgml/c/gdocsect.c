@@ -1407,7 +1407,7 @@ extern void gml_abstract( const gmltag * entry )
         return;
     }
     if( g_blank_text_lines > 0 ) {
-        set_skip_vars( NULL, NULL, NULL, 0, 0 );    // set g_blank_lines
+        set_skip_vars( NULL, NULL, NULL, 0, 0 );    // set g_blank_units_lines
     }
     scr_process_break();
     gml_doc_xxx( doc_sect_abstract );
@@ -1425,7 +1425,7 @@ extern void gml_abstract( const gmltag * entry )
 extern void gml_appendix( const gmltag * entry )
 {
     if( g_blank_text_lines > 0 ) {
-        set_skip_vars( NULL, NULL, NULL, 0, 0 );    // set g_blank_lines
+        set_skip_vars( NULL, NULL, NULL, 0, 0 );    // set g_blank_units_lines
     }
     scr_process_break();
     gml_doc_xxx( doc_sect_appendix );
@@ -1445,7 +1445,7 @@ extern void gml_backm( const gmltag * entry )
     }
 
     if( g_blank_text_lines > 0 ) {
-        set_skip_vars( NULL, NULL, NULL, 0, 0 );    // set g_blank_lines
+        set_skip_vars( NULL, NULL, NULL, 0, 0 );    // set g_blank_units_lines
     }
     scr_process_break();
     gml_doc_xxx( doc_sect_backm );
@@ -1463,7 +1463,7 @@ extern void gml_backm( const gmltag * entry )
 extern void gml_body( const gmltag * entry )
 {
     if( g_blank_text_lines > 0 ) {
-        set_skip_vars( NULL, NULL, NULL, 0, 0 );    // set g_blank_lines
+        set_skip_vars( NULL, NULL, NULL, 0, 0 );    // set g_blank_units_lines
     }
     scr_process_break();
     gml_doc_xxx( doc_sect_body );
@@ -1553,7 +1553,7 @@ extern void gml_preface( const gmltag * entry )
         return;
     }
     if( g_blank_text_lines > 0 ) {
-        set_skip_vars( NULL, NULL, NULL, 0, 0 );    // set g_blank_lines
+        set_skip_vars( NULL, NULL, NULL, 0, 0 );    // set g_blank_units_lines
     }
     scr_process_break();
     gml_doc_xxx( doc_sect_preface );
@@ -1629,7 +1629,7 @@ extern void gml_egdoc( const gmltag * entry )
     fwd_ref *   curr;
 
     if( g_blank_text_lines > 0 ) {
-        set_skip_vars( NULL, NULL, NULL, 0, 0 );    // set g_blank_lines
+        set_skip_vars( NULL, NULL, NULL, 0, 0 );    // set g_blank_units_lines
     }
     scr_process_break();                        // outputs last element in file
 

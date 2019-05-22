@@ -720,7 +720,7 @@ static void set_positions( doc_element * list, uint32_t h_start, uint32_t v_star
                     cur_text = cur_text->next;
                 }
                 if( use_spacing ) {
-                    cur_spacing += cur_line->spacing + cur_line->line_height;
+                    cur_spacing += cur_line->units_spacing + cur_line->line_height;
                 } else {
                     cur_spacing += cur_line->line_height;
                     use_spacing = true;         // use between lines
@@ -745,7 +745,7 @@ static void set_positions( doc_element * list, uint32_t h_start, uint32_t v_star
 
                     if( cur_el->element.text.overprint && cur_el->element.text.force_op ) {
                         if( use_spacing ) {
-                            cur_spacing -= cur_line->spacing + cur_line->line_height;
+                            cur_spacing -= cur_line->units_spacing + cur_line->line_height;
                         } else {
                             cur_spacing -= cur_line->line_height;
                         }
@@ -1682,8 +1682,8 @@ void insert_col_main( doc_element * a_element )
             t_doc_el_group->depth += (a_element->blank_lines + a_element->subs_skip +
                                       a_element->depth);
             if( a_element->type == el_text ) {  // subsequent text elements only
-                a_element->depth += g_spacing;
-                t_doc_el_group->depth += g_spacing;
+                a_element->depth += g_units_spacing;
+                t_doc_el_group->depth += g_units_spacing;
             }
         }
         return;
@@ -2154,40 +2154,34 @@ void set_skip_vars( su * pre_skip, su * pre_top_skip, su * post_skip,
     int32_t skippost;
     int32_t skippre;
 
-    g_spacing = 0;
-    if( text_spacing == 0 ) {
-        text_spacing = g_text_spacing;
-    }
-    if( text_spacing > 0 ) {
-        g_spacing = ( text_spacing - 1 ) * wgml_fonts[font].line_height;
-    }
-    g_blank_lines = g_blank_text_lines * wgml_fonts[font].line_height;
+    g_units_spacing = ( text_spacing - 1 ) * wgml_fonts[font].line_height;
+    g_blank_units_lines = g_blank_text_lines * wgml_fonts[font].line_height;
     if( g_blank_text_lines > 0 ) {
-        g_blank_lines += ( g_blank_text_lines - 1 ) * g_spacing;
+        g_blank_units_lines += ( g_blank_text_lines - 1 ) * g_units_spacing;
     }
-    g_blank_lines += g_space;
+    g_blank_units_lines += g_space;
     g_blank_text_lines = 0;
 
     /* SK can tell if it follows SP or blank lines, but not if it precedes them */
 
     if( !ProcFlags.sk_2nd ) {
-        if( g_blank_lines > g_skip ) {
-            g_skip = 0;                 // use g_blank_lines
+        if( g_blank_units_lines > g_skip ) {
+            g_skip = 0;                         // use g_blank_units_lines
         } else {
-            g_top_skip += g_blank_lines;// use g_blank_lines at top of page
-            g_blank_lines = 0;          // use SK skip elsewhere
+            g_top_skip += g_blank_units_lines;  // use g_blank_units_lines at top of page
+            g_blank_units_lines = 0;            // use SK skip elsewhere
         }
     } else {
-        ProcFlags.sk_2nd = false;       // if was true, make false
+        ProcFlags.sk_2nd = false;               // if was true, make false
     }
 
-    if( g_blank_lines > 0 ) {           // blank space into el_vspace element
+    if( g_blank_units_lines > 0 ) {             // blank space into el_vspace element
         t_element = init_doc_el( el_vspace, 0 );
-        t_element->subs_skip = t_element->element.vspace.spacing;
+        t_element->subs_skip = t_element->element.vspace.units_spacing;
         insert_col_main( t_element );
         t_element = NULL;
         t_el_last = NULL;
-        g_blank_lines = 0;
+        g_blank_units_lines = 0;
     }
 
     if( pre_skip != NULL ) {
@@ -2279,7 +2273,7 @@ bool split_element( doc_element * a_element, uint32_t req_depth )
 
         /* Error if first line will not fit on any page */
 
-        if( (cur_line->line_height + cur_line->spacing) > old_max_depth ) {
+        if( (cur_line->line_height + cur_line->units_spacing) > old_max_depth ) {
             xx_err( err_text_line_too_deep );
             break;
         }
@@ -2287,10 +2281,10 @@ bool split_element( doc_element * a_element, uint32_t req_depth )
         if( g_cur_threshold == 1 ) {                // simplest case
 
             while( cur_line != NULL ) {
-                if( (cur_depth + cur_line->line_height + cur_line->spacing) > req_depth ) {
+                if( (cur_depth + cur_line->line_height + cur_line->units_spacing) > req_depth ) {
                     break;
                 }
-                cur_depth += cur_line->line_height + cur_line->spacing;
+                cur_depth += cur_line->line_height + cur_line->units_spacing;
                 last = cur_line;
                 cur_line = cur_line->next;
             }
@@ -2313,7 +2307,7 @@ bool split_element( doc_element * a_element, uint32_t req_depth )
             cur_line = a_element->element.text.first;
             while( cur_line != NULL ) {
                 if( cur_count < g_cur_threshold ) {
-                    cur_depth += cur_line->line_height + cur_line->spacing;
+                    cur_depth += cur_line->line_height + cur_line->units_spacing;
                 } else {
                     break;
                 }
@@ -2334,11 +2328,11 @@ bool split_element( doc_element * a_element, uint32_t req_depth )
             } else {
                 while( cur_line != NULL ) {
                     if( (cur_count >= (tot_count - g_cur_threshold)) || ((cur_line->next != NULL) &&
-                        (cur_depth + (cur_line->line_height + cur_line->spacing)) > req_depth) ) {
+                        (cur_depth + (cur_line->line_height + cur_line->units_spacing)) > req_depth) ) {
                         break;
                     }
                     cur_count++;
-                    cur_depth += (cur_line->line_height + cur_line->spacing);
+                    cur_depth += (cur_line->line_height + cur_line->units_spacing);
                     last = cur_line;
                     cur_line = cur_line->next;
                 }

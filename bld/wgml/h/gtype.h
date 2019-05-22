@@ -999,7 +999,7 @@ struct eol_ix;              // forward declaration
 typedef struct text_line {
     struct  text_line   *   next;
             uint32_t        line_height;
-            units_space     spacing;
+            units_space     units_spacing;
             uint32_t        y_address;
     struct  eol_ix      *   eol_index;
             text_chars  *   first;
@@ -1078,7 +1078,7 @@ typedef struct {
 } vline_element;
 
 typedef struct {
-            units_space     spacing;        // vertical space to be inserted
+            units_space     units_spacing;  // vertical space to be inserted
     struct  eol_ix      *   eol_index;
 } vspace_element;
 

@@ -381,12 +381,12 @@ global  uint32_t    g_cd;               // no of columns
 global  uint32_t    g_gutter;           // space between columns
 
 global  uint32_t    g_blank_text_lines; // blank lines (line count)
-global  units_space g_blank_lines;      // blank lines (in vertical base units)
+global  units_space g_blank_units_lines;// blank lines (in vertical base units)
 global  uint32_t    g_post_skip;        // post_skip
 global  uint32_t    g_subs_skip;        // subs_skip
 global  uint32_t    g_top_skip;         // top_skip
 global  text_space  g_text_spacing;     // spacing between lines (line count)
-global  units_space g_spacing;          // spacing (in vertical base units)
+global  units_space g_units_spacing;    // spacing (in vertical base units)
 global  int32_t     g_skip;             // .sk skip value (in vbus)
 global  int32_t     g_space;            // .sp space value (in vbus)
 

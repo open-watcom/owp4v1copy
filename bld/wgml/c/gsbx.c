@@ -242,7 +242,7 @@ static void box_blank_lines( uint32_t lines )
     cur_chars = NULL;
 
     blank_el = alloc_doc_el( el_text );
-    blank_el->depth = lines + g_spacing;
+    blank_el->depth = lines + g_units_spacing;
     blank_el->element.text.bx_h_done = true;    // prevent being processed again as text element
     lines /= def_height;
 
@@ -487,13 +487,13 @@ static void box_draw_vlines( box_col_set * hline, uint32_t subs_skip,
 
             /* Create the doc_element to hold the VLINE */
 
-            /**************************NOTE********************************/
-            /* Conversion to init_doc_el() was kept as simple as possible */
-            /* it might be asked whether g_blank_lines should be zeroed   */
-            /* even for the first VLINE, but that is how I found the code */
-            /**************************************************************/
+            /**************************NOTE************************************/
+            /* Conversion to init_doc_el() was kept as simple as possible     */
+            /* it might be asked whether g_blank_units_lines should be zeroed */
+            /* even for the first VLINE, but that is how I found the code     */
+            /******************************************************************/
 
-            g_blank_lines = 0;                      // no positional adjustments
+            g_blank_units_lines = 0;                // no positional adjustments
             if( !first_done ) {                     // except first VLINE
                 g_subs_skip = subs_skip;
                 g_top_skip = top_skip;
@@ -1151,9 +1151,9 @@ static void do_line_device( void )
                 box_depth += g_top_skip;
                 el_skip += g_top_skip;
             } else {
-                box_depth += g_subs_skip + g_blank_lines;
-                el_skip += g_subs_skip + g_blank_lines;
-                g_blank_lines = 0;
+                box_depth += g_subs_skip + g_blank_units_lines;
+                el_skip += g_subs_skip + g_blank_units_lines;
+                g_blank_units_lines = 0;
             }
         } else {
 
@@ -1162,8 +1162,8 @@ static void do_line_device( void )
             if( ProcFlags.top_line ) {
                 box_skip += g_top_skip;
             } else {
-                box_skip += g_subs_skip + g_blank_lines;
-                g_blank_lines = 0;
+                box_skip += g_subs_skip + g_blank_units_lines;
+                g_blank_units_lines = 0;
             }
         }
 

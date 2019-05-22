@@ -557,7 +557,7 @@ void gml_fig( const gmltag * entry )
 
     if( place == inline_place ) {
         if( (frame.type == box_frame) && (bin_driver->dbox.text != NULL) ) {
-            g_blank_lines += g_subs_skip;
+            g_blank_units_lines += g_subs_skip;
             g_subs_skip = 0;
             scr_process_break();
         }
@@ -620,12 +620,12 @@ void gml_fig( const gmltag * entry )
 
     if( (frame.type == none) && (place != bottom_place) ) {
         if( depth > g_subs_skip ) {
-            g_blank_lines = depth;
+            g_blank_units_lines = depth;
             g_subs_skip = 0;
             scr_process_break();
         }
     } else {
-        g_blank_lines = depth;
+        g_blank_units_lines = depth;
         scr_process_break();
     }
 
@@ -955,9 +955,9 @@ void gml_efig( const gmltag * entry )
             /*************************************************************/
 
             if( frame.type != none ) {
-                g_blank_lines = cur_doc_el_group->first->blank_lines;
+                g_blank_units_lines = cur_doc_el_group->first->blank_lines;
                 cur_doc_el_group->first->blank_lines = 0;
-                cur_doc_el_group->depth -= g_blank_lines;
+                cur_doc_el_group->depth -= g_blank_units_lines;
             }
             g_subs_skip = cur_doc_el_group->first->subs_skip;
             cur_doc_el_group->first->subs_skip = 0;
@@ -1229,7 +1229,7 @@ void gml_figdesc( const gmltag * entry )
         process_text( p, g_curr_font);  // if text follows
     } else {
         if( !figcap_done ) {            // if no FIGCAP was present
-            g_blank_lines += g_subs_skip;
+            g_blank_units_lines += g_subs_skip;
             g_subs_skip = 0;
             scr_process_break();
         }
