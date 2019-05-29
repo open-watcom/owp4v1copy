@@ -194,9 +194,10 @@ void  scr_process_break( void )
         } else {
             set_skip_vars( NULL, NULL, NULL, g_text_spacing, g_curr_font);
         }
-    } else if( g_blank_units_lines > 0 ) {            // arbitrary blank space
+    } else if( g_blank_text_lines > 0  ) {                  // pending blank lines
+        set_skip_vars( NULL, NULL, NULL, 0, g_curr_font );  // emits vspace doc_element
+    } else if( g_blank_units_lines > 0 ) {   // arbitrary blank space
         t_element = init_doc_el( el_vspace, 0 );
-        t_element->subs_skip = t_element->element.vspace.units_spacing;
         insert_col_main( t_element );
         t_element = NULL;
         t_el_last = NULL;

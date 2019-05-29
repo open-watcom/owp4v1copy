@@ -80,6 +80,10 @@ static void do_el_list_out( doc_element * in_element )
                                 }
                             }
                         }
+                    } else if( in_element->next->type == el_vspace ) {
+                        if( in_element->next->element.vspace.font > 0 ) {
+                            in_element->element.binc.force_FONT0 = true;
+                        }
                     }
                 }
                 ob_binclude( &in_element->element.binc );
@@ -2177,7 +2181,6 @@ void set_skip_vars( su * pre_skip, su * pre_top_skip, su * post_skip,
 
     if( g_blank_units_lines > 0 ) {             // blank space into el_vspace element
         t_element = init_doc_el( el_vspace, 0 );
-        t_element->subs_skip = t_element->element.vspace.units_spacing;
         insert_col_main( t_element );
         t_element = NULL;
         t_el_last = NULL;

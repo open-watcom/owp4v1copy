@@ -287,6 +287,7 @@ void add_box_col_stack_to_pool( box_col_stack * a_stack )
 /***************************************************************************/
 /*  allocate / reuse a doc_element instance                                */
 /*  Note: called directly in a few cases, but mostly from init_doc_el()    */
+/*        this produces a doc_element with default values                  */
 /***************************************************************************/
 
 doc_element * alloc_doc_el( element_type type )
@@ -366,7 +367,7 @@ doc_element * alloc_doc_el( element_type type )
         curr->element.vline.eol_index = NULL;
         break;
     case el_vspace :
-        curr->element.vspace.units_spacing = g_units_spacing;
+        curr->element.vspace.font = 0;
         curr->element.vspace.eol_index = NULL;
         break;
     default :
@@ -678,8 +679,8 @@ doc_element * init_doc_el( element_type type, uint32_t depth )
     if( type == el_text ) {             // overprint applies to text lines
         curr->element.text.overprint = ProcFlags.overprint;
         ProcFlags.overprint = false;
-    } else if( type == el_vspace ) {      // spacing applies to vertical space elements
-        curr->element.vspace.units_spacing = g_units_spacing;
+    } else if( type == el_vspace ) {    // the font is needed for post-BINCLUDE processing
+        curr->element.vspace.font = g_curr_font;
     }
 
     ProcFlags.skips_valid = false;

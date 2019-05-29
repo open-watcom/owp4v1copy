@@ -1078,7 +1078,7 @@ typedef struct {
 } vline_element;
 
 typedef struct {
-            units_space     units_spacing;  // vertical space to be inserted
+    font_number             font;
     struct  eol_ix      *   eol_index;
 } vspace_element;
 
