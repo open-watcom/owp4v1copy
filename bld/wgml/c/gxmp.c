@@ -180,6 +180,8 @@ void gml_exmp( const gmltag * entry )
     char        *   p;
     doc_element *   cur_el;
     tag_cb      *   wk;
+    uint32_t        test_depth1;
+    uint32_t        test_depth2;
 
     /* Ensure blank lines at end of XMP use correct font */
 
@@ -220,8 +222,25 @@ void gml_exmp( const gmltag * entry )
                                 cur_doc_el_group->first->subs_skip);
         }
 
-        if( (cur_doc_el_group->depth + t_page.cur_depth) > t_page.max_depth ) {
+        /*********************************************************************/
+        /* If the last doc_element is vspace and is the only element causing */
+        /* the block to not fit on this page, then zero it out, reduce the   */
+        /* group depth, and keep the block on this page.                     */
+        /*********************************************************************/
+
+        test_depth1 = (cur_doc_el_group->depth + t_page.cur_depth);
+        if( cur_doc_el_group->last->type == el_vspace ) {
+            test_depth2 = test_depth1 - cur_doc_el_group->last->depth;
+        } else {
+            test_depth2 = test_depth1;
+        }
+        
+        if( test_depth2 > t_page.max_depth ) {          // block moves even without final vspace element (if present)
             next_column();  //  the block won't fit on this page (or in this column)
+        } else if( test_depth2 != test_depth1 ) {      // clear final vspace element
+            cur_doc_el_group->last->blank_lines = 0;
+            cur_doc_el_group->last->depth = 0;
+            cur_doc_el_group->last->subs_skip = 0;
         }
 
         while( cur_doc_el_group->first != NULL ) {
