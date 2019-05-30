@@ -237,7 +237,6 @@ void    init_def_lay( void )
     layout_work.hx.hx_head[k].line_break = true;
     layout_work.hx.hx_head[k].page_eject = ej_yes;
     layout_work.hx.hx_head[k].number_form = num_new;
-    layout_work.hx.hx_head[k].number_reset = false;
     layout_work.hx.hx_head[k].number_style = b_style;
 
     memcpy( &layout_work.hx.hx_sect[k], &layout_work.hx.hx_sect[k-1],
