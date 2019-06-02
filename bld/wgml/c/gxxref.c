@@ -278,6 +278,7 @@ void gml_hdref( const gmltag * entry )
     if( !ProcFlags.reprocess_line && *p ) {
         if( *p == '.' ) p++;                // possible tag end
         if( *p ) {                          // only if text follows
+            ProcFlags.ct = true;
             post_space = 0;                 // cancel space after ref_text
             process_text( p, g_curr_font );
         }
