@@ -292,8 +292,8 @@ static void remove_indentation( void )
     ProcFlags.CW_sep_ignore = false;
 
     p = buff2;
-    while( ((buff2_lg > 1) && ( *p == SCR_char && *(p + 1) == ' ')) ||
-            ((buff2_lg > 2) && ( *p == SCR_char && *(p + 1) == '\'' && *(p + 2) == ' ')) ) {
+    while( ((buff2_lg > 1) && (*p == SCR_char && is_space_tab_char(*(p + 1)))) ||
+            ((buff2_lg > 2) && (*p == SCR_char && *(p + 1) == '\'' && *(p + 2) == ' ')) ) {
         p++;                                        // over SCR_char
         if( *p == ' ' ) {
             ProcFlags.CW_indented = true;
