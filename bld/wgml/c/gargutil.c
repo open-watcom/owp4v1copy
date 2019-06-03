@@ -300,7 +300,7 @@ bool is_lay_att_char( char c )
 {
     bool    test;
 
-    test = isalpha( c );
+    test = isalpha( (unsigned char)c );
     if( !test ) {
         test = ( c == '_' );
     }
@@ -315,7 +315,7 @@ bool is_function_char( char c )
 {
     bool    test;
 
-    test = isalnum( c );
+    test = isalnum( (unsigned char)c );
     return( test );
 }
 
@@ -327,7 +327,7 @@ bool is_id_char( char c )
 {
     bool    test;
 
-    test = isalnum( c );
+    test = isalnum( (unsigned char)c );
     return( test );
 }
 
@@ -339,7 +339,7 @@ bool is_macro_char( char c )
 {
     bool    test;
 
-    test = isalnum( c );
+    test = isalnum( (unsigned char)c );
     if( !test ) {
         test = ( c == '@' ) || ( c == '#' ) || ( c == '$' ) || ( c == '_' );
     }
@@ -354,7 +354,7 @@ bool is_symbol_char( char c )
 {
     bool    test;
 
-    test = isalnum( c );
+    test = isalnum( (unsigned char)c );
     if( !test ) {
         test = ( c == '@' ) || ( c == '#' ) || ( c == '$' ) || ( c == '_' );
     }

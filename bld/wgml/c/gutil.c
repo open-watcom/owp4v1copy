@@ -181,7 +181,7 @@ static const bool internal_to_su( su *in_su, bool tag, const char *base )
     k = 0;
     pu = ps;
     for( i = 0; i < 2; i++ ) {                  // max two characters in unit
-        if( *ps && isalpha( *ps ) ) {
+        if( *ps && isalpha( *(unsigned char *)ps ) ) {
             unit[k++] = my_tolower( *ps );      // save Unit
             ps++;
         } else {
@@ -191,7 +191,7 @@ static const bool internal_to_su( su *in_su, bool tag, const char *base )
             break;
         }
     }
-    if( *ps && isalpha( *ps ) ) {             // too many characters in unit
+    if( *ps && isalpha( *(unsigned char *)ps ) ) {             // too many characters in unit
         val_parse_err( base + (ps - s->su_txt), tag );
         scan_start = scan_stop + 1;
         return( cvterr );

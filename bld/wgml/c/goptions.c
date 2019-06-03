@@ -1229,7 +1229,7 @@ static void set_research( option * opt )
         research_to = ULONG_MAX - 1;
 
         research_file_name[0] = '\0';   // no filename
-        if( isalpha( *str ) ) {         // filename ?
+        if( isalpha( *(unsigned char *)str ) ) {         // filename ?
             if( len < sizeof( research_file_name ) ) {
                 strcpy_s( research_file_name, sizeof( research_file_name ), str );
             }
