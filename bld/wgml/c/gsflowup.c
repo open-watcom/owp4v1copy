@@ -167,9 +167,9 @@ static condcode scr_lowup( parm parms[MAX_FUN_PARMS], size_t parmcount,
             break;
         }
         if( upper ) {
-           **result = toupper( *pval++ );
+           **result = my_toupper( *pval++ );
         } else {
-           **result = tolower( *pval++ );
+           **result = my_tolower( *pval++ );
         }
         *result += 1;
         ressize--;

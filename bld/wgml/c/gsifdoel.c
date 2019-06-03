@@ -134,9 +134,10 @@ static condcode gargrelop( relop * r )
             break;
         }
     } else {
-        char    c2 = tolower( *(tok_start + 1) );// second char of relation operator
+        char    c2;
 
-        switch( tolower( *tok_start ) ) {   // relop is 2 chars
+        c2 = my_tolower( *(tok_start + 1) );    // second char of relation operator
+        switch( my_tolower( *tok_start ) ) {    // relop is 2 chars
         case '^'  :
             if( c2 == '=' ) {
                 *r = NE;

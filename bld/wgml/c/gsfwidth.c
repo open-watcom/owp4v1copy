@@ -92,7 +92,7 @@ condcode    scr_width( parm parms[MAX_FUN_PARMS], size_t parmcount, char * * res
 
             unquote_if_quoted( &pa, &pe );
 
-            type = tolower( *pa );
+            type = my_tolower( *pa );
             switch( type ) {
             case   'c':                 // CPI
                 width = cop_text_width( pval, len, g_curr_font );

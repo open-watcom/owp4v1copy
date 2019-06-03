@@ -49,12 +49,12 @@ char * get_refid_value( char * p, char * refid )
     }
     if( val_len < ID_LEN ) {
         for( k = 0; k < val_len; k++ ) {
-            refid[k] = tolower( *(val_start + k) );
+            refid[k] = my_tolower( *(val_start + k) );
         }
         refid[val_len] = '\0';
     } else {
         for( k = 0; k < ID_LEN; k++ ) {
-            refid[k] = tolower( *(val_start + k) );
+            refid[k] = my_tolower( *(val_start + k) );
         }
         refid[ID_LEN - 1] = '\0';
     }

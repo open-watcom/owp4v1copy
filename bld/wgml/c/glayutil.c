@@ -734,7 +734,7 @@ bool    i_number_style( char * p, lay_att curr, num_style * tm )
     char        c;
 
     cvterr = false;
-    c = tolower( *p );
+    c = my_tolower( *p );
     switch( c ) {                       // first letter
     case   'a':
         wk |= a_style;
@@ -758,7 +758,7 @@ bool    i_number_style( char * p, lay_att curr, num_style * tm )
 
     p++;
     if( !cvterr && *p && (*p != ' ') ) {// second letter
-        c = tolower( *p );
+        c = my_tolower( *p );
         switch( c ) {
         case   'd':
             wk |= xd_style;
@@ -766,7 +766,7 @@ bool    i_number_style( char * p, lay_att curr, num_style * tm )
         case   'p':
             p++;
             if( *p && (*p != ' ') ) {   // third letter
-                c = tolower( *p );
+                c = my_tolower( *p );
                 switch( c ) {
                 case   'a':
                     wk |= xpa_style;    // only left parenthesis

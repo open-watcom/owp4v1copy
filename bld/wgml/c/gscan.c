@@ -217,7 +217,7 @@ static void scan_gml( void )
     } else {
         *p ='\0';
         for( k = 0; k <= toklen; k++ ) {
-            tok_upper[k] = toupper( *(tok_start + 1 + k) );
+            tok_upper[k] = my_toupper( *(tok_start + 1 + k) );
         }
         tok_upper[k] = '\0';
 
@@ -499,8 +499,8 @@ static void     scan_script( void )
         scan_start = p;
 
         pt = token_buf;
-        while( *p && is_macro_char( *p ) ) {  // end of controlword
-           *pt++ = tolower( *p++ );     // copy lowercase to TokenBuf
+        while( *p && is_macro_char( *p ) ) {    // end of controlword
+           *pt++ = my_tolower( *p++ );          // copy lowercase to TokenBuf
         }
         *pt = '\0';
 
@@ -763,16 +763,16 @@ void set_if_then_do( ifcb * cb )
     char        cw[3];
     char        c;
 
-    if( *buff2 == SCR_char ) {          // only test script control words
+    if( *buff2 == SCR_char ) {              // only test script control words
         cw[0] = '\0';
-        if( (*(buff2 + 1) == SCR_char)  ||  // ..CW
-            (*(buff2 + 1) == '\'') ) {  // .'CW
-            cw[0] = tolower( *(buff2 + 2) );// copy possible controlword
-            cw[1] = tolower( *(buff2 + 3) );
+        if( (*(buff2 + 1) == SCR_char)  ||      // ..CW
+            (*(buff2 + 1) == '\'') ) {          // .'CW
+            cw[0] = my_tolower( *(buff2 + 2) ); // copy possible controlword
+            cw[1] = my_tolower( *(buff2 + 3) );
             c = *(buff2 + 4);
-        } else {                        // .CW
-            cw[0] = tolower( *(buff2 + 1) );// copy possible controlword
-            cw[1] = tolower( *(buff2 + 2) );
+        } else {                                // .CW
+            cw[0] = my_tolower( *(buff2 + 1) ); // copy possible controlword
+            cw[1] = my_tolower( *(buff2 + 2) );
             c = *(buff2 + 3);
         }
         cw[2] = '\0';

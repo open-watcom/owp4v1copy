@@ -213,7 +213,7 @@ static  condcode    scan_att_optionsA( gaflags * att_flags )
             break;
         }
         p = tok_start;
-        switch( tolower( *p ) ) {
+        switch( my_tolower( *p ) ) {
         case   'u' :
             if( (arg_flen > 1) && (arg_flen < 11)
                 && !strnicmp( "UPpercase", p, arg_flen ) ) {
@@ -277,7 +277,7 @@ static  condcode    scan_att_optionsB( gavalflags * val_flags, condcode cca,
     stringval[0] = '\0';
     cc = pos;
 
-    switch( tolower( *tok_start ) ) {
+    switch( my_tolower( *tok_start ) ) {
     case   'a' :
         if( !strnicmp( "ANY", tok_start, arg_flen ) ) {
 
@@ -506,21 +506,21 @@ void    scr_ga( void )
             xx_err( err_tag_name_inv );
             return;
         }
-        savetag = '*';                  // remember for possible quick access
+        savetag = '*';                      // remember for possible quick access
         if( GlobalFlags.firstpass && (input_cbs->fmflags & II_research) ) {
             out_msg("  using tagname %s\n", tagname );
         }
     } else {
-        savetag = ' ';                  // no quick access
+        savetag = ' ';                      // no quick access
 
-        init_tag_att();            // forget previous values for quick access
+        init_tag_att();                     // forget previous values for quick access
 
         pn      = tagname;
         len     = 0;
 
         while( *p && is_macro_char( *p ) ) {
             if( len < TAG_NAME_LENGTH ) {
-                *pn++ = tolower( *p++ );// copy lowercase tagname
+                *pn++ = my_tolower( *p++ ); // copy lowercase tagname
                 *pn   = '\0';
             } else {
                 break;
@@ -533,12 +533,12 @@ void    scr_ga( void )
         tagname[TAG_NAME_LENGTH] = '\0';
 
         if( len < arg_flen ) {
-            xx_err( err_tag_name_inv );// name contains invalid or too many chars
+            xx_err( err_tag_name_inv );     // name contains invalid or too many chars
             return;
         }
         tag_entry = find_tag( &tag_dict, tagname );
         if( tag_entry == NULL ) {
-            nottag_err();               // tagname not defined
+            nottag_err();                   // tagname not defined
             return;
         }
     }
@@ -547,7 +547,7 @@ void    scr_ga( void )
     /* isolate attname  use previous if attname *                          */
     /***********************************************************************/
 
-    cc = getarg();                      // Attribute  name or *
+    cc = getarg();                          // Attribute  name or *
 
     if( cc == omit || (*tok_start == '*' && att_entry == NULL) ) {
         // no operands or attname * and no previous definition
@@ -562,20 +562,20 @@ void    scr_ga( void )
             xx_err( err_att_name_inv );
             return;
         }
-        saveatt = '*';                  // remember for possible quick access
+        saveatt = '*';                      // remember for possible quick access
         if( GlobalFlags.firstpass && (input_cbs->fmflags & II_research) ) {
             out_msg("  using attname %s\n", attname );
         }
         att_flags = att_entry->attflags;
     } else {
-        saveatt = ' ';                  // no quick access
+        saveatt = ' ';                      // no quick access
         att_entry = NULL;
         pn      = attname;
         len     = 0;
 
         while( *p && is_macro_char( *p ) ) {
             if( len < ATT_NAME_LENGTH ) {
-                *pn++ = tolower( *p++ );// copy lowercase tagname
+                *pn++ = my_tolower( *p++ ); // copy lowercase tagname
                 *pn   = '\0';
             } else {
                 break;

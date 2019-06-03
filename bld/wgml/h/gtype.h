@@ -106,6 +106,9 @@
 #define vbar2   '\xdd'
 #define l_q     '\x60'
 
+#define my_tolower( p )     tolower( (unsigned char)(p) )
+#define my_toupper( p )     toupper( (unsigned char)(p) )
+
 typedef uint32_t    line_number;
 typedef uint8_t     text_space;
 typedef uint32_t    units_space;

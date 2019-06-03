@@ -89,7 +89,7 @@ condcode    scr_strip( parm parms[MAX_FUN_PARMS], size_t parmcount, char * * res
             pe  = parms[1].e;
 
             unquote_if_quoted( &pa, &pe );
-            type = tolower( *pa );
+            type = my_tolower( *pa );
 
             switch( type ) {
             case   'b':

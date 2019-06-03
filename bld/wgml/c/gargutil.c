@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description: utility functions for arguments 
+* Description: utility functions for arguments
 *
 ****************************************************************************/
 
@@ -49,7 +49,7 @@ char parse_char( const char *pa, size_t len )
                 if( isdigit( *pa ) ) {
                     c += *pa - '0';
                 } else {
-                    c += toupper( *pa ) - 'A' + 10;
+                    c += my_toupper( *pa ) - 'A' + 10;
                 }
                 pa++;
             }

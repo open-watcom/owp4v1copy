@@ -333,7 +333,7 @@ void    scr_dm( void )
      */
     while( *p && is_macro_char( *p ) ) {
         if( len < MAC_NAME_LENGTH ) {
-            *pn++ = tolower( *p++ );    // copy lowercase macroname
+            *pn++ = my_tolower( *p++ ); // copy lowercase macroname
             *pn   = '\0';
         } else {
             break;
@@ -436,8 +436,8 @@ void    scr_dm( void )
             if( *p == SCR_char ) {      // possible macro end
                 int second = (*(p + 1) == SCR_char);// for ..dm case
 
-                if( tolower( *(p + 1 + second) ) == 'd' &&
-                    tolower( *(p + 2 + second) ) == 'm' &&
+                if( my_tolower( *(p + 1 + second) ) == 'd' &&
+                    my_tolower( *(p + 2 + second) ) == 'm' &&
                     (*(p + 3 + second) == ' ' || *(p + 3 + second) == '\0') ) {
 
                     garginit();

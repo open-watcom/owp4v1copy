@@ -114,7 +114,7 @@ condcode    scr_translate( parm parms[MAX_FUN_PARMS], size_t parmcount, char * *
 
     if( (ptabia == NULL) && (ptaboa == NULL) && !padchar_set ) {
         while( (pval <= pend) && (ressize > 0) ) {  // translate to upper
-            **result = toupper( *pval++ );
+            **result = my_toupper( *pval++ );
             *result += 1;
             ressize--;
         }

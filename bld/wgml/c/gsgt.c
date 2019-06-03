@@ -265,7 +265,7 @@ static  condcode    scan_tag_options( gtflags * tag_flags )
             break;
         }
         p = tok_start;
-        switch( tolower( *p ) ) {
+        switch( my_tolower( *p ) ) {
         case   'a' :
             if( (arg_flen > 2) && (arg_flen < 12)
                 && !strnicmp( "ATTributes", p, arg_flen ) ) {
@@ -394,9 +394,9 @@ void    scr_gt( void )
             }
         }
     } else {
-        savetag = ' ';               // no global function for delete / print
+        savetag = ' ';                      // no global function for delete / print
 
-        init_tag_att();            // forget previous values for quick access
+        init_tag_att();                     // forget previous values for quick access
         attname[0] = '*';
 
         pn      = tagname;
@@ -404,7 +404,7 @@ void    scr_gt( void )
 
         while( *p && is_macro_char( *p ) ) {
             if( len < TAG_NAME_LENGTH ) {
-                *pn++ = tolower( *p++ );// copy lowercase tagname
+                *pn++ = my_tolower( *p++ ); // copy lowercase tagname
                 *pn   = '\0';
             } else {
                 break;
@@ -436,7 +436,7 @@ void    scr_gt( void )
 
     p = tok_start;
     function = 0;
-    switch( tolower( *p ) ) {
+    switch( my_tolower( *p ) ) {
     case   'a':
         if( !strnicmp( "ADD ", p, 4 ) ) {
 
@@ -502,7 +502,7 @@ void    scr_gt( void )
 
         while( *p && is_macro_char( *p ) ) {
             if( len < MAC_NAME_LENGTH ) {
-                *pn++ = tolower( *p++ );    // copy lowercase macroname
+                *pn++ = my_tolower( *p++ );     // copy lowercase macroname
                 *pn   = '\0';
             } else {
                 break;

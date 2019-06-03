@@ -732,7 +732,7 @@ static void gen_index( void )
     first[0] = true;
     while( ixh1 != NULL ) {             // level 1
 
-        if( letter[0] != toupper( *(ixh1->ix_term) ) ) {
+        if( letter[0] != my_toupper( *(ixh1->ix_term) ) ) {
 
             /* Set g_subs_skip for IXHEAD */
 
@@ -741,7 +741,7 @@ static void gen_index( void )
 
             /* Generate IXHEAD heading */
 
-            letter[0] = toupper( *(ixh1->ix_term) );
+            letter[0] = my_toupper( *(ixh1->ix_term) );
 
             if( (4 * wgml_fonts[layout_work.ixhead.font].line_height)
                    + g_subs_skip

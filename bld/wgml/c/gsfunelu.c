@@ -214,13 +214,13 @@ static char *scr_single_func_u( char * in, char * end, char * * result )
             pval =  symvar_entry.name;  // not found use variable name
         }
         while( *pval ) {
-            **result = toupper( *pval++ );
+            **result = my_toupper( *pval++ );
             *result += 1;
         }
     } else {                            // string
         pchar = in + 3;
         while( !((*pchar == ' ') || (*pchar == '.') || (pchar == end)) ) {
-            **result = toupper( *pchar++ );
+            **result = my_toupper( *pchar++ );
             *result += 1;
         }
     }
@@ -332,14 +332,14 @@ static char *scr_single_func_x( char * in, char * end, char * * result )
                 if( isdigit( *pchar ) ) {
                     c += *pchar - '0';
                 } else {
-                    c += toupper( *pchar ) - 'A' + 10;
+                    c += my_toupper( *pchar ) - 'A' + 10;
                 }
                 c *= 16;
                 pchar++;
                 if( isdigit( *pchar ) ) {
                     c += *pchar - '0';
                 } else {
-                    c += toupper( *pchar ) - 'A' + 10;
+                    c += my_toupper( *pchar ) - 'A' + 10;
                 }
 
                 **result = c;

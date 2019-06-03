@@ -182,7 +182,7 @@ static const bool internal_to_su( su *in_su, bool tag, const char *base )
     pu = ps;
     for( i = 0; i < 2; i++ ) {                  // max two characters in unit
         if( *ps && isalpha( *ps ) ) {
-            unit[k++] = tolower( *ps );          // save Unit
+            unit[k++] = my_tolower( *ps );      // save Unit
             ps++;
         } else {
             break;

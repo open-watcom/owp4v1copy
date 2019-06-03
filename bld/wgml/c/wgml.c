@@ -354,8 +354,8 @@ static bool test_macro_xxxx( char const * beginend )
         if( (*p == SCR_char)  || (*p == '\'') ) {
             p++;
         }
-        cw[0] = tolower( *p++ );
-        cw[1] = tolower( *p++ );
+        cw[0] = my_tolower( *p++ );
+        cw[1] = my_tolower( *p++ );
         c = *p++;
 
         cw[2] = '\0';
@@ -389,16 +389,16 @@ static  bool    test_comment( void )
 
     if( *buff2 == SCR_char ) {          // test for .*  .cm
         if( (*(buff2 + 1) == '*') ||
-            ((tolower( *(buff2 + 1) ) == 'c') &&
-             (tolower( *(buff2 + 2) ) == 'm') &&
+            ((my_tolower( *(buff2 + 1) ) == 'c') &&
+             (my_tolower( *(buff2 + 2) ) == 'm') &&
              (*(buff2+3) == ' ')) ) {
            return( true );
         }
     } else {                            // test for :cmt
         if( (*buff2 == GML_char) &&
-            (tolower( *(buff2 + 1) ) == 'c') &&
-            (tolower( *(buff2 + 2) ) == 'm') &&
-            (tolower( *(buff2 + 3) ) == 't')
+            (my_tolower( *(buff2 + 1) ) == 'c') &&
+            (my_tolower( *(buff2 + 2) ) == 'm') &&
+            (my_tolower( *(buff2 + 3) ) == 't')
         ) {
             if( (*(buff2 + 4) == ' ') ||
                 (*(buff2 + 4) == '.')  ) {

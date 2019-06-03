@@ -1344,7 +1344,7 @@ void ob_setup( void )
     /* The record type must be "t"; it must have only one character and be */
     /* followed by ":".                                                    */
 
-    if( tolower( (out_file_attr[0] ) != 't') || (out_file_attr[1] != ':') ) {
+    if( ( my_tolower( out_file_attr[0] ) != 't' ) || ( out_file_attr[1] != ':' ) ) {
         xx_simple_err_c( err_rec_att_not_sup, out_file_attr );
     }
 

@@ -1435,10 +1435,10 @@ static cmd_tok  *process_option( option * op_table, cmd_tok * tok )
 
     option_start = tok->token;
     p = option_start;
-    c = tolower( *p );
+    c = my_tolower( *p );
     if( option_delimiter( c ) ) {
         p++;
-        c = tolower( *p );
+        c = my_tolower( *p );
     }
     tokennext = tok->nxt;
     for( i = 0; ; i++ ) {
@@ -1462,7 +1462,7 @@ static cmd_tok  *process_option( option * op_table, cmd_tok * tok )
                     op_table[i].function( &op_table[i]);
                     return( tokennext );
                 }
-                c = tolower( p[j] );
+                c = my_tolower( p[j] );
                 if( *opt != c ) {
                     if( *opt < 'A' || *opt > 'Z' ) break;
                     if( *opt != p[j] ) break;
@@ -1494,13 +1494,13 @@ static cmd_tok  *process_option_old( option * op_table, cmd_tok * tok )
     option_start = p;
     len = tok->toklen;
     tokennext = tok->nxt;
-    c = tolower( *p );
+    c = my_tolower( *p );
     if(  c == '(' ) {
         if( len == 1 ) {
             return( tokennext );        // skip single (
         }
         p++;
-        c = tolower( *p );
+        c = my_tolower( *p );
     }
     for( i = 0; ; i++ ) {
         opt = op_table[i].option;
@@ -1604,7 +1604,7 @@ static cmd_tok  *process_option_old( option * op_table, cmd_tok * tok )
             } else if( *opt == '=' ) {  // collect an optional '='
                 if( p[j] == '=' || p[j] == '#' ) ++j;
             } else {
-                c = tolower( p[j] );
+                c = my_tolower( p[j] );
                 if( *opt != c ) {
                     if( *opt < 'A' || *opt > 'Z' ) break;
                     if( *opt != p[j] ) break;
@@ -1637,18 +1637,18 @@ static bool is_option( void )
     p = tokennext->token;
     option_start = p;
     len = tokennext->toklen;
-    c = tolower( *p );
+    c = my_tolower( *p );
     if(  c == '(' ) {
         if( len == 1 ) {            // skip single (
             tokennext = tokennext->nxt;
             p = tokennext->token;
             option_start = p;
             len = tokennext->toklen;
-            c = tolower( *p );
+            c = my_tolower( *p );
         } else {
             p++;
             len--;
-            c = tolower( *p );
+            c = my_tolower( *p );
         }
     }
     for( i = 0; ; i++ ) {
@@ -1664,10 +1664,10 @@ static bool is_option( void )
     p = tokennext->token;
     option_start = p;
     len = tokennext->toklen;
-    c = tolower( *p );
+    c = my_tolower( *p );
     if( option_delimiter( c ) ) {
         p++;
-        c = tolower( *p );
+        c = my_tolower( *p );
     }
     for( i = 0; ; i++ ) {
         opt = GML_new_Options[i].option;

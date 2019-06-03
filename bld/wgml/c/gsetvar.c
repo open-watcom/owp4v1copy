@@ -77,7 +77,7 @@ char    *scan_sym( char * p, symvar * sym, sub_index * subscript )
                     k = 1;
                 }
             }
-            sym->name[k++] = tolower( *p );
+            sym->name[k++] = my_tolower( *p );
             sym->name[k] = '\0';
         } else {
             if( !scan_err ) {
