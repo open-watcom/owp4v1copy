@@ -270,7 +270,7 @@ static void ign_option( option * opt )
             if( tokennext == NULL )  break;
             if( tokennext->bol ) break;
             if( tokennext->token[0] == '(' ) break;
-            if( is_option() == true ) break;
+            if( is_option() ) break;
             tokennext = tokennext->nxt;
         }
     }
@@ -293,7 +293,7 @@ static void wng_option( option * opt )
             if( tokennext == NULL )  break;
             if( tokennext->bol ) break;
             if( tokennext->token[0] == '(' ) break;
-            if( is_option() == true ) break;
+            if( is_option() ) break;
             tokennext = tokennext->nxt;
         }
     }
@@ -311,7 +311,7 @@ static void set_altext( option * opt )
     char    *   p;
     int         len;
 
-    if( tokennext == NULL || tokennext->bol || is_option() == true ) {
+    if( tokennext == NULL || tokennext->bol || is_option() ) {
         bad_cmd_line( err_missing_opt_value, opt->option, ' ' );
     } else {
         len = tokennext->toklen;
@@ -343,7 +343,7 @@ static void set_bind( option * opt )
     su          bindwork;
 
     if( tokennext == NULL || tokennext->bol || tokennext->token[0] == '('
-                                            || is_option() == true ) {
+                                            || is_option() ) {
 
         g_err( err_miss_inv_opt_value, opt->option, "" );
         err_count++;
@@ -366,7 +366,7 @@ static void set_bind( option * opt )
 
             tokennext = tokennext->nxt; // check for optional bind even val
             if( tokennext == NULL || tokennext->bol ||
-                tokennext->token[0] == '(' || is_option() == true ) {
+                tokennext->token[0] == '(' || is_option() ) {
 
                 memcpy_s( &bind_even, sizeof( bind_even), &bind_odd,
                           sizeof( bind_odd ) );  // use bind_odd
@@ -402,7 +402,7 @@ static void set_cpinch( option * opt )
     char        wkstring[MAX_L_AS_STR];
 
     if( tokennext == NULL || tokennext->bol ||
-        tokennext->token[0] == '(' || is_option() == true ) {
+        tokennext->token[0] == '(' || is_option() ) {
 
         g_err( err_missing_opt_value, opt->option );
         err_count++;
@@ -434,7 +434,7 @@ static void set_lpinch( option * opt )
     char    *   p;
 
     if( tokennext == NULL || tokennext->bol ||
-        tokennext->token[0] == '(' || is_option() == true ) {
+        tokennext->token[0] == '(' || is_option() ) {
 
         g_err( err_missing_opt_value, opt->option );
         err_count++;
@@ -464,7 +464,7 @@ static void set_lpinch( option * opt )
 
 static void set_delim( option * opt )
 {
-    if( tokennext == NULL || is_option() == true
+    if( tokennext == NULL || is_option()
                           || tokennext->toklen != 1 ) {       // not length 1
         g_err( err_miss_inv_opt_value, opt->option,
                 tokennext == NULL ? " " : tokennext->token );
@@ -488,7 +488,7 @@ static void set_device( option * opt )
     char    *   p;
     int         len;
 
-    if( tokennext == NULL || tokennext->bol || is_option() == true ) {
+    if( tokennext == NULL || tokennext->bol || is_option() ) {
         bad_cmd_line( err_missing_device_name, opt->option, ' ' );
     } else {
         len = tokennext->toklen;
@@ -538,12 +538,12 @@ static bool font_points( cmd_tok * in_tok, char buff[5] )
                 good = false;
                 break;
             }
-            if( has_pt == true ) post_pt++;
+            if( has_pt ) post_pt++;
             else pre_pt++;
         }
         else has_pt = true;
     }
-    if( good == false || pre_pt > 2 || post_pt > 2 ) return( false );
+    if( !good || pre_pt > 2 || post_pt > 2 ) return( false );
     i = 0;
     if( pre_pt > 0 ) {
         if( pre_pt == 1 ) {
@@ -557,7 +557,8 @@ static bool font_points( cmd_tok * in_tok, char buff[5] )
             i++;
         }
     }
-    if( has_pt == true ) i++;
+    if( has_pt )
+        i++;
     if( post_pt > 0 ) {
         if( post_pt == 1) {
             buff[2] = p[i];
@@ -607,7 +608,7 @@ static void set_font( option * opt )
     opts[1] = NULL;
     opts[2] = NULL;
 
-    if( tokennext == NULL || tokennext->bol || is_option() == true ) {
+    if( tokennext == NULL || tokennext->bol || is_option() ) {
         bad_cmd_line( err_missing_font_number, opt->option, ' ' );
         mem_free( new_font );
         new_font = NULL;
@@ -624,7 +625,7 @@ static void set_font( option * opt )
             }
         }
 
-        if( good == false ) {
+        if( !good ) {
             bad_cmd_line( err_invalid_font_number, p, ' ' );
             tokennext = tokennext->nxt;
         } else {
@@ -640,7 +641,7 @@ static void set_font( option * opt )
         }
     }
 
-    if( tokennext == NULL || tokennext->bol || is_option() == true ) {
+    if( tokennext == NULL || tokennext->bol || is_option() ) {
         bad_cmd_line( err_missing_font_name, opt->option, ' ' );
         mem_free( new_font );
         new_font = NULL;
@@ -660,17 +661,17 @@ static void set_font( option * opt )
         tokennext = tokennext->nxt;
     }
 
-    if( tokennext != NULL && !tokennext->bol && is_option() == false ) {
+    if( tokennext != NULL && !tokennext->bol && !is_option() ) {
         opts_cnt++;
         opts[0] = tokennext;
         tokennext = tokennext->nxt;
 
-        if( tokennext != NULL && !tokennext->bol && is_option() == false ) {
+        if( tokennext != NULL && !tokennext->bol && !is_option() ) {
             opts_cnt++;
             opts[1] = tokennext;
             tokennext = tokennext->nxt;
 
-            if( tokennext != NULL && !tokennext->bol && is_option() == false ) {
+            if( tokennext != NULL && !tokennext->bol && !is_option() ) {
                 opts_cnt++;
                 opts[2] = tokennext;
                 tokennext = tokennext->nxt;
@@ -686,7 +687,7 @@ static void set_font( option * opt )
         pts[4] = '\0';
         len = opts[0]->toklen;
         p = opts[0]->token;
-        if( font_points( opts[0], pts ) == true ) {
+        if( font_points( opts[0], pts ) ) {
             fn = atoi( pts );
             if( fn > MAX_CENTIPOINTS ) {
                 bad_cmd_line( err_invalid_font_space, p, ' ' );
@@ -716,7 +717,7 @@ static void set_font( option * opt )
             pts[4] = '\0';
             len = opts[1]->toklen;
             p = opts[1]->token;
-            if( font_points( opts[1], pts ) == false ) {
+            if( !font_points( opts[1], pts ) ) {
                 bad_cmd_line( err_invalid_font_height, p, ' ' );
             } else {
                 fn = atoi( pts );
@@ -728,7 +729,7 @@ static void set_font( option * opt )
                 }
             }
         } else {
-            if( font_points( opts[0], pts ) == true ) {
+            if( font_points( opts[0], pts ) ) {
                 fn = atoi( pts );
                 if( fn > MAX_CENTIPOINTS ) {
                     bad_cmd_line( err_invalid_font_space, p, ' ' );
@@ -741,7 +742,7 @@ static void set_font( option * opt )
                 pts[4] = '\0';
                 len = opts[1]->toklen;
                 p = opts[1]->token;
-                if( font_points( opts[1], pts ) == false ) {
+                if( !font_points( opts[1], pts ) ) {
                     bad_cmd_line( err_invalid_font_height, p, ' ' );
                 } else {
                     fn = atoi( pts );
@@ -766,7 +767,7 @@ static void set_font( option * opt )
                 pts[4] = '\0';
                 len = opts[1]->toklen;
                 p = opts[1]->token;
-                if( font_points( opts[1], pts ) == true ) {
+                if( font_points( opts[1], pts ) ) {
                     fn = atoi( pts );
                     if( fn > MAX_CENTIPOINTS ) {
                         bad_cmd_line( err_invalid_font_space, p, ' ' );
@@ -796,7 +797,7 @@ static void set_font( option * opt )
             pts[4] = '\0';
             len = opts[2]->toklen;
             p = opts[2]->token;
-            if( font_points( opts[2], pts ) == false ) {
+            if( !font_points( opts[2], pts ) ) {
                 bad_cmd_line( err_invalid_font_height, p, ' ' );
             } else {
                 fn = atoi( pts );
@@ -812,7 +813,7 @@ static void set_font( option * opt )
             pts[4] = '\0';
             len = opts[1]->toklen;
             p = opts[1]->token;
-            if( font_points( opts[1], pts ) == false ) {
+            if( !font_points( opts[1], pts ) ) {
                 bad_cmd_line( err_invalid_font_space, p, ' ' );
             } else {
                 fn = atoi( pts );
@@ -828,7 +829,7 @@ static void set_font( option * opt )
             pts[4] = '\0';
             len = opts[2]->toklen;
             p = opts[2]->token;
-            if( font_points( opts[2], pts ) == false ) {
+            if( !font_points( opts[2], pts ) ) {
                 bad_cmd_line( err_invalid_font_height, p, ' ' );
             } else {
                 fn = atoi( pts );
@@ -886,7 +887,7 @@ static void set_layout( option * opt )
     char    attrwork[MAX_FILE_ATTR];
     struct  laystack    * laywk;
 
-    if( tokennext == NULL || tokennext->bol || is_option() == true ) {
+    if( tokennext == NULL || tokennext->bol || is_option() ) {
         g_err( err_miss_inv_opt_value, opt->option, "" );
         err_count++;
     } else {
@@ -921,7 +922,7 @@ static void set_outfile( option * opt )
     int     len;
     char    attrwork[MAX_FILE_ATTR];
 
-    if( tokennext == NULL || tokennext->bol || is_option() == true ) {
+    if( tokennext == NULL || tokennext->bol || is_option() ) {
         g_err( err_miss_inv_opt_value, opt->option, "" );
         err_count++;
         out_file = NULL;
@@ -955,7 +956,7 @@ static void set_passes( option * opt )
     char    *   p;
 
     if( tokennext == NULL || tokennext->bol ||
-        tokennext->token[0] == '(' || is_option() == true ) {
+        tokennext->token[0] == '(' || is_option() ) {
 
         g_err( err_missing_opt_value, opt->option );
         err_count++;
@@ -984,7 +985,7 @@ static void set_from( option * opt )
     char    *   p;
 
     if( tokennext == NULL || tokennext->bol ||
-        tokennext->token[0] == '(' || is_option() == true ) {
+        tokennext->token[0] == '(' || is_option() ) {
 
         g_err( err_missing_opt_value, opt->option );
         err_count++;
@@ -1015,7 +1016,7 @@ static void set_symbol( option * opt )
     int32_t     rc;
 
     if( tokennext == NULL || tokennext->bol ||
-        tokennext->token[0] == '(' || is_option() == true ) {
+        tokennext->token[0] == '(' || is_option() ) {
 
         g_err( err_missing_name, opt->option );
         err_count++;
@@ -1025,7 +1026,7 @@ static void set_symbol( option * opt )
         tokennext = tokennext->nxt;
 
         if( tokennext == NULL || tokennext->bol ||
-            tokennext->token[0] == '(' || is_option() == true ) {
+            tokennext->token[0] == '(' || is_option() ) {
 
             g_err( err_missing_value, opt->option );
             err_count++;
@@ -1047,7 +1048,7 @@ static void set_to( option * opt )
     char    *   p;
 
     if( tokennext == NULL || tokennext->bol ||
-        tokennext->token[0] == '(' || is_option() == true ) {
+        tokennext->token[0] == '(' || is_option() ) {
 
         g_err( err_missing_value, opt->option );
         err_count++;
@@ -1114,7 +1115,7 @@ static void set_OPTFile( option * opt )
     char    *   str;
 
 
-    if( tokennext == NULL || tokennext->bol || is_option() == true
+    if( tokennext == NULL || tokennext->bol || is_option()
         /* || tokennext->token[0] == '('  allow (t:123)file.opt construct */
                                          ) {
         g_err( err_missing_value, opt->option );
@@ -1213,7 +1214,7 @@ static void set_research( option * opt )
 
     GlobalFlags.research = opt->value;
 
-    if( tokennext == NULL || tokennext->bol || is_option() == true
+    if( tokennext == NULL || tokennext->bol || is_option()
             || tokennext->token[0] == '(' ) {
         str[0] = '\0';
     } else {
@@ -1233,7 +1234,7 @@ static void set_research( option * opt )
                 strcpy_s( research_file_name, sizeof( research_file_name ), str );
             }
             tokennext = tokennext->nxt;
-            if( tokennext == NULL || tokennext->bol || is_option() == true
+            if( tokennext == NULL || tokennext->bol || is_option()
                     || tokennext->token[0] == '(' ) {
                 /* nothing to do */
             } else {                    // get from and to values
@@ -1241,7 +1242,7 @@ static void set_research( option * opt )
                 strcat( str, " " );
                 strcat( str, tokennext->token );
                 tokennext = tokennext->nxt;
-                if( tokennext == NULL || tokennext->bol || is_option() == true
+                if( tokennext == NULL || tokennext->bol || is_option()
                         || tokennext->token[0] == '(' ) {
                     /* nothing to do */
                 } else {
@@ -1252,13 +1253,13 @@ static void set_research( option * opt )
                 }
             }
         } else {
-            if( tokennext == NULL || tokennext->bol || is_option() == true
+            if( tokennext == NULL || tokennext->bol || is_option()
                     || tokennext->token[0] == '(' ) {
                 /* nothing to do */
             } else {                    // get from and to values
                 research_from = get_num_value( tokennext->token );
                 tokennext = tokennext->nxt;
-                if( tokennext == NULL || tokennext->bol || is_option() == true
+                if( tokennext == NULL || tokennext->bol || is_option()
                         || tokennext->token[0] == '(' ) {
                     /* nothing to do */
                 } else {
@@ -1774,7 +1775,7 @@ int proc_options( char * string )
             /***************************************************************/
                 tok = process_option( GML_new_Options, tok );
 
-                if( tok != NULL && tok->bol == false ) {
+                if( tok != NULL && !tok->bol ) {
 
                     /*******************************************************/
                     /*  allow master filename if following 'new' option    */

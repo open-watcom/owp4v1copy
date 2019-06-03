@@ -749,7 +749,7 @@ static void gen_index( void )
                 next_column();
             }
 
-            if( layout_work.ixhead.header == true ) {
+            if( layout_work.ixhead.header ) {
                 spc_count = wgml_fonts[layout_work.ixhead.font].width_table[(unsigned char) *letter] /
                             wgml_fonts[layout_work.ixhead.font].spc_width;  // integer ratio
                 if( (wgml_fonts[layout_work.ixhead.font].width_table[(unsigned char) *letter] %

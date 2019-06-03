@@ -299,7 +299,7 @@ static void remove_indentation( void )
             ProcFlags.CW_indented = true;
             ProcFlags.CW_sep_ignore = false;
         } else {                                    // *p == '\''
-            if( ProcFlags.CW_indented == false ) {  // first indent
+            if( !ProcFlags.CW_indented ) {          // first indent
                 ProcFlags.CW_indented = true;
                 ProcFlags.CW_sep_ignore = true;
             }
