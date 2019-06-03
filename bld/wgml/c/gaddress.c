@@ -177,7 +177,7 @@ void gml_aline( const gmltag * entry )
         g_err_tag_prec( "ADDRESS" );
     }
     p = scan_start;
-    if( *p == '.' ) p++;                // over '.'
+    SkipDot( p );                       // over '.'
 
     while( *p == ' ' ) {                // over WS to <text line>
         p++;

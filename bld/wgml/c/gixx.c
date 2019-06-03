@@ -283,7 +283,7 @@ static void gml_ixxx_common( const gmltag * entry, int hx_lvl )
         }
     }
 
-    if( *p == '.' ) p++;        // possible tag end
+    SkipDot( p );               // possible tag end
     while( *p == ' ' ) p++;     // step over spaces
     if( hx_lvl > 0 ) {          // not for IREF, take existing text, if any, as-is
         while( !*p ) {          // we need a text line for :Ix :IHx
@@ -343,9 +343,9 @@ static void gml_ixxx_common( const gmltag * entry, int hx_lvl )
             }
 
             if( !ProcFlags.reprocess_line && *p ) {
-                if( *p == '.' ) p++;                // possible tag end
+                SkipDot( p );                       // possible tag end
                 if( *p ) {
-                    process_text( p, g_curr_font); // if text follows
+                    process_text( p, g_curr_font);  // if text follows
                 }
             }
 

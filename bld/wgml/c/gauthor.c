@@ -49,7 +49,7 @@ void gml_author( const gmltag * entry )
         xx_nest_err_cc( err_tag_wrong_sect, entry->tagname, ":TITLEP section" );
     }
     p = scan_start;
-    if( *p && *p == '.' ) p++;          // over . to docnum
+    SkipDot( p );                       // over . to docnum
 
     while( *p == ' ' ) {                // over WS to <text line>
         p++;

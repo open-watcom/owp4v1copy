@@ -109,6 +109,10 @@
 #define my_tolower( p )     tolower( (unsigned char)(p) )
 #define my_toupper( p )     toupper( (unsigned char)(p) )
 
+#define SkipSpaces( p )     while( *(p) == ' ' ) (p)++
+#define SkipNonSpaces( p )  while( *(p) != '\0' && *(p) != ' ' ) (p)++
+#define SkipDot( p )        if( *(p) == '.' ) (p)++
+
 typedef uint32_t    line_number;
 typedef uint8_t     text_space;
 typedef uint32_t    units_space;

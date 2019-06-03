@@ -60,7 +60,7 @@ extern  void    gml_pb( const gmltag * entry )
         ProcFlags.skips_valid = false;  // convert g_post_skip to g_subs_skip
     }
 
-    if( *p == '.' ) p++;                // over '.'
+    SkipDot( p );                       // over '.'
     post_space = 0;
     if( *p ) {
         process_text( p, g_curr_font );

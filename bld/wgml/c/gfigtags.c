@@ -707,7 +707,7 @@ void gml_fig( const gmltag * entry )
     ProcFlags.keep_left_margin = true;  // keep special indent
 
     if( !ProcFlags.reprocess_line && *p ) {
-        if( *p == '.' ) p++;                // possible tag end
+        SkipDot( p );                       // possible tag end
         if( *p ) {
             process_text( p, g_curr_font); // if text follows
         }
@@ -744,7 +744,7 @@ void gml_efig( const gmltag * entry )
     /* Done here because needed for the minimum post_skip */
 
     p = scan_start;
-    if( *p == '.' ) p++;                    // possible tag end
+    SkipDot( p );                           // possible tag end
 
     if( cur_group_type != gt_fig ) {        // no preceding :FIG tag
         g_err_tag_prec( "FIG" );
@@ -1164,7 +1164,7 @@ void gml_figcap( const gmltag * entry )
 
     g_curr_font = layout_work.figcap.font;
     if( *p ) {
-        if( *p == '.' ) p++;                // possible tag end
+        SkipDot( p );                       // possible tag end
         while( *p == ' ' ) p++;             // skip preceding spaces
         post_space = 0;                     // g_curr_left should be enough
         input_cbs->fmflags &= ~II_sol;      // prefix was SOL, so this is not
@@ -1223,7 +1223,7 @@ void gml_figdesc( const gmltag * entry )
 
     nest_cb->font = g_curr_font;        // support font changes inside description
 
-    if( *p == '.' ) p++;                // possible tag end
+    SkipDot( p );                       // possible tag end
     if( *p ) {
         ProcFlags.concat = true;        // even if was false on entry
         process_text( p, g_curr_font);  // if text follows

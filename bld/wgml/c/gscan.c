@@ -244,9 +244,7 @@ static void scan_gml( void )
                         }
                         processed = true;
                         lay_ind = k;    // now process attributes if any
-                        if( *scan_start == '.' ) {
-                            scan_start++;
-                        }
+                        SkipDot( scan_start );
                         break;
                     }
                 }
@@ -354,9 +352,7 @@ static void scan_gml( void )
                             g_err_tag_rsloc( rs_loc, tok_start );
                         }
                         processed = true;
-                        if( *scan_start == '.' ) {
-                            scan_start++;
-                        }
+                        SkipDot( scan_start );
                         break;
                     }
                 }
@@ -990,9 +986,7 @@ char * get_text_line( char * p )
 
     if( !ProcFlags.reprocess_line  ) {  // still on last line of tag
         while( *p == ' ' ) p++;         // skip initial spaces
-        if( *p == '.' ) {
-            p++;                        // possible tag end
-        }
+        SkipDot( p );                   // possible tag end
         if( *p == '\0' ) {              // get new line
             while( *p == '\0' ) {
                 if( !(input_cbs->fmflags & II_eof) ) {

@@ -87,7 +87,7 @@ static void gml_xl_lp_common( e_tags t )
     scan_err = false;
     p = scan_start;
     while( *p == ' ' ) p++;                 // skip spaces
-    if( *p == '.' ) p++;                    // skip tag end
+    SkipDot( p );                           // skip tag end
     if( t != t_LP ) {                       // text only allowed for :LP
         if( t != t_DL && t != t_GL ) {      // DL/GL don't require LI/LP
             ProcFlags.need_li_lp = true;    // :LI or :LP  next
@@ -667,7 +667,7 @@ static void     gml_exl_common( const gmltag * entry )
     t_page.cur_width = t_page.cur_left;
     scan_err = false;
     p = scan_start;
-    if( *p == '.' ) p++;            // over '.'
+    SkipDot( p );                       // over '.'
     if( *p ) {
         do_force_pc( p );
     } else {
@@ -914,7 +914,7 @@ static  void    gml_li_ol( const gmltag * entry )
     ju_x_start = t_page.cur_width;
 
     g_curr_font = nest_cb->u.ol_layout->font;
-    if( *p == '.' ) p++;                // over '.'
+    SkipDot( p );                       // over '.'
     while( *p == ' ' ) p++;             // skip initial spaces
     if( *p ) {
         process_text( p, g_curr_font ); // if text follows
@@ -963,7 +963,7 @@ static  void    gml_li_sl( const gmltag * entry )
     ju_x_start = t_page.cur_width;
 
     g_curr_font = nest_cb->u.sl_layout->font;
-    if( *p == '.' ) p++;                // over '.'
+    SkipDot( p );                       // over '.'
     while( *p == ' ' ) p++;             // skip initial spaces
     if( *p ) {
         process_text( p, g_curr_font ); // if text follows
@@ -1026,7 +1026,7 @@ static  void    gml_li_ul( const gmltag * entry )
     ju_x_start = t_page.cur_width;
 
     g_curr_font = nest_cb->u.ul_layout->font;
-    if( *p == '.' ) p++;                // over '.'
+    SkipDot( p );                       // over '.'
     while( *p == ' ' ) p++;             // skip initial spaces
     if( *p ) {
         process_text( p, g_curr_font ); // if text fullows
@@ -1157,7 +1157,7 @@ void    gml_lp( const gmltag * entry )
     ProcFlags.para_starting = true;     // for next break, not this tag's break
     dl_gl_starting = false;
 
-    if( *p == '.' ) p++;                // possible tag end
+    SkipDot( p );                       // possible tag end
     while( *p == ' ' ) p++;             // skip initial spaces
     if( *p ) {
         process_text( p, g_curr_font ); // if text follows
@@ -1279,7 +1279,7 @@ void gml_ddhd( const gmltag * entry )
 
     ddhd_done = true;   // override compact if DT follows
 
-    if( *p == '.' ) p++;                // skip tag end
+    SkipDot( p );                       // skip tag end
     while( *p == ' ' ) p++;             // skip initial spaces
     if( *p ) {
         process_text( p, g_curr_font ); // if text follows
@@ -1410,7 +1410,7 @@ void gml_dd( const gmltag * entry )
 
     ju_x_start = t_page.cur_width;
 
-    if( *p == '.' ) p++;                // possible tag end
+    SkipDot( p );                       // possible tag end
     while( *p == ' ' ) p++;             // skip initial spaces
     if( *p ) {
         process_text( p, g_curr_font ); // if text follows
@@ -1543,7 +1543,7 @@ void gml_gd( const gmltag * entry )
 
     ju_x_start = t_page.cur_width;
 
-    if( *p == '.' ) p++;                // possible tag end
+    SkipDot( p );                       // possible tag end
     while( *p == ' ' ) p++;             // skip initial spaces
     if( *p ) {
         process_text( p, g_curr_font ); // if text follows

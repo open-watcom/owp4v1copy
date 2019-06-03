@@ -154,7 +154,7 @@ void gml_xmp( const gmltag * entry )
     }
 
     if( !ProcFlags.reprocess_line && *p ) { // text after tag
-        if( *p == '.' ) p++;                // possible tag end
+        SkipDot( p );                       // possible tag end
         if( *p ) {
             process_text( p, g_curr_font);  // if text follows
         }
@@ -234,7 +234,7 @@ void gml_exmp( const gmltag * entry )
         } else {
             test_depth2 = test_depth1;
         }
-        
+
         if( test_depth2 > t_page.max_depth ) {          // block moves even without final vspace element (if present)
             next_column();  //  the block won't fit on this page (or in this column)
         } else if( test_depth2 != test_depth1 ) {      // clear final vspace element
@@ -258,7 +258,7 @@ void gml_exmp( const gmltag * entry )
     t_page.cur_width = t_page.cur_left;
     scan_err = false;
     p = scan_start;
-    if( *p == '.' ) p++;            // over '.'
+    SkipDot( p );                   // over '.'
     if( *p ) {
         do_force_pc( p );
     } else {

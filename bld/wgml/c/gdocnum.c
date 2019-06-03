@@ -57,7 +57,7 @@ void    gml_docnum( const gmltag * entry )
     }
 
     p = scan_start;
-    if( *p && *p == '.' ) p++;          // over . to docnum
+    SkipDot( p );                       // over . to docnum
 
     while( *p == ' ' ) {                // over WS to attribute
         p++;

@@ -82,7 +82,7 @@ void    gml_title( const gmltag * entry )
         }
     }
 
-    if( *p && *p == '.' ) p++;          // over . to docnum
+    SkipDot( p );                       // over . to docnum
 
     while( *p == ' ' ) {                // over WS to title
         p++;

@@ -246,7 +246,7 @@ void    gml_graphic( const gmltag * entry )
     }
 
     if( !ProcFlags.reprocess_line && *p ) {
-        if( *p == '.' ) p++;                // possible tag end
+        SkipDot( p );                       // possible tag end
         if( *p ) {                          // only if text follows
             process_text( p, g_curr_font );
         }

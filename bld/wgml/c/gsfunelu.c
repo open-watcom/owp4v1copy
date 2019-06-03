@@ -59,16 +59,14 @@ static char *scr_single_func_e( char * in, char * end, char * * result )
                           &symsubval );
     }
     if( rc == 2 ) {
-        **result = '1';                 // exists
+        **result = '1';             // exists
     } else {
-        **result = '0';                 // does not exist
+        **result = '0';             // does not exist
     }
     *result  += 1;
     **result = '\0';
 
-    if( *pchar == '.' ) {
-        pchar++;                    // skip optional terminating dot
-    }
+    SkipDot( pchar );               // skip optional terminating dot
     return( pchar );
 }
 
@@ -114,9 +112,7 @@ static char *scr_single_func_l( char * in, char * end, char * * result )
     *result  += strlen( *result );
     **result = '\0';
 
-    if( *pchar == '.' ) {
-        pchar++;                    // skip optional terminating dot
-    }
+    SkipDot( pchar );               // skip optional terminating dot
     return( pchar );
 }
 
@@ -174,9 +170,7 @@ static char *scr_single_func_sS( char * in, char * end, char * * result, char fu
     *result += 1;
     **result = '\0';
 
-    if( *pchar == '.' ) {
-        pchar++;                    // skip optional terminating dot
-    }
+    SkipDot( pchar );               // skip optional terminating dot
     return( pchar );
 }
 
@@ -226,9 +220,7 @@ static char *scr_single_func_u( char * in, char * end, char * * result )
     }
     **result = '\0';
 
-    if( *pchar == '.' ) {
-        pchar++;                    // skip optional terminating dot
-    }
+    SkipDot( pchar );               // skip optional terminating dot
     return( pchar );
 }
 
@@ -289,9 +281,7 @@ static char *scr_single_func_w( char * in, char * end, char * * result )
     *result  += strlen( *result );
     **result = '\0';
 
-    if( *pchar == '.' ) {
-        pchar++;                    // skip optional terminating dot
-    }
+    SkipDot( pchar );               // skip optional terminating dot
     return( pchar );
 }
 
@@ -347,9 +337,7 @@ static char *scr_single_func_x( char * in, char * end, char * * result )
             }
             **result = '\0';
             pchar++;                            // skip final 2nd hex digit
-            if( *pchar == '.' ) {
-                pchar++;                        // skip optional terminating dot
-            }
+            SkipDot( pchar );                   // skip optional terminating dot
         }
     }
 

@@ -163,9 +163,7 @@ char    *scan_sym( char * p, symvar * sym, sub_index * subscript )
                 if( *p == ')' ) {
                     p++;
                 }
-                if( *p == '.' ) {
-                    p++;
-                }
+                SkipDot( p );
             } else {
                 if( !scan_err && !ProcFlags.suppress_msg ) {
                     g_err( err_sub_invalid, psave );

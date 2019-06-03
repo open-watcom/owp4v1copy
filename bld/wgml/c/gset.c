@@ -27,11 +27,11 @@
 * Description:  GML :SET processing
 *
 ****************************************************************************/
- 
- 
+
+
 #include "wgml.h"
- 
- 
+
+
 /***************************************************************************/
 /*   :SET symbol='symbol-name'                                             */
 /*        value='character-string'                                         */
@@ -46,7 +46,7 @@
 /* be assigned to the symbol name.  If the attribute value delete is used, */
 /* the symbol referred to by the symbol name is deleted.                   */
 /***************************************************************************/
- 
+
 extern  void    gml_set( const gmltag * entry )
 {
     bool            symbol_found    = false;
@@ -57,10 +57,10 @@ extern  void    gml_set( const gmltag * entry )
     symvar          sym;
     sub_index       subscript;
     symvar      * * working_dict;
- 
+
     subscript = no_subscript;           // not subscripted
     scan_err = false;
- 
+
     p = scan_start;
     if( *p == '.' ) {
         /* already at tag end */
@@ -121,7 +121,7 @@ extern  void    gml_set( const gmltag * entry )
     }
 
     if( !ProcFlags.reprocess_line && *p ) {
-        if( *p == '.' ) p++;                // possible tag end
+        SkipDot( p );                       // possible tag end
         if( *p ) {
             post_space = 0;
             ProcFlags.ct = true;
@@ -131,4 +131,4 @@ extern  void    gml_set( const gmltag * entry )
     scan_start = scan_stop + 1;
     return;
 }
- 
+

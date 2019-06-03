@@ -106,7 +106,7 @@ static void gml_inline_common( const gmltag * entry, int level, e_tags t )
 
     scan_err = false;
     p = scan_start;
-    if( *p == '.' ) p++;                // over '.'
+    SkipDot( p );                       // over '.'
     if( *p ) {
         if( ProcFlags.force_pc ) {
             do_force_pc( p );
@@ -213,7 +213,7 @@ static void gml_e_inlne_common( const gmltag * entry, e_tags t )
 
         scan_err = false;
         p = scan_start;
-        if( *p == '.' ) p++;            // over '.'
+        SkipDot( p );                   // over '.'
         if( *p ) {
             process_text( p, g_curr_font );
         }

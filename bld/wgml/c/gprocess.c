@@ -516,9 +516,7 @@ bool resolve_symvar_functions( char * buf )
                                 // if variable starts with SINGLE cw separator
                                 // and ignore cw separator
 
-                    if( *pchar == '.' ) {
-                        pchar++;        // skip optional terminating dot
-                    }
+                    SkipDot( pchar );   // skip optional terminating dot
                     *p2 = '\0';
                     split_input_var( buf, pchar, &symsubval->value[1], true );
                     pw = pwend + 1;     // stop substitution for this record
@@ -534,9 +532,7 @@ bool resolve_symvar_functions( char * buf )
                     }
                     strcpy( p2, pw );   // copy value
                     p2 += strlen(pw);
-                    if( *pchar == '.' ) {
-                        pchar++;        // skip optional terminating dot
-                    }
+                    SkipDot( pchar );   // skip optional terminating dot
                     pw = pchar;
                 }
             } else {                    // variable not found
@@ -560,17 +556,15 @@ bool resolve_symvar_functions( char * buf )
                             *p2++ = *pw++;  // and copy
                         }
 
-                        continue;       // pchar points already to next &
+                        continue;           // pchar points already to next &
 
-                    } else {     // replace not found local var by nullstring
+                    } else {    // replace not found local var by nullstring
                         ProcFlags.substituted = true;
-                        if( *pchar == '.' ) {
-                            pchar++;    // skip optional terminating dot
-                        }
+                        SkipDot( pchar );   // skip optional terminating dot
                         pw = pchar;
                     }
-                } else {                // global var not found
-                                        // .. or local var outside of macro
+                } else {                    // global var not found
+                                            // .. or local var outside of macro
                     /*******************************************************/
                     /*  keep trying for constructs such as                 */
                     /*                                                     */
@@ -601,11 +595,9 @@ bool resolve_symvar_functions( char * buf )
                     }
 
                     pw = varstart;
-                    if( *pchar == '.' ) {
-                        pchar++;        // copy terminating dot, too
-                    }
+                    SkipDot( pchar );       // copy terminating dot, too
                     while( pw < pchar ) {   // treat var name as text
-                        *p2++ = *pw++;  // and copy
+                        *p2++ = *pw++;      // and copy
                     }
                 }
             }

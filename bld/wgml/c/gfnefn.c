@@ -64,7 +64,7 @@ void gml_fn( const gmltag * entry )
     g_keep_nest( "Footnote" );          // catch nesting errors
 
     p = scan_start;
-    if( *p == '.' ) p++;                // possible tag end
+    SkipDot( p );                       // possible tag end
 
     fn_count++;                         // get current FN number
     if( *p == '.' ) {
@@ -173,7 +173,7 @@ void gml_fn( const gmltag * entry )
     ProcFlags.keep_left_margin = true;  // keep special indent
 
     if( !ProcFlags.reprocess_line && *p ) {
-        if( *p == '.' ) p++;                // possible tag end
+        SkipDot( p );                       // possible tag end
         while( *p == ' ' ) p++;             // skip preceding spaces
         input_cbs->fmflags &= ~II_sol;      // number was SOL, so this is not
         ProcFlags.concat = true;            // concatenation on
@@ -231,7 +231,7 @@ void gml_efn( const gmltag * entry )
 
     scan_err = false;
     p = scan_start;
-    if( *p == '.' ) p++;                // possible tag end
+    SkipDot( p );                       // possible tag end
     if( *p ) {
         process_text( p, g_curr_font);  // if text follows
     }

@@ -73,7 +73,7 @@ static void proc_p_pc( p_lay_tag * p_pc )
     scan_err = false;
     p = scan_start;
 
-    if( *p == '.' ) p++;                // over '.'
+    SkipDot( p );                       // over '.'
 
     if( *p ) {
         process_text( p, g_curr_font );
@@ -136,7 +136,7 @@ extern void gml_note( const gmltag * entry )
     g_curr_font = layout_work.defaults.font;
 
     set_skip_vars( NULL, NULL, NULL, g_text_spacing, g_curr_font );
-    if( *p == '.' ) p++;                // over '.'
+    SkipDot( p );                       // over '.'
     while( *p == ' ' ) p++;             // skip initial space
     if( *p ) {                          // if text follows
         post_space = 0;
@@ -173,7 +173,7 @@ extern void do_force_pc( char * p )
 {
     p_pc_setup( &layout_work.pc );
 
-    if( *p == '.' ) p++;                // over '.'
+    SkipDot( p );                       // over '.'
 
     if( *p ) {
         process_text( p, g_curr_font );

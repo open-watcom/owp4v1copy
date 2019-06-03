@@ -415,9 +415,7 @@ bool        process_tag( gtentry * ge, mac_entry * me )
                 return( processed );
             }
             // '.' immediately after the tag does not count as text
-            if( *p == '.' ) {
-                p++;
-            }
+            SkipDot( p );
             while( *p == ' ' ) {        // spaces don't count as text
                 p++;
             }
@@ -433,9 +431,7 @@ bool        process_tag( gtentry * ge, mac_entry * me )
             return( processed );
         }
         // '.' immediately after the tag is not passed to the macro
-        if( *p == '.' ) {
-            p++;
-        }
+        SkipDot( p );
         strcpy( token_buf, p );
         rc = add_symvar( &loc_dict, "_", token_buf, no_subscript, local_var );
         p += strlen( token_buf );
