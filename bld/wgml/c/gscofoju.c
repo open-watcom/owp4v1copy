@@ -143,15 +143,9 @@ static void process_co_ju( bool both , char *cwcurr )
     int             len;
 
     p = scan_start;
-
-    while( *p && *p == ' ' ) {          // next word start
-        p++;
-    }
+    SkipSpaces( p );                    // next word start
     pa = p;
-
-    while( *p && *p != ' ' ) {          // end of word
-        p++;
-    }
+    SkipNonSpaces( p );                 // end of word
     len = p - pa;
     switch( len ) {
     case 0 :                            // omitted means ON
@@ -277,14 +271,9 @@ void    scr_co( void )
     cwcurr[3] = '\0';
 
     p = scan_start;
-    while( *p && *p == ' ' ) {          // next word start
-        p++;
-    }
+    SkipSpaces( p );                    // next word start
     pa = p;
-
-    while( *p && *p != ' ' ) {          // end of word
-        p++;
-    }
+    SkipNonSpaces( p );                 // end of word
     len = p - pa;
     switch( len ) {
     case 0 :                            // omitted means ON

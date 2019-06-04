@@ -1729,6 +1729,7 @@ void process_text( const char *text, font_number font )
 {
     const char          *   pword;
     const char          *   p;
+    const char          *   pa;
 
     bool                    wrap_done       = false;
     bool                    stop_fnd;
@@ -1848,21 +1849,17 @@ void process_text( const char *text, font_number font )
         t_line = alloc_text_line();
     }
     if( t_line->first == NULL ) {    // first phrase in paragraph
-        if( !ProcFlags.in_fb_fk_block || !ProcFlags.concat ) {
+        // skip initial spaces
+        pa = p;
+        SkipSpaces( p );
+        tab_space = p - pa;
+        if( !ProcFlags.in_fb_fk_block ) {
             post_space = 0;
         }
-        tab_space = 0;
-        if( ProcFlags.concat ) {    // ".co on": skip initial spaces
-            while( *p == ' ' ) {
-                p++;
-                tab_space++;
-            }
-        } else {                    // ".co off": compute initial spacing
-            while( *p == ' ' ) {
-                post_space += wgml_fonts[font].spc_width;
-                p++;
-                tab_space++;
-            }
+        // ".co on": skip initial spaces
+        // ".co off": compute initial spacing
+        if( !ProcFlags.concat ) {
+            post_space = tab_space * wgml_fonts[font].spc_width;
             if( !*p && !(input_cbs->fmflags & II_eol) ) {
 
                 /* if no text follows, insert text_chars for post_space */
@@ -1907,14 +1904,9 @@ void process_text( const char *text, font_number font )
                         post_space += wgml_fonts[font].spc_width;
                     }
                     if( (c_stop != NULL) && (t_line->last->width == 0) ) {
-                        while( *p ) {   // locate the first non-space character, if any
-                            if( *p != ' ' ) {
-                                break;
-                            }
-                            p++;
-                        }
+                        SkipSpaces( p );        // locate the first non-space character, if any
                         tab_space = p - text;
-                        p = text;       // restore p to start of text
+                        p = text;               // restore p to start of text
                         if( tab_space != strlen( p ) ) {  // something follows the spaces
                             if( count == tab_space ) {     // and it is a tab character
                                 // insert a marker
@@ -1946,10 +1938,8 @@ void process_text( const char *text, font_number font )
                 t_line->last = n_chars;
                 n_chars = NULL;
             }
+            SkipSpaces( p );        // skip initial spaces
 
-            while( *p == ' ' ) {    // skip initial spaces
-                p++;
-            }
         } else {                    // ".co off": increment initial spacing
             if( (post_space > 0) && (font != g_prev_font) ) { // font changed
                 n_chars = process_word( NULL, 0, g_prev_font );
@@ -1965,10 +1955,9 @@ void process_text( const char *text, font_number font )
                 t_line->last = n_chars;
                 n_chars = NULL;
             }
-            while( *p == ' ' ) {
-                post_space += wgml_fonts[font].spc_width;
-                p++;
-            }
+            pa = p;
+            SkipSpaces( p );
+            post_space += ( p - pa ) * wgml_fonts[font].spc_width;
             if( !*p ) { // text is entirely spaces
                 n_chars = process_word( NULL, 0, font );
                 n_chars->type = tx_norm;
@@ -2362,11 +2351,10 @@ void process_text( const char *text, font_number font )
                 post_space += wgml_fonts[font].spc_width;
             }
             p++;
-            while( *p == ' ' ) {
-                if( (cur_group_type == gt_xmp) ) {   // multiple blanks
-                    post_space += wgml_fonts[font].spc_width;
-                }
-                p++;
+            pa = p;
+            SkipSpaces( p );
+            if( (cur_group_type == gt_xmp) ) {   // multiple blanks
+                post_space += ( p - pa ) * wgml_fonts[font].spc_width;
             }
             p--;                    // back off non-space character, whatever it was
             tab_space = p - pword + 1;

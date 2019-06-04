@@ -56,14 +56,9 @@ static void sksp_common( void )
 
     p = scan_start;
     if( *p ) {
-        while( *p == ' ' ) {
-            p++;
-        }
+        SkipSpaces( p );
         pa = p;
-
-        while( *p && *p != ' ' ) {          // end of word
-            p++;
-        }
+        SkipNonSpaces( p );                 // end of word
         len = p - pa;
 
         if( len > 0 ) {                     // arguments exist
@@ -74,14 +69,9 @@ static void sksp_common( void )
             }
 
             while( *p ) {                   // the operands can appear in either order, or not at all
-                while( *p == ' ' ) {
-                    p++;
-                }
-
+                SkipSpaces( p );
                 pa = p;
-                while( *pa && (*pa != ' ') ) {
-                    pa++;
-                }
+                SkipNonSpaces( pa );
                 len = pa - p;
                 if( !a_seen && (len <= 3) ) {
                     if( !memicmp( p, "abs", len ) ) {   // wgml 4.0 matches 'a', 'ab', 'abs' only

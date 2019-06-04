@@ -1085,9 +1085,7 @@ void    init_sysparm( char * cmdline, char * banner )
         sysparm0.value = cmdline;       // empty cmdline
     } else {
         p++;
-        while( *p == ' ' ) {            // over leading blanks
-            p++;
-        }
+        SkipSpaces( p );                // over leading blanks
         sysparm0.value = p;
 
         p += strlen( p ) - 1;

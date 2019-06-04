@@ -58,10 +58,7 @@ void    gml_docnum( const gmltag * entry )
 
     p = scan_start;
     SkipDot( p );                       // over . to docnum
-
-    while( *p == ' ' ) {                // over WS to attribute
-        p++;
-    }
+    SkipSpaces( p );                    // over WS to attribute
 
     /* Prepend the docnum_string, if any */
 

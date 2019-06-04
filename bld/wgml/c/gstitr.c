@@ -148,9 +148,7 @@ void    scr_ti( void )
 
     p = scan_start;
 
-    while( *p && *p == ' ' ) {          // next word start
-        p++;
-    }
+    SkipSpaces( p );                    // next word start
 
     cop_ti_table( p );
     add_to_sysdir( "$tiset", in_esc );  // put in dictionary
@@ -166,9 +164,7 @@ void    scr_tr( void )
 
     p = scan_start;
 
-    while( *p && *p == ' ' ) {          // next word start
-        p++;
-    }
+    SkipSpaces( p );                // next word start
     cop_tr_table( p );
 
     scan_restart = scan_stop + 1;

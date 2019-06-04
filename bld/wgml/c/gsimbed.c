@@ -160,9 +160,7 @@ void    scr_im( void )
     getnum_block    gn;
 
     p = scan_start;
-    while( *p == ' ' ) {
-        p++;
-    }
+    SkipSpaces( p );
 
     gn.argstart = p;
     gn.argstop  = scan_stop;

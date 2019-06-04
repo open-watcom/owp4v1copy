@@ -104,16 +104,11 @@ static char * get_params( const char * scw_name ) {
     su                  fbk_su;
 
     p = scan_start;
-
-    while( *p && (*p == ' ') ) {
-        p++;
-    }
+    SkipSpaces( p );
 
     if( *p ) {                  // at least one potential operand
         pa = p;
-        while( *p && (*p != ' ') ) {
-            p++;
-        }
+        SkipNonSpaces( p );
         len = p - pa;
 
         /* Identify the first operand */
@@ -130,9 +125,7 @@ static char * get_params( const char * scw_name ) {
         if( cur_cmd == fbk_none ) {
             p = pa;                                 // reset, invalid input
         } else {
-            while( *p && (*p == ' ') ) {            // find next argument, if any
-                p++;
-            }
+            SkipSpaces( p );                        // find next argument, if any
             if( *p ) {
                 if( cur_cmd == fbk_begin ) {        // begin does not allow another operand
                     xx_val_line_warn( wng_too_many_ops, scw_name, p );

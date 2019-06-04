@@ -84,15 +84,9 @@ void    scr_li( void )
     cwcurr[3] = '\0';
 
     p = scan_start;
-
-    while( *p && *p == ' ' ) {          // next word start
-        p++;
-    }
+    SkipSpaces( p );                    // next word start
     pa = p;
-
-    while( *p && *p != ' ' ) {          // end of word
-        p++;
-    }
+    SkipNonSpaces( p );                 // end of word
     len = p - pa;
     if( len == 0 ) {                    // omitted means 1 = next line
         if( !ProcFlags.literal ) {

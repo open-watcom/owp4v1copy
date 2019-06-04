@@ -112,7 +112,7 @@ static void gml_ixxx_common( const gmltag * entry, int hx_lvl )
     /*        as text and appear in the document text                      */
     /***********************************************************************/
 
-    while( *p == ' ' ) p++;
+    SkipSpaces( p );
     if( *p == '.' ) {
         /* already at tag end */
     } else {
@@ -284,13 +284,13 @@ static void gml_ixxx_common( const gmltag * entry, int hx_lvl )
     }
 
     SkipDot( p );               // possible tag end
-    while( *p == ' ' ) p++;     // step over spaces
+    SkipSpaces( p );            // step over spaces
     if( hx_lvl > 0 ) {          // not for IREF, take existing text, if any, as-is
         while( !*p ) {          // we need a text line for :Ix :IHx
             get_line( true );
             p = buff2;
         }
-        while( *p == ' ' ) p++; // step over spaces
+        SkipSpaces( p );        // step over spaces
     }
 
     /***********************************************************************/

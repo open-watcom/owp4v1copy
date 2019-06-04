@@ -495,9 +495,7 @@ void    scr_if( void )
             cb->if_flags[cb->if_level].iftrue = false;
         }
 
-        while( *scan_start == ' ' ) {
-            scan_start++;
-        }
+        SkipSpaces( scan_start );
 
 /*
  * test logical condition if not line end
@@ -642,9 +640,7 @@ void    scr_th( void )
 
     garginit();                         // find end of control word
 
-    while( *scan_start == ' ' ) {
-        scan_start++;
-    }
+    SkipSpaces( scan_start );
 
     if( *scan_start ) {                 // rest of line is not empty split
         split_input( buff2, scan_start, true );// and process next
@@ -715,9 +711,7 @@ void    scr_el( void )
     }
     garginit();                         // find end of control word
 
-    while( *scan_start == ' ' ) {
-        scan_start++;
-    }
+    SkipSpaces( scan_start );
 
     if( *scan_start ) {                 // rest of line is not empty split
         split_input( buff2, scan_start, true );// and process next

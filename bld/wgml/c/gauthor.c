@@ -50,10 +50,7 @@ void gml_author( const gmltag * entry )
     }
     p = scan_start;
     SkipDot( p );                       // over . to docnum
-
-    while( *p == ' ' ) {                // over WS to <text line>
-        p++;
-    }
+    SkipSpaces( p );                    // over WS to <text line>
 
     /* Only first AUTHOR is used in banners */
 

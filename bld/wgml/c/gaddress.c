@@ -178,10 +178,7 @@ void gml_aline( const gmltag * entry )
     }
     p = scan_start;
     SkipDot( p );                       // over '.'
-
-    while( *p == ' ' ) {                // over WS to <text line>
-        p++;
-    }
+    SkipSpaces( p );                    // over WS to <text line>
 
     scr_process_break();
     start_doc_sect();                       // if not already done

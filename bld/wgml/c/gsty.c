@@ -62,9 +62,7 @@ void    scr_ty( void )
 {
     char    *   p = scan_start + 1;
 
-    while( *p == ' ' ) {                // wgml 4.0 ignores leading blanks
-        p++;                            // let's do the same
-    }
+    SkipSpaces( p );            // wgml 4.0 ignores leading blanks, let's do the same
     if( *p == '\0' ) {
         p--;
     }

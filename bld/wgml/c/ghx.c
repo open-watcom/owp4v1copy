@@ -662,7 +662,7 @@ static void gml_hx_common( const gmltag * entry, hdsrc hn_lvl )
     }
 
     p = scan_start;
-    while( *p == ' ' ) p++;
+    SkipSpaces( p );
     if( *p == '.' ) {
         /* already at tag end */
     } else {

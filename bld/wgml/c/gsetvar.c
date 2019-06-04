@@ -49,9 +49,7 @@ char    *scan_sym( char * p, symvar * sym, sub_index * subscript )
     sym->flags = 0;
     *subscript = no_subscript;          // not subscripted
 
-    while( *p && *p == ' ' ) {          // skip over spaces
-        p++;
-    }
+    SkipSpaces( p );                    // skip over spaces
     if( *p == d_q || *p == s_q || *p == l_q ) {
         quote = *p++;
     } else {
@@ -246,9 +244,7 @@ void    scr_se( void )
     }
 
     if( ProcFlags.blanks_allowed ) {
-        while( *p && *p == ' ' ) {      // skip over spaces
-            p++;
-        }
+        SkipSpaces( p );                            // skip over spaces
     }
     if( *p == '\0' ) {
         if( !ProcFlags.suppress_msg ) {
@@ -261,9 +257,7 @@ void    scr_se( void )
         if( *p == '=' ) {                       // all other cases have no equal sign (see above)
             p++;
             if( ProcFlags.blanks_allowed ) {
-                while( *p && *p == ' ' ) {      // skip over spaces to value
-                    p++;
-                }
+                SkipSpaces( p );                // skip over spaces to value
             }
             valstart = p;
             if( is_quote_char( *valstart ) ) {      // quotes ?

@@ -1743,9 +1743,7 @@ int proc_options( char * string )
     buffers[0] = NULL;
     cmd_tokens[0] = NULL;
 
-    while( *string == ' ' ) {
-        string++;
-    }
+    SkipSpaces( string );
     s_after_dq = string;                // assume no starting quote
     if( *string == d_q ) {              // take care of possible quotes
         for( p = string + 1; *p; p++ )  /* empty */ ;

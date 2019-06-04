@@ -2095,9 +2095,7 @@ void    lay_convert( const gmltag * entry )
         ProcFlags.layout = true;
         return;                         // process during first pass only
     }
-    while( *p == ' ' ) {
-        p++;
-    }
+    SkipSpaces( p );
     *token_buf = '\0';
     if( !strnicmp( "file=", p, 5 ) ) {  // file attribute?
         char    quote;

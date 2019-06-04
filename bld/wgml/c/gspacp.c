@@ -104,15 +104,9 @@ void scr_pa( void )
     cwcurr[3] = '\0';
 
     p = scan_start;
-
-    while( *p && *p == ' ' ) {          // next word start
-        p++;
-    }
+    SkipSpaces( p );                    // next word start
     pa = p;
-
-    while( *p && *p != ' ' ) {          // end of word
-        p++;
-    }
+    SkipNonSpaces( p );                 // end of word
     len = p - pa;
     switch( len ) {
     case 7 :
@@ -257,15 +251,9 @@ void scr_cp( void )
     cwcurr[3] = '\0';
 
     p = scan_start;
-
-    while( *p && *p == ' ' ) {          // next word start
-        p++;
-    }
+    SkipSpaces( p );                    // next word start
     pa = p;
-
-    while( *p && *p != ' ' ) {          // end of word
-        p++;
-    }
+    SkipNonSpaces( p );                 // end of word
     len = p - pa;
     if( len > 0 ) {                     // no action if no parm
         gn.argstart = pa;

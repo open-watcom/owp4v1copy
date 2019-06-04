@@ -303,9 +303,7 @@ void gml_sf( const gmltag * entry )
     font_number     font;
 
     p = scan_start;
-    while( *p == ' ' ) {
-        p++;
-    }
+    SkipSpaces( p );
     if( *p == '.' ) {
         /* already at tag end */
     } else {

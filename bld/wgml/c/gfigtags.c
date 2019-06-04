@@ -1165,7 +1165,7 @@ void gml_figcap( const gmltag * entry )
     g_curr_font = layout_work.figcap.font;
     if( *p ) {
         SkipDot( p );                       // possible tag end
-        while( *p == ' ' ) p++;             // skip preceding spaces
+        SkipSpaces( p );                    // skip preceding spaces
         post_space = 0;                     // g_curr_left should be enough
         input_cbs->fmflags &= ~II_sol;      // prefix was SOL, so this is not
         if( pass == 1 ) {                   // only on first pass

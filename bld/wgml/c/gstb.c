@@ -136,26 +136,16 @@ void    scr_tb( void )
     int             len;
 
     p = scan_start;
-    while( *p && (*p != ' ') ) {            // over tb
-        p++;
-    }
-    while( *p && (*p == ' ') ) {            // first token
-        p++;
-    }
+    SkipNonSpaces( p );                     // over tb
+    SkipSpaces( p );                        // first token
     pa = p;
-    while( *p && (*p != ' ') ) {            // token end
-        p++;
-    }
+    SkipNonSpaces( p );                     // token end
     len = p - pa;
 
     if( (len == 3) &&  !memicmp( pa , "set", len ) ) {
-        while( *p && (*p == ' ') ) {        // tab char
-            p++;
-        }
+        SkipSpaces( p );                    // tab char
         pa = p;
-        while( *p && (*p != ' ') ) {        // end tab char
-            p++;
-        }
+        SkipNonSpaces( p );                 // end tab char
         len = p - pa;
         if( len == 0 ) {
             tab_char = 0x09;                // reset to default value
@@ -166,13 +156,9 @@ void    scr_tb( void )
         }
         add_to_sysdir( "$tb", tab_char );
         add_to_sysdir( "$tab", tab_char );
-        while( *p && (*p == ' ') ) {        // end of line
-            p++;
-        }
+        SkipSpaces( p );                    // end of line
         pa = p;
-        while( *p && (*p != ' ') ) {        // end of line
-            p++;
-        }
+        SkipNonSpaces( p );                 // end of line
         len = p - pa;                       // should be "0"
         if( len != 0 ) {
             xx_line_err( err_tab_char, pa );
@@ -244,16 +230,12 @@ void    scr_tb( void )
 
             // Parse the tab stop position
 
-            while( *p && (*p == ' ') ) {
-                p++;
-            }
+            SkipSpaces( p );
             pa = p;                             // tab position start
 
             t_pos.ignore_blanks = false;
             t_pos.argstart = p;
-            while( *p && (*p != ' ') ) {        // tab position end plus 1
-                p++;
-            }
+            SkipNonSpaces( p );                 // tab position end plus 1
             if( *p && (p > pa) ) {              // as needed by getnum
                 p--;                            // *p is last character of tab stop
             }
@@ -342,13 +324,9 @@ void    scr_tb( void )
                 }
             }
             if( *p != ' ' ) {
-                while( *p && (*p != ' ') ) {    // find end of tab stop
-                    p++;
-                }
+                SkipNonSpaces( p );             // find end of tab stop
             }
-            while( *p && (*p == ' ') ) {        // find next tab position
-                p++;
-            }
+            SkipSpaces( p );                    // find next tab position
         }
     }
 

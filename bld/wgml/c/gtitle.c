@@ -83,10 +83,7 @@ void    gml_title( const gmltag * entry )
     }
 
     SkipDot( p );                       // over . to docnum
-
-    while( *p == ' ' ) {                // over WS to title
-        p++;
-    }
+    SkipSpaces( p );                    // over WS to title
 
     if( GlobalFlags.firstpass && !ProcFlags.title_text_seen && *p ) {   // first title goes into dictionary
         add_symvar( &global_dict, "$title", p, no_subscript, 0 );

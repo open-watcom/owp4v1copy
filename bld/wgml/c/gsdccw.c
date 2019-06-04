@@ -285,15 +285,9 @@ void    scr_cw( void )
     int             len;
 
     p = scan_start;
-
-    while( *p && *p == ' ' ) {          // next word start
-        p++;
-    }
+    SkipSpaces( p );                    // next word start
     pa = p;
-
-    while( *p && *p != ' ' ) {          // end of word
-        p++;
-    }
+    SkipNonSpaces( p );                 // end of word
     len = p - pa;
     if( len > 2 ) {
         xx_line_err( err_inv_cw_sep, pa );
@@ -328,14 +322,9 @@ void    scr_dc( void )
     int const   max_opt = sizeof( options) / sizeof( options[0] );
 
     p = scan_start;
-
-    while( *p && *p == ' ' ) {          // next word start = option
-        p++;
-    }
+    SkipSpaces( p );                    // next word start = option
     pa = p;
-    while( *p && *p != ' ' ) {          // end of word
-        p++;
-    }
+    SkipNonSpaces( p );                 // end of word
     len = p - pa;
     opt = 0;
     if( len > 0 ) {
@@ -350,15 +339,11 @@ void    scr_dc( void )
         dc_opt_warn_len( pa, len );
         return;
     }
-    while( *p && *p == ' ' ) {          // next word start = option value
-        p++;
-    }
+    SkipSpaces( p );                    // next word start = option value
     pa = p;
-    c = '\0';
-    while( *p && *p != ' ' ) {          // end of word
-        p++;
-    }
+    SkipNonSpaces( p );                 // end of word
     len = p - pa;
+    c = '\0';
     if( len == 1 ) {
         c = *pa;
     }

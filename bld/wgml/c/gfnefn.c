@@ -174,7 +174,7 @@ void gml_fn( const gmltag * entry )
 
     if( !ProcFlags.reprocess_line && *p ) {
         SkipDot( p );                       // possible tag end
-        while( *p == ' ' ) p++;             // skip preceding spaces
+        SkipSpaces( p );                    // skip preceding spaces
         input_cbs->fmflags &= ~II_sol;      // number was SOL, so this is not
         ProcFlags.concat = true;            // concatenation on
         if( *p ) {

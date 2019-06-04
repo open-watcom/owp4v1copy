@@ -1319,27 +1319,21 @@ void cop_ti_table( const char *p )
     no_data = true;
 
     pa = p;
-    while( *p && *p != ' ' ) {          // end of word
-        p++;
-    }
+    SkipNonSpaces( p );         // end of word
     len = p - pa;
 
     if( len > 0 ) {
         if( len > 2 ) { // check for ".ti set"
             if( len == 3 ) {
                 if( !strnicmp( pa, "SET", len ) ) {
-                    while( *p && *p == ' ' ) {  // set char start
-                        p++;
-                    }
+                    SkipSpaces( p );        // set char start
                     pa = p;
-                    while( *p && *p != ' ' ) {  // set char start
-                        p++;
-                    }
+                    SkipNonSpaces( p );     // set char start
                     len = p - pa;
-                    if( len == 0 ) {    // no set char: set to ' '
+                    if( len == 0 ) {        // no set char: set to ' '
                         ProcFlags.in_trans = false;
                         in_esc = ' ';
-                    } else if( len > 1 ) { // hex digits are not allowed here
+                    } else if( len > 1 ) {  // hex digits are not allowed here
                         xx_line_err_len( err_char_only, pa, len );
                         return;
                     } else {
@@ -1347,13 +1341,9 @@ void cop_ti_table( const char *p )
                         in_esc = *pa;
                     }
 
-                    while( *p && *p == ' ' ) {  // text or '\0'
-                        p++;
-                    }
+                    SkipSpaces( p );        // text or '\0'
                     pa = p;
-                    while( *p && *p != ' ' ) {  // set char start
-                        p++;
-                    }
+                    SkipNonSpaces( p );     // set char start
                     len = p - pa;
                     if( len > 0 ) {     // additional text not allowed
                         xx_line_err_len( err_char_only, pa, len );
@@ -1377,13 +1367,9 @@ void cop_ti_table( const char *p )
             no_data = false;
         }
         while( *p ) {
-            while( *p && *p == ' ' ) {  // next char start
-                p++;
-            }
+            SkipSpaces( p );            // next char start
             pa = p;
-            while( *p && *p != ' ' ) {  // next char start
-                p++;
-            }
+            SkipNonSpaces( p );         // next char start
             len = p - pa;
 
             if( len == 0 ) break;   // exit loop if no next char

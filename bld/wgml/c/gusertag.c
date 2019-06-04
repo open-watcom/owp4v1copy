@@ -195,9 +195,7 @@ bool        process_tag( gtentry * ge, mac_entry * me )
     if( ge->attribs != NULL ) {     // only process attributes if they exist
         while( *p == ' ' ) {        // not yet end of tag, process attributes
 
-            while( *p == ' ' ) {        // over WS to attribute
-                p++;
-            }
+            SkipSpaces( p );            // over WS to attribute
             if( *p == '.' ) {
                 tag_end_found = true;
                 break;
@@ -399,9 +397,7 @@ bool        process_tag( gtentry * ge, mac_entry * me )
             if( (*p == '.') || (*p == CW_sep_char) ) {
                 p++;
             }
-            while( *p == ' ' ) {        // spaces don't count as text
-                p++;
-            }
+            SkipSpaces( p );            // spaces don't count as text
             if( *p ) {                  // text found
                 tag_text_err( ge->name );
                 processed = false;
@@ -416,9 +412,7 @@ bool        process_tag( gtentry * ge, mac_entry * me )
             }
             // '.' immediately after the tag does not count as text
             SkipDot( p );
-            while( *p == ' ' ) {        // spaces don't count as text
-                p++;
-            }
+            SkipSpaces( p );            // spaces don't count as text
             if( !*p ) {                 // no text found
                 tag_text_req_err( ge->name );
                 processed = false;

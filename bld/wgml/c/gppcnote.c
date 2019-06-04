@@ -137,7 +137,7 @@ extern void gml_note( const gmltag * entry )
 
     set_skip_vars( NULL, NULL, NULL, g_text_spacing, g_curr_font );
     SkipDot( p );                       // over '.'
-    while( *p == ' ' ) p++;             // skip initial space
+    SkipSpaces( p );                    // skip initial space
     if( *p ) {                          // if text follows
         post_space = 0;
         process_text( p, g_curr_font );

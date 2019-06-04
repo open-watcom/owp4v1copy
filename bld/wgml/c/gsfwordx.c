@@ -194,9 +194,9 @@ static  condcode    scr_xx_word( parm parms[MAX_FUN_PARMS], size_t parmcount,
             *result += 1;
             ressize--;
         }
-        if( pval < tok_start && (*pval != ' ') ) {  // copy last word
-            for( ; pval < tok_start; pval++ ){
-                if( (*pval == ' ') || (ressize <= 0) ) {
+        if( pval < tok_start && ( *pval != ' ' ) ) {    // copy last word
+            for( ; pval < tok_start; pval++ ) {
+                if( ( *pval == ' ' ) || ( ressize <= 0 ) ) {
                     break;
                 }
                 **result = *pval;
@@ -274,7 +274,7 @@ condcode    scr_words( parm parms[MAX_FUN_PARMS], size_t parmcount, char * * res
     for( ; pval <= pend; pval++ ) {     // for all chars in string
 
         for( ; pval <= pend; pval++ ) { // skip leading blanks
-            if( *pval != ' ') {
+            if( *pval != ' ' ) {
                 break;
             }
         }
@@ -284,7 +284,7 @@ condcode    scr_words( parm parms[MAX_FUN_PARMS], size_t parmcount, char * * res
         wc++;                           // start of word found
 
         for( ; pval <= pend; pval++ ) {
-            if( *pval == ' ') {         // end of word found
+            if( *pval == ' ' ) {        // end of word found
                 break;
             }
         }
@@ -363,14 +363,14 @@ condcode    scr_wordpos( parm parms[MAX_FUN_PARMS], size_t parmcount, char * * r
             cc = getnum( &gn );
             if( (cc != pos) || (gn.result == 0) ) {
                 if( !ProcFlags.suppress_msg ) {
-                        g_err( err_func_parm, "3 (startword)" );
-                        if( input_cbs->fmflags & II_tag_mac ) {
-                            ulongtodec( input_cbs->s.m->lineno, linestr );
-                            g_info( inf_mac_line, linestr, input_cbs->s.m->mac->name );
-                        } else {
-                            ulongtodec( input_cbs->s.f->lineno, linestr );
-                            g_info( inf_file_line, linestr, input_cbs->s.f->filename );
-                        }
+                    g_err( err_func_parm, "3 (startword)" );
+                    if( input_cbs->fmflags & II_tag_mac ) {
+                        ulongtodec( input_cbs->s.m->lineno, linestr );
+                        g_info( inf_mac_line, linestr, input_cbs->s.m->mac->name );
+                    } else {
+                        ulongtodec( input_cbs->s.f->lineno, linestr );
+                        g_info( inf_file_line, linestr, input_cbs->s.f->filename );
+                    }
                     err_count++;
                     show_include_stack();
                 }
@@ -379,14 +379,12 @@ condcode    scr_wordpos( parm parms[MAX_FUN_PARMS], size_t parmcount, char * * r
             n = gn.result - 1;
         }
     }
-
-
     scan_start = pstr;
     scan_stop  = pstrend;
     k = 0;
     cc = pos;
     tok_start = pstr;
-    while( (k <= n) && (cc != omit) ) { // find start word
+    while( ( k <= n ) && ( cc != omit ) ) { // find start word
         cc = getarg();
         k++;
     }

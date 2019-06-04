@@ -154,18 +154,11 @@ static void scr_style_common( style_cw_type type, style_cw_info * cw_info )
         cw_info->scope = SCS_count;
         pa = scan_start;                // nothing following
     } else {                            // "pos", "quotes", "quote0"
-        while( *p && *p == ' ' ) {      // first token start
-            p++;
-        }
+        SkipSpaces( p );                // first token start
         pa = p;
-        while( *p && *p != ' ' ) {      // end of token
-            p++;
-        }
+        SkipNonSpaces( p );             // end of token
         len = p - pa;
-
-        while( *p && *p == ' ' ) {      // second token?
-            p++;
-        }
+        SkipSpaces( p );                // second token?
         if( !*p ) {                     // no second token
             if( (len == 3) && (!strnicmp( pa, "OFF", len )) ) { // OFF
                 if( type == SCT_bi ) {

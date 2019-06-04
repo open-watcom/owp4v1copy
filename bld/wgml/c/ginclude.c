@@ -56,7 +56,7 @@
 /* the current directory, the directories specified by the include path    */
 /* list are searched for the file.  If the file is still not found, the    */
 /* directories specified by the DOS environment symbol PATH are searched.  */
-/*                                                                         */ 
+/*                                                                         */
 /* NOTE: The attribute turns out to not, in face, be needed: the token     */
 /*       after the tag is treated as a filename if it is not "file"        */
 /*                                                                         */
@@ -70,9 +70,7 @@ extern  void    gml_include( const gmltag * entry )
     *token_buf = '\0';
     p = scan_start;
     p++;
-    while( *p == ' ' ) {
-        p++;
-    }
+    SkipSpaces( p );
     if( *p == '.' ) {
         /* already at tag end */
     } else {
@@ -101,7 +99,7 @@ extern  void    gml_include( const gmltag * entry )
             scan_start = scan_stop + 1;         // .. and ignore remaining line
         }
     }
-    
+
     return;
 }
 

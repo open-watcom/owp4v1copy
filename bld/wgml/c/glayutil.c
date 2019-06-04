@@ -438,13 +438,11 @@ bool    i_content( char * p, lay_att curr, content * tm )
     }
     if( tm->content_type == string_content ) {  // unquoted single word
         pa = p;
-        len = 0;
-        while( *p && (*p != ' ') ) {
-            p++;
-            len++;
-        }
+        SkipNonSpaces( p );
+        len = p - pa;
         p = pa;                                 // reset to start of word
-        if( len >= str_size ) len = str_size;   // truncate to allowed length
+        if( len >= str_size )
+            len = str_size;                     // truncate to allowed length
         memcpy( tm->string, p, len );
         tm->string[len] = '\0';
     }

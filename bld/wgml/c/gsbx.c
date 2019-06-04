@@ -2272,14 +2272,9 @@ void scr_bx( void )
     }
 
     p = scan_start;
-
-    while( *p && (*p == ' ') ) {
-        p++;
-    }
+    SkipSpaces( p );
     pa = p;
-    while( *p && (*p != ' ') ) {
-        p++;
-    }
+    SkipNonSpaces( p );
     len = p - pa;
 
     /* Identify any non-numeric operand */
@@ -2306,9 +2301,7 @@ void scr_bx( void )
         p = pa;
     }
 
-    while( *p && (*p == ' ') ) {
-        p++;
-    }
+    SkipSpaces( p );
 
     if( !ProcFlags.in_bx_box && !*p ) {     // if not in a box, box columns must be given
         scan_restart = scan_stop + 1;
@@ -2338,18 +2331,14 @@ void scr_bx( void )
                 if( *p == '/' ) {
                     xx_line_err( err_spc_not_valid, p );
                     p++;
-                    while( *p && (*p == ' ') ) {
-                        p++;
-                    }
+                    SkipSpaces( p );
                     continue;
                 }
             } else if( *p == '/' ) {
                 cur_temp->next = alloc_box_col_set();
                 cur_temp = cur_temp->next;
                 p++;
-                while( *p && (*p == ' ') ) {
-                    p++;
-                }
+                SkipSpaces( p );
                 continue;
             }
             pa = p;
@@ -2374,9 +2363,7 @@ void scr_bx( void )
             } else {
                 xx_line_err( err_spc_not_valid, pa );
             }
-            while( *p && (*p == ' ') ) {
-                p++;
-            }
+            SkipSpaces( p );
             cur_temp->current++;
         }
     }

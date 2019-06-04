@@ -305,9 +305,7 @@ static void remove_indentation( void )
             }
             p++;                                    // over '
         }
-        while( *p == ' ' ) {
-            p++;                                    // skip blanks
-        }
+        SkipSpaces( p );                            // skip blanks
         if( *p == SCR_char && *(p + 1) == GML_char ) {
             p++;                                    // skip SCR_char
         }
@@ -361,15 +359,9 @@ static bool test_macro_xxxx( char const * beginend )
         cw[2] = '\0';
         if( c == '\0' || c == ' ' ) {
             if( !strcmp( cw, "dm" ) ) {
-                while( *p && *p == ' ' ) {  // find macroname
-                    p++;
-                }
-                while( *p && *p != ' ' ) {
-                    p++;
-                }
-                while( *p && *p == ' ' ) {  // find begin end
-                    p++;
-                }
+                SkipSpaces( p );            // find macroname
+                SkipNonSpaces( p );
+                SkipSpaces( p );            // find begin end
                 return(  !strnicmp( p, beginend, strlen( beginend ) ) );
             }
         }

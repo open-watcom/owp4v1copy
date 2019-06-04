@@ -182,11 +182,7 @@ static  char    * find_end_of_parm( char * pchar, char * pend )
 static  char    * find_start_of_parm( char * pchar )
 {
     ++pchar;                            // over ( or ,
-    if( *pchar == ' ' ) {
-        while( *pchar == ' ' ) {        // over unquoted blanks
-            ++pchar;
-        }
-    }
+    SkipSpaces( pchar );                // over unquoted blanks
     return( pchar );
 }
 

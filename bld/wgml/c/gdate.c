@@ -57,10 +57,7 @@ void    gml_date( const gmltag * entry )
 
     p = scan_start;
     SkipDot( p );                       // over . to docnum
-
-    while( *p == ' ' ) {                // over WS to attribute
-        p++;
-    }
+    SkipSpaces( p );                    // over WS to attribute
 
     if( *p ) { // date specified
         if( GlobalFlags.firstpass  ) {

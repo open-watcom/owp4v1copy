@@ -570,12 +570,8 @@ bool cw_val_to_su( char * * scanp, su * in_su )
     pa = p;
     ps = s->su_txt;
     *ps = '\0';
-    while( *p && (*p == ' ' ) ) {   // just in case
-        p++;
-    }
-    while( *p && (*p != ' ' ) ) {
-        p++;
-    }
+    SkipSpaces( p );                // just in case
+    SkipNonSpaces( p );
     len = p - pa;
     *scanp = p;                     // report back value of p
     if( (len + 1) > MAX_SU_CHAR ) {
@@ -636,12 +632,8 @@ bool lay_init_su( char * p, su * in_su )
     ps = s->su_txt;
     *ps = '\0';
 
-    while( *p && (*p == ' ' ) ) {   // just in case
-        p++;
-    }
-    while( *p && (*p != ' ' ) ) {
-        p++;
-    }
+    SkipSpaces( p );            // just in case
+    SkipNonSpaces( p );
     len = p - pa;
 
     if( (len + 1) > MAX_SU_CHAR ) {                 // won't fit
@@ -895,9 +887,7 @@ char * get_att_start( char * p )
     ProcFlags.tag_end_found = false;
     for(;;) {                           // loop until potential attribute/rescan line found
         pa = p;                         // save initial location
-        while( *p == ' ' ) {            // over WS to attribute
-            p++;
-        }
+        SkipSpaces( p );                // over WS to attribute
         if( *p == '.' ) {   // end-of-tag
             p++;
             pa = p;         // return next char after end-of-tag
@@ -951,14 +941,10 @@ char * get_att_value( char * p )
     quote_char = '\0';
     val_start = NULL;
     val_len = 0;
-    while( *p == ' ' ) {                // over WS to '='
-        p++;
-    }
+    SkipSpaces( p );                    // over WS to '='
     if( *p == '=' ) {
         p++;
-        while( *p == ' ' ) {            // over WS to value
-            p++;
-        }
+        SkipSpaces( p );                // over WS to value
     } else {
         if( *p == '.' ) {
             ProcFlags.tag_end_found = true;
@@ -1061,9 +1047,7 @@ char * get_tag_value( char * p )
     quote_char = '\0';
     val_start = NULL;
     val_len = 0;
-    while( *p == ' ' ) {                // over WS to '='
-        p++;
-    }
+    SkipSpaces( p );                    // over WS to '='
     if( (*p == '\0') || (*p == '.') ) { // value is missing
         if( *p == '.' ) {
             ProcFlags.tag_end_found = true;

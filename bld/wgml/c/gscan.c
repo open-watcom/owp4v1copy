@@ -985,7 +985,7 @@ char * get_text_line( char * p )
     size_t          toklen                          = 0;
 
     if( !ProcFlags.reprocess_line  ) {  // still on last line of tag
-        while( *p == ' ' ) p++;         // skip initial spaces
+        SkipSpaces( p );                // skip initial spaces
         SkipDot( p );                   // possible tag end
         if( *p == '\0' ) {              // get new line
             while( *p == '\0' ) {
@@ -1008,7 +1008,7 @@ char * get_text_line( char * p )
         ProcFlags.reprocess_line = false;
     }
     if( !use_current ) {                // not on same line as tag
-        while( *p == ' ' ) p++;         // skip initial spaces
+        SkipSpaces( p );                // skip initial spaces
         if( *p ) {                      // text exists
             classify_record( *p );      // sets ProcFlags used below if appropriate
             if( ProcFlags.scr_cw) {

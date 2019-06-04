@@ -146,9 +146,7 @@ void    add_macro_parms( char * p )
         add_symvar( &input_cbs->local_dict, MAC_STAR_NAME, p, no_subscript, local_var );
         star0 = 0;
         tok_start = p;                  // save start of parameter
-        while( *p == ' ' ) {            // find first nonspace character
-            p++;
-        }
+        SkipSpaces( p );                // find first nonspace character
         while( *p ) {                   // as long as there are parms
             if( is_quote_char( *p ) ) { // argument is quoted
                 star0++;
@@ -176,10 +174,8 @@ void    add_macro_parms( char * p )
             } else {                    // look if it is a symbolic variable definition
                 pa = p;
                 pa++;
-                while( *pa && (*pa != ' ') ) {
-                    pa++;
-                }
-                c          = *pa;       // prepare value end
+                SkipNonSpaces( pa );
+                c = *pa;                // prepare value end
                 *pa = '\0';             // terminate string
                 scan_start = p;         // rescan for variable
                 ProcFlags.suppress_msg = true;  // no errmsg please
@@ -203,9 +199,7 @@ void    add_macro_parms( char * p )
                 }
                 p = pa;
             }
-            while( *p == ' ' ) {
-                p++;                // over spaces
-            }
+            SkipSpaces( p );        // over spaces
         }
                                         // the positional parameter count
         add_symvar( &input_cbs->local_dict, "0", starbuf, no_subscript, local_var );

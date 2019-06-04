@@ -102,15 +102,9 @@ void    scr_in( void )
     cwcurr[3] = '\0';
 
     p = scan_start;
-
-    while( *p && *p == ' ' ) {          // next word start
-        p++;
-    }
+    SkipSpaces( p );                    // next word start
     pa = p;
-
-    while( *p && *p != ' ' ) {          // end of word
-        p++;
-    }
+    SkipNonSpaces( p );                 // end of word
     len = p - pa;
     if( len == 0 ) {                    // omitted means reset to default
         newindent = 0;
@@ -141,9 +135,7 @@ void    scr_in( void )
                 }
             }
         }
-        while( *p == ' ' ) {
-            p++;
-        }
+        SkipSpaces( p );
         if( !*p ) {                     // zero right indent
             newindentr = 0;
         } else if( *p == '*' ) {        // keep old indentr value

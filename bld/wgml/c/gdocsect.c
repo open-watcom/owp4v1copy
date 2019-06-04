@@ -1700,11 +1700,10 @@ extern void gml_gdoc( const gmltag * entry )
 
     scan_err = false;
     p = scan_start;
-    if( *p ) p++;
-
-    while( *p == ' ' ) {                // over WS to attribute
+    if( *p )
         p++;
-    }
+
+    SkipSpaces( p );                    // over WS to attribute
     if( *p &&
         ! (strnicmp( "sec ", p, 4 ) &&  // look for "sec " or "sec="
            strnicmp( "sec=", p, 4 )) ) {
@@ -1712,14 +1711,10 @@ extern void gml_gdoc( const gmltag * entry )
         char    *   valstart;
 
         p += 3;
-        while( *p == ' ' ) {
-            p++;
-        }
+        SkipSpaces( p );
         if( *p == '=' ) {
             p++;
-            while( *p == ' ' ) {
-                p++;
-            }
+            SkipSpaces( p );
         }
         if( *p == '"' || *p == '\'' ) {
             quote = *p;

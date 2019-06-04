@@ -76,9 +76,7 @@ bool        gotarget_reached( void )
     } else {                            // label name search
         if( (*buff2 == *(buff2 + 1)) && (*buff2 == *(buff2 + 2)) ) {// "..."
             p = buff2 + 3;
-            while( *p == ' ' ) {
-                p++;
-            }
+            SkipSpaces( p );
             if( *p != '\0' ) {
                 k = 0;
                 while( gotarget[k] && *p == gotarget[k] ) {
@@ -158,9 +156,7 @@ void    scr_label( void )
 
     scan_start += 2;                    // over dots
 
-    while( *scan_start == ' ' ) {       // may be ...LABEL or ...      LABEL
-        scan_start++;                   // over blanks
-    }
+    SkipSpaces( scan_start );           // may be ...LABEL or ...  LABEL , skip over blanks
     if( *scan_start == '\0'  ) {        // no label?
         scan_err = true;
         err_count++;

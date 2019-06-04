@@ -86,7 +86,7 @@ void gml_lq( const gmltag * entry )
     ju_x_start = t_page.cur_width;
 
     p = scan_start;
-    while( *p == ' ' ) p++;                 // skip spaces
+    SkipSpaces( p );                        // skip spaces
     SkipDot( p );                           // skip tag end
     if( *p ) {
         process_text( p, g_curr_font );
