@@ -167,7 +167,7 @@ void    scr_tb( void )
         user_tabs.current = 0;              // clear user_tabs
         p = pa;                             // reset to start of first tab
 
-        while( *p ) {                       // tab stop start
+        while( *p != '\0' ) {               // tab stop start
             if( user_tabs.current == user_tabs.length) {
                 user_tabs.length += TAB_COUNT;  // add space for new tab stops
                 user_tabs.tabs = mem_realloc( user_tabs.tabs, user_tabs.length *
@@ -182,12 +182,12 @@ void    scr_tb( void )
 
             // Parse fill chars/strings
 
-            if( (*p != '+') && !isdigit(*p) ) { // potential fill char
+            if( (*p != '+') && !isdigit( *p ) ) { // potential fill char
                 if( (*p == '\'') || (*p == '"') || (*p == '/') ) {
                     quote = *p;                 // initial quote found
                     p++;                        // should be fill char
-                    if( !*p || (*p == ' ') ||
-                        (*p == '+') || isdigit(*p) ) { // ' " or / only before tab stop position
+                    if( *p == '\0' || (*p == ' ') ||
+                        (*p == '+') || isdigit( *p ) ) { // ' " or / only before tab stop position
                         xx_line_err( err_right_delim, pa );
                         continue;
                     }
@@ -195,7 +195,7 @@ void    scr_tb( void )
                 user_tabs.tabs[i].fill_char = *p;
                 pb = p;                 // save position if not fill char
                 p++;                    // should be end delimiter
-                if( !*p ) {             // 'c "c or /c only
+                if( *p == '\0' ) {      // 'c "c or /c only
                     xx_line_err( err_right_delim, pa );
                     continue;
                 }
@@ -206,8 +206,8 @@ void    scr_tb( void )
                                        ((quote != ' ') && (*p == quote)) ) {
                     p++;                // final quote found
                 } else {
-                    if( quote != ' ' ) {// quoted value started
-                        while( *p ) {   // find final quote
+                    if( quote != ' ' ) {        // quoted value started
+                        while( *p != '\0' ) {   // find final quote
                             if( *p == quote ) {
                                 break;
                             }
@@ -216,7 +216,7 @@ void    scr_tb( void )
                         if( *p == quote ) { // found: fill string
                             xx_line_err( err_tab_fill_string, pa );
                             user_tabs.tabs[i].fill_char = ' ';
-                        } else if( *p ) {   // not found: format error
+                        } else if( *p != '\0' ) {   // not found: format error
                             xx_line_err( err_right_delim, pa );
                             user_tabs.tabs[i].fill_char = ' ';
                         }
@@ -236,7 +236,7 @@ void    scr_tb( void )
             t_pos.ignore_blanks = false;
             t_pos.argstart = p;
             SkipNonSpaces( p );                 // tab position end plus 1
-            if( *p && (p > pa) ) {              // as needed by getnum
+            if( *p != '\0' && (p > pa) ) {      // as needed by getnum
                 p--;                            // *p is last character of tab stop
             }
             while( (p != pa) && !isdigit( *p ) ) { // back up over alignment
@@ -286,7 +286,7 @@ void    scr_tb( void )
             // Parse the alignment
 
             user_tabs.tabs[i].alignment = al_left;
-            if( *p && (*p != ' ') ) {           // space ends tab stop
+            if( *p != '\0' && (*p != ' ') ) {   // space ends tab stop
 
             /* alignment characters are not allowed -- yet */
 
@@ -302,12 +302,12 @@ void    scr_tb( void )
                     p++;
                 } else if( *p == '\'' ) {       // possible alignment character
                     p++;
-                    if( !*p || (*p != ' ') ) {  // not end of tab stop
-                        if( !*p ) {             // ' only
+                    if( *p == '\0' || (*p != ' ') ) {  // not end of tab stop
+                        if( *p == '\0' ) {             // ' only
                             xx_line_err( err_right_delim, pa );
                         }
                         p++;
-                        if( !*p ) {             // 'c only
+                        if( *p == '\0' ) {             // 'c only
                             xx_line_err( err_right_delim, pa );
                         } else if( *p == '\'' ) {   // definite alignment character
                             xx_line_err( err_tab_align_char, pa );

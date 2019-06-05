@@ -123,7 +123,7 @@ condcode getarg( void )
         cc = omit;                      // arg omitted
     } else {
         p = scan_start;
-        while( *p && *p == ' ' && p <= scan_stop ) {// skip leading blanks
+        while( *p != '\0' && *p == ' ' && p <= scan_stop ) {// skip leading blanks
             p++;
         }
         if( p > scan_stop ) {
@@ -227,7 +227,7 @@ condcode getqst( void )
         cc = omit;                      // arg omitted
     } else {
         p = scan_start;
-        while( *p && *p == ' ' && p <= scan_stop ) {// skip leading blanks
+        while( *p != '\0' && *p == ' ' && p <= scan_stop ) {// skip leading blanks
             p++;
         }
 

@@ -75,7 +75,7 @@ static void proc_p_pc( p_lay_tag * p_pc )
 
     SkipDot( p );                       // over '.'
 
-    if( *p ) {
+    if( *p != '\0' ) {
         process_text( p, g_curr_font );
     }
 
@@ -138,7 +138,7 @@ extern void gml_note( const gmltag * entry )
     set_skip_vars( NULL, NULL, NULL, g_text_spacing, g_curr_font );
     SkipDot( p );                       // over '.'
     SkipSpaces( p );                    // skip initial space
-    if( *p ) {                          // if text follows
+    if( *p != '\0' ) {                  // if text follows
         post_space = 0;
         process_text( p, g_curr_font );
     } else if( !ProcFlags.concat && ProcFlags.has_aa_block &&
@@ -175,7 +175,7 @@ extern void do_force_pc( char * p )
 
     SkipDot( p );                       // over '.'
 
-    if( *p ) {
+    if( *p != '\0' ) {
         process_text( p, g_curr_font );
     }
 

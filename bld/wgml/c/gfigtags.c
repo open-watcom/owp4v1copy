@@ -706,9 +706,9 @@ void gml_fig( const gmltag * entry )
     t_page.cur_width = t_page.cur_left;
     ProcFlags.keep_left_margin = true;  // keep special indent
 
-    if( !ProcFlags.reprocess_line && *p ) {
+    if( !ProcFlags.reprocess_line && *p != '\0' ) {
         SkipDot( p );                       // possible tag end
-        if( *p ) {
+        if( *p != '\0' ) {
             process_text( p, g_curr_font); // if text follows
         }
     }
@@ -766,7 +766,7 @@ void gml_efig( const gmltag * entry )
 
     if( (g_post_skip == 0) ||
             (g_post_skip == wgml_fonts[layout_work.fig.font].line_height) ) {
-        if( *p ) {
+        if( *p != '\0' ) {
             g_post_skip = wgml_fonts[FONT0].line_height;
         }
         if( place == top_place ) {                      // top fig only
@@ -1070,7 +1070,7 @@ void gml_efig( const gmltag * entry )
     t_page.cur_width = t_page.cur_left;
 
     scan_err = false;
-    if( *p ) {
+    if( *p != '\0' ) {
         do_force_pc( p );
     } else {
         ProcFlags.force_pc = true;
@@ -1163,7 +1163,7 @@ void gml_figcap( const gmltag * entry )
     t_page.cur_left = t_page.cur_width;
 
     g_curr_font = layout_work.figcap.font;
-    if( *p ) {
+    if( *p != '\0' ) {
         SkipDot( p );                       // possible tag end
         SkipSpaces( p );                    // skip preceding spaces
         post_space = 0;                     // g_curr_left should be enough
@@ -1224,7 +1224,7 @@ void gml_figdesc( const gmltag * entry )
     nest_cb->font = g_curr_font;        // support font changes inside description
 
     SkipDot( p );                       // possible tag end
-    if( *p ) {
+    if( *p != '\0' ) {
         ProcFlags.concat = true;        // even if was false on entry
         process_text( p, g_curr_font);  // if text follows
     } else {

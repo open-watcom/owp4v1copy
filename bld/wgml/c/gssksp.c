@@ -55,7 +55,7 @@ static void sksp_common( void )
     text_spacing = g_text_spacing;          // set spacing to default
 
     p = scan_start;
-    if( *p ) {
+    if( *p != '\0' ) {
         SkipSpaces( p );
         pa = p;
         SkipNonSpaces( p );                 // end of word
@@ -68,7 +68,7 @@ static void sksp_common( void )
                 p = pa;                     // reset scan pointer if no space value found
             }
 
-            while( *p ) {                   // the operands can appear in either order, or not at all
+            while( *p != '\0' ) {           // the operands can appear in either order, or not at all
                 SkipSpaces( p );
                 pa = p;
                 SkipNonSpaces( pa );
@@ -90,7 +90,7 @@ static void sksp_common( void )
                     }
                 }
 
-                if( *p ) {                              // more text on line
+                if( *p != '\0' ) {                      // more text on line
                     xx_line_err( err_parm_invalid, p );
                     break;                              // avoids looping
                 }

@@ -63,7 +63,7 @@ char    *scan_sym( char * p, symvar * sym, sub_index * subscript )
     sym->name[0] = '\0';
 
     k = 0;
-    while( *p && is_symbol_char( *p ) ) {
+    while( *p != '\0' && is_symbol_char( *p ) ) {
 
         if( k < SYM_NAME_LENGTH ) {
             if( (k == 3) && (sym->name[0] != '$') ) {
@@ -113,7 +113,7 @@ char    *scan_sym( char * p, symvar * sym, sub_index * subscript )
             }
         }
     }
-    if( quote && quote == *p ) {        // over terminating quote
+    if( quote != '\0' && quote == *p ) {        // over terminating quote
         p++;
     }
     if( !scan_err && (*p == '(') ) {    // subscripted ?
@@ -145,7 +145,7 @@ char    *scan_sym( char * p, symvar * sym, sub_index * subscript )
             char            csave;
 
             gn.argstart      = p;
-            while( *p && (*p != ')') ) {
+            while( *p != '\0' && (*p != ')') ) {
                 p++;
             }
             gn.argstop       = p - 1;
@@ -219,21 +219,19 @@ void    scr_se( void )
     symsub      *   symsubval;
     symvar          sym;
     symvar      * * working_dict;
+    size_t          len;
 
     subscript = no_subscript;                       // not subscripted
     scan_err = false;
     p = scan_sym( scan_start, &sym, &subscript );
 
-    if( strcmp( sym.name, MAC_STAR_NAME ) ) {       // remove trailing blanks from all symbols but *
+    if( strcmp( sym.name, MAC_STAR_NAME ) != 0 ) {  // remove trailing blanks from all symbols except *
         valstart = p;
-        while( *p ) {                               // find end of line
-            p++;
+        for( len = strlen( p ); len-- > 0; ) {
+            if( p[len] != ' ' )
+                break;
+            p[len] = '\0';
         }
-        p--;
-        while( (valstart < p) && (*p == ' ') ) {    // find last non-space character
-            p--;
-        }
-        *++p = '\0';                                // mark end of line
         p = valstart;
     }
 
@@ -262,7 +260,7 @@ void    scr_se( void )
             valstart = p;
             if( is_quote_char( *valstart ) ) {      // quotes ?
                 p++;
-                while( *p ) {  // look for quote end (must match and be at eol or followed by a space)
+                while( *p != '\0' ) {   // look for quote end (must match and be at eol or followed by a space)
                     if( (*valstart == *p) && (!*(p+1) || (*(p+1) == ' ')) ) {
                         break;
                     }
@@ -288,13 +286,13 @@ void    scr_se( void )
 
             rc = add_symvar( working_dict, sym.name, valstart, subscript, sym.flags );
 
-        } else if( *p == '\'' ) {                   // \' without equal sign
+        } else if( *p == '\'' ) {                       // \' without equal sign
             p++;
-            while( *p && (*valstart != *p) ) {      // look for final \'
+            while( *p != '\0' && (*valstart != *p) ) {  // look for final \'
                 p++;
             }
-            valstart++;                             // delete initial \'
-            if( (valstart < p) && (*p == '\'') ) {  // delete \' at end
+            valstart++;                                 // delete initial \'
+            if( (valstart < p) && (*p == '\'') ) {      // delete \' at end
                 *p = '\0';
             }
             rc = add_symvar( working_dict, sym.name, valstart, subscript, sym.flags );

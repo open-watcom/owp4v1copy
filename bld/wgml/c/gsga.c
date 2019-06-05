@@ -518,7 +518,7 @@ void    scr_ga( void )
         pn      = tagname;
         len     = 0;
 
-        while( *p && is_macro_char( *p ) ) {
+        while( *p != '\0' && is_macro_char( *p ) ) {
             if( len < TAG_NAME_LENGTH ) {
                 *pn++ = my_tolower( *p++ ); // copy lowercase tagname
                 *pn   = '\0';
@@ -573,7 +573,7 @@ void    scr_ga( void )
         pn      = attname;
         len     = 0;
 
-        while( *p && is_macro_char( *p ) ) {
+        while( *p != '\0' && is_macro_char( *p ) ) {
             if( len < ATT_NAME_LENGTH ) {
                 *pn++ = my_tolower( *p++ ); // copy lowercase tagname
                 *pn   = '\0';

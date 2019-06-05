@@ -178,7 +178,7 @@ condcode    get_lay_sub_and_value( att_args * args )
     args->len[1] = -1;                  // switch for scanning error
 
     for(;;) {                           // loop until attribute/value pair or rescan line found
-        while( *p && is_lay_att_char( *p ) ) {
+        while( *p != '\0' && is_lay_att_char( *p ) ) {
             p++;
         }
         if( *p == '\0' ) {              // end of line: get new line
@@ -216,7 +216,7 @@ condcode    get_lay_sub_and_value( att_args * args )
             p++;
         }
 
-        if(*p && *p == '=' ) {
+        if( *p != '\0' && *p == '=' ) {
             p++;
             while( is_space_tab_char( *p ) ) {  // over WS to attribute value
                 p++;
@@ -240,7 +240,7 @@ condcode    get_lay_sub_and_value( att_args * args )
             args->quoted = false;
         }
 
-        while( *p && *p != quote ) {
+        while( *p != '\0' && *p != quote ) {
             ++p;
         }
 
@@ -755,7 +755,7 @@ bool    i_number_style( char * p, lay_att curr, num_style * tm )
     }
 
     p++;
-    if( !cvterr && *p && (*p != ' ') ) {// second letter
+    if( !cvterr && *p != '\0' && (*p != ' ') ) {    // second letter
         c = my_tolower( *p );
         switch( c ) {
         case   'd':
@@ -763,7 +763,7 @@ bool    i_number_style( char * p, lay_att curr, num_style * tm )
             break;
         case   'p':
             p++;
-            if( *p && (*p != ' ') ) {   // third letter
+            if( *p != '\0' && (*p != ' ') ) {   // third letter
                 c = my_tolower( *p );
                 switch( c ) {
                 case   'a':

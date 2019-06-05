@@ -77,9 +77,9 @@ void    scr_br( void )
 
     p = scan_start;
 
-    if( *p ) {
+    if( *p != '\0' ) {
         SkipSpaces( p );
-        if( *p ) {
+        if( *p != '\0' ) {
             split_input( scan_start, p, false );// line operand
         }
     }

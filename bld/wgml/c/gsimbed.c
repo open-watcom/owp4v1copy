@@ -184,7 +184,7 @@ void    scr_im( void )
             quote = ' ';                // error??
         }
         fnstart = p;
-        while( *p && *p != quote ) {
+        while( *p != '\0' && *p != quote ) {
             ++p;
         }
         *p = '\0';

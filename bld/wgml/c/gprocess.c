@@ -662,7 +662,7 @@ static bool remove_leading_space( void )
         p2 = buff2;
         do {
             *p2++ = *p++;
-        } while( *p );
+        } while( *p != '\0' );
         *p2++ = '\0';
         *p2   = '\0';
         removed = true;

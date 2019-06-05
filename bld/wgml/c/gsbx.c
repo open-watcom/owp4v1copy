@@ -2297,18 +2297,18 @@ void scr_bx( void )
         return;
     }
 
-    if( cur_op == bx_none ) {               // reuse token if not recognized
+    if( cur_op == bx_none ) {                   // reuse token if not recognized
         p = pa;
     }
 
     SkipSpaces( p );
 
-    if( !ProcFlags.in_bx_box && !*p ) {     // if not in a box, box columns must be given
+    if( !ProcFlags.in_bx_box && *p == '\0' ) {  // if not in a box, box columns must be given
         scan_restart = scan_stop + 1;
         return;
     }
 
-    if( *p && (cur_op == bx_can) ) {        // CAN and DEL cannot have column lists
+    if( *p != '\0' && (cur_op == bx_can) ) {    // CAN and DEL cannot have column lists
         xx_line_err( err_too_many_ops, pa );
         scan_restart = scan_stop + 1;
         return;
@@ -2316,13 +2316,13 @@ void scr_bx( void )
 
     /* Now for the box column list, if any */
 
-    if( *p ) {
+    if( *p != '\0' ) {
         ProcFlags.box_cols_cur = true;      // box column list found
         cur_temp = alloc_box_col_set();
         cur_line = cur_temp;
         first_col = true;                   // first column not yet found
         boxcol_prev = 0;
-        while( *p ) {
+        while( *p != '\0' ) {
             if( cur_temp->current == cur_temp->length ) {
                 resize_box_cols( cur_temp );
             }

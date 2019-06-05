@@ -2109,13 +2109,13 @@ void    lay_convert( const gmltag * entry )
             quote = '.';                // error?? filename without quotes
         }
         fnstart = p;
-        while( *p && *p != quote ) {
+        while( *p != '\0' && *p != quote ) {
             ++p;
         }
         *p = '\0';
         strcpy_s( token_buf, buf_size, fnstart );
     } else {                            // try undocumented format
-        if( *p && *p == '.' ) {
+        if( *p != '\0' && *p == '.' ) {
             strcpy_s( token_buf, buf_size, p + 1 );
         }
     }

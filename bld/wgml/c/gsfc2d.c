@@ -83,7 +83,7 @@ condcode    scr_c2d( parm parms[MAX_FUN_PARMS], size_t parmcount, char * * resul
     }
     ulongtodec( n, linestr );
     p = linestr;
-    while( *p && ressize > 0) {
+    while( *p != '\0' && ressize > 0) {
         **result = *p++;
         *result += 1;
         ressize--;

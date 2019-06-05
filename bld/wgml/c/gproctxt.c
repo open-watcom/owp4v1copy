@@ -1781,10 +1781,7 @@ void process_text( const char *text, font_number font )
     /********************************************************************/
 
     p = text;
-    while( *p ) {                       // locate the first wgml tab, if any
-        if( (*p == '\t') || (*p == tab_char) ) {
-            break;
-        }
+    while( *p != '\0' && *p != '\t' && *p != tab_char ) {   // locate the first wgml tab, if any
         p++;
     }
     count = p - text;
@@ -1860,7 +1857,7 @@ void process_text( const char *text, font_number font )
         // ".co off": compute initial spacing
         if( !ProcFlags.concat ) {
             post_space = tab_space * wgml_fonts[font].spc_width;
-            if( !*p && !(input_cbs->fmflags & II_eol) ) {
+            if( *p == '\0' && !(input_cbs->fmflags & II_eol) ) {
 
                 /* if no text follows, insert text_chars for post_space */
 
@@ -1958,7 +1955,7 @@ void process_text( const char *text, font_number font )
             pa = p;
             SkipSpaces( p );
             post_space += ( p - pa ) * wgml_fonts[font].spc_width;
-            if( !*p ) { // text is entirely spaces
+            if( *p == '\0' ) {  // text is entirely spaces
                 n_chars = process_word( NULL, 0, font );
                 n_chars->type = tx_norm;
                 t_page.cur_width += post_space;
@@ -1985,7 +1982,7 @@ void process_text( const char *text, font_number font )
     h_chars = NULL;
     n_chars = NULL;
     pword = p;                          // remember word start
-    while( *p ) {
+    while( *p != '\0' ) {
         if( *p == function_escape ) {   // special sub/superscript...
             switch( *(p + 1) ) {
             case function_subscript :   // start of subscript
@@ -2014,7 +2011,7 @@ void process_text( const char *text, font_number font )
 
         } else {                        // no function escape
             p++;
-            if( *p ) {                  // process last word inside loop
+            if( *p != '\0' ) {          // process last word inside loop
                 if( *p != ' ' ) {       // no space no word end
                     continue;
                 }
@@ -2338,7 +2335,7 @@ void process_text( const char *text, font_number font )
 
         // exit at end of text unless at end of input line
 
-        if( !(input_cbs->fmflags & II_eol) && !*p ) {
+        if( !(input_cbs->fmflags & II_eol) && *p == '\0' ) {
             break;
         }
 
@@ -2362,7 +2359,7 @@ void process_text( const char *text, font_number font )
                 tab_space = 1;
             }
             pword = p + 1;          // new word start or end of input record
-        } else if( !*p && (input_cbs->fmflags & II_eol)
+        } else if( *p == '\0' && (input_cbs->fmflags & II_eol)
                 && (input_cbs->fmflags & II_file)
                 && !ProcFlags.wrap_indent) { // insert spaces at actual end-of-line, except in INDEX
             pword = p;

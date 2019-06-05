@@ -88,7 +88,7 @@ void gml_lq( const gmltag * entry )
     p = scan_start;
     SkipSpaces( p );                        // skip spaces
     SkipDot( p );                           // skip tag end
-    if( *p ) {
+    if( *p != '\0' ) {
         process_text( p, g_curr_font );
     }
 
@@ -133,7 +133,7 @@ void gml_elq( const gmltag * entry )
     scan_err = false;
     p = scan_start;
     SkipDot( p );                       // over '.'
-    if( *p ) {
+    if( *p != '\0' ) {
         ProcFlags.skips_valid = false;
         process_text( p, g_curr_font);  // if text follows
     } else {

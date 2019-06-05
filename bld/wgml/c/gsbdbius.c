@@ -159,7 +159,7 @@ static void scr_style_common( style_cw_type type, style_cw_info * cw_info )
         SkipNonSpaces( p );             // end of token
         len = p - pa;
         SkipSpaces( p );                // second token?
-        if( !*p ) {                     // no second token
+        if( *p == '\0' ) {              // no second token
             if( (len == 3) && (!strnicmp( pa, "OFF", len )) ) { // OFF
                 if( type == SCT_bi ) {
                     script_style.style &= ~SCT_bd;
@@ -217,7 +217,7 @@ static void scr_style_common( style_cw_type type, style_cw_info * cw_info )
         }
     }
 
-    if( *pa ) {
+    if( *pa != '\0' ) {
         if( type == SCT_bi ) {
             script_style.style |= SCT_bd;
             script_style.cw_bd.count = 0;

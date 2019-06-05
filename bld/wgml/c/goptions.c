@@ -1739,14 +1739,14 @@ int proc_options( char * string )
     char        linestr[MAX_L_AS_STR];
     char        linestr2[MAX_L_AS_STR];
 
-    level = 0;                     // option file include level: 0 == cmdline
+    level = 0;                          // option file include level: 0 == cmdline
     buffers[0] = NULL;
     cmd_tokens[0] = NULL;
 
     SkipSpaces( string );
     s_after_dq = string;                // assume no starting quote
     if( *string == d_q ) {              // take care of possible quotes
-        for( p = string + 1; *p; p++ )  /* empty */ ;
+        for( p = string + 1; *p != '\0'; p++ )  /* empty */ ;
         p--;
         while( *p == ' ' ) {            // ignore trailing spaces
             p--;

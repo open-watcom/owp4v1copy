@@ -69,9 +69,9 @@ void    scr_oc( void )
 
     if( GlobalFlags.lastpass ) {
         p = scan_start;                 // next char after .oc
-        if( *p ) {                      // line operand specified
+        if( *p != '\0' ) {              // line operand specified
             SkipSpaces( p );
-            if( *p ) {
+            if( *p != '\0' ) {
                 ob_oc( p );
                 if( input_cbs->fmflags & II_research ) {
                     out_msg( p );       // TBD

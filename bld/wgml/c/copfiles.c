@@ -1366,13 +1366,14 @@ void cop_ti_table( const char *p )
             first_found = true;
             no_data = false;
         }
-        while( *p ) {
+        while( *p != '\0' ) {
             SkipSpaces( p );            // next char start
             pa = p;
             SkipNonSpaces( p );         // next char start
             len = p - pa;
 
-            if( len == 0 ) break;   // exit loop if no next char
+            if( len == 0 )
+                break;                  // exit loop if no next char
 
             token_char = parse_char( pa, len );
             no_data = false;

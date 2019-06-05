@@ -120,9 +120,9 @@ extern  void    gml_set( const gmltag * entry )
         xx_err( err_att_missing );
     }
 
-    if( !ProcFlags.reprocess_line && *p ) {
+    if( !ProcFlags.reprocess_line && *p != '\0' ) {
         SkipDot( p );                       // possible tag end
-        if( *p ) {
+        if( *p != '\0' ) {
             post_space = 0;
             ProcFlags.ct = true;
             process_text( p, g_curr_font);  // if text follows

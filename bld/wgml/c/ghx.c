@@ -586,6 +586,7 @@ static void gml_hx_common( const gmltag * entry, hdsrc hn_lvl )
     char        *   pa;
     hdsrc           hds_lvl;
     text_space      sav_spacing;
+    size_t          len;
 
     static char     hxstr[4]    = ":HX";
 
@@ -730,14 +731,15 @@ static void gml_hx_common( const gmltag * entry, hdsrc hn_lvl )
     p = get_text_line( p );
 
     if( !ProcFlags.reprocess_line ) {
-        if( *p ) {                     // text exists
+        if( *p != '\0' ) {              // text exists
 
             /* remove trailing spaces */
 
-            pa = &p[strlen( p )];
-            pa--;
-            while( *pa == ' ' ) {
-                *pa = '\0';
+            for( len = strlen( p ); len-- > 0; ) {
+                if( p[len] != ' ' ) {
+                    break;
+                }
+                p[len] = '\0';
             }
 
             /* Implement the case attribute */

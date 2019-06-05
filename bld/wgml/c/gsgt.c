@@ -402,7 +402,7 @@ void    scr_gt( void )
         pn      = tagname;
         len     = 0;
 
-        while( *p && is_macro_char( *p ) ) {
+        while( *p != '\0' && is_macro_char( *p ) ) {
             if( len < TAG_NAME_LENGTH ) {
                 *pn++ = my_tolower( *p++ ); // copy lowercase tagname
                 *pn   = '\0';
@@ -496,23 +496,13 @@ void    scr_gt( void )
             return;
         }
         p = tok_start;
-
-        pn      = macname;
-        len     = 0;
-
-        while( *p && is_macro_char( *p ) ) {
-            if( len < MAC_NAME_LENGTH ) {
-                *pn++ = my_tolower( *p++ );     // copy lowercase macroname
-                *pn   = '\0';
-            } else {
-                break;
-            }
+        len = 0;
+        pn = macname;
+        while( *p != '\0' && is_macro_char( *p ) && len < MAC_NAME_LENGTH ) {
+            *pn++ = my_tolower( *p++ );     // copy lowercase macroname
             len++;
         }
-        for( k = len; k < MAC_NAME_LENGTH; k++ ) {
-            macname[k] = '\0';
-        }
-        macname[MAC_NAME_LENGTH] = '\0';
+        *pn = '\0';
 
         tag_flags = 0;
 

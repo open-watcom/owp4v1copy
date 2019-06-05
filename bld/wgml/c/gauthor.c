@@ -55,7 +55,7 @@ void gml_author( const gmltag * entry )
     /* Only first AUTHOR is used in banners */
 
     if( GlobalFlags.firstpass && !ProcFlags.author_tag_seen ) {
-        if( *p ) {
+        if( *p != '\0' ) {
             add_symvar( &global_dict, "$author", p, no_subscript, 0 );
         }
         ProcFlags.author_tag_seen = true;
@@ -95,7 +95,7 @@ void gml_author( const gmltag * entry )
     old_line_pos = line_position;
     line_position = layout_work.author.page_position;
     ProcFlags.as_text_line = true;
-    if( *p ) {
+    if( *p != '\0' ) {
         process_text( p, g_curr_font );
     } else {
         ProcFlags.titlep_starting = true;

@@ -74,7 +74,7 @@ void scr_pp( void )
     t_page.cur_width = t_page.cur_left + g_line_indent;
 
     post_space = 0;
-    if( *p ) {
+    if( *p != '\0' ) {
         process_text( p, g_curr_font );
     }
 

@@ -1700,11 +1700,11 @@ extern void gml_gdoc( const gmltag * entry )
 
     scan_err = false;
     p = scan_start;
-    if( *p )
+    if( *p != '\0' )
         p++;
 
     SkipSpaces( p );                    // over WS to attribute
-    if( *p &&
+    if( *p != '\0' &&
         ! (strnicmp( "sec ", p, 4 ) &&  // look for "sec " or "sec="
            strnicmp( "sec=", p, 4 )) ) {
         char        quote;
@@ -1723,7 +1723,7 @@ extern void gml_gdoc( const gmltag * entry )
             quote = ' ';
         }
         valstart = p;
-        while( *p && *p != quote ) {
+        while( *p != '\0' && *p != quote ) {
             ++p;
         }
         *p = '\0';

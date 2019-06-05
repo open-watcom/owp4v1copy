@@ -151,18 +151,18 @@ static const bool internal_to_su( su *in_su, bool tag, const char *base )
         return( cvterr );
     }
 
-    if( *ps && *ps == '.' ) {   // check for decimal point
+    if( *ps != '\0' && *ps == '.' ) {   // check for decimal point
         pd = ps;
         ps++;
-        pd1 = ps;                            // remember start of decimals
-        for( i = 0; i < 2; i++ ) {          // max two digits in decimals
+        pd1 = ps;                       // remember start of decimals
+        for( i = 0; i < 2; i++ ) {      // max two digits in decimals
             if( (*ps >= '0') && (*ps <= '9') ) {
                 wd = 10 * wd + *ps - '0';
                 ps++;
             } else {
                 break;
             }
-            if( !*ps ) {                     // value end reached
+            if( *ps == '\0' ) {             // value end reached
                 break;
             }
         }
@@ -181,17 +181,17 @@ static const bool internal_to_su( su *in_su, bool tag, const char *base )
     k = 0;
     pu = ps;
     for( i = 0; i < 2; i++ ) {                  // max two characters in unit
-        if( *ps && isalpha( *(unsigned char *)ps ) ) {
+        if( *ps != '\0' && isalpha( *(unsigned char *)ps ) ) {
             unit[k++] = my_tolower( *ps );      // save Unit
             ps++;
         } else {
             break;
         }
-        if( !*ps ) {                            // value end reached
+        if( *ps == '\0' ) {                            // value end reached
             break;
         }
     }
-    if( *ps && isalpha( *(unsigned char *)ps ) ) {             // too many characters in unit
+    if( *ps != '\0' && isalpha( *(unsigned char *)ps ) ) {  // too many characters in unit
         val_parse_err( base + (ps - s->su_txt), tag );
         scan_start = scan_stop + 1;
         return( cvterr );
@@ -262,18 +262,18 @@ static const bool internal_to_su( su *in_su, bool tag, const char *base )
                 wd = (10 * wd) + (*ps - '0');
                 ps++;
             }
-            if( *ps ) {    // value end reached
+            if( *ps != '\0' ) { // value end reached
                 break;
             }
         }
     }
-    if( (*ps >= '0') && (*ps <= '9') ) {      // too many digits after "C" or "P"
+    if( (*ps >= '0') && (*ps <= '9') ) {    // too many digits after "C" or "P"
         val_parse_err( base + (ps - s->su_txt), tag );
         scan_start = scan_stop + 1;
         return( cvterr );
     }
 
-    if( *ps ) {                             // value continues on: it shouldn't
+    if( *ps != '\0' ) {                     // value continues on: it shouldn't
         val_parse_err( base + (ps - s->su_txt), tag );
         scan_start = scan_stop + 1;
         return( cvterr );
@@ -367,9 +367,8 @@ static bool su_expression( su * in_su )
 
     value.ignore_blanks = false;
     value.argstart = p;
-    while( *p ) {
+    while( *p != '\0' )
         p++;
-    }
     value.argstop = p - 1;
     cc = getnum( &value );
 
@@ -404,7 +403,7 @@ size_t len_to_trail_space( const char *p , size_t len )
 
 char * skip_to_quote( char * p, char quote )
 {
-    while( *p && quote != *p ) {
+    while( *p != '\0' && quote != *p ) {
         p++;
     }
     return( p + 1 );
@@ -525,7 +524,7 @@ bool att_val_to_su( su * in_su, bool pos )
     } else {
         sign = '+';
     }
-    if( !*ps ) {                          // value end reached, not valid
+    if( *ps == '\0' ) {                 // value end reached, not valid
         xx_line_err( err_inv_att_val, val_start );
         scan_start = scan_stop + 1;
         return( cvterr );
@@ -566,7 +565,7 @@ bool cw_val_to_su( char * * scanp, su * in_su )
     su      *   s;
 
     s = in_su;
-    p = *scanp;;
+    p = *scanp;
     pa = p;
     ps = s->su_txt;
     *ps = '\0';
@@ -618,14 +617,14 @@ bool cw_val_to_su( char * * scanp, su * in_su )
 /*                    true on error (conversion error occurred)            */
 /***************************************************************************/
 
-bool lay_init_su( char * p, su * in_su )
+bool lay_init_su( const char * p, su * in_su )
 {
-    bool        cvterr  = true;
-    char    *   pa      = NULL; // start of value text
-    char    *   ps      = NULL; // destination for value text
-    char        sign;
-    size_t      len;
-    su      *   s;
+    bool            cvterr  = true;
+    const char  *   pa      = NULL; // start of value text
+    char        *   ps      = NULL; // destination for value text
+    char            sign;
+    size_t          len;
+    su          *   s;
 
     s = in_su;
     pa = p;
@@ -659,7 +658,7 @@ bool lay_init_su( char * p, su * in_su )
     } else {
         sign = '+';
     }
-    if( !*ps ) {                          // value end reached, not valid
+    if( *ps == '\0' ) {                          // value end reached, not valid
         xx_line_err( err_inv_att_val, ps );
         scan_start = scan_stop + 1;
         return( cvterr );

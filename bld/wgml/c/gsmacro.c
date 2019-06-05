@@ -139,7 +139,7 @@ void    add_macro_parms( char * p )
     garginit();                         // resets scan_start to space after macro name
     p = scan_start;
     p++;                                // over space between macro name and first parm
-    if( *p ) {
+    if( *p != '\0' ) {
 
         /* the name used for * is a macro because it may have to be changed -- TBD */
 
@@ -147,14 +147,14 @@ void    add_macro_parms( char * p )
         star0 = 0;
         tok_start = p;                  // save start of parameter
         SkipSpaces( p );                // find first nonspace character
-        while( *p ) {                   // as long as there are parms
+        while( *p != '\0' ) {           // as long as there are parms
             if( is_quote_char( *p ) ) { // argument is quoted
                 star0++;
                 sprintf( starbuf, "%d", star0 );
                 quote = *p;
                 pa = p;
                 pa++;
-                while( *pa ) {
+                while( *pa != '\0' ) {
                     if( (*pa == quote) && ((*(pa+1) == ' ') || (*(pa+1) == '\0')) ) {
                         break;          // matching delimiter found
                     }
@@ -318,23 +318,18 @@ void    scr_dm( void )
     }
 
     p   = tok_start;
-    pn  = macname;
-    len = 0;
 
     /*  truncate name if too long WITHOUT error msg
      *  this is wgml 4.0 behaviour
      *
      */
-    while( *p && is_macro_char( *p ) ) {
-        if( len < MAC_NAME_LENGTH ) {
-            *pn++ = my_tolower( *p++ ); // copy lowercase macroname
-            *pn   = '\0';
-        } else {
-            break;
-        }
+    len = 0;
+    pn  = macname;
+    while( *p != '\0' && is_macro_char( *p ) && len < MAC_NAME_LENGTH ) {
+        *pn++ = my_tolower( *p++ );     // copy lowercase macroname
         len++;
     }
-    macname[MAC_NAME_LENGTH] = '\0';
+    *pn = '\0';
 
     cc = getarg();
     if( cc == omit ) {                  // nothing found
@@ -376,8 +371,8 @@ void    scr_dm( void )
         p = tok_start;
         sepchar = *p++;
         nmstart = p;
-        while( *p ) {
-            while( *p && *p != sepchar ) {  // look for seperator
+        while( *p != '\0' ) {
+            while( *p != '\0' && *p != sepchar ) {  // look for seperator
                 ++p;
             }
             len = p - nmstart;
@@ -698,23 +693,18 @@ void    scr_em( void )
 
     if( *tok_start == SCR_char ) {      // possible macro name
         p   = tok_start + 1;            // over .
-        pn  = macname;
-        len = 0;
 
         /*  truncate name if too long WITHOUT error msg
          *  this is wgml 4.0 behaviour
          *
          */
-        while( *p && is_macro_char( *p ) ) {
-            if( len < MAC_NAME_LENGTH ) {
-                *pn++ = *p++;           // copy macroname
-                *pn   = '\0';
-            } else {
-                break;
-            }
+        len = 0;
+        pn  = macname;
+        while( *p != '\0' && is_macro_char( *p ) && len < MAC_NAME_LENGTH ) {
+            *pn++ = *p++;           // copy macroname
             len++;
         }
-        macname[MAC_NAME_LENGTH] = '\0';
+        *pn = '\0';
 
         me = find_macro( macro_dict, macname );
     } else {

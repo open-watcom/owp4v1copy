@@ -107,7 +107,7 @@ static void gml_inline_common( const gmltag * entry, int level, e_tags t )
     scan_err = false;
     p = scan_start;
     SkipDot( p );                       // over '.'
-    if( *p ) {
+    if( *p != '\0' ) {
         if( ProcFlags.force_pc ) {
             do_force_pc( p );
         } else {
@@ -214,7 +214,7 @@ static void gml_e_inlne_common( const gmltag * entry, e_tags t )
         scan_err = false;
         p = scan_start;
         SkipDot( p );                   // over '.'
-        if( *p ) {
+        if( *p != '\0' ) {
             process_text( p, g_curr_font );
         }
         if( !ProcFlags.concat && (input_cbs->fmflags & II_eol)

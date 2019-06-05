@@ -59,7 +59,7 @@ void    gml_date( const gmltag * entry )
     SkipDot( p );                       // over . to docnum
     SkipSpaces( p );                    // over WS to attribute
 
-    if( *p ) { // date specified
+    if( *p != '\0' ) {  // date specified
         if( GlobalFlags.firstpass  ) {
             add_symvar( &global_dict, "date", p, no_subscript, 0 );
         }
@@ -97,7 +97,7 @@ void    gml_date( const gmltag * entry )
     old_line_pos = line_position;
     line_position = layout_work.author.page_position;
     ProcFlags.as_text_line = true;
-    if( *p ) {
+    if( *p != '\0' ) {
         process_text( p, g_curr_font );
     } else {
         ProcFlags.titlep_starting = true;

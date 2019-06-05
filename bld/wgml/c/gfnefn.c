@@ -172,12 +172,12 @@ void gml_fn( const gmltag * entry )
     t_page.cur_width = t_page.cur_left;
     ProcFlags.keep_left_margin = true;  // keep special indent
 
-    if( !ProcFlags.reprocess_line && *p ) {
+    if( !ProcFlags.reprocess_line && *p != '\0' ) {
         SkipDot( p );                       // possible tag end
         SkipSpaces( p );                    // skip preceding spaces
         input_cbs->fmflags &= ~II_sol;      // number was SOL, so this is not
         ProcFlags.concat = true;            // concatenation on
-        if( *p ) {
+        if( *p != '\0' ) {
             process_text( p, g_curr_font);  // if text follows
         }
     }
@@ -232,7 +232,7 @@ void gml_efn( const gmltag * entry )
     scan_err = false;
     p = scan_start;
     SkipDot( p );                       // possible tag end
-    if( *p ) {
+    if( *p != '\0' ) {
         process_text( p, g_curr_font);  // if text follows
     }
     if( pass > 1 ) {                    // not on first pass

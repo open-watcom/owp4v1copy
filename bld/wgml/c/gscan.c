@@ -495,21 +495,21 @@ static void     scan_script( void )
         scan_start = p;
 
         pt = token_buf;
-        while( *p && is_macro_char( *p ) ) {    // end of controlword
-           *pt++ = my_tolower( *p++ );          // copy lowercase to TokenBuf
+        while( *p != '\0' && is_macro_char( *p ) ) {    // end of controlword
+           *pt++ = my_tolower( *p++ );                  // copy lowercase to TokenBuf
         }
         *pt = '\0';
 
         toklen = pt - token_buf;
 
-        if( !ProcFlags.CW_sep_ignore &&
-                (*p && (*p != ' ') || toklen == 0) ) {// no valid script controlword / macro
-            scan_start = scan_restart;  // treat as text
+        if( !ProcFlags.CW_sep_ignore && (*p != '\0' && (*p != ' ') || toklen == 0) ) {
+            // no valid script controlword / macro, treat as text
+            scan_start = scan_restart;
             return;
         }
 
         if( toklen >= MAC_NAME_LENGTH ) {
-            *(token_buf + MAC_NAME_LENGTH) = '\0';
+            token_buf[MAC_NAME_LENGTH] = '\0';
         }
         if( !ProcFlags.macro_ignore ) {
             me = find_macro( macro_dict, token_buf );
@@ -1009,7 +1009,7 @@ char * get_text_line( char * p )
     }
     if( !use_current ) {                // not on same line as tag
         SkipSpaces( p );                // skip initial spaces
-        if( *p ) {                      // text exists
+        if( *p != '\0' ) {              // text exists
             classify_record( *p );      // sets ProcFlags used below if appropriate
             if( ProcFlags.scr_cw) {
                 tl_found = false;       // control word, macro, or whatever

@@ -136,7 +136,7 @@ void    scr_in( void )
             }
         }
         SkipSpaces( p );
-        if( !*p ) {                     // zero right indent
+        if( *p == '\0' ) {              // zero right indent
             newindentr = 0;
         } else if( *p == '*' ) {        // keep old indentr value
             p++;

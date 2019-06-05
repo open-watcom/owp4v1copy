@@ -100,7 +100,7 @@ static void gml_xl_lp_common( e_tags t )
             ProcFlags.para_starting = false;    // clear for this tag's first break
         }
         scr_process_break();
-        if( !ProcFlags.reprocess_line && *p ) {
+        if( !ProcFlags.reprocess_line && *p != '\0' ) {
             process_text( p, g_curr_font );
         }
     }

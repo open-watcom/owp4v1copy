@@ -335,7 +335,7 @@ void    scr_dc( void )
             }
         }
     }
-    if( opt == 0 ) {                   // omitted / unknown / not implemented
+    if( opt == 0 ) {                    // omitted / unknown / not implemented
         dc_opt_warn_len( pa, len );
         return;
     }
@@ -384,8 +384,7 @@ void    scr_dc( void )
         scan_restart = pa + len;
         GML_char = c;
         string[0] = c;
-        add_symvar( &global_dict, "gml", string, no_subscript,
-                    predefined );
+        add_symvar( &global_dict, "gml", string, no_subscript, predefined );
         add_to_sysdir( "$gml", GML_char );
         break;
     case 3 :                            // TB option
@@ -411,15 +410,15 @@ void    scr_dc( void )
         break;
     case 4 :                            // STOP option
 
-/***************************************************************************/
-/*  when the documentation refers to "script", this may be quite literal:  */
-/*  setting STOP to OFF has no effect when WSCRIPT is specificed           */
-/*  whether ".dc stop" with a list of characters has any effect is unknown */
-/*  so doing nothing is the appropriate implementation, at least for now   */
-/*                                                                         */
-/*  the only use is ".dc stop off" found in                                */
-/*        docs\doc\whelp\whelp.gml line 765                                */
-/***************************************************************************/
+        /***************************************************************************/
+        /*  when the documentation refers to "script", this may be quite literal:  */
+        /*  setting STOP to OFF has no effect when WSCRIPT is specificed           */
+        /*  whether ".dc stop" with a list of characters has any effect is unknown */
+        /*  so doing nothing is the appropriate implementation, at least for now   */
+        /*                                                                         */
+        /*  the only use is ".dc stop off" found in                                */
+        /*        docs\doc\whelp\whelp.gml line 765                                */
+        /***************************************************************************/
 
         scan_restart = pa + len;
         break;

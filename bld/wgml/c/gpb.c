@@ -62,7 +62,7 @@ extern  void    gml_pb( const gmltag * entry )
 
     SkipDot( p );                       // over '.'
     post_space = 0;
-    if( *p ) {
+    if( *p != '\0' ) {
         process_text( p, g_curr_font );
     }
 

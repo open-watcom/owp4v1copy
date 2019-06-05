@@ -70,7 +70,7 @@ void    gml_docnum( const gmltag * entry )
         p = buff;
     }
 
-    if( GlobalFlags.firstpass && *p ) {
+    if( GlobalFlags.firstpass && *p != '\0' ) {
         add_symvar( &global_dict, "$docnum", p, no_subscript, 0 );
     }
     ProcFlags.docnum_tag_seen = true;
@@ -105,7 +105,7 @@ void    gml_docnum( const gmltag * entry )
     old_line_pos = line_position;
     line_position = layout_work.docnum.page_position;
     ProcFlags.as_text_line = true;
-    if( *p ) {
+    if( *p != '\0' ) {
         process_text( p, g_curr_font );
     } else {
         ProcFlags.titlep_starting = true;

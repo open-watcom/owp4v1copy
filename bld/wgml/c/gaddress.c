@@ -207,7 +207,7 @@ void gml_aline( const gmltag * entry )
     ProcFlags.keep_left_margin = true;  // keep special indent
     line_position = layout_work.address.page_position;
     ProcFlags.as_text_line = true;
-    if( *p ) {
+    if( *p != '\0' ) {
         process_text( p, g_curr_font );
     } else {
         ProcFlags.titlep_starting = true;

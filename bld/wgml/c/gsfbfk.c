@@ -106,7 +106,7 @@ static char * get_params( const char * scw_name ) {
     p = scan_start;
     SkipSpaces( p );
 
-    if( *p ) {                  // at least one potential operand
+    if( *p != '\0' ) {          // at least one potential operand
         pa = p;
         SkipNonSpaces( p );
         len = p - pa;
@@ -126,7 +126,7 @@ static char * get_params( const char * scw_name ) {
             p = pa;                                 // reset, invalid input
         } else {
             SkipSpaces( p );                        // find next argument, if any
-            if( *p ) {
+            if( *p != '\0' ) {
                 if( cur_cmd == fbk_begin ) {        // begin does not allow another operand
                     xx_val_line_warn( wng_too_many_ops, scw_name, p );
                 } else {                            // both <n> and <0|w> are treated as space
