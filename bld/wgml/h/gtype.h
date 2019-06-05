@@ -45,67 +45,67 @@
 #define ulong           unsigned long
 
 //================= Some global defines ========================
-#define MAX_NESTING     32              // max nesting of option files
-#define MAX_PASSES      10              // max no of document passes
-#define MAX_INC_DEPTH   255             // max include level depth
-#define BUF_SIZE        512             // default buffersize for filecb e.a.
-#define MAX_FILE_ATTR   15              // max size for fileattr (T:xxxx)
-#define SCR_KW_LENGTH   2               // script control word length
-#define FUN_NAME_LENGTH 11              // &'function name max length
-#define MAX_PAREN       50              // max parenthesis nesting in &'functions
+#define MAX_NESTING         32          // max nesting of option files
+#define MAX_PASSES          10          // max no of document passes
+#define MAX_INC_DEPTH       255         // max include level depth
+#define BUF_SIZE            512         // default buffersize for filecb e.a.
+#define MAX_FILE_ATTR       15          // max size for fileattr (T:xxxx)
+#define SCR_KW_LENGTH       2           // script control word length
+#define FUN_NAME_LENGTH     11          // &'function name max length
+#define MAX_PAREN           50          // max parenthesis nesting in &'functions
 
-#define TAG_NAME_LENGTH 15              // :tag name length
-#define ATT_NAME_LENGTH 9               // :tag attr name length
-#define VAL_LENGTH      10              // max length for attribute value
+#define TAG_NAME_LENGTH     15          // :tag name length
+#define ATT_NAME_LENGTH     9           // :tag attr name length
+#define VAL_LENGTH          10          // max length for attribute value
                                         // longer strings will be allocated
 
-#define ID_LEN          15              // length of refids wgml 4 gives a warning
+#define ID_LEN              15          // length of refids wgml 4 gives a warning
                                         // for lengths > 7 but processes it
                                         // we try with truncating at 15
 
-#define SYM_NAME_LENGTH 10              // symbol name length
-#define MAC_NAME_LENGTH 8               // macro name length
-#define LABEL_NAME_LENGTH 8             // label name length
-#define MAX_MAC_PARMS   32              // maximum macro parm count
+#define SYM_NAME_LENGTH     10          // symbol name length
+#define MAC_NAME_LENGTH     8           // macro name length
+#define LABEL_NAME_LENGTH   8           // label name length
+#define MAX_MAC_PARMS       32          // maximum macro parm count
                                         // arbitrary value, not found in docu!!!
-#define MAC_STAR_NAME   "_"             // local variable name for &*
+#define MAC_STAR_NAME       "_"         // local variable name for &*
 
-#define MAX_FUN_PARMS   7               // max parmcount found in documentation
+#define MAX_FUN_PARMS       7           // max parmcount found in documentation
 
-#define MAX_IF_LEVEL    10              // maximum nested .if s
-#define MAX_L_AS_STR    16              // long as string
+#define MAX_IF_LEVEL        10          // maximum nested .if s
+#define MAX_L_AS_STR        16          // long as string
 
-#define MAX_CPI         100             // not documented, assumed
-#define MAX_LPI         100             // not documented, assumed
-#define MAX_COL         9               // .CD limits number of columns to 9 (1..9)
+#define MAX_CPI             100         // not documented, assumed
+#define MAX_LPI             100         // not documented, assumed
+#define MAX_COL             9           // .CD limits number of columns to 9 (1..9)
 
-#define TAB_COUNT       16              // used with tab_list
+#define TAB_COUNT           16          // used with tab_list
 
 
 /* default filename extensions */
-#define DEF_EXT         ".def"
-#define ERR_EXT         ".err"
-#define GML_EXT         ".gml"
-#define LAY_EXT         ".lay"
-#define OPT_EXT         ".opt"
+#define DEF_EXT             ".def"
+#define ERR_EXT             ".err"
+#define GML_EXT             ".gml"
+#define LAY_EXT             ".lay"
+#define OPT_EXT             ".opt"
 
 #define GML_CHAR_DEFAULT    ':'         // start of GML tag
 #define SCR_CHAR_DEFAULT    '.'         // start of Script keyword
 #define CW_SEP_CHAR_DEFAULT ';'         // script controlline seperator
 
-#define CPI10          10               // 10 as a CPI value
-#define FONT0           0               // 0 as a font number
+#define CPI10               10          // 10 as a CPI value
+#define FONT0               0           // 0 as a font number
 
 /* string start / end characters Possible incomplete list*/
-#define d_q     '\"'                    // change also is_quote_char()
-#define s_q     '\''                    // in gargutil.c
-#define cent    '\x9b'                  // if list is extended
-#define excl    '!'
-#define not_c   '^'
-#define slash   '/'
-#define vbar1   '|'
-#define vbar2   '\xdd'
-#define l_q     '\x60'
+#define d_q                 '\"'        // change also is_quote_char()
+#define s_q                 '\''        // in gargutil.c
+#define cent                '\x9b'      // if list is extended
+#define excl                '!'
+#define not_c               '^'
+#define slash               '/'
+#define vbar1               '|'
+#define vbar2               '\xdd'
+#define l_q                 '\x60'
 
 #define my_tolower( p )     tolower( (unsigned char)(p) )
 #define my_toupper( p )     toupper( (unsigned char)(p) )
