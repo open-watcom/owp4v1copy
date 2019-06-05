@@ -48,7 +48,7 @@ static  labelcb *   find_label( char    *   name )
         lb = input_cbs->s.f->label_cb;
     }
     for( ; lb != NULL; lb = lb->prev ) {
-        if( !strncmp( name, lb->label_name, MAC_NAME_LENGTH ) ) {
+        if( strncmp( name, lb->label_name, LABEL_NAME_LENGTH ) == 0 ) {
             return( lb );
         }
     }
@@ -154,10 +154,9 @@ void    scr_label( void )
     labelcb     *   lb;
     char            linestr[MAX_L_AS_STR];
 
-    scan_start += 2;                    // over dots
-
-    SkipSpaces( scan_start );           // may be ...LABEL or ...  LABEL , skip over blanks
-    if( *scan_start == '\0'  ) {        // no label?
+    scan_start += 2;                // over dots
+    SkipSpaces( scan_start );       // may be ...LABEL or ...<blanks>LABEL, skip over blanks
+    if( *scan_start == '\0'  ) {    // no label?
         scan_err = true;
         err_count++;
         g_err( err_missing_name, "" );
@@ -260,8 +259,7 @@ void    scr_label( void )
                             input_cbs->s.m->mac->label_cb = lb;
                             lb->pos         = 0;
                             lb->lineno      = input_cbs->s.m->lineno;
-                            strcpy_s( lb->label_name, sizeof( lb->label_name ),
-                                      token_buf );
+                            strcpy_s( lb->label_name, sizeof( lb->label_name ), token_buf );
                         }
                     }
                 } else {
@@ -285,8 +283,7 @@ void    scr_label( void )
                             input_cbs->s.f->label_cb = lb;
                             lb->pos         = input_cbs->s.f->pos;
                             lb->lineno      = input_cbs->s.f->lineno;
-                            strcpy_s( lb->label_name, sizeof( lb->label_name ),
-                                      token_buf );
+                            strcpy_s( lb->label_name, sizeof( lb->label_name ), token_buf );
                         }
                     }
                 }
@@ -484,17 +481,18 @@ void    scr_go( void )
 
 void        print_labels( labelcb * lcb, char * name )
 {
-    static const char   fill[10] = "         ";
+    char                fill[LABEL_NAME_LENGTH + 1];
     size_t              len;
     labelcb         *   lb;
 
     lb = lcb;
     if( lb != NULL ) {
-        out_msg( "\nList of defined labels for %s:\n\n", name);
+        out_msg( "\nList of defined labels for %s:\n\n", name );
         while( lb != NULL ) {
-            len = strlen( lb->label_name );
-            out_msg( "Label='%s'%s at line %d\n", lb->label_name, &fill[len],
-                      lb->lineno );
+            len = LABEL_NAME_LENGTH - strlen( lb->label_name );
+            memset( fill, ' ', len );
+            fill[len] = '\0';
+            out_msg( "Label='%s'%s at line %d\n", lb->label_name, fill, lb->lineno );
             lb = lb->prev;
         }
     }
