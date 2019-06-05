@@ -465,7 +465,7 @@ static void set_lpinch( option * opt )
 static void set_delim( option * opt )
 {
     if( tokennext == NULL || is_option()
-                          || tokennext->toklen != 1 ) {       // not length 1
+      || tokennext->toklen != 1 ) {     // not length 1
         g_err( err_miss_inv_opt_value, opt->option,
                 tokennext == NULL ? " " : tokennext->token );
         err_count++;
@@ -1384,13 +1384,13 @@ void split_attr_file( char * filename , char * attr, size_t attrlen )
 /*  test for delimiter                                                     */
 /***************************************************************************/
 
-static int option_delimiter( char c )
+static bool option_delimiter( char c )
 {
     if( c == ' ' || c == '-' || c == '\0' || c == '\t' || c == '(' ||
         c == switch_char || c == '\n' ) {
-        return( 1 );
+        return( true );
     }
-    return( 0 );
+    return( false );
 }
 
 
@@ -1514,13 +1514,13 @@ static cmd_tok  *process_option_old( option * op_table, cmd_tok * tok )
         if( strnicmp( opt, p, len ) ) {
             continue;
         }
-/* '=' indicates optional '=' */
-/* '#' indicates a decimal numeric value */
-/* '$' indicates identifier */
-/* '@' indicates filename */
-/* '*' indicates additional characters will be scanned by option routine */
-/* if a capital letter appears in the option, then input must match exactly */
-/* otherwise all input characters are changed to lower case before matching */
+        /* '=' indicates optional '=' */
+        /* '#' indicates a decimal numeric value */
+        /* '$' indicates identifier */
+        /* '@' indicates filename */
+        /* '*' indicates additional characters will be scanned by option routine */
+        /* if a capital letter appears in the option, then input must match exactly */
+        /* otherwise all input characters are changed to lower case before matching */
         opt_value = op_table[i].value;
         j = len;
         opt += op_table[i].optionLenM1;
@@ -1634,7 +1634,8 @@ static bool is_option( void )
     char    *   p;
     char    *   option_start;
 
-    if( tokennext == NULL ) return( false );
+    if( tokennext == NULL )
+        return( false );
     p = tokennext->token;
     option_start = p;
     len = tokennext->toklen;
@@ -1746,7 +1747,8 @@ int proc_options( char * string )
     SkipSpaces( string );
     s_after_dq = string;                // assume no starting quote
     if( *string == d_q ) {              // take care of possible quotes
-        for( p = string + 1; *p != '\0'; p++ )  /* empty */ ;
+        for( p = string + 1; *p != '\0'; p++ )
+            /* empty */ ;
         p--;
         while( *p == ' ' ) {            // ignore trailing spaces
             p--;
@@ -1768,9 +1770,9 @@ int proc_options( char * string )
 
             if( c == '-' || c == switch_char ) {
 
-            /***************************************************************/
-            /*  process 'new' options -x or /x                             */
-            /***************************************************************/
+                /***************************************************************/
+                /*  process 'new' options -x or /x                             */
+                /***************************************************************/
                 tok = process_option( GML_new_Options, tok );
 
                 if( tok != NULL && !tok->bol ) {
@@ -1807,7 +1809,8 @@ int proc_options( char * string )
             mem_free( file_names[level] );
             file_names[level] = NULL;
         }
-        if( level == 0 ) break;
+        if( level == 0 )
+            break;
         tok = sav_tokens[--level];
     }
     if( print_to < print_from  ) {

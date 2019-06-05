@@ -161,7 +161,6 @@ void    scr_im( void )
 
     p = scan_start;
     SkipSpaces( p );
-
     gn.argstart = p;
     gn.argstop  = scan_stop;
     gn.ignore_blanks = 0;

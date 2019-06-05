@@ -351,7 +351,6 @@ void    scr_gt( void )
     char        *   p;
     char        *   pn;
     char            savetag;
-    int             k;
     int             len;
     char            macname[MAC_NAME_LENGTH + 1];
     condcode        cc;
@@ -399,22 +398,13 @@ void    scr_gt( void )
         init_tag_att();                     // forget previous values for quick access
         attname[0] = '*';
 
-        pn      = tagname;
-        len     = 0;
-
-        while( *p != '\0' && is_macro_char( *p ) ) {
-            if( len < TAG_NAME_LENGTH ) {
-                *pn++ = my_tolower( *p++ ); // copy lowercase tagname
-                *pn   = '\0';
-            } else {
-                break;
-            }
+        len = 0;
+        pn = tagname;
+        while( is_macro_char( *p ) && len < TAG_NAME_LENGTH ) {
+            *pn++ = my_tolower( *p++ ); // copy lowercase tagname
             len++;
         }
-        for( k = len; k < TAG_NAME_LENGTH; k++ ) {
-            tagname[k] = '\0';
-        }
-        tagname[TAG_NAME_LENGTH] = '\0';
+        *pn = '\0';
 
         if( len < arg_flen ) {
             xx_err( err_tag_name_inv );
@@ -496,9 +486,10 @@ void    scr_gt( void )
             return;
         }
         p = tok_start;
+
         len = 0;
         pn = macname;
-        while( *p != '\0' && is_macro_char( *p ) && len < MAC_NAME_LENGTH ) {
+        while( is_macro_char( *p ) && len < MAC_NAME_LENGTH ) {
             *pn++ = my_tolower( *p++ );     // copy lowercase macroname
             len++;
         }

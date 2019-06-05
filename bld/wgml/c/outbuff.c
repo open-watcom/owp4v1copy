@@ -968,12 +968,12 @@ void cop_tr_table( const char *p )
     no_data = true;
 
     while( *p ) {
-        SkipSpaces( p );            // next char start
+        SkipSpaces( p );        // next char start
         pa = p;
-        SkipNonSpaces( p );         // next char start
+        SkipNonSpaces( p );     // next char start
         len = p - pa;
-
-        if( len == 0 ) break;   // exit loop if no next char
+        if( len == 0 )
+            break;              // exit loop if no next char
 
         token_char = parse_char( pa, len );
         no_data = false;

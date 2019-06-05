@@ -59,7 +59,7 @@ void    gml_date( const gmltag * entry )
     SkipDot( p );                       // over . to docnum
     SkipSpaces( p );                    // over WS to attribute
 
-    if( *p != '\0' ) {  // date specified
+    if( *p != '\0' ) {                  // date specified
         if( GlobalFlags.firstpass  ) {
             add_symvar( &global_dict, "date", p, no_subscript, 0 );
         }

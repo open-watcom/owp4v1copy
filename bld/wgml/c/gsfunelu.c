@@ -170,7 +170,7 @@ static char *scr_single_func_sS( char * in, char * end, char * * result, char fu
     *result += 1;
     **result = '\0';
 
-    SkipDot( pchar );               // skip optional terminating dot
+    SkipDot( pchar );                   // skip optional terminating dot
     return( pchar );
 }
 

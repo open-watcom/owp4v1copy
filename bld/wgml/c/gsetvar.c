@@ -63,7 +63,7 @@ char    *scan_sym( char * p, symvar * sym, sub_index * subscript )
     sym->name[0] = '\0';
 
     k = 0;
-    while( *p != '\0' && is_symbol_char( *p ) ) {
+    while( is_symbol_char( *p ) ) {
 
         if( k < SYM_NAME_LENGTH ) {
             if( (k == 3) && (sym->name[0] != '$') ) {
@@ -242,7 +242,7 @@ void    scr_se( void )
     }
 
     if( ProcFlags.blanks_allowed ) {
-        SkipSpaces( p );                            // skip over spaces
+        SkipSpaces( p );                        // skip over spaces
     }
     if( *p == '\0' ) {
         if( !ProcFlags.suppress_msg ) {

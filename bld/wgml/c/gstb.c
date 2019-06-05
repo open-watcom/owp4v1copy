@@ -323,9 +323,7 @@ void    scr_tb( void )
                     p++;
                 }
             }
-            if( *p != ' ' ) {
-                SkipNonSpaces( p );             // find end of tab stop
-            }
+            SkipNonSpaces( p );                 // find end of tab stop
             SkipSpaces( p );                    // find next tab position
         }
     }

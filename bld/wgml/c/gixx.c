@@ -298,9 +298,10 @@ static void gml_ixxx_common( const gmltag * entry, int hx_lvl )
     /***********************************************************************/
 
     txt = p;
-    txtlen = strlen(txt);               // total remaining characters
-    while( txt[txtlen - 1] == ' ') {    // back off trailing spaces
-        txtlen--;
+    for( txtlen = strlen( txt ); txtlen > 0; txtlen-- ) { // back off trailing spaces
+        if( txt[txtlen - 1] != ' ' ) {
+            break;
+        }
     }
 
     if( !pgseen ) {

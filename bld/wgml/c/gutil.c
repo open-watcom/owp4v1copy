@@ -134,44 +134,44 @@ static const bool internal_to_su( su *in_su, bool tag, const char *base )
         sign = '+';
     }
 
-    for( i = 0; i < 4; i++ ) {              // max four digits in whole part
+    for( i = 0; i < 4; i++ ) {                  // max four digits in whole part
         if( (*ps >= '0') && (*ps <= '9') ) {
             wh = (10 * wh) + (*ps - '0');
             ps++;
         } else {
             break;
         }
-        if( !*ps ) {                           // value end reached
+        if( *ps == '\0' ) {                     // value end reached
             break;
         }
     }
-    if( (*ps >= '0') && (*ps <= '9') ) {      // too many digits in whole part
+    if( (*ps >= '0') && (*ps <= '9') ) {        // too many digits in whole part
         val_parse_err( base + (ps - s->su_txt), tag );
         scan_start = scan_stop + 1;
         return( cvterr );
     }
 
-    if( *ps != '\0' && *ps == '.' ) {   // check for decimal point
+    if( *ps == '.' ) {                         // check for decimal point
         pd = ps;
         ps++;
-        pd1 = ps;                       // remember start of decimals
-        for( i = 0; i < 2; i++ ) {      // max two digits in decimals
+        pd1 = ps;                               // remember start of decimals
+        for( i = 0; i < 2; i++ ) {              // max two digits in decimals
             if( (*ps >= '0') && (*ps <= '9') ) {
                 wd = 10 * wd + *ps - '0';
                 ps++;
             } else {
                 break;
             }
-            if( *ps == '\0' ) {             // value end reached
+            if( *ps == '\0' ) {                 // value end reached
                 break;
             }
         }
         pdn = ps;
-        if( pd1 == ps ) {                        // no decimals
+        if( pd1 == ps ) {                       // no decimals
             pd1 = NULL;
             pdn = NULL;
         }
-        if( (*ps >= '0') && (*ps <= '9') ) {      // too many digits in decimals
+        if( (*ps >= '0') && (*ps <= '9') ) {    // too many digits in decimals
             val_parse_err( base + (ps - s->su_txt), tag );
             scan_start = scan_stop + 1;
             return( cvterr );
@@ -181,17 +181,17 @@ static const bool internal_to_su( su *in_su, bool tag, const char *base )
     k = 0;
     pu = ps;
     for( i = 0; i < 2; i++ ) {                  // max two characters in unit
-        if( *ps != '\0' && isalpha( *(unsigned char *)ps ) ) {
+        if( isalpha( *(unsigned char *)ps ) ) {
             unit[k++] = my_tolower( *ps );      // save Unit
             ps++;
         } else {
             break;
         }
-        if( *ps == '\0' ) {                            // value end reached
+        if( *ps == '\0' ) {                     // value end reached
             break;
         }
     }
-    if( *ps != '\0' && isalpha( *(unsigned char *)ps ) ) {  // too many characters in unit
+    if( isalpha( *(unsigned char *)ps ) ) {     // too many characters in unit
         val_parse_err( base + (ps - s->su_txt), tag );
         scan_start = scan_stop + 1;
         return( cvterr );
@@ -201,14 +201,14 @@ static const bool internal_to_su( su *in_su, bool tag, const char *base )
     /*  check for valid unit                                               */
     /***********************************************************************/
 
-    if( unit[1] == '\0' ) {           // single letter unit
+    if( unit[1] == '\0' ) {                     // single letter unit
         switch( unit[0] ) {
         case 'i' :
             s->su_u = SU_inch;
             break;
         case 'm' :
             s->su_u = SU_ems;
-            if( pd != NULL ) {          // no decimals with "M"
+            if( pd != NULL ) {                  // no decimals with "M"
                 val_parse_err( base + (ps - s->su_txt), tag );
                 scan_start = scan_stop + 1;
                 return( cvterr );
@@ -222,7 +222,7 @@ static const bool internal_to_su( su *in_su, bool tag, const char *base )
             s->su_u = SU_pica;
             is_cp = true;
             break;
-        case '\0' :                     // no unit is characters or lines
+        case '\0' :                             // no unit is characters or lines
             s->su_u = SU_chars_lines;
             break;
         default:
@@ -230,26 +230,26 @@ static const bool internal_to_su( su *in_su, bool tag, const char *base )
             scan_start = scan_stop + 1;
             return( cvterr );
         }
-    } else {                            // two letter unit
-        if( unit[1] == 'm' ) {          // cm, mm ?
+    } else {                                    // two letter unit
+        if( unit[1] == 'm' ) {                  // cm, mm ?
             if( unit[0] == 'c' ) {
                 s->su_u = SU_cm;
             } else if( unit[0] == 'm' ) {
                 s->su_u = SU_mm;
-            } else {                    // invalid unit
+            } else {                            // invalid unit
                 val_parse_err( base + (ps - s->su_txt), tag );
                 scan_start = scan_stop + 1;
                 return( cvterr );
             }
-        } else if( unit[0] == 'd' ) {   // dv ?
+        } else if( unit[0] == 'd' ) {           // dv ?
             if( unit[1] == 'v' ) {
                 s->su_u = SU_dv;
-            } else {                    // invalid unit
+            } else {                            // invalid unit
                 val_parse_err( base + (ps - s->su_txt), tag );
                 scan_start = scan_stop + 1;
                 return( cvterr );
             }
-        } else {                        // invalid unit
+        } else {                                // invalid unit
             val_parse_err( base + (ps - s->su_txt), tag );
             scan_start = scan_stop + 1;
             return( cvterr );
@@ -262,12 +262,12 @@ static const bool internal_to_su( su *in_su, bool tag, const char *base )
                 wd = (10 * wd) + (*ps - '0');
                 ps++;
             }
-            if( *ps != '\0' ) { // value end reached
+            if( *ps != '\0' ) {                 // value end reached
                 break;
             }
         }
     }
-    if( (*ps >= '0') && (*ps <= '9') ) {    // too many digits after "C" or "P"
+    if( (*ps >= '0') && (*ps <= '9') ) {        // too many digits after "C" or "P"
         val_parse_err( base + (ps - s->su_txt), tag );
         scan_start = scan_stop + 1;
         return( cvterr );
@@ -496,7 +496,7 @@ bool att_val_to_su( su * in_su, bool pos )
     ps = s->su_txt;
     *ps = '\0';
 
-    if( (val_len + 1) > MAX_SU_CHAR ) {             // won't fit
+    if( (val_len + 1) > MAX_SU_CHAR ) {     // won't fit
         xx_line_err( err_inv_att_val, val_start );
         scan_start = scan_stop + 1;
         return( cvterr );
@@ -505,12 +505,12 @@ bool att_val_to_su( su * in_su, bool pos )
     ps[val_len] = '\0';
 
     s->su_u = SU_undefined;
-    if( *ps == '+' ) {                   // not allowed with tags
+    if( *ps == '+' ) {                      // not allowed with tags
         xx_line_err( err_inv_att_val, val_start );
         scan_start = scan_stop + 1;
         return( cvterr );
-    } else if( *ps == '-' ) {            // not relative, just negative
-        if( pos ) {                     // value must be positive
+    } else if( *ps == '-' ) {               // not relative, just negative
+        if( pos ) {                         // value must be positive
             xx_line_err( err_inv_att_val, val_start );
             scan_start = scan_stop + 1;
             return( cvterr );
@@ -524,7 +524,7 @@ bool att_val_to_su( su * in_su, bool pos )
     } else {
         sign = '+';
     }
-    if( *ps == '\0' ) {                 // value end reached, not valid
+    if( *ps == '\0' ) {                     // value end reached, not valid
         xx_line_err( err_inv_att_val, val_start );
         scan_start = scan_stop + 1;
         return( cvterr );
@@ -569,10 +569,10 @@ bool cw_val_to_su( char * * scanp, su * in_su )
     pa = p;
     ps = s->su_txt;
     *ps = '\0';
-    SkipSpaces( p );                // just in case
+    SkipSpaces( p );            // just in case
     SkipNonSpaces( p );
     len = p - pa;
-    *scanp = p;                     // report back value of p
+    *scanp = p;                 // report back value of p
     if( (len + 1) > MAX_SU_CHAR ) {
         xx_line_err( err_inv_cw_op_val, val_start );
         scan_start = scan_stop + 1;
@@ -631,11 +631,11 @@ bool lay_init_su( const char * p, su * in_su )
     ps = s->su_txt;
     *ps = '\0';
 
-    SkipSpaces( p );            // just in case
+    SkipSpaces( p );                // just in case
     SkipNonSpaces( p );
     len = p - pa;
 
-    if( (len + 1) > MAX_SU_CHAR ) {                 // won't fit
+    if( (len + 1) > MAX_SU_CHAR ) { // won't fit
         xx_line_err( err_inv_att_val, val_start );
         scan_start = scan_stop + 1;
         return( cvterr );
@@ -644,11 +644,11 @@ bool lay_init_su( const char * p, su * in_su )
     ps[len] = '\0';
 
     s->su_u = SU_undefined;
-    if( *ps == '+' ) {                   // not allowed with tags
+    if( *ps == '+' ) {                      // not allowed with tags
         xx_line_err( err_inv_att_val, ps );
         scan_start = scan_stop + 1;
         return( cvterr );
-    } else if( *ps == '-' ) {            // not relative, just negative
+    } else if( *ps == '-' ) {               // not relative, just negative
         sign = *ps;
         if( *(ps + 1) == '+' || *(ps + 1) == '-' ) {  // only one sign is allowed
             xx_line_err( err_inv_att_val, ps );
@@ -658,12 +658,12 @@ bool lay_init_su( const char * p, su * in_su )
     } else {
         sign = '+';
     }
-    if( *ps == '\0' ) {                          // value end reached, not valid
+    if( *ps == '\0' ) {                     // value end reached, not valid
         xx_line_err( err_inv_att_val, ps );
         scan_start = scan_stop + 1;
         return( cvterr );
     }
-    s->su_relative = false;             // no relative positioning with tags
+    s->su_relative = false;                 // no relative positioning with tags
 
     if( su_layout_special( in_su ) ) {
         cvterr = false;
@@ -965,7 +965,7 @@ char * get_att_value( char * p )
         quote_char = *p;
         ++p;
         val_start = p;
-        while( *p ) {
+        while( *p != '\0' ) {
             if( *p == quote ) {
                 if( *(p + 1) != quote ) {
                     break;
@@ -993,7 +993,7 @@ char * get_att_value( char * p )
         ++p;                        // over final quote
     } else {
         val_start = p;
-        while( *p && *p != ' ' && *p != '.' ) {
+        while( *p != '\0' && *p != ' ' && *p != '.' ) {
             ++p;
         }
         val_len = p - val_start;
@@ -1060,7 +1060,7 @@ char * get_tag_value( char * p )
         quote_char = *p;
         ++p;
         val_start = p;
-        while( *p ) {
+        while( *p != '\0' ) {
             if( *p == quote ) {
                 if( *(p + 1) != quote ) {
                     break;
@@ -1070,7 +1070,7 @@ char * get_tag_value( char * p )
                     char    *   r;
                     q = p;
                     r = p + 1;
-                    while( *r ) {
+                    while( *r != '\0' ) {
                         *q = *r;
                         q++;
                         r++;
@@ -1088,7 +1088,7 @@ char * get_tag_value( char * p )
         ++p;                        // over final quote
     } else {
         val_start = p;
-        while( *p && *p != ' ' && *p != '.' ) {
+        while( *p != '\0' && *p != ' ' && *p != '.' ) {
             ++p;
         }
         val_len = p - val_start;

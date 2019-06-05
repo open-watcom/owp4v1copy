@@ -485,8 +485,7 @@ static void wgml_tabs( void )
                             0, t_page.cur_width, 0, in_chars->font,
                             in_chars->type );
                     } else {                // adjust prior marker
-                        pre_width = tab_space *
-                                        wgml_fonts[in_chars->font].spc_width;
+                        pre_width = tab_space * wgml_fonts[in_chars->font].spc_width;
                         if( c_stop->alignment == al_center ) {
                             pre_width /= 2;
                             if( (pre_width % 2) > 0 ) {
@@ -585,8 +584,7 @@ static void wgml_tabs( void )
                     text_found = false;
                 } else {    // alignment right or center
                     if( s_multi == NULL ) {    // first time, set s_width
-                        s_width = tab_space *
-                                        wgml_fonts[in_chars->font].spc_width;
+                        s_width = tab_space * wgml_fonts[in_chars->font].spc_width;
                     }
                     i = 0;
                 }
@@ -1854,7 +1852,7 @@ void process_text( const char *text, font_number font )
             post_space = 0;
         }
         // ".co on": skip initial spaces
-        // ".co off": compute initial spacing
+        // ".co off": compute initial spacing from initial spaces
         if( !ProcFlags.concat ) {
             post_space = tab_space * wgml_fonts[font].spc_width;
             if( *p == '\0' && !(input_cbs->fmflags & II_eol) ) {
@@ -1901,10 +1899,10 @@ void process_text( const char *text, font_number font )
                         post_space += wgml_fonts[font].spc_width;
                     }
                     if( (c_stop != NULL) && (t_line->last->width == 0) ) {
-                        SkipSpaces( p );        // locate the first non-space character, if any
-                        tab_space = p - text;
-                        p = text;               // restore p to start of text
-                        if( tab_space != strlen( p ) ) {  // something follows the spaces
+                        pa = text;
+                        SkipSpaces( pa );     // locate the first non-space character, if any
+                        tab_space = pa - text;
+                        if( *pa != '\0' ) {   // something follows the spaces
                             if( count == tab_space ) {     // and it is a tab character
                                 // insert a marker
                                 t_page.cur_width += wgml_fonts[font].spc_width;
@@ -2343,8 +2341,7 @@ void process_text( const char *text, font_number font )
         if( *p == ' ' ) {                                       // spaces to process
             pword = p;
             post_space = wgml_fonts[font].spc_width;
-            if( !ProcFlags.as_text_line && stop_fnd
-                    && (cur_group_type != gt_xmp) ) {   // exclude XMP
+            if( !ProcFlags.as_text_line && stop_fnd && (cur_group_type != gt_xmp) ) {   // exclude XMP
                 post_space += wgml_fonts[font].spc_width;
             }
             p++;
@@ -2364,8 +2361,7 @@ void process_text( const char *text, font_number font )
                 && !ProcFlags.wrap_indent) { // insert spaces at actual end-of-line, except in INDEX
             pword = p;
             post_space = wgml_fonts[font].spc_width;
-            if( !ProcFlags.as_text_line && stop_fnd
-                    && (cur_group_type != gt_xmp) ) {   // exclude XMP
+            if( !ProcFlags.as_text_line && stop_fnd && (cur_group_type != gt_xmp) ) {   // exclude XMP
                 post_space += wgml_fonts[font].spc_width;
             }
         }

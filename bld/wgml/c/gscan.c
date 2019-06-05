@@ -495,8 +495,8 @@ static void     scan_script( void )
         scan_start = p;
 
         pt = token_buf;
-        while( *p != '\0' && is_macro_char( *p ) ) {    // end of controlword
-           *pt++ = my_tolower( *p++ );                  // copy lowercase to TokenBuf
+        while( is_macro_char( *p ) ) {      // end of controlword
+           *pt++ = my_tolower( *p++ );      // copy lowercase to TokenBuf
         }
         *pt = '\0';
 

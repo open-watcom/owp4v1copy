@@ -178,7 +178,7 @@ condcode    get_lay_sub_and_value( att_args * args )
     args->len[1] = -1;                  // switch for scanning error
 
     for(;;) {                           // loop until attribute/value pair or rescan line found
-        while( *p != '\0' && is_lay_att_char( *p ) ) {
+        while( is_lay_att_char( *p ) ) {
             p++;
         }
         if( *p == '\0' ) {              // end of line: get new line
@@ -216,7 +216,7 @@ condcode    get_lay_sub_and_value( att_args * args )
             p++;
         }
 
-        if( *p != '\0' && *p == '=' ) {
+        if( *p == '=' ) {
             p++;
             while( is_space_tab_char( *p ) ) {  // over WS to attribute value
                 p++;
@@ -438,9 +438,8 @@ bool    i_content( char * p, lay_att curr, content * tm )
     }
     if( tm->content_type == string_content ) {  // unquoted single word
         pa = p;
-        SkipNonSpaces( p );
-        len = p - pa;
-        p = pa;                                 // reset to start of word
+        SkipNonSpaces( pa );
+        len = pa - p;
         if( len >= str_size )
             len = str_size;                     // truncate to allowed length
         memcpy( tm->string, p, len );

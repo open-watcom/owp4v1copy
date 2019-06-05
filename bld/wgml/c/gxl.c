@@ -181,7 +181,7 @@ void gml_dl( const gmltag * entry )
     tsize = conv_hor_unit( &dl_layout->align, g_curr_font );
 
     p = scan_start;
-    SkipSpaces( p );                        // over spaces
+    SkipSpaces( p );                    // over spaces
     if( *p == '.' ) {
         /* already at tag end */
     } else {
@@ -1205,7 +1205,7 @@ void gml_dthd( const gmltag * entry )
     p = get_text_line( p );
 
     if( !ProcFlags.reprocess_line ) {
-        SkipSpaces( p );                // skip initial spaces
+        SkipSpaces( p );                    // skip initial spaces
         ProcFlags.as_text_line = true;
         if( *p ) {
             process_text( p, g_curr_font ); // if text follows
@@ -1267,7 +1267,7 @@ void gml_ddhd( const gmltag * entry )
         ProcFlags.dd_space = true;
     }
 
-    ddhd_done = true;   // override compact if DT follows
+    ddhd_done = true;                   // override compact if DT follows
 
     SkipDot( p );                       // skip tag end
     SkipSpaces( p );                    // skip initial spaces
@@ -1331,7 +1331,7 @@ void gml_dt( const gmltag * entry )
     p = get_text_line( p );
 
     if( !ProcFlags.reprocess_line ) {
-        SkipSpaces( p );                // skip initial spaces
+        SkipSpaces( p );                    // skip initial spaces
         ProcFlags.as_text_line = true;
         if( *p ) {
             process_text( p, g_curr_font ); // if text follows
@@ -1400,10 +1400,10 @@ void gml_dd( const gmltag * entry )
 
     ju_x_start = t_page.cur_width;
 
-    SkipDot( p );                       // possible tag end
-    SkipSpaces( p );                    // skip initial spaces
+    SkipDot( p );                           // possible tag end
+    SkipSpaces( p );                        // skip initial spaces
     if( *p ) {
-        process_text( p, g_curr_font ); // if text follows
+        process_text( p, g_curr_font );     // if text follows
     } else {
         if( break_done ) {
             ProcFlags.dd_starting = true;   // no text, set flag

@@ -173,12 +173,12 @@ void gml_aline( const gmltag * entry )
           (ProcFlags.doc_sect_nxt == doc_sect_titlep)) ) {
         xx_nest_err_cc( err_tag_wrong_sect, entry->tagname, ":TITLEP section" );
     }
-    if( cur_group_type != gt_address ) {   // no preceding :ADDRESS tag
+    if( cur_group_type != gt_address ) {    // no preceding :ADDRESS tag
         g_err_tag_prec( "ADDRESS" );
     }
     p = scan_start;
-    SkipDot( p );                       // over '.'
-    SkipSpaces( p );                    // over WS to <text line>
+    SkipDot( p );                           // over '.'
+    SkipSpaces( p );                        // over WS to <text line>
 
     scr_process_break();
     start_doc_sect();                       // if not already done

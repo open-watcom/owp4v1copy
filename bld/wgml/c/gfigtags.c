@@ -704,12 +704,12 @@ void gml_fig( const gmltag * entry )
     }
 
     t_page.cur_width = t_page.cur_left;
-    ProcFlags.keep_left_margin = true;  // keep special indent
+    ProcFlags.keep_left_margin = true;      // keep special indent
 
     if( !ProcFlags.reprocess_line && *p != '\0' ) {
         SkipDot( p );                       // possible tag end
         if( *p != '\0' ) {
-            process_text( p, g_curr_font); // if text follows
+            process_text( p, g_curr_font);  // if text follows
         }
     }
     scan_start = scan_stop + 1;
@@ -744,9 +744,9 @@ void gml_efig( const gmltag * entry )
     /* Done here because needed for the minimum post_skip */
 
     p = scan_start;
-    SkipDot( p );                           // possible tag end
+    SkipDot( p );                       // possible tag end
 
-    if( cur_group_type != gt_fig ) {        // no preceding :FIG tag
+    if( cur_group_type != gt_fig ) {    // no preceding :FIG tag
         g_err_tag_prec( "FIG" );
     }
 

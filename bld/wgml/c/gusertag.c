@@ -195,7 +195,7 @@ bool        process_tag( gtentry * ge, mac_entry * me )
     if( ge->attribs != NULL ) {     // only process attributes if they exist
         while( *p == ' ' ) {        // not yet end of tag, process attributes
 
-            SkipSpaces( p );            // over WS to attribute
+            SkipSpaces( p );        // over WS to attribute
             if( *p == '.' ) {
                 tag_end_found = true;
                 break;

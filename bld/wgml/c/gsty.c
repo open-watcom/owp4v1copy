@@ -63,10 +63,12 @@ void    scr_ty( void )
     char    *   p = scan_start + 1;
 
     SkipSpaces( p );            // wgml 4.0 ignores leading blanks, let's do the same
+#if 0
     if( *p == '\0' ) {
-        p--;
+        p--;    // ???
     }
-    out_msg( "%s\n", p );        // no output translation, add if needed TBD
+#endif
+    out_msg( "%s\n", p );       // no output translation, add if needed TBD
     scan_restart = scan_stop + 1;
     return;
 }

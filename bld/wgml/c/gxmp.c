@@ -258,7 +258,7 @@ void gml_exmp( const gmltag * entry )
     t_page.cur_width = t_page.cur_left;
     scan_err = false;
     p = scan_start;
-    SkipDot( p );                   // over '.'
+    SkipDot( p );                       // over '.'
     if( *p ) {
         do_force_pc( p );
     } else {

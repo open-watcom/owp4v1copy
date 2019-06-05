@@ -186,16 +186,16 @@ void gen_heading( char * h_text, char * id, hdsrc hn_lvl, hdsrc hds_lvl )
     page_width = (hds_lvl < hds_abstract) && (t_page.last_pane->col_count > 1);
     if( page_width ) {
         t_page.max_width = t_page.page_width;
-   }
+    }
     update_headnumx( hn_lvl, hds_lvl );
 
     if( hds_lvl == hds_appendix ) {
         prefixlen = strlen( layout_work.appendix.string ) + strlen( hd_nums[hn_lvl].hnumstr );
-        prefix = (char *) mem_alloc( prefixlen + 1 );
+        prefix = (char *)mem_alloc( prefixlen + 1 );
         strcpy_s( prefix, prefixlen, layout_work.appendix.string); // prefix
         strcat_s( prefix, prefixlen + 1, hd_nums[hn_lvl].hnumstr ); // numbered header
         headlen = prefixlen + strlen( h_text ) + 2;
-        headp = (char *) mem_alloc( headlen );
+        headp = (char *)mem_alloc( headlen );
         if( layout_work.hx.hx_head[hds_appendix].number_form != num_none ) {
             strcpy_s( headp, headlen, prefix ); // numbered header
             strcat_s( headp, headlen, " " );
@@ -736,9 +736,8 @@ static void gml_hx_common( const gmltag * entry, hdsrc hn_lvl )
             /* remove trailing spaces */
 
             for( len = strlen( p ); len-- > 0; ) {
-                if( p[len] != ' ' ) {
+                if( p[len] != ' ' )
                     break;
-                }
                 p[len] = '\0';
             }
 

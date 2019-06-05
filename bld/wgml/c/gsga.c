@@ -515,22 +515,13 @@ void    scr_ga( void )
 
         init_tag_att();                     // forget previous values for quick access
 
-        pn      = tagname;
-        len     = 0;
-
-        while( *p != '\0' && is_macro_char( *p ) ) {
-            if( len < TAG_NAME_LENGTH ) {
-                *pn++ = my_tolower( *p++ ); // copy lowercase tagname
-                *pn   = '\0';
-            } else {
-                break;
-            }
+        len = 0;
+        pn = tagname;
+        while( is_macro_char( *p ) && len < TAG_NAME_LENGTH ) {
+            *pn++ = my_tolower( *p++ );     // copy lowercase tagname
             len++;
         }
-        for( k = len; k < TAG_NAME_LENGTH; k++ ) {
-            tagname[k] = '\0';
-        }
-        tagname[TAG_NAME_LENGTH] = '\0';
+        *pn = '\0';
 
         if( len < arg_flen ) {
             xx_err( err_tag_name_inv );     // name contains invalid or too many chars
@@ -570,22 +561,14 @@ void    scr_ga( void )
     } else {
         saveatt = ' ';                      // no quick access
         att_entry = NULL;
-        pn      = attname;
-        len     = 0;
 
-        while( *p != '\0' && is_macro_char( *p ) ) {
-            if( len < ATT_NAME_LENGTH ) {
-                *pn++ = my_tolower( *p++ ); // copy lowercase tagname
-                *pn   = '\0';
-            } else {
-                break;
-            }
+        len = 0;
+        pn = attname;
+        while( is_macro_char( *p ) && len < ATT_NAME_LENGTH ) {
+            *pn++ = my_tolower( *p++ ); // copy lowercase tagname
             len++;
         }
-        for( k = len; k < ATT_NAME_LENGTH; k++ ) {
-            attname[k] = '\0';
-        }
-        attname[ATT_NAME_LENGTH] = '\0';
+        *pn = '\0';
 
         if( len < arg_flen ) {
             xx_err( err_att_name_inv );// attname with invalid or too many chars

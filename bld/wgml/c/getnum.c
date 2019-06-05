@@ -236,7 +236,7 @@ static char *get_exp( const char *str )
     char *tptr = tokbuf;
     struct operator *op;
 
-    while( *ptr ) {
+    while( *ptr != '\0' ) {
         if( *ptr == ' ' ) {
             if( ignore_blanks ) {
                 ptr++;
@@ -288,7 +288,7 @@ static  int evaluate( char **line, long *val )
     nparens   = 0;
     ptr       = *line;
 
-    while( *ptr ) {
+    while( *ptr != '\0' ) {
         if( *ptr == ' ' ) {
             if( ignore_blanks ) {
                 ptr++;

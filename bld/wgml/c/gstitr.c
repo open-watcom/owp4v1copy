@@ -147,7 +147,6 @@ void    scr_ti( void )
     char        *   p;
 
     p = scan_start;
-
     SkipSpaces( p );                    // next word start
 
     cop_ti_table( p );
@@ -164,7 +163,7 @@ void    scr_tr( void )
 
     p = scan_start;
 
-    SkipSpaces( p );                // next word start
+    SkipSpaces( p );                    // next word start
     cop_tr_table( p );
 
     scan_restart = scan_stop + 1;

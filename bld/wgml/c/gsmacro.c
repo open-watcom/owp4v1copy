@@ -199,7 +199,7 @@ void    add_macro_parms( char * p )
                 }
                 p = pa;
             }
-            SkipSpaces( p );        // over spaces
+            SkipSpaces( p );            // over spaces
         }
                                         // the positional parameter count
         add_symvar( &input_cbs->local_dict, "0", starbuf, no_subscript, local_var );
@@ -325,7 +325,7 @@ void    scr_dm( void )
      */
     len = 0;
     pn  = macname;
-    while( *p != '\0' && is_macro_char( *p ) && len < MAC_NAME_LENGTH ) {
+    while( is_macro_char( *p ) && len < MAC_NAME_LENGTH ) {
         *pn++ = my_tolower( *p++ );     // copy lowercase macroname
         len++;
     }
@@ -700,7 +700,7 @@ void    scr_em( void )
          */
         len = 0;
         pn  = macname;
-        while( *p != '\0' && is_macro_char( *p ) && len < MAC_NAME_LENGTH ) {
+        while( is_macro_char( *p ) && len < MAC_NAME_LENGTH ) {
             *pn++ = *p++;           // copy macroname
             len++;
         }

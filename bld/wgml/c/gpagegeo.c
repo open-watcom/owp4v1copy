@@ -346,7 +346,7 @@ static void preprocess_script_region( region_lay_tag * reg )
                 /* are removed                                                 */
                 /***************************************************************/
 
-                SkipSpaces( pl );           // remove leading spaces
+                SkipSpaces( pl );       // remove leading spaces
                 reg->script_region[k].string = pl;
                 while( *pl &&  *pl != sep ) {
                     pl++;

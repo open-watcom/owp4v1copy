@@ -1345,7 +1345,7 @@ void cop_ti_table( const char *p )
                     pa = p;
                     SkipNonSpaces( p );     // set char start
                     len = p - pa;
-                    if( len > 0 ) {     // additional text not allowed
+                    if( len > 0 ) {         // additional text not allowed
                         xx_line_err_len( err_char_only, pa, len );
                         return;
                     }

@@ -362,7 +362,7 @@ static bool test_macro_xxxx( char const * beginend )
                 SkipSpaces( p );            // find macroname
                 SkipNonSpaces( p );
                 SkipSpaces( p );            // find begin end
-                return(  !strnicmp( p, beginend, strlen( beginend ) ) );
+                return( strnicmp( p, beginend, strlen( beginend ) ) == 0 );
             }
         }
     }
