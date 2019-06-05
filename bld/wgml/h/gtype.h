@@ -110,9 +110,16 @@
 #define my_tolower( p )     tolower( (unsigned char)(p) )
 #define my_toupper( p )     toupper( (unsigned char)(p) )
 
+#define my_isalpha( p )     isalpha( (unsigned char)(p) )
+#define my_isalnum( p )     isalnum( (unsigned char)(p) )
+#define my_isdigit( p )     isdigit( (unsigned char)(p) )
+#define my_isxdigit( p )    isxdigit( (unsigned char)(p) )
+#define my_isspace( p )     isspace( (unsigned char)(p) )
+
 #define SkipSpaces( p )     while( *(p) == ' ' ) (p)++
 #define SkipNonSpaces( p )  while( *(p) != '\0' && *(p) != ' ' ) (p)++
 #define SkipDot( p )        if( *(p) == '.' ) (p)++
+#define SkipSpacesTabs( p ) while( is_space_tab_char( *(p) ) ) (p)++
 
 typedef uint32_t    line_number;
 typedef uint8_t     text_space;
