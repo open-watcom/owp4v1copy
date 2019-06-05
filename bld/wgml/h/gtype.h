@@ -65,6 +65,7 @@
 
 #define SYM_NAME_LENGTH 10              // symbol name length
 #define MAC_NAME_LENGTH 8               // macro name length
+#define LABEL_NAME_LENGTH 8             // label name length
 #define MAX_MAC_PARMS   32              // maximum macro parm count
                                         // arbitrary value, not found in docu!!!
 #define MAC_STAR_NAME   "_"             // local variable name for &*
@@ -237,7 +238,7 @@ typedef struct labelcb {
     struct labelcb  *   prev;
     fpos_t              pos;            // file position for label if file
     line_number         lineno;         // lineno of label
-    char                label_name[MAC_NAME_LENGTH + 1];
+    char                label_name[LABEL_NAME_LENGTH + 1];
 } labelcb;
 
 
