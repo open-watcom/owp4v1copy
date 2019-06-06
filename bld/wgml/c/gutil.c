@@ -261,16 +261,18 @@ static const bool internal_to_su( su *in_su, bool tag, const char *base )
             if( my_isdigit( *ps ) ) {
                 wd = (10 * wd) + (*ps - '0');
                 ps++;
+            } else {
+                break;
             }
-            if( *ps != '\0' ) {                 // value end reached
+            if( *ps == '\0' ) {                 // value end reached
                 break;
             }
         }
-    }
-    if( my_isdigit( *ps ) ) {     // too many digits after "C" or "P"
-        val_parse_err( base + (ps - s->su_txt), tag );
-        scan_start = scan_stop + 1;
-        return( cvterr );
+        if( my_isdigit( *ps ) ) {     // too many digits after "C" or "P"
+            val_parse_err( base + (ps - s->su_txt), tag );
+            scan_start = scan_stop + 1;
+            return( cvterr );
+        }
     }
 
     if( *ps != '\0' ) {                         // value continues on: it shouldn't
