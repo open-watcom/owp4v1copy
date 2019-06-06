@@ -50,7 +50,6 @@ typedef struct cmd_tok {
     size_t              toklen;
     bool                bol;
     char                token[1];       // variable length
-
 } cmd_tok;
 
 static unsigned     level;              // include level 0 = cmdline
@@ -78,7 +77,6 @@ static  void    free_tokens( int lvl )
 
     tok = cmd_tokens[lvl];
     cmd_tokens[lvl] = NULL;
-
     while( tok != NULL ) {
         wk = tok->nxt;
         mem_free( tok );
@@ -962,7 +960,6 @@ static void set_passes( option * opt )
     } else {
         p = tokennext->token;
         opt_value = get_num_value( p );
-
         if( opt_value < 1 || opt_value > MAX_PASSES ) {
             g_err( err_passes_value, str( MAX_PASSES ), opt_value );
             err_count++;
@@ -1421,41 +1418,42 @@ static void strip_quotes( char * fname )
 static cmd_tok  *process_option( option * op_table, cmd_tok * tok )
 {
     int         i;
-    int         j;
     char    *   opt;
     char        first_c;
     char    *   option_start;
     char    *   p;
+    char    *   pa;
+    bool        opt_delim_start;
 
 
     option_start = tok->token;
     p = option_start;
-    first_c = my_tolower( *p );
-    if( option_delimiter( first_c ) ) {
+    opt_delim_start = option_delimiter( *p );
+    if( opt_delim_start ) {
         p++;
-        first_c = my_tolower( *p );
     }
+    first_c = my_tolower( *p );
     tokennext = tok->nxt;
     for( i = 0; (opt = op_table[i].option) != NULL; i++ ) {
         if( first_c == *opt ) {               // match for first char
             opt_value = op_table[i].value;
-            for( j = 1, opt++; ; j++, opt++ ) {
+            for( opt++, pa = p + 1; ; opt++, pa++ ) {
                 if( *opt == '\0' ) {
-                    if( p - option_start == 1 ) {
+                    if( opt_delim_start ) {
                         // make sure end of option
-                        if( p[j] != '\0' && !option_delimiter( p[j] ) ) {
+                        if( *pa != '\0' && !option_delimiter( *pa ) ) {
                             break;
                         }
                     }
-                    opt_scan_ptr = p + j;
+                    opt_scan_ptr = pa;
                     g_info_research( inf_recognized_xxx, "n1", option_start );
                     op_table[i].function( &op_table[i]);
                     return( tokennext );
                 }
-                if( *opt != (char)my_tolower( p[j] ) ) {
+                if( *opt != (char)my_tolower( *pa ) ) {
                     if( *opt < 'A' || *opt > 'Z' )
                         break;
-                    if( *opt != p[j] ) {
+                    if( *opt != *pa ) {
                         break;
                     }
                 }
@@ -1474,37 +1472,33 @@ static cmd_tok  *process_option( option * op_table, cmd_tok * tok )
 static cmd_tok  *process_option_old( option * op_table, cmd_tok * tok )
 {
     int         i;
-    int         j;
     int         len;
     char    *   opt;
     char        first_c;
     char        c;
     char    *   p;
+    char    *   pa;
     char    *   option_start;
+    bool        opt_delim_start;
 
     p = tok->token;
     option_start = p;
     len = tok->toklen;
     tokennext = tok->nxt;
-    first_c = my_tolower( *p );
-    if( first_c == '(' ) {
+    opt_delim_start = ( *p == '(' );
+    if( opt_delim_start ) {
         if( len == 1 ) {
             return( tokennext );        // skip single (
         }
         p++;
         len--;
-        first_c = my_tolower( *p );
     }
-    for( i = 0; ; i++ ) {
-        opt = op_table[i].option;
-        j = 1;
-        if( opt == NULL )
-            break;
+    first_c = my_tolower( *p );
+    for( i = 0; (opt = op_table[i].option) != NULL; i++ ) {
         if( first_c != *opt )
             continue;
-        if( len < op_table[i].minLength ) {
+        if( len < op_table[i].minLength )
             continue;                   // cannot be this option
-        }
         if( strnicmp( opt, p, len ) ) {
             continue;
         }
@@ -1516,91 +1510,86 @@ static cmd_tok  *process_option_old( option * op_table, cmd_tok * tok )
         /* if a capital letter appears in the option, then input must match exactly */
         /* otherwise all input characters are changed to lower case before matching */
         opt_value = op_table[i].value;
-        j = len;
-        for( opt += op_table[i].optionLen; ; opt++ ) {
+        for( pa = p + len, opt += op_table[i].optionLen; ; opt++ ) {
             if( *opt == '\0' || *opt == '*' ) {
                 if( *opt == '\0' ) {
-                    if( p - option_start == 1 ) {
-                                        // make sure end of option
-                        if( p[j] != '\0' && !option_delimiter( p[j] ) ) {
+                    if( opt_delim_start ) {
+                        if( *pa != '\0' && !option_delimiter( *pa ) ) { // make sure end of option
                             break;
                         }
                     }
                 }
-                opt_scan_ptr = p + j;
+                opt_scan_ptr = pa;
                 g_info_research( inf_recognized_xxx, "1", option_start );
-                op_table[i].function( &op_table[i]);
+                op_table[i].function( &op_table[i] );
                 return( tokennext );
             }
             if( *opt == '#' ) {         // collect a number
-                while( p[j] == ' ' ) {// skip blanks
-                    ++j;
-                }
-                if( my_isdigit( p[j] ) ) {
+                SkipSpaces( pa );       // skip blanks
+                if( my_isdigit( *pa ) ) {
                     opt_value = 0;
-                    for( ; my_isdigit( p[j] ); j++ ) {
-                        opt_value = opt_value * 10 + p[j] - '0';
+                    for( ; my_isdigit( *pa ); pa++ ) {
+                        opt_value = opt_value * 10 + *pa - '0';
                     }
-                    opt_scan_ptr = p + j;
+                    opt_scan_ptr = pa;
                 }
                 g_info_research( inf_recognized_xxx, "num", option_start );
             } else if( *opt == '$' ) {  // collect an identifer
-                if( p[j] == ' ' )       // skip 1 blank
-                    j++;
-                opt_parm = &p[j];
-                for( ; (c = p[j]) != '\0'; j++ ) {
+                if( *pa == ' ' )        // skip 1 blank
+                    pa++;
+                opt_parm = pa;
+                for( ; (c = *pa) != '\0'; pa++ ) {
                     if( c == '-' ) break;
                     if( c == '(' ) break;
                     if( c == ' ' ) break;
                     if( c == switch_char ) break;
                     if( c == '\n' ) {
-                        p[j] = ' ';
+                        *pa = ' ';
                         break;
                     }
                 }
-                opt_scan_ptr = p + j;
+                opt_scan_ptr = pa;
                 g_info_research( inf_recognized_xxx, "id", option_start );
             } else if( *opt == '@' ) {  // collect a filename
-                opt_parm = &p[j];
-                c = p[j];
+                opt_parm = pa;
+                c = *pa;
                 if( c == '"' ){         // "filename"
-                    for( j++; (c = p[j]) != '\0'; j++ ) {
-                        if( c == '"' ) {
-                            ++j;
+                    for( pa++; (c = *pa) != '\0'; pa++ ) {
+                        if( c == '"' ){
+                            pa++;
                             break;
                         }
-                        if( c == '\\' ) {
-                            ++j;
+                        if( c == '\\' ){
+                            pa++;
                         }
                     }
                 } else {
-                    for( ; (c = p[j]) != '\0'; j++ ) {
+                    for( ; (c = *pa) != '\0'; pa++ ) {
                         if( is_space_tab_char( c ) )
                             break;
                         if( c == switch_char )
                             break;
                         if( c == '\n' ) {
-                            p[j] = ' ';
+                            *pa = ' ';
                             break;
                         }
                     }
                 }
                 g_info_research( inf_recognized_xxx, "fn", option_start );
             } else if( *opt == '=' ) {  // collect an optional '='
-                if( p[j] == '=' || p[j] == '#' ) {
-                    ++j;
+                if( *pa == '=' || *pa == '#' ) {
+                    pa++;
                 }
             } else {
-                c = my_tolower( p[j] );
-                if( *opt != c ) {
+                if( *opt != (char)my_tolower( *pa ) ) {
                     if( *opt < 'A' || *opt > 'Z' )
                         break;
-                    if( *opt != p[j] ) {
+                    if( *opt != *pa ) {
                         break;
                     }
                 }
-                ++j;
-                opt_scan_ptr = p + j;
+                pa++;
+                opt_scan_ptr = pa;
             }
         }
         g_info_research( inf_recognized_xxx, "5", option_start );
