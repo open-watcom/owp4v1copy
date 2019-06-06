@@ -1380,11 +1380,7 @@ void split_attr_file( char * filename , char * attr, size_t attrlen )
 
 static bool option_delimiter( char c )
 {
-    if( c == ' ' || c == '-' || c == '\0' || c == '\t' || c == '(' ||
-        c == switch_char || c == '\n' ) {
-        return( true );
-    }
-    return( false );
+    return( c == ' ' || c == '-' || c == '\t' || c == '(' || c == switch_char || c == '\n' );
 }
 
 
@@ -1449,7 +1445,7 @@ static cmd_tok  *process_option( option * op_table, cmd_tok * tok )
                 if( *opt == '\0' ) {
                     if( p - option_start == 1 ) {
                         // make sure end of option
-                        if( !option_delimiter( p[j] ) ) {
+                        if( p[j] != '\0' && !option_delimiter( p[j] ) ) {
                             break;
                         }
                     }
@@ -1525,7 +1521,7 @@ static cmd_tok  *process_option_old( option * op_table, cmd_tok * tok )
                 if( *opt == '\0' ) {
                     if( p - option_start == 1 ) {
                                         // make sure end of option
-                        if( !option_delimiter( p[j] ) ) {
+                        if( p[j] != '\0' && !option_delimiter( p[j] ) ) {
                             break;
                         }
                     }
@@ -1543,7 +1539,7 @@ static cmd_tok  *process_option_old( option * op_table, cmd_tok * tok )
                     opt_value = 0;
                     for(;;) {
                         c = p[j];
-                        if( !my_isdigit( c ) ) 
+                        if( !my_isdigit( c ) )
                             break;
                         opt_value = opt_value * 10 + c - '0';
                         ++j;
