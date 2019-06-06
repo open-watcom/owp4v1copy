@@ -1349,7 +1349,7 @@ void ob_setup( void )
     count = 0;
 
     for( i = 2; i < strlen( out_file_attr ); i++ ) {
-        if( !isdigit( out_file_attr[i] ) ) {
+        if( !my_isdigit( out_file_attr[i] ) ) {
             xx_simple_err_c( err_rec_att_bad_fmt, out_file_attr );
         }
         count++;

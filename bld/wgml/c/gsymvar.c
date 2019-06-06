@@ -220,7 +220,7 @@ int find_symvar_l( symvar * * dict, char * name, sub_index sub, symsub * * symsu
     }
 
     p = name;                           // see if symbol name consists entirely of digits
-    while( !*p && isdigit(*p) ) {
+    while( my_isdigit( *p ) ) {
         p++;
     }
 

@@ -152,11 +152,11 @@ void    gml_graphic( const gmltag * entry )
                     break;
                 }
                 pb = val_start;
-                if( (*pb == '+') || (*pb == '-') ) {  // signs not allowed
+                if( (*pb == '+') || (*pb == '-') ) {    // signs not allowed
                     xx_line_err( err_num_too_large, val_start );
                 }
                 scale = 0;
-                while( (*pb >= '0') && (*pb <= '9') ) { // convert to number
+                while( my_isdigit( *pb ) ) {            // convert to number
                     scale = (10 * scale) + (*pb - '0');
                     pb++;
                     if( (pb - val_start) > val_len ) {  // value end reached

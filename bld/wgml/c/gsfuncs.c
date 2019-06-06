@@ -125,7 +125,7 @@ static  char    * find_end_of_parm( char * pchar, char * pend )
         } else {
             if( test_for_quote && is_quote_char( c ) ) {
                 if( (cm1 == ampchar) || // &' sequence
-                    ((cm2 == ampchar) && isalpha( (unsigned char)cm1 )) ) {// &X' sequence
+                    ((cm2 == ampchar) && my_isalpha( cm1 )) ) {// &X' sequence
                             /* no instring change */
                 } else {
                     instring[paren_level] = true;

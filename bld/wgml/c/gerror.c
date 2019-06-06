@@ -151,7 +151,8 @@ static void g_msg_var( msg_ids errornum, int sev, va_list arglist )
     } else {
         while( strlen( start ) > MAX_LINE_LEN - msg_indent ) {
             end = start + MAX_LINE_LEN - msg_indent;
-            while( !isspace( *end ) && end > start ) end--;
+            while( !my_isspace( *end ) && end > start )
+                end--;
             if( end != start )  {
                 *end = '\0';
             } else {
@@ -164,7 +165,8 @@ static void g_msg_var( msg_ids errornum, int sev, va_list arglist )
         out_msg( "%*s%s\n", msg_indent, "", start );
         if( save != NULL ) {    // set msg_indent for follow-on line
             save++;             // step over the ":"
-            while( isspace( *save ) ) save++;   // step over any spaces
+            while( my_isspace( *save ) )    // step over any spaces
+                save++;
             msg_indent = save - err_buf;
         }
     }

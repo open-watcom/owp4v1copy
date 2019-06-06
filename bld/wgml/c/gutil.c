@@ -135,7 +135,7 @@ static const bool internal_to_su( su *in_su, bool tag, const char *base )
     }
 
     for( i = 0; i < 4; i++ ) {                  // max four digits in whole part
-        if( (*ps >= '0') && (*ps <= '9') ) {
+        if( my_isdigit( *ps ) ) {
             wh = (10 * wh) + (*ps - '0');
             ps++;
         } else {
@@ -145,18 +145,18 @@ static const bool internal_to_su( su *in_su, bool tag, const char *base )
             break;
         }
     }
-    if( (*ps >= '0') && (*ps <= '9') ) {        // too many digits in whole part
+    if( my_isdigit( *ps ) ) {                   // too many digits in whole part
         val_parse_err( base + (ps - s->su_txt), tag );
         scan_start = scan_stop + 1;
         return( cvterr );
     }
 
-    if( *ps == '.' ) {                         // check for decimal point
+    if( *ps == '.' ) {                          // check for decimal point
         pd = ps;
         ps++;
         pd1 = ps;                               // remember start of decimals
         for( i = 0; i < 2; i++ ) {              // max two digits in decimals
-            if( (*ps >= '0') && (*ps <= '9') ) {
+            if( my_isdigit( *ps ) ) {
                 wd = 10 * wd + *ps - '0';
                 ps++;
             } else {
@@ -171,7 +171,7 @@ static const bool internal_to_su( su *in_su, bool tag, const char *base )
             pd1 = NULL;
             pdn = NULL;
         }
-        if( (*ps >= '0') && (*ps <= '9') ) {    // too many digits in decimals
+        if( my_isdigit( *ps ) ) {               // too many digits in decimals
             val_parse_err( base + (ps - s->su_txt), tag );
             scan_start = scan_stop + 1;
             return( cvterr );
@@ -181,7 +181,7 @@ static const bool internal_to_su( su *in_su, bool tag, const char *base )
     k = 0;
     pu = ps;
     for( i = 0; i < 2; i++ ) {                  // max two characters in unit
-        if( isalpha( *(unsigned char *)ps ) ) {
+        if( my_isalpha( *ps ) ) {
             unit[k++] = my_tolower( *ps );      // save Unit
             ps++;
         } else {
@@ -191,7 +191,7 @@ static const bool internal_to_su( su *in_su, bool tag, const char *base )
             break;
         }
     }
-    if( isalpha( *(unsigned char *)ps ) ) {     // too many characters in unit
+    if( my_isalpha( *ps ) ) {                   // too many characters in unit
         val_parse_err( base + (ps - s->su_txt), tag );
         scan_start = scan_stop + 1;
         return( cvterr );
@@ -258,7 +258,7 @@ static const bool internal_to_su( su *in_su, bool tag, const char *base )
 
     if( is_cp ) {       // "C" and "P" can be followed by max four digits
         for( i = 0; i < 4; i++ ) {
-            if( (*ps >= '0') && (*ps <= '9') ) {
+            if( my_isdigit( *ps ) ) {
                 wd = (10 * wd) + (*ps - '0');
                 ps++;
             }
@@ -267,13 +267,13 @@ static const bool internal_to_su( su *in_su, bool tag, const char *base )
             }
         }
     }
-    if( (*ps >= '0') && (*ps <= '9') ) {        // too many digits after "C" or "P"
+    if( my_isdigit( *ps ) ) {     // too many digits after "C" or "P"
         val_parse_err( base + (ps - s->su_txt), tag );
         scan_start = scan_stop + 1;
         return( cvterr );
     }
 
-    if( *ps != '\0' ) {                     // value continues on: it shouldn't
+    if( *ps != '\0' ) {                         // value continues on: it shouldn't
         val_parse_err( base + (ps - s->su_txt), tag );
         scan_start = scan_stop + 1;
         return( cvterr );
@@ -1017,11 +1017,11 @@ font_number get_font_number( char * value, size_t len )
     p = value;
     pb = p + len;
 
-    while( (*p >= '0') && (*p <= '9') ) {   // ensure entire token consists of decimal digits
+    while( my_isdigit( *p ) ) {                 // ensure entire token consists of decimal digits
         p++;
     }
 
-    if( p != pb ) {                         // badly-formed token
+    if( p != pb ) {                             // badly-formed token
         xx_line_err( err_num_too_large, val_start );
     }
 

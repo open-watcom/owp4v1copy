@@ -221,7 +221,7 @@ void scr_ix( void )
 
             p = tok_start;
             for( k = 0; k < arg_flen; k++ ) {
-                if( (*p == ' ') || (*p < '0') || (*p > '9') ) {
+                if( (*p == ' ') || !my_isdigit( *p ) ) {
                     break;
                 }
                 p++;

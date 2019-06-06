@@ -182,12 +182,12 @@ void    scr_tb( void )
 
             // Parse fill chars/strings
 
-            if( (*p != '+') && !isdigit( *p ) ) { // potential fill char
+            if( (*p != '+') && !my_isdigit( *p ) ) {    // potential fill char
                 if( (*p == '\'') || (*p == '"') || (*p == '/') ) {
-                    quote = *p;                 // initial quote found
-                    p++;                        // should be fill char
+                    quote = *p;                         // initial quote found
+                    p++;                                // should be fill char
                     if( *p == '\0' || (*p == ' ') ||
-                        (*p == '+') || isdigit( *p ) ) { // ' " or / only before tab stop position
+                        (*p == '+') || my_isdigit( *p ) ) { // ' " or / only before tab stop position
                         xx_line_err( err_right_delim, pa );
                         continue;
                     }
@@ -239,7 +239,7 @@ void    scr_tb( void )
             if( *p != '\0' && (p > pa) ) {      // as needed by getnum
                 p--;                            // *p is last character of tab stop
             }
-            while( (p != pa) && !isdigit( *p ) ) { // back up over alignment
+            while( (p != pa) && !my_isdigit( *p ) ) { // back up over alignment
                 p--;
             }
             pb = p + 1;

@@ -43,10 +43,10 @@ char parse_char( const char *pa, size_t len )
     c = '\0';
     p = pa + len;
     if( len == 2 ) {             // 2 hex characters
-        if( isxdigit( *pa ) && isxdigit( *(pa + 1) ) ) {
+        if( my_isxdigit( pa[0] ) && my_isxdigit( pa[1] ) ) {
             for( ; len > 0; len-- ) {
                 c *= 16;
-                if( isdigit( *pa ) ) {
+                if( my_isdigit( *pa ) ) {
                     c += *pa - '0';
                 } else {
                     c += my_toupper( *pa ) - 'A' + 10;
@@ -300,7 +300,7 @@ bool is_lay_att_char( char c )
 {
     bool    test;
 
-    test = isalpha( (unsigned char)c );
+    test = my_isalpha( c );
     if( !test ) {
         test = ( c == '_' );
     }
@@ -315,7 +315,7 @@ bool is_function_char( char c )
 {
     bool    test;
 
-    test = isalnum( (unsigned char)c );
+    test = my_isalnum( c );
     return( test );
 }
 
@@ -327,7 +327,7 @@ bool is_id_char( char c )
 {
     bool    test;
 
-    test = isalnum( (unsigned char)c );
+    test = my_isalnum( c );
     return( test );
 }
 
@@ -339,7 +339,7 @@ bool is_macro_char( char c )
 {
     bool    test;
 
-    test = isalnum( (unsigned char)c );
+    test = my_isalnum( c );
     if( !test ) {
         test = ( c == '@' ) || ( c == '#' ) || ( c == '$' ) || ( c == '_' );
     }
@@ -354,7 +354,7 @@ bool is_symbol_char( char c )
 {
     bool    test;
 
-    test = isalnum( (unsigned char)c );
+    test = my_isalnum( c );
     if( !test ) {
         test = ( c == '@' ) || ( c == '#' ) || ( c == '$' ) || ( c == '_' );
     }

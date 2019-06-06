@@ -308,7 +308,7 @@ static char *scr_single_func_x( char * in, char * end, char * * result )
             accept = false;
         } else {
             for( ; pchar <= end; pchar++ ) {    // check for non-hex-digit in input
-                if( !isxdigit( *pchar ) ) {
+                if( !my_isxdigit( *pchar ) ) {
                     accept = false;
                     break;
                 }
@@ -319,14 +319,14 @@ static char *scr_single_func_x( char * in, char * end, char * * result )
             for( ; pchar < end; pchar++ ) { // check for non-hex-digit in input
 
                 c = 0;
-                if( isdigit( *pchar ) ) {
+                if( my_isdigit( *pchar ) ) {
                     c += *pchar - '0';
                 } else {
                     c += my_toupper( *pchar ) - 'A' + 10;
                 }
                 c *= 16;
                 pchar++;
-                if( isdigit( *pchar ) ) {
+                if( my_isdigit( *pchar ) ) {
                     c += *pchar - '0';
                 } else {
                     c += my_toupper( *pchar ) - 'A' + 10;

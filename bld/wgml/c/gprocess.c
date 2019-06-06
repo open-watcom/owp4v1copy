@@ -391,8 +391,7 @@ bool resolve_symvar_functions( char * buf )
             }
             buf_lg = strnlen_s( buf, buf_size );
 
-            if( isalpha( *(unsigned char *)(pchar + 1) ) && *(pchar + 2) == '\''
-                && *(pchar + 3) > ' ' ) {
+            if( my_isalpha( pchar[1] ) && pchar[2] == '\'' && pchar[3] > ' ' ) {
                                         // not for .if '&*' eq '' .th ...
                                         // only    .if '&x'foo' eq '' .th
                 char * * ppval = &p2;

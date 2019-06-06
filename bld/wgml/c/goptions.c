@@ -231,19 +231,13 @@ static  char    *read_indirect_file( const char * filename )
 /***************************************************************************/
 /*  convert string to integer                                              */
 /***************************************************************************/
-static  long    get_num_value( char * p )
+static  long    get_num_value( const char * p )
 {
-    char    c;
-    int     j;
     long    value;
 
     value = 0;
-    j = 0;
-    for( ;; ) {
-        c = p[j];
-        if( c < '0' || c > '9' ) break;
-        value = value * 10 + c - '0';
-        ++j;
+    for( ; my_isdigit( *p ); p++ ) {
+        value = value * 10 + *p - '0';
     }
     return( value );
 }
@@ -534,7 +528,7 @@ static bool font_points( cmd_tok * in_tok, char buff[5] )
     pre_pt = 0;
     for( i = 0; i < len; i++ ) {
         if( p[i] != '.' ) {
-            if( p[i] < '0' || p[i] > '9' ) {
+            if( !my_isdigit( p[i] ) ) {
                 good = false;
                 break;
             }
@@ -619,7 +613,7 @@ static void set_font( option * opt )
 
         good = true;
         for( i = 0; i < len; i++ ) {
-            if( p[i] < '0' || p[i] > '9' ) {
+            if( !my_isdigit( p[i] ) ) {
                 good = false;
                 break;
             }
@@ -1229,7 +1223,7 @@ static void set_research( option * opt )
         research_to = ULONG_MAX - 1;
 
         research_file_name[0] = '\0';   // no filename
-        if( isalpha( *(unsigned char *)str ) ) {         // filename ?
+        if( my_isalpha( *str ) ) {      // filename ?
             if( len < sizeof( research_file_name ) ) {
                 strcpy_s( research_file_name, sizeof( research_file_name ), str );
             }
@@ -1448,15 +1442,16 @@ static cmd_tok  *process_option( option * op_table, cmd_tok * tok )
         if( opt == NULL ) break;        // not found
 
         if( c == *opt ) {               // match for first char
-
             opt_value = op_table[i].value;
             j = 1;
             for(;;) {
                 ++opt;
                 if( *opt == '\0' ) {
                     if( p - option_start == 1 ) {
-                                        // make sure end of option
-                        if( !option_delimiter( p[j] ) ) break;
+                        // make sure end of option
+                        if( !option_delimiter( p[j] ) ) {
+                            break;
+                        }
                     }
                     opt_scan_ptr = p + j;
                     g_info_research( inf_recognized_xxx, "n1", option_start );
@@ -1530,7 +1525,9 @@ static cmd_tok  *process_option_old( option * op_table, cmd_tok * tok )
                 if( *opt == '\0' ) {
                     if( p - option_start == 1 ) {
                                         // make sure end of option
-                        if( !option_delimiter( p[j] ) ) break;
+                        if( !option_delimiter( p[j] ) ) {
+                            break;
+                        }
                     }
                 }
                 opt_scan_ptr = p + j;
@@ -1542,11 +1539,12 @@ static cmd_tok  *process_option_old( option * op_table, cmd_tok * tok )
                 while( p[j] == ' ' ) {// skip blanks
                     ++j;
                 }
-                if( p[j] >= '0' && p[j] <= '9' ) {
+                if( my_isdigit( p[j] ) ) {
                     opt_value = 0;
                     for(;;) {
                         c = p[j];
-                        if( c < '0' || c > '9' ) break;
+                        if( !my_isdigit( c ) ) 
+                            break;
                         opt_value = opt_value * 10 + c - '0';
                         ++j;
                     }
@@ -1603,7 +1601,9 @@ static cmd_tok  *process_option_old( option * op_table, cmd_tok * tok )
                 }
                 g_info_research( inf_recognized_xxx, "fn", option_start );
             } else if( *opt == '=' ) {  // collect an optional '='
-                if( p[j] == '=' || p[j] == '#' ) ++j;
+                if( p[j] == '=' || p[j] == '#' ) {
+                    ++j;
+                }
             } else {
                 c = my_tolower( p[j] );
                 if( *opt != c ) {
