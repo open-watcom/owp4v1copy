@@ -1454,8 +1454,7 @@ static cmd_tok  *process_option( option * op_table, cmd_tok * tok )
                     op_table[i].function( &op_table[i]);
                     return( tokennext );
                 }
-                c = my_tolower( p[j] );
-                if( *opt != c ) {
+                if( *opt != (char)my_tolower( p[j] ) ) {
                     if( *opt < 'A' || *opt > 'Z' ) break;
                     if( *opt != p[j] ) break;
                 }
