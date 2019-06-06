@@ -967,7 +967,7 @@ void cop_tr_table( const char *p )
     first_found = false;
     no_data = true;
 
-    while( *p ) {
+    while( *p != '\0' ) {
         SkipSpaces( p );        // next char start
         pa = p;
         SkipNonSpaces( p );     // next char start

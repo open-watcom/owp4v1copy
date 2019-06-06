@@ -159,9 +159,7 @@ static void split_at_GML_tag( void )
                     }
                     if( (rs_loc > 0) || layoutsw ) {
                         p = buff2;
-                        while( is_space_tab_char( *p ) ) {
-                            p++;
-                        }
+                        SkipSpacesTabs( p );
                         if( p == pchar ) {  // only leading blanks
                             memmove_s( buff2, buf_size, pchar, buf_size - (p - buff2) );
                             buff2_lg = strnlen_s( buff2, buf_size );// new length
@@ -654,9 +652,7 @@ static bool remove_leading_space( void )
         return( false );                // don't change input
     }
     p = buff2;
-    while( is_space_tab_char( *p ) ) {
-        p++;
-    }
+    SkipSpacesTabs( p );
     if( (p != buff2) && (*p == GML_char) && (cur_group_type != gt_xmp) ) {
         p2 = buff2;
         do {

@@ -175,9 +175,9 @@ void gml_figref( const gmltag * entry )
     mem_free( ref_text );
     ref_text = NULL;
 
-    if( !ProcFlags.reprocess_line && *p ) {
+    if( !ProcFlags.reprocess_line && *p != '\0' ) {
         SkipDot( p );                       // possible tag end
-        if( *p ) {                          // only if text follows
+        if( *p != '\0' ) {                  // only if text follows
             post_space = 0;                 // cancel space after ref_text
             process_text( p, g_curr_font );
         }
@@ -275,9 +275,9 @@ void gml_hdref( const gmltag * entry )
     mem_free( ref_text );
     ref_text = NULL;
 
-    if( !ProcFlags.reprocess_line && *p ) {
+    if( !ProcFlags.reprocess_line && *p != '\0' ) {
         SkipDot( p );                       // possible tag end
-        if( *p ) {                          // only if text follows
+        if( *p != '\0' ) {                  // only if text follows
             ProcFlags.ct = true;
             post_space = 0;                 // cancel space after ref_text
             process_text( p, g_curr_font );
@@ -334,9 +334,9 @@ void gml_fnref( const gmltag * entry )
         process_text( buffer, layout_work.fnref.font );
     }
 
-    if( !ProcFlags.reprocess_line && *p ) {
+    if( !ProcFlags.reprocess_line && *p != '\0' ) {
         SkipDot( p );                       // possible tag end
-        if( *p ) {                          // only if text follows
+        if( *p != '\0' ) {                  // only if text follows
             post_space = 0;                 // cancel space after ref_text
             process_text( p, g_curr_font );
         }

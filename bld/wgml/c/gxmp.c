@@ -153,13 +153,13 @@ void gml_xmp( const gmltag * entry )
         scr_process_break();
     }
 
-    if( !ProcFlags.reprocess_line && *p ) { // text after tag
-        SkipDot( p );                       // possible tag end
-        if( *p ) {
-            process_text( p, g_curr_font);  // if text follows
+    if( !ProcFlags.reprocess_line && *p != '\0' ) { // text after tag
+        SkipDot( p );                               // possible tag end
+        if( *p != '\0' ) {
+            process_text( p, g_curr_font);          // if text follows
         }
     }
-    if( input_cbs->fmflags & II_macro ) {   // only when in macro -- TBD: user tags also?
+    if( input_cbs->fmflags & II_macro ) {           // only when in macro -- TBD: user tags also?
         ProcFlags.skip_blank_line = true;
     }
     scan_start = scan_stop + 1;
@@ -259,7 +259,7 @@ void gml_exmp( const gmltag * entry )
     scan_err = false;
     p = scan_start;
     SkipDot( p );                       // over '.'
-    if( *p ) {
+    if( *p != '\0' ) {
         do_force_pc( p );
     } else {
         ProcFlags.force_pc = true;

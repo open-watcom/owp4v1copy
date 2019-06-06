@@ -224,7 +224,7 @@ int find_symvar_l( symvar * * dict, char * name, sub_index sub, symsub * * symsu
         p++;
     }
 
-    if( !*p && (dict == &input_cbs->local_dict) ) { // not auto symbol and current dict is local dict
+    if( *p == '\0' && (dict == &input_cbs->local_dict) ) { // not auto symbol and current dict is local dict
 
                                         // search upwards thru all local dicts
 

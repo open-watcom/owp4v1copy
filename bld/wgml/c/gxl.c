@@ -658,7 +658,7 @@ static void     gml_exl_common( const gmltag * entry )
     scan_err = false;
     p = scan_start;
     SkipDot( p );                       // over '.'
-    if( *p ) {
+    if( *p != '\0' ) {
         do_force_pc( p );
     } else {
         ProcFlags.force_pc = true;
@@ -906,7 +906,7 @@ static  void    gml_li_ol( const gmltag * entry )
     g_curr_font = nest_cb->u.ol_layout->font;
     SkipDot( p );                       // over '.'
     SkipSpaces( p );                    // skip initial spaces
-    if( *p ) {
+    if( *p != '\0' ) {
         process_text( p, g_curr_font ); // if text follows
     }
 
@@ -955,7 +955,7 @@ static  void    gml_li_sl( const gmltag * entry )
     g_curr_font = nest_cb->u.sl_layout->font;
     SkipDot( p );                       // over '.'
     SkipSpaces( p );                    // skip initial spaces
-    if( *p ) {
+    if( *p != '\0' ) {
         process_text( p, g_curr_font ); // if text follows
     }
 
@@ -1018,7 +1018,7 @@ static  void    gml_li_ul( const gmltag * entry )
     g_curr_font = nest_cb->u.ul_layout->font;
     SkipDot( p );                       // over '.'
     SkipSpaces( p );                    // skip initial spaces
-    if( *p ) {
+    if( *p != '\0' ) {
         process_text( p, g_curr_font ); // if text fullows
     }
 
@@ -1149,7 +1149,7 @@ void    gml_lp( const gmltag * entry )
 
     SkipDot( p );                       // possible tag end
     SkipSpaces( p );                    // skip initial spaces
-    if( *p ) {
+    if( *p != '\0' ) {
         process_text( p, g_curr_font ); // if text follows
     }
 
@@ -1207,7 +1207,7 @@ void gml_dthd( const gmltag * entry )
     if( !ProcFlags.reprocess_line ) {
         SkipSpaces( p );                    // skip initial spaces
         ProcFlags.as_text_line = true;
-        if( *p ) {
+        if( *p != '\0' ) {
             process_text( p, g_curr_font ); // if text follows
         } else {
             ProcFlags.need_text = true;
@@ -1271,7 +1271,7 @@ void gml_ddhd( const gmltag * entry )
 
     SkipDot( p );                       // skip tag end
     SkipSpaces( p );                    // skip initial spaces
-    if( *p ) {
+    if( *p != '\0' ) {
         process_text( p, g_curr_font ); // if text follows
     } else {
         ProcFlags.need_text = true;
@@ -1333,7 +1333,7 @@ void gml_dt( const gmltag * entry )
     if( !ProcFlags.reprocess_line ) {
         SkipSpaces( p );                    // skip initial spaces
         ProcFlags.as_text_line = true;
-        if( *p ) {
+        if( *p != '\0' ) {
             process_text( p, g_curr_font ); // if text follows
         } else {
             ProcFlags.need_text = true;
@@ -1402,7 +1402,7 @@ void gml_dd( const gmltag * entry )
 
     SkipDot( p );                           // possible tag end
     SkipSpaces( p );                        // skip initial spaces
-    if( *p ) {
+    if( *p != '\0' ) {
         process_text( p, g_curr_font );     // if text follows
     } else {
         if( break_done ) {
@@ -1464,7 +1464,7 @@ void gml_gt( const gmltag * entry )
     if( !ProcFlags.reprocess_line ) {
         SkipSpaces( p );                    // skip initial spaces
         ProcFlags.as_text_line = true;
-        if( *p ) {
+        if( *p != '\0' ) {
             process_text( p, g_curr_font ); // if text follows
         } else {
             ProcFlags.need_text = true;
@@ -1535,7 +1535,7 @@ void gml_gd( const gmltag * entry )
 
     SkipDot( p );                       // possible tag end
     SkipSpaces( p );                    // skip initial spaces
-    if( *p ) {
+    if( *p != '\0' ) {
         process_text( p, g_curr_font ); // if text follows
     }
 

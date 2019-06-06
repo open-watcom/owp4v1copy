@@ -977,7 +977,7 @@ char * get_att_value( char * p )
                     char    *   r;
                     q = p;
                     r = p + 1;
-                    while( *r ) {
+                    while( *r != '\0' ) {
                         *q = *r;
                         q++;
                         r++;

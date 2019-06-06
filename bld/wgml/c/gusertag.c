@@ -221,7 +221,7 @@ bool        process_tag( gtentry * ge, mac_entry * me )
                             p2 = token_buf;
                             if( is_quote_char( *p ) ) {
                                 quote = *p++;
-                                while( *p && *p != quote ) {// quoted value
+                                while( *p != '\0' && *p != quote ) {// quoted value
                                     *p2++ = *p++;
                                 }
                                 if( *p == quote ) {
@@ -229,7 +229,7 @@ bool        process_tag( gtentry * ge, mac_entry * me )
                                 }
                             } else {
                                 quote = '\0';
-                                while( *p && (*p != ' ') && (*p != '.') ) {
+                                while( *p != '\0' && (*p != ' ') && (*p != '.') ) {
                                     *p2++ = *p++;
                                 }
                             }
@@ -398,7 +398,7 @@ bool        process_tag( gtentry * ge, mac_entry * me )
                 p++;
             }
             SkipSpaces( p );            // spaces don't count as text
-            if( *p ) {                  // text found
+            if( *p != '\0' ) {          // text found
                 tag_text_err( ge->name );
                 processed = false;
                 return( processed );
@@ -413,14 +413,14 @@ bool        process_tag( gtentry * ge, mac_entry * me )
             // '.' immediately after the tag does not count as text
             SkipDot( p );
             SkipSpaces( p );            // spaces don't count as text
-            if( !*p ) {                 // no text found
+            if( *p == '\0' ) {          // no text found
                 tag_text_req_err( ge->name );
                 processed = false;
                 return( processed );
             }
         }
         // per wgml 4.0 behavior
-        if( *p && (*p == CW_sep_char) ) {   // null CW_sep_char does not count
+        if( *p != '\0' && (*p == CW_sep_char) ) {   // null CW_sep_char does not count
             processed = false;
             return( processed );
         }

@@ -85,7 +85,7 @@ void    gml_title( const gmltag * entry )
     SkipDot( p );                       // over . to docnum
     SkipSpaces( p );                    // over WS to title
 
-    if( GlobalFlags.firstpass && !ProcFlags.title_text_seen && *p ) {   // first title goes into dictionary
+    if( GlobalFlags.firstpass && !ProcFlags.title_text_seen && *p != '\0' ) {   // first title goes into dictionary
         add_symvar( &global_dict, "$title", p, no_subscript, 0 );
         ProcFlags.title_text_seen = true;
     }
@@ -119,7 +119,7 @@ void    gml_title( const gmltag * entry )
     old_line_pos = line_position;
     line_position = layout_work.title.page_position;
     ProcFlags.as_text_line = true;
-    if( *p ) {
+    if( *p != '\0' ) {
         process_text( p, g_curr_font );
     } else {
         ProcFlags.titlep_starting = true;

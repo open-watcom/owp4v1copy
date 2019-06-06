@@ -169,10 +169,7 @@ condcode    get_lay_sub_and_value( att_args * args )
     pa = p;
     rc = no;
 
-    while( is_space_tab_char( *p ) ) {  // over WS to start of name
-        p++;
-    }
-
+    SkipSpacesTabs( p );                // over WS to start of name
     args->start[0] = p;
     args->len[0] = -1;                  // switch for scanning error
     args->len[1] = -1;                  // switch for scanning error
@@ -193,11 +190,9 @@ condcode    get_lay_sub_and_value( att_args * args )
                         ProcFlags.reprocess_line = true;
                         break;
                     } else {
-                        p = scan_start; // new line is part of current tag
-                        while( is_space_tab_char( *p ) ) {  // over WS to start of alleged attribute
-                            p++;
-                        }
-                        args->start[0] = p;                 // set for new line
+                        p = scan_start;                 // new line is part of current tag
+                        SkipSpacesTabs( p );            // over WS to start of alleged attribute
+                        args->start[0] = p;             // set for new line
                         continue;
                     }
                 }
@@ -211,20 +206,14 @@ condcode    get_lay_sub_and_value( att_args * args )
         if( args->len[0] < 4 ) {            // attribute name length
             xx_line_err( err_att_name_inv, pa );
         }
-
-        while( is_space_tab_char( *p ) ) {  // over WS to =
-            p++;
-        }
-
+        SkipSpacesTabs( p );                // over WS to =
         if( *p == '=' ) {
             p++;
-            while( is_space_tab_char( *p ) ) {  // over WS to attribute value
-                p++;
-            }
-            if( *p == '.' ) {                   // final "." is end of tag
+            SkipSpacesTabs( p );            // over WS to attribute value
+            if( *p == '.' ) {               // final "." is end of tag
                 xx_line_err( err_att_val_missing, p );
             }
-        } else {                                // equals sign is required
+        } else {                            // equals sign is required
             xx_line_err( err_eq_missing, p );
         }
 
@@ -669,11 +658,11 @@ bool    i_font_number( char *p, lay_att curr, font_number *tm )
 
     pb = p;
     len = 0;
-    while( *pb && !is_space_tab_char(*pb) && *pb != '.' ) {     // get length
+    while( *pb != '\0' && !is_space_tab_char( *pb ) && *pb != '.' ) {   // get length
         len++;
         pb++;
     }
-    *tm = get_font_number( p, len);
+    *tm = get_font_number( p, len );
     return( false );
 }
 

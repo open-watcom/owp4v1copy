@@ -1008,7 +1008,7 @@ static  void    init_date_time( void )
     if( p != NULL ) {                   // 'September 02, 2009'
         p++;
         *p = ' ';
-        while( *p ) {                   // becomes
+        while( *p != '\0' ) {           // becomes
             *p = *(p + 1);              // 'September 2, 2009'
             p++;
         }

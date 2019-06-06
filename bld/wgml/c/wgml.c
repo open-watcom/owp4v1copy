@@ -313,7 +313,7 @@ static void remove_indentation( void )
 
             offset = p - buff2;
             pb = buff2;
-            while( *p ) {
+            while( *p != '\0' ) {
                 *pb++ = *p++;
             }
             if( offset > 0 ) {
