@@ -247,13 +247,13 @@ static char *get_exp( const char *str )
         }
         op = get_op( ptr );
         if (NULL != op ) {
-            if( ('-' == ptr[0])  || ('+' == ptr[0]) ) {
-                if( ('-' == ptr[1])  || ('+' == ptr[1]) ) {
+            if( ('-' == ptr[0]) || ('+' == ptr[0]) ) {
+                if( ('-' == ptr[1]) || ('+' == ptr[1]) ) {
                     return( NULL );
                 }
                 if( str != ptr )
                     break;
-                if( str == ptr && !my_isdigit( ptr[1] ) && '.' != ptr[1] ) {
+                if( !my_isdigit( ptr[1] ) && '.' != ptr[1] ) {
                     push_val( 0 );
                     *tptr++ = *ptr++;
                     break;

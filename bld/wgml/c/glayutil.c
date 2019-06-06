@@ -169,18 +169,19 @@ condcode    get_lay_sub_and_value( att_args * args )
     pa = p;
     rc = no;
 
-    SkipSpacesTabs( p );                // over WS to start of name
-    args->start[0] = p;
-    args->len[0] = -1;                  // switch for scanning error
-    args->len[1] = -1;                  // switch for scanning error
+    SkipSpacesTabs( p );                    // over WS to start of name
 
-    for(;;) {                           // loop until attribute/value pair or rescan line found
+    args->start[0] = p;
+    args->len[0] = -1;                      // switch for scanning error
+    args->len[1] = -1;                      // switch for scanning error
+
+    for(;;) {                               // loop until attribute/value pair or rescan line found
         while( is_lay_att_char( *p ) ) {
             p++;
         }
-        if( *p == '\0' ) {              // end of line: get new line
+        if( *p == '\0' ) {                  // end of line: get new line
             if( !(input_cbs->fmflags & II_eof) ) {
-                if( get_line( true ) ) {// next line for missing attribute
+                if( get_line( true ) ) {    // next line for missing attribute
 
                     process_line();
                     scan_start = buff2;
@@ -199,7 +200,7 @@ condcode    get_lay_sub_and_value( att_args * args )
             }
         }
         args->len[0] = p - args->start[0];
-        if( *p == '.' ) {   // end of tag
+        if( *p == '.' ) {                   // end of tag
             ProcFlags.tag_end_found = true;
             return( omit );
         }
@@ -252,11 +253,11 @@ condcode    get_lay_sub_and_value( att_args * args )
 
         val_start = args->start[1];
         val_len = args->len[1];
-        if( args->quoted) {         // delimiters must be omitted for these externs
+        if( args->quoted) {                 // delimiters must be omitted for these externs
             val_start++;
             val_len -= 2;
         }
-        break;                      // values found
+        break;                              // values found
     }
 
     scan_start = p;
@@ -440,13 +441,13 @@ bool    i_content( char * p, lay_att curr, content * tm )
 void    o_content( FILE * f, lay_att curr, const content * tm )
 {
     const   char    * p;
-    char            c   = '\0';
+    char              c;
 
     if( tm->content_type >= no_content && tm->content_type < max_content) {
         p = tm->string;
         if( tm->content_type == string_content ) { // user string with quotes
             fprintf_s( f, "        %s = '", att_names[curr] );
-            while( c = *p++ ) {
+            while( (c = *p++) != '\0' ) {
                 if( c == '&' ) {
                     fprintf_s( f, "&$amp." );
                 } else {

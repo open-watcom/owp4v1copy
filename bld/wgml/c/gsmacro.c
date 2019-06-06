@@ -155,7 +155,7 @@ void    add_macro_parms( char * p )
                 pa = p;
                 pa++;
                 while( *pa != '\0' ) {
-                    if( (*pa == quote) && ((*(pa+1) == ' ') || (*(pa+1) == '\0')) ) {
+                    if( (pa[0] == quote) && ((pa[1] == ' ') || (pa[1] == '\0')) ) {
                         break;          // matching delimiter found
                     }
                     pa++;
@@ -167,7 +167,7 @@ void    add_macro_parms( char * p )
                 *pa = '\0';             // terminate string
                 add_symvar( &input_cbs->local_dict, starbuf, p, no_subscript, local_var );
                 *pa = c;                // restore original char at string end
-                if( *pa == quote) {     // pa was decremented above
+                if( *pa == quote ) {    // pa was decremented above
                     pa++;               // point to character after parameter
                 }
                 p = pa;

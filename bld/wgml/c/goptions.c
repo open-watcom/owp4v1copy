@@ -37,7 +37,7 @@
 
 typedef struct  option {
     char        *   option;             // the option
-    short           optionLen;          // length of option - 1
+    short           optionLen;          // length of option
     short           minLength;          // minimum abbreviation
     long            value;              // sometimes value to set option to
     void            (*function)( struct option *optentry );
@@ -103,7 +103,7 @@ static  int     split_tokens( char *str )
     linestart = true;                   // assume start of line
     cnt = 0;                            // found tokens
 
-    tok = cmd_tokens[level];          // first token at this level
+    tok = cmd_tokens[level];            // first token at this level
     if( tok != NULL ) {
         while( tok->nxt != NULL ) {
             tok = tok->nxt;             // last token at this level
@@ -111,19 +111,18 @@ static  int     split_tokens( char *str )
     }
 
     for( ;; ) {
-        while( (*str == ' ') || ( *str == '\t') )  str++;// skip blanks / tabs
+        SkipSpacesTabs( str );          // skip blanks / tabs
         if( *str == '\0' ) {
             break;
         }
         if( *str == '"' || *str == '\'' ) {
             quote = *str++;
         } else {
-           quote = '\0';
+            quote = '\0';
         }
         tokstart = str;
-        while( *str ) {
-            if( (quote == '\0' && ((*str == ' ') || (*str == '\t')))
-                || *str == '\n' ) {
+        while( *str != '\0' ) {
+            if( quote == '\0' && is_space_tab_char( *str ) || *str == '\n' ) {
                 break;
             }
             if( *str == quote ) {
@@ -532,12 +531,17 @@ static bool font_points( cmd_tok * in_tok, char buff[5] )
                 good = false;
                 break;
             }
-            if( has_pt ) post_pt++;
-            else pre_pt++;
+            if( has_pt ) {
+                post_pt++;
+            } else {
+                pre_pt++;
+            }
+        } else {
+            has_pt = true;
         }
-        else has_pt = true;
     }
-    if( !good || pre_pt > 2 || post_pt > 2 ) return( false );
+    if( !good || pre_pt > 2 || post_pt > 2 )
+        return( false );
     i = 0;
     if( pre_pt > 0 ) {
         if( pre_pt == 1 ) {
@@ -1432,13 +1436,10 @@ static cmd_tok  *process_option( option * op_table, cmd_tok * tok )
         first_c = my_tolower( *p );
     }
     tokennext = tok->nxt;
-    for( i = 0; ; i++ ) {
-        opt = op_table[i].option;
-        if( opt == NULL ) break;        // not found
+    for( i = 0; (opt = op_table[i].option) != NULL; i++ ) {
         if( first_c == *opt ) {               // match for first char
             opt_value = op_table[i].value;
-            j = 1;
-            for( ;; opt++ ) {
+            for( j = 1, opt++; ; j++, opt++ ) {
                 if( *opt == '\0' ) {
                     if( p - option_start == 1 ) {
                         // make sure end of option
@@ -1452,10 +1453,12 @@ static cmd_tok  *process_option( option * op_table, cmd_tok * tok )
                     return( tokennext );
                 }
                 if( *opt != (char)my_tolower( p[j] ) ) {
-                    if( *opt < 'A' || *opt > 'Z' ) break;
-                    if( *opt != p[j] ) break;
+                    if( *opt < 'A' || *opt > 'Z' )
+                        break;
+                    if( *opt != p[j] ) {
+                        break;
+                    }
                 }
-                ++j;
             }
         }
     }
@@ -1495,8 +1498,10 @@ static cmd_tok  *process_option_old( option * op_table, cmd_tok * tok )
     for( i = 0; ; i++ ) {
         opt = op_table[i].option;
         j = 1;
-        if( opt == NULL ) break;
-        if( first_c != *opt )  continue;
+        if( opt == NULL )
+            break;
+        if( first_c != *opt )
+            continue;
         if( len < op_table[i].minLength ) {
             continue;                   // cannot be this option
         }
@@ -1533,22 +1538,17 @@ static cmd_tok  *process_option_old( option * op_table, cmd_tok * tok )
                 }
                 if( my_isdigit( p[j] ) ) {
                     opt_value = 0;
-                    for(;;) {
-                        c = p[j];
-                        if( !my_isdigit( c ) )
-                            break;
-                        opt_value = opt_value * 10 + c - '0';
-                        ++j;
+                    for( ; my_isdigit( p[j] ); j++ ) {
+                        opt_value = opt_value * 10 + p[j] - '0';
                     }
                     opt_scan_ptr = p + j;
                 }
                 g_info_research( inf_recognized_xxx, "num", option_start );
             } else if( *opt == '$' ) {  // collect an identifer
-                if( p[j] == ' ' ) j++;// skip 1 blank
-
+                if( p[j] == ' ' )       // skip 1 blank
+                    j++;
                 opt_parm = &p[j];
-                for(;;) {
-                    c = p[j];
+                for( ; (c = p[j]) != '\0'; j++ ) {
                     if( c == '-' ) break;
                     if( c == '(' ) break;
                     if( c == ' ' ) break;
@@ -1557,8 +1557,6 @@ static cmd_tok  *process_option_old( option * op_table, cmd_tok * tok )
                         p[j] = ' ';
                         break;
                     }
-                    if( c == '\0' ) break;
-                    ++j;
                 }
                 opt_scan_ptr = p + j;
                 g_info_research( inf_recognized_xxx, "id", option_start );
@@ -1566,29 +1564,25 @@ static cmd_tok  *process_option_old( option * op_table, cmd_tok * tok )
                 opt_parm = &p[j];
                 c = p[j];
                 if( c == '"' ){         // "filename"
-                    for(;;){
-                        c = p[++j];
-                        if( c == '"' ){
+                    for( j++; (c = p[j]) != '\0'; j++ ) {
+                        if( c == '"' ) {
                             ++j;
                             break;
                         }
-                        if( c == '\0' )break;
-                        if( c == '\\' ){
+                        if( c == '\\' ) {
                             ++j;
                         }
                     }
                 } else {
-                    for(;;) {
-                        c = p[j];
-                        if( c == ' ' ) break;
-                        if( c == '\t' ) break;
-                        if( c == switch_char ) break;
+                    for( ; (c = p[j]) != '\0'; j++ ) {
+                        if( is_space_tab_char( c ) )
+                            break;
+                        if( c == switch_char )
+                            break;
                         if( c == '\n' ) {
                             p[j] = ' ';
                             break;
                         }
-                        if( c == '\0' ) break;
-                        ++j;
                     }
                 }
                 g_info_research( inf_recognized_xxx, "fn", option_start );
@@ -1599,8 +1593,11 @@ static cmd_tok  *process_option_old( option * op_table, cmd_tok * tok )
             } else {
                 c = my_tolower( p[j] );
                 if( *opt != c ) {
-                    if( *opt < 'A' || *opt > 'Z' ) break;
-                    if( *opt != p[j] ) break;
+                    if( *opt < 'A' || *opt > 'Z' )
+                        break;
+                    if( *opt != p[j] ) {
+                        break;
+                    }
                 }
                 ++j;
                 opt_scan_ptr = p + j;

@@ -35,34 +35,30 @@
 /* validate and return the character parameter, or raise an error          */
 /***************************************************************************/
 
-char parse_char( const char *pa, size_t len )
+char parse_char( const char *p, size_t len )
 {
-    const char  *p;
     char        c;
 
     c = '\0';
-    p = pa + len;
-    if( len == 2 ) {             // 2 hex characters
-        if( my_isxdigit( pa[0] ) && my_isxdigit( pa[1] ) ) {
-            for( ; len > 0; len-- ) {
-                c *= 16;
-                if( my_isdigit( *pa ) ) {
-                    c += *pa - '0';
-                } else {
-                    c += my_toupper( *pa ) - 'A' + 10;
-                }
-                pa++;
+    if( len == 1 ) {
+        c = p[0];
+    } else if( len == 2 ) {         // 2 hex characters
+        if( my_isxdigit( p[0] ) && my_isxdigit( p[1] ) ) {
+            if( my_isdigit( p[0] ) ) {
+                c = p[0] - '0';
+            } else {
+                c = my_toupper( p[0] ) - 'A' + 10;
+            }
+            if( my_isdigit( p[1] ) ) {
+                c = c * 16 + p[1] - '0';
+            } else {
+                c = c * 16 + my_toupper( p[1] ) - 'A' + 10;
             }
         } else {
-            xx_line_err_len( err_cw_not_char, pa, len );
-            return( c );
+            xx_line_err_len( err_cw_not_char, p, len );
         }
     } else {
-        if( len != 1 ) {
-            xx_line_err_len( err_cw_not_char, pa, len );
-            return( c );
-        }
-        c = *pa;
+        xx_line_err_len( err_cw_not_char, p, len );
     }
 
     return( c );
@@ -170,16 +166,13 @@ condcode getarg( void )
             if( *p == quote ) {
                 break;
             }
-            if( quote == '\0' && (*p == '=') && is_quote_char( *(p+1) ) ) {
+            if( quote == '\0' && (p[0] == '=') && is_quote_char( p[1] ) ) {
                 valquoted = true;
-                valquote = *(p+1);
+                valquote = p[1];
                 p += 2;
-                for( ; p <= scan_stop; p++ ) {
+                for( ; *p != '\0' && p <= scan_stop; p++ ) {
                     if( *p == valquote ) {
                         p++;
-                        break;
-                    }
-                    if( *p == '\0' ) {
                         break;
                     }
                 }
@@ -247,17 +240,13 @@ condcode getqst( void )
             quote = '\0';
             quoted = false;
         }
-        for( ; p <= scan_stop; p++ ) {  // look for end of string
-
-            if( *p == '\0' ) {          // null char is end
-                break;
-            }
+        for( ; *p != '\0' && p <= scan_stop; p++ ) {  // look for end of string
             if( quoted ) {
                 if( *p == quote ) {
-                    if( *(p+1) == '\0' || *(p+1) == ' ' ) {
-                        break;      // quote followed by blank or null is end
+                    if( p[1] == '\0' || p[1] == ' ' ) {
+                        break;          // quote followed by blank or null is end
                     }
-                    if( *(p+1) == quote ) {
+                    if( p[1] == quote ) {
                         continue;       // 2 quote chars not end of string
                     }
                 }
