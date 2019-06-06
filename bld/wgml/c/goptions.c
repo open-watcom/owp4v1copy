@@ -37,7 +37,7 @@
 
 typedef struct  option {
     char        *   option;             // the option
-    short           optionLenM1;        // length of option - 1
+    short           optionLen;          // length of option - 1
     short           minLength;          // minimum abbreviation
     long            value;              // sometimes value to set option to
     void            (*function)( struct option *optentry );
@@ -1283,62 +1283,62 @@ static void set_wscript( option * opt )
 
 static option GML_old_Options[] =
 {
-/*               length-1  minimum  default  Processing             */
+/*                 length  minimum  default  Processing             */
 /*     optionname          Abbrev   value    routine      Parmcount */
-    { "altextension",  11, 6,       0,       set_altext,     1 },
-    { "bind",          3,  1,       0,       set_bind,       1 },
-    { "cpinch",        5,  3,       10,      set_cpinch,     1 },
-    { "delim",         4,  3,       0,       set_delim,      1 },
-    { "device",        5,  3,       0,       set_device,     1 },
-    { "description",   10, 4,       0,       ign_option,     1 },
-    { "duplex",        5,  3,       0,       ign_option,     0 },
-    { "file",          3,  4,       0,       set_OPTFile,    1 },
-    { "font",          3,  4,       0,       set_font,       5 },
-    { "fontfamily",    9,  5,       0,       ign_option,     0 },
-    { "format",        5,  4,       0,       ign_option,     1 },
-    { "from",          3,  4,       1,       set_from,       1 },
-    { "inclist",       6,  4,       1,       set_inclist,    0 },
-    { "index",         4,  3,       1,       set_index,      0 },
-    { "layout",        5,  3,       0,       set_layout,     1 },
-    { "linemode",      7,  4,       0,       ign_option,     0 },
-    { "llength",       6,  2,       130,     ign_option,     1 },
-    { "logfile",       6,  3,       0,       ign_option,     1 },
-    { "lpinch",        5,  3,       6,       set_lpinch,     1 },
-    { "mailmerge",     8,  4,       0,       ign_option,     1 },
-    { "noduplex",      7,  5,       0,       ign_option,     0 },
-    { "noinclist",     8,  6,       0,       set_inclist,    0 },
-    { "noindex",       6,  5,       0,       set_index,      0 },
-    { "nopause",       6,  3,       0,       ign_option,     0 },
-    { "noquiet",       6,  3,       0,       set_quiet,      0 },
-    { "noscript",      7,  5,       0,       wng_option,     0 },
-    { "nostatistics",  11, 6,       0,       set_stats,      0 },
-    { "nowait",        5,  6,       0,       ign_option,     0 },
-    { "nowarning",     8,  6,       0,       set_warning,    0 },
-    { "output",        5,  3,       0,       set_outfile,    1 },
-    { "passes",        5,  4,       1,       set_passes,     1 },
-    { "pause",         4,  5,       1,       ign_option,     0 },
-    { "process",       6,  4,       0,       ign_option,     1 },
-    { "quiet",         4,  5,       1,       set_quiet,      0 },
-    { "resetscreen",   10, 5,       1,       ign_option,     0 },
-    { "script",        5,  3,       1,       wng_option,     0 },
-    { "setsymbol",     8,  3,       0,       set_symbol,     2 },
-    { "statistics",    9,  4,       1,       set_stats,      0 },
-    { "terse",         4,  5,       1,       ign_option,     0 },
-    { "to",            1,  2,       INT_MAX, set_to,         1 },
-    { "valueset",      7,  6,       0,       ign_option,     1 },
-    { "verbose",       6,  4,       1,       ign_option,     0 },
-    { "wait",          3,  4,       1,       ign_option,     0 },
-    { "warning",       6,  4,       1,       set_warning,    0 },
-    { "wscript",       6,  4,       1,       ign_option,     0 },// always set
-    { NULL, 0, 0, 0, ign_option, 0 }    // end marker
+    { "altextension",  12, 6,       0,       set_altext,     1 },
+    { "bind",          4,  1,       0,       set_bind,       1 },
+    { "cpinch",        6,  3,       10,      set_cpinch,     1 },
+    { "delim",         5,  3,       0,       set_delim,      1 },
+    { "device",        6,  3,       0,       set_device,     1 },
+    { "description",   11, 4,       0,       ign_option,     1 },
+    { "duplex",        6,  3,       0,       ign_option,     0 },
+    { "file",          4,  4,       0,       set_OPTFile,    1 },
+    { "font",          4,  4,       0,       set_font,       5 },
+    { "fontfamily",    10, 5,       0,       ign_option,     0 },
+    { "format",        6,  4,       0,       ign_option,     1 },
+    { "from",          4,  4,       1,       set_from,       1 },
+    { "inclist",       7,  4,       1,       set_inclist,    0 },
+    { "index",         5,  3,       1,       set_index,      0 },
+    { "layout",        6,  3,       0,       set_layout,     1 },
+    { "linemode",      8,  4,       0,       ign_option,     0 },
+    { "llength",       7,  2,       130,     ign_option,     1 },
+    { "logfile",       7,  3,       0,       ign_option,     1 },
+    { "lpinch",        6,  3,       6,       set_lpinch,     1 },
+    { "mailmerge",     9,  4,       0,       ign_option,     1 },
+    { "noduplex",      8,  5,       0,       ign_option,     0 },
+    { "noinclist",     9,  6,       0,       set_inclist,    0 },
+    { "noindex",       7,  5,       0,       set_index,      0 },
+    { "nopause",       7,  3,       0,       ign_option,     0 },
+    { "noquiet",       7,  3,       0,       set_quiet,      0 },
+    { "noscript",      8,  5,       0,       wng_option,     0 },
+    { "nostatistics",  12, 6,       0,       set_stats,      0 },
+    { "nowait",        6,  6,       0,       ign_option,     0 },
+    { "nowarning",     9,  6,       0,       set_warning,    0 },
+    { "output",        6,  3,       0,       set_outfile,    1 },
+    { "passes",        6,  4,       1,       set_passes,     1 },
+    { "pause",         5,  5,       1,       ign_option,     0 },
+    { "process",       7,  4,       0,       ign_option,     1 },
+    { "quiet",         5,  5,       1,       set_quiet,      0 },
+    { "resetscreen",   11, 5,       1,       ign_option,     0 },
+    { "script",        6,  3,       1,       wng_option,     0 },
+    { "setsymbol",     9,  3,       0,       set_symbol,     2 },
+    { "statistics",    10, 4,       1,       set_stats,      0 },
+    { "terse",         5,  5,       1,       ign_option,     0 },
+    { "to",            2,  2,       INT_MAX, set_to,         1 },
+    { "valueset",      8,  6,       0,       ign_option,     1 },
+    { "verbose",       7,  4,       1,       ign_option,     0 },
+    { "wait",          4,  4,       1,       ign_option,     0 },
+    { "warning",       7,  4,       1,       set_warning,    0 },
+    { "wscript",       7,  4,       1,       ign_option,     0 },   // always set
+    { NULL,            0,  0,       0,       ign_option,     0 }    // end marker
 };
 
 /* options in 'new' format   -o                        */
 static option GML_new_Options[] =
 {
-    { "q",            0,   1,       1,        set_quiet,     0 },
-    { "r",            0,   1,       1,        set_research,  3 },
-    { NULL, 0, 0, 0, ign_option, 0 }    // end marker
+    { "q",             1,  1,       1,        set_quiet,     0 },
+    { "r",             1,  1,       1,        set_research,  3 },
+    { NULL,            0,  0,       0,        ign_option,    0 }    // end marker
 };
 
 
@@ -1419,29 +1419,26 @@ static cmd_tok  *process_option( option * op_table, cmd_tok * tok )
     int         i;
     int         j;
     char    *   opt;
-    char        c;
+    char        first_c;
     char    *   option_start;
     char    *   p;
 
 
     option_start = tok->token;
     p = option_start;
-    c = my_tolower( *p );
-    if( option_delimiter( c ) ) {
+    first_c = my_tolower( *p );
+    if( option_delimiter( first_c ) ) {
         p++;
-        c = my_tolower( *p );
+        first_c = my_tolower( *p );
     }
     tokennext = tok->nxt;
     for( i = 0; ; i++ ) {
         opt = op_table[i].option;
-        j = 1;
         if( opt == NULL ) break;        // not found
-
-        if( c == *opt ) {               // match for first char
+        if( first_c == *opt ) {               // match for first char
             opt_value = op_table[i].value;
             j = 1;
-            for(;;) {
-                ++opt;
+            for( ;; opt++ ) {
                 if( *opt == '\0' ) {
                     if( p - option_start == 1 ) {
                         // make sure end of option
@@ -1477,6 +1474,7 @@ static cmd_tok  *process_option_old( option * op_table, cmd_tok * tok )
     int         j;
     int         len;
     char    *   opt;
+    char        first_c;
     char        c;
     char    *   p;
     char    *   option_start;
@@ -1485,19 +1483,20 @@ static cmd_tok  *process_option_old( option * op_table, cmd_tok * tok )
     option_start = p;
     len = tok->toklen;
     tokennext = tok->nxt;
-    c = my_tolower( *p );
-    if(  c == '(' ) {
+    first_c = my_tolower( *p );
+    if( first_c == '(' ) {
         if( len == 1 ) {
             return( tokennext );        // skip single (
         }
         p++;
-        c = my_tolower( *p );
+        len--;
+        first_c = my_tolower( *p );
     }
     for( i = 0; ; i++ ) {
         opt = op_table[i].option;
         j = 1;
         if( opt == NULL ) break;
-        if( c != *opt )  continue;
+        if( first_c != *opt )  continue;
         if( len < op_table[i].minLength ) {
             continue;                   // cannot be this option
         }
@@ -1513,9 +1512,7 @@ static cmd_tok  *process_option_old( option * op_table, cmd_tok * tok )
         /* otherwise all input characters are changed to lower case before matching */
         opt_value = op_table[i].value;
         j = len;
-        opt += op_table[i].optionLenM1;
-        for(;;) {
-            ++opt;
+        for( opt += op_table[i].optionLen; ; opt++ ) {
             if( *opt == '\0' || *opt == '*' ) {
                 if( *opt == '\0' ) {
                     if( p - option_start == 1 ) {
@@ -1580,7 +1577,7 @@ static cmd_tok  *process_option_old( option * op_table, cmd_tok * tok )
                             ++j;
                         }
                     }
-                }else{
+                } else {
                     for(;;) {
                         c = p[j];
                         if( c == ' ' ) break;
@@ -1653,7 +1650,7 @@ static bool is_option( void )
         if( opt == NULL ) break;    // end of table
         if( c != *opt )  continue;  // easy disqualifiers: first char & length
         if( len < GML_old_Options[i].minLength ) continue;
-        if( len > GML_old_Options[i].optionLenM1 + 1 ) continue;
+        if( len > GML_old_Options[i].optionLen ) continue;
         if( strnicmp( opt, p, len ) ) continue; // no match
         return( true );                         // match found
     }
@@ -1671,7 +1668,7 @@ static bool is_option( void )
         if( opt == NULL ) break;    // end of table
         if( c != *opt )  continue;  // easy disqualifiers: first char & length
         if( len < GML_old_Options[i].minLength ) continue;
-        if( len > GML_old_Options[i].optionLenM1 + 1 ) continue;
+        if( len > GML_old_Options[i].optionLen ) continue;
         if( strnicmp( opt, p, len ) ) continue; // no match
         return( true );                         // match found
 
