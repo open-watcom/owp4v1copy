@@ -220,11 +220,11 @@ int find_symvar_l( symvar * * dict, char * name, sub_index sub, symsub * * symsu
     }
 
     p = name;                           // see if symbol name consists entirely of digits
-    while( my_isdigit( *p ) ) {
+    while( *p && my_isdigit( *p ) ) {
         p++;
     }
 
-    if( *p == '\0' && (dict == &input_cbs->local_dict) ) { // not auto symbol and current dict is local dict
+    if( *p && (dict == &input_cbs->local_dict) ) { // not auto symbol and current dict is local dict
 
                                         // search upwards thru all local dicts
 
