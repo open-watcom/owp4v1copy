@@ -208,6 +208,10 @@ void gml_figref( const gmltag * entry )
 /* the content of a basic document element.  The heading text from the     */
 /* referenced heading is enclosed in double quotation marks and inserted   */
 /* into the formatted document.                                            */
+/*                                                                         */
+/* Forward references always produce:                                      */
+/*     "Undefined Heading" on page XXX                                     */
+/* without regard to the value of attribute page                           */
 /***************************************************************************/
 
 void gml_hdref( const gmltag * entry )
@@ -220,10 +224,8 @@ void gml_hdref( const gmltag * entry )
     size_t          bu_len;
     size_t          len;
 
-    static  char    def_page[]  = " on page XXX";
-    static  char    def_ref[]   = "\"Undefined Heading\"";
+    static  char    def_ref[]   = "\"Undefined Heading\" on page XXX";
     static  char    on_page[]  = " on page ";
-    static  size_t  dp_len;
     static  size_t  dr_len;
     static  size_t  op_len;
 
@@ -239,18 +241,11 @@ void gml_hdref( const gmltag * entry )
         do_page = ((page + 1) != cur_re->u.ffh.entry->pageno);
     }
 
-    dp_len = strlen( def_page );
     dr_len = strlen( def_ref );
     op_len = strlen( on_page );
     if( cur_re == NULL ) {              // undefined refid
-        if( do_page ) {
-            ref_text = (char *) mem_alloc( dr_len + dp_len + 1 );
-            strcpy( ref_text, def_ref );
-            strcat( ref_text, def_page );
-        } else {
-            ref_text = (char *) mem_alloc( dr_len + 1 );
-            strcpy( ref_text, def_ref );
-        }
+        ref_text = (char *) mem_alloc( dr_len + 1 );
+        strcpy( ref_text, def_ref );
     } else {
         len = strlen( cur_re->u.ffh.entry->text ) + 2;        // allow for quote chars
         if( do_page ) {
