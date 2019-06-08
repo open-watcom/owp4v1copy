@@ -215,8 +215,8 @@ int find_symvar_l( symvar * * dict, char * name, sub_index sub, symsub * * symsu
     symvar  *   wk;
 
     rc = find_symvar( dict, name, sub, symsubval );
-    if( rc ) {
-        return( rc );                   // found variable in specified dict
+    if( rc || (strlen( name ) == 1) && (*name == *MAC_STAR_NAME) ) {
+        return( rc );                   // found variable in specified dict or is *
     }
 
     p = name;                           // see if symbol name consists entirely of digits
@@ -229,13 +229,13 @@ int find_symvar_l( symvar * * dict, char * name, sub_index sub, symsub * * symsu
                                         // search upwards thru all local dicts
 
         for( incbs = input_cbs->prev; incbs != NULL; incbs = incbs->prev ) {
-            if( incbs->fmflags & II_file ) break;   // stop at first file
             if( incbs->local_dict != NULL ) {
                 wk = incbs->local_dict;
                 rc = find_symvar( &wk, name, sub, symsubval );
                 if( rc ) {
                     break;              // found variable
                 }
+            if( incbs->fmflags & II_file ) break;   // stop at first file
             }
         }
     }
