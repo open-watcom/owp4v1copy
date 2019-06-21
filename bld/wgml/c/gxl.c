@@ -894,7 +894,8 @@ static  void    gml_li_ol( const gmltag * entry )
 
     ProcFlags.keep_left_margin = true;  // keep special Note indent
     process_text( charnumber, g_curr_font );    // insert item number
-    insert_hard_spaces( " " );
+    insert_hard_spaces( " ", FONT0 );
+    ProcFlags.zsp = true;
 
     t_page.cur_left = nest_cb->lm + nest_cb->left_indent + nest_cb->align;   // left start
     if( t_page.cur_width < t_page.cur_left ) {  // set for current line
@@ -1005,7 +1006,8 @@ static  void    gml_li_ul( const gmltag * entry )
     ProcFlags.keep_left_margin = true;  // keep special Note indent
     g_curr_font = nest_cb->u.ul_layout->bullet_font;
     process_text( bullet, g_curr_font );    // insert bullet
-    insert_hard_spaces( " " );
+    insert_hard_spaces( " ", FONT0 );
+    ProcFlags.zsp = true;
 
     t_page.cur_left = nest_cb->lm + nest_cb->left_indent + nest_cb->align;   // left start
     if( t_page.cur_width < t_page.cur_left ) {  // set for current line
@@ -1364,8 +1366,8 @@ void gml_dt( const gmltag * entry )
 
 void gml_dd( const gmltag * entry )
 {
-    bool        break_done  = false;
-    char    *   p;
+    bool            break_done  = false;
+    char        *   p;
 
     if( ProcFlags.need_dd ) {
         ProcFlags.need_dd = false;
@@ -1380,11 +1382,14 @@ void gml_dd( const gmltag * entry )
     }
 
     p = scan_start;
-
     g_curr_font = layout_work.dd.font;
     t_page.cur_left = nest_cb->lm + nest_cb->left_indent + nest_cb->tsize;   // left start
-    if( t_page.cur_width < t_page.cur_left ) {  // set for current line
+
+    if( t_page.cur_width + wgml_fonts[g_curr_font].spc_width < t_page.cur_left ) {  // set for current line
         t_page.cur_width = t_page.cur_left;
+        if( input_cbs->fmflags & II_macro ) {
+            ProcFlags.dd_macro = true;
+        }
         ProcFlags.zsp = true;
     } else if( nest_cb->dl_break ) {
         break_done = true;
@@ -1394,6 +1399,9 @@ void gml_dd( const gmltag * entry )
         t_page.cur_width = t_page.cur_left;
         post_space = 0;
     } else {                        // cur_width > cur_left and no break
+        if( input_cbs->fmflags & II_macro ) {
+            ProcFlags.dd_macro = true;
+        }
         ProcFlags.dd_space = true;
     }
     t_page.max_width = nest_cb->rm + nest_cb->right_indent;

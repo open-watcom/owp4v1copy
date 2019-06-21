@@ -133,6 +133,7 @@ typedef struct proc_flags {
     unsigned        para_has_text       : 1;// :LP, :P, :PB or :PC had text (used by PB)
     unsigned        titlep_starting     : 1;// AUTHOR or TITLE had no text (in scr_process_break())
 
+    unsigned        dd_macro            : 1;// DT/DD were invoked inside a macro
     unsigned        dd_space            : 1;// insert one space before DD text
     unsigned        need_dd             : 1;// DT seen; DD must be next tag
     unsigned        need_ddhd           : 1;// DTHD seen; DDHD must be next tag

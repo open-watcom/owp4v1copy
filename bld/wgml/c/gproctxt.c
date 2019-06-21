@@ -1381,23 +1381,26 @@ void do_justify( uint32_t lm, uint32_t rm, text_line * line )
 
 /***************************************************************************/
 /*  insert space characters as if they were text                           */
-/*  NOTE: used with NOTE, SL and UL                                        */
+/*  NOTE: used with DD, NOTE, SL and UL                                        */
 /*        avoids complicating process_text() further                       */
 /*        sets ProcFlags.zsp to avoid any post_space before text           */
 /***************************************************************************/
 
-void insert_hard_spaces( char * spaces )
+void insert_hard_spaces( char * spaces, font_number font )
 {
-    size_t  spc_cnt;
+    size_t          spc_cnt;
+    text_chars  *   sav_chars;
 
     spc_cnt = strlen( spaces );
     if( spc_cnt > 0 ) {
         if( t_line == NULL ) {
-            t_line->first = process_word( layout_work.note.spaces, spc_cnt, FONT0 );
+            t_line->first = process_word( layout_work.note.spaces, spc_cnt, font );
             t_line->last = t_line->first;
         } else {
-            t_line->last->next = process_word( layout_work.note.spaces, spc_cnt, FONT0 );
+            sav_chars = t_line->last;
+            t_line->last->next = process_word( layout_work.note.spaces, spc_cnt, font );
             t_line->last = t_line->last->next;
+            t_line->last->prev = sav_chars;
         }
         t_line->last->type = tx_norm;
         t_line->last->x_address = t_page.cur_width;
@@ -1405,7 +1408,6 @@ void insert_hard_spaces( char * spaces )
         if( wgml_fonts[FONT0].line_height > t_line->line_height ) {
             t_line->line_height = wgml_fonts[FONT0].line_height;
         }
-        ProcFlags.zsp = true;
     }
     return;
 }
@@ -2428,6 +2430,7 @@ void process_text( const char *text, font_number font )
     ProcFlags.as_text_line = false;
     ProcFlags.ct = false;
     ProcFlags.dd_space = false;
+    ProcFlags.dd_macro = false;
     ProcFlags.dd_starting = false;
     ProcFlags.force_pc = false;
     ProcFlags.fsp = false;

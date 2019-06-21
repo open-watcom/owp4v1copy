@@ -211,12 +211,12 @@ void gml_figref( const gmltag * entry )
 /*                                                                         */
 /* Forward references always produce:                                      */
 /*     "Undefined Heading" on page XXX                                     */
-/* without regard to the value of attribute page                           */
+/* unless attribute page is explicitly given the value "no"                */
 /***************************************************************************/
 
 void gml_hdref( const gmltag * entry )
 {
-    bool            do_page     =   false;  // default for fwd refs w/no "page" attribute
+    bool            do_page     =   false;
     char            buffer[11];
     char        *   p;
     char        *   ref_text;
@@ -224,8 +224,10 @@ void gml_hdref( const gmltag * entry )
     size_t          bu_len;
     size_t          len;
 
-    static  char    def_ref[]   = "\"Undefined Heading\" on page XXX";
-    static  char    on_page[]  = " on page ";
+    static  char    def_page[]  = " on page XXX";
+    static  char    def_ref[]   = "\"Undefined Heading\"";
+    static  char    on_page[]   = " on page ";
+    static  size_t  dp_len;
     static  size_t  dr_len;
     static  size_t  op_len;
 
@@ -239,13 +241,19 @@ void gml_hdref( const gmltag * entry )
         ref_page = false;
     } else if( cur_re != NULL ) {
         do_page = ((page + 1) != cur_re->u.ffh.entry->pageno);
+    } else {
+        do_page = true;
     }
 
+    dp_len = strlen( def_page );
     dr_len = strlen( def_ref );
     op_len = strlen( on_page );
     if( cur_re == NULL ) {              // undefined refid
-        ref_text = (char *) mem_alloc( dr_len + 1 );
+        ref_text = (char *) mem_alloc( dp_len + dr_len + 1 );
         strcpy( ref_text, def_ref );
+        if( do_page ) {
+          strcat( ref_text, def_page );
+        }
     } else {
         len = strlen( cur_re->u.ffh.entry->text ) + 2;        // allow for quote chars
         if( do_page ) {
@@ -264,6 +272,21 @@ void gml_hdref( const gmltag * entry )
             strcpy( ref_text, "\"" );
             strcat_s( ref_text, len + 1, cur_re->u.ffh.entry->text );
             strcat( ref_text, "\"" );
+        }
+    }
+
+    if( ProcFlags.dd_macro ) {              // special processing for DT/DD in macro followed by HDREF
+        insert_hard_spaces( " ", t_line->last->font );  // to match wgml 4.0
+        if( !ProcFlags.dd_space ) {         // DD determined DT text plus one space was to left of align/tsize position
+            t_line->last->x_address = t_line->last->prev->x_address + t_line->last->prev->width;
+            t_page.cur_width = t_line->last->x_address + t_line->last->width;
+            if( (t_page.cur_width + wgml_fonts[layout_work.dd.font].spc_width) < t_page.cur_left ) {
+                t_page.cur_width = t_page.cur_left;
+                ProcFlags.zsp = true;
+            } else {
+                ProcFlags.dd_space = true;
+                ProcFlags.zsp = false;
+            }
         }
     }
     process_text( ref_text, g_curr_font );

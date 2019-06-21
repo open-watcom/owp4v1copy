@@ -130,7 +130,8 @@ extern void gml_note( const gmltag * entry )
     if( strlen(layout_work.note.string) > 0 ) {
         process_text( layout_work.note.text, layout_work.note.font );
     }
-    insert_hard_spaces( layout_work.note.spaces );
+    insert_hard_spaces( layout_work.note.spaces, FONT0 );
+    ProcFlags.zsp = true;
 
     g_text_spacing = layout_work.note.spacing;
     g_curr_font = layout_work.defaults.font;
