@@ -41,6 +41,7 @@
 
 #define __STDC_WANT_LIB_EXT1__ 1
 #include <process.h>
+#include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
 

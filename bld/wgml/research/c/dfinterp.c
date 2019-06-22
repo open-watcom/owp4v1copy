@@ -118,11 +118,11 @@
 /* This will be simplified or eliminated in wgml. */
 
 typedef struct {
-    bool        warning;
-    uint8_t *   base;
-    uint8_t *   current;
-    uint8_t     parameter_type;
-    uint8_t     df_code;
+    bool            warning;
+    const uint8_t   *   base;
+    const uint8_t   *   current;
+    uint8_t         parameter_type;
+    uint8_t         df_code;
 } df_data;
 
 static df_data current_df_data;
@@ -1601,11 +1601,11 @@ static df_function function_table[0x3D] = {
  *      in any particular state.
 */
 
-void interpret_function( uint8_t * in_function )
+void interpret_function( const uint8_t * in_function )
 {
-    bool        last_function_done;
-    uint8_t *   current_function    = NULL;
-    uint16_t    current_offset;
+    bool            last_function_done;
+    const uint8_t   *   current_function    = NULL;
+    uint16_t        current_offset;
 
     /* Initialize the loop parameters. */
 

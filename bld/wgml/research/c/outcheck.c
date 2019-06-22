@@ -1743,7 +1743,7 @@ static void oc_process_text( char * input_text, uint8_t font_number )
     static  bool            tabbing         = false;
     static  size_t          increment       = 0;
     static  size_t          spaces          = 0;
-    static  text_type       cur_type        = norm;
+    static  text_type       cur_type        = tx_norm;
     static  uint8_t         old_font        = 0;
     static  uint32_t        cur_h_address   = 0;
     static  text_line   *   the_line        = NULL;
@@ -2125,13 +2125,13 @@ static void oc_process_text( char * input_text, uint8_t font_number )
             input_text++;
             switch( *input_text ) {
             case 0xff:
-                cur_type = norm;
+                cur_type = tx_norm;
                 break;
             case 0x01:
-                cur_type = sub;
+                cur_type = tx_sub;
                 break;
             case 0x02:
-                cur_type = sup;
+                cur_type = tx_sup;
                 break;
             default:
                 out_msg( "outcheck internal error: incorrect text_type\n" );
@@ -2388,7 +2388,7 @@ static void oc_process_text( char * input_text, uint8_t font_number )
                              */
 
 
-                            hyphen_chars = oc_alloc_text_chars( "-", 1, 0, norm );
+                            hyphen_chars = oc_alloc_text_chars( "-", 1, 0, tx_norm );
                             hyphen_chars->width = oc_hyphen_width;
 
                             hyphen_chars->x_address = the_line->last->x_address \
