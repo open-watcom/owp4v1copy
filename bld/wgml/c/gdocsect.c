@@ -37,7 +37,6 @@
 
 static  bool            concat_save;                // for ProcFlags.concat
 static  bool            ref_done;                   // true if a reference has been done
-static  bool            ssect_save;                 // for ProcFlags.start_section
 static  char            frame_line_1[CHAR_FRAME_LEN + 1]; // box top line/rule line/'character string' line
 static  char            frame_line_2[CHAR_FRAME_LEN + 1]; // box blank/middle line
 static  char            frame_line_3[CHAR_FRAME_LEN + 1]; // box bottom line
@@ -531,7 +530,6 @@ static void gen_figlist( void )
 
     /* Insert FIGLIST into current section */
 
-    ssect_save = ProcFlags.start_section;
     ProcFlags.start_section = true; // prevent ABSTRACT/PREFACE start if pending
     last_page_out();                // ensure are on new page
     g_skip = 0;                     // ignore remaining skip value
@@ -604,14 +602,13 @@ static void gen_figlist( void )
         scr_process_break();                // ensure line break
     }
 
-    ProcFlags.start_section = ssect_save;
     ProcFlags.concat = concat_save;
     ProcFlags.justify = justify_save;
 
     /* Re-establish current section */
 
     last_page_out();                // ensure all pages output
-    set_section_banners( ProcFlags.doc_sect );
+    set_section_banners( ProcFlags.doc_sect_nxt );
     reset_t_page();
 
     return;
@@ -1049,14 +1046,13 @@ static void gen_toc( void )
         levels[cur_level] = true;                   // first entry of level done
     }
 
-    ProcFlags.start_section = ssect_save;
     ProcFlags.concat = concat_save;
     ProcFlags.justify = justify_save;
 
     /* Re-establish current section */
 
     last_page_out();                // ensure all pages output
-    set_section_banners( ProcFlags.doc_sect );
+    set_section_banners( ProcFlags.doc_sect_nxt );
     reset_t_page();
 
     return;
