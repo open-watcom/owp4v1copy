@@ -104,7 +104,6 @@ void scr_pa( void )
     cwcurr[3] = '\0';
 
     start_doc_sect();
-    scr_process_break();
     p = scan_start;
     SkipSpaces( p );                    // next word start
     pa = p;
@@ -253,7 +252,6 @@ void scr_cp( void )
     cwcurr[3] = '\0';
 
     start_doc_sect();
-    scr_process_break();
     p = scan_start;
     SkipSpaces( p );                    // next word start
     pa = p;

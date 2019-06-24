@@ -363,6 +363,13 @@ void gen_heading( char * h_text, char * id, hdsrc hn_lvl, hdsrc hds_lvl )
         t_doc_el_group = t_doc_el_group->next;  // processed doc_elements go to next group, if any
         cur_doc_el_group->next = NULL;
 
+        if( t_doc_el_group != NULL) {
+            cur_doc_el_group->first->element.text.prev = t_doc_el_group->last;
+        } else {
+//            cur_doc_el_group->first->element.text.prev = t_page.last_col_main;
+        }
+//        cur_doc_el_group->first->element.text.entry = hd_entry;
+
         if( hds_lvl < hds_appendix ) {      // Hx only, but not APPENDIX H1
 
             set_headx_banners( hn_lvl );    // set possible banners
