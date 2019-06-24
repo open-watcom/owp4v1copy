@@ -1079,10 +1079,12 @@ typedef struct {
 } hline_element;
 
 typedef struct {
-    text_line   *   first;
-    bool            bx_h_done;          // bx has added ascenders to the line
-    bool            force_op;           // forces overprint at top of page
-    bool            overprint;          // placement avoids padding warning
+    struct  doc_element *   prev;       // only used with headings
+    struct  ffh_entry   *   entry;      // only used with headings
+            text_line   *   first;      
+            bool            bx_h_done;  // bx has added ascenders to the line
+            bool            force_op;   // forces overprint at top of page
+            bool            overprint;  // placement avoids padding warning
 } text_element;
 
 typedef struct {

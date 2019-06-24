@@ -354,6 +354,8 @@ doc_element * alloc_doc_el( element_type type )
         curr->element.hline.eol_index = NULL;
         break;
     case el_text :
+        curr->element.text.prev = NULL;
+        curr->element.text.entry = NULL;
         curr->element.text.first = NULL;
         curr->element.text.bx_h_done = false;
         curr->element.text.force_op = false;
