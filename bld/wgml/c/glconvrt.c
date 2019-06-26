@@ -1092,7 +1092,7 @@ static  void    put_lay_heading( FILE * layfile, layout_data * lay )
             o_yes_no( layfile, curr, &lay->heading.para_indent );
             break;
         case   e_threshold:
-            o_int8( layfile, curr, &lay->heading.threshold );
+            o_threshold( layfile, curr, &lay->heading.threshold );
             break;
         case   e_max_group:
             o_int8( layfile, curr, &lay->heading.max_group );
@@ -1821,7 +1821,7 @@ static  void    put_lay_widow( FILE * layfile, layout_data * lay )
 
         switch( curr ) {
         case   e_threshold:
-            o_int8( layfile, curr, &lay->widow.threshold );
+            o_threshold( layfile, curr, &lay->widow.threshold );
             break;
         default:
             internal_err( __FILE__, __LINE__ );

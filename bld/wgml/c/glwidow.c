@@ -80,7 +80,7 @@ void    lay_widow( const gmltag * entry )
 
                 switch( curr ) {
                 case   e_threshold:
-                    cvterr = i_int8( p, curr, &layout_work.widow.threshold );
+                    cvterr = i_threshold( p, curr, &layout_work.widow.threshold );
                     break;
                 default:
                     out_msg( "WGML logic error.\n");

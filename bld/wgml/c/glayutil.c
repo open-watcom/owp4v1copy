@@ -627,27 +627,6 @@ void    o_int8( FILE * f, lay_att curr, const int8_t * tm )
     return;
 }
 
-bool    i_spacing( char *p, lay_att curr, text_space *tm )
-{
-    long wk;
-
-    curr = curr;
-    wk = strtol( p, NULL, 10 );
-    if( wk < 0 || wk > 255 ) {
-        xx_line_err( err_ui_8, p );
-    }
-    *tm = wk;
-    return( false );
-}
-
-void    o_spacing( FILE * f, lay_att curr, const text_space *tm )
-{
-    unsigned wk = *tm;
-
-    fprintf_s( f, "        %s = %u\n", att_names[curr], wk );
-    return;
-}
-
 
 /***************************************************************************/
 /*  font number                                                            */
@@ -1010,7 +989,7 @@ void    o_pouring( FILE * f, lay_att curr, const reg_pour * tm )
 
 
 /***************************************************************************/
-/*  Space unit                                                             */
+/*  space unit                                                             */
 /***************************************************************************/
 bool    i_space_unit( char * p, lay_att curr, su * tm )
 {
@@ -1026,6 +1005,65 @@ void    o_space_unit( FILE * f, lay_att curr, const su * tm )
     } else {
         fprintf_s( f, "        %s = '%s'\n", att_names[curr], tm->su_txt );
     }
+    return;
+}
+
+
+/***************************************************************************/
+/*  spacing                                                                */
+/***************************************************************************/
+bool    i_spacing( char *p, lay_att curr, text_space *tm )
+{
+    long wk;
+
+    curr = curr;
+    wk = strtol( p, NULL, 10 );
+    if( wk < 0 || wk > 255 ) {
+        xx_line_err( err_ui_8, p );
+    }
+    *tm = wk;
+    return( false );
+}
+
+void    o_spacing( FILE * f, lay_att curr, const text_space *tm )
+{
+    unsigned wk = *tm;
+
+    fprintf_s( f, "        %s = %u\n", att_names[curr], wk );
+    return;
+}
+
+
+/***************************************************************************/
+/*  threshold                                                              */
+/***************************************************************************/
+bool    i_threshold( char * p, lay_att curr, int16_t * tm )
+{
+    char    *   pa;
+    long        wk;
+
+    curr = curr;
+    wk = strtol( p, NULL, 10 );
+    
+    for( pa = p; isdigit( *pa ); pa++ );
+    if( *pa ) {
+        xx_line_err( err_num_too_large, p );
+    }
+    if( wk == 0 ) {
+        xx_line_err( err_num_zero, p );
+    }
+    if( wk > 0x7fff ) {
+        xx_line_err( err_num_s16_neg, p );
+    }
+    *tm = wk;
+    return( false );
+}
+
+void    o_threshold( FILE * f, lay_att curr, const int16_t * tm )
+{
+    unsigned wk = *tm;
+
+    fprintf_s( f, "        %s = %d\n", att_names[curr], wk );
     return;
 }
 
@@ -1070,7 +1108,7 @@ void    o_date_form( FILE * f, lay_att curr, const xx_str * tm )
 }
 
 /***************************************************************************/
-/*  Yes or No  as bool result                                              */
+/*  yes or No  as bool result                                              */
 /***************************************************************************/
 bool    i_yes_no( char * p, lay_att curr, bool * tm )
 {

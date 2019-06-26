@@ -560,6 +560,9 @@ pick( ERR_NUM_TOO_LARGE,        "Number is too large or contains invalid charact
 pick( ERR_NUM_ZERO,             "Number value must be greater than zero",
                                 "Number value must be greater than zero" )
 
+pick( ERR_NUM_S16_NEG,          "Number value cannot be greater than 32,767",
+                                "Number value cannot be greater than 32,767" )
+
 pick( ERR_VAL_NEG,              "Value cannot be negative",
                                 "Value cannot be negative" )
 

@@ -217,7 +217,7 @@ typedef struct default_lay_tag {
 /***************************************************************************/
 
 typedef struct widow_lay_tag {
-    int8_t          threshold;          // non-negative integer
+    int16_t         threshold;          // matches wgml 4.0
 } widow_lay_tag;
 
 
@@ -361,7 +361,7 @@ typedef struct heading_lay_tag {
     char            delim;
     bool            stop_eject;         // yes, no -> bool
     bool            para_indent;        // yes, no -> bool
-    int8_t          threshold;          // non-negative integer
+    int16_t         threshold;          // per wgml 4.0
     int8_t          max_group;          // non-negative integer
 } heading_lay_tag;
 
