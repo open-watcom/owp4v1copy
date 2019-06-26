@@ -1037,7 +1037,7 @@ void    o_spacing( FILE * f, lay_att curr, const text_space *tm )
 /***************************************************************************/
 /*  threshold                                                              */
 /***************************************************************************/
-bool    i_threshold( char * p, lay_att curr, int16_t * tm )
+bool    i_threshold( char * p, lay_att curr, uint16_t * tm )
 {
     char    *   pa;
     long        wk;
@@ -1059,7 +1059,7 @@ bool    i_threshold( char * p, lay_att curr, int16_t * tm )
     return( false );
 }
 
-void    o_threshold( FILE * f, lay_att curr, const int16_t * tm )
+void    o_threshold( FILE * f, lay_att curr, const uint16_t * tm )
 {
     unsigned wk = *tm;
 
