@@ -26,29 +26,6 @@
 *
 * Description:  Page-oriented output
 *
-*               consolidate_array       convert column array to element list
-*               do_doc_panes_out        output text from one or more doc_panes
-*               do_el_list_out          output text from an array of element lists
-*               do_page_out             actually output t_page
-*               full_col_out            output all full columns
-*               insert_col_bot          insert doc_element into t_page.cols->bot_fig
-*               insert_col_fn           insert doc_element into t_page.cols->footnote
-*               insert_col_main         insert doc_element into t_page.cols->main
-*               insert_col_width        insert doc_element into t_page.col_width
-*               insert_page_width       insert doc_element into t_page.page_width
-*               last_col_out            force output of all pending columns
-*               last_page_out           force output of all pending pages
-*               next_column             move to next column
-*               reset_bot_ban           reset t_page.bottom_banner and related externs
-*               reset_t_page            reset t_page and related externs
-*               reset_top_ban           reset t_page.top_banner and related externs
-*               set_skip_vars           merge the various skips into the externs
-*               set_positions           set vertical/horizontal positions in an element list
-*               split_element           splits an element at given depth
-*               text_col_out            output all columns where main is full
-*               update_column           update a single column
-*               update_t_page           update t_page from n_page
-*
 ****************************************************************************/
 
 
@@ -942,6 +919,92 @@ static void do_doc_panes_out( void )
     return;
 }
 
+
+/***************************************************************************/
+/*  fill the current column                                                */
+/*  the first doc_element returned will fill the current column            */
+/*  the second doc_element will contain the rest of the content            */
+/*                                                                         */
+/*  NOTE: this should only be called if split_element reports that the     */
+/*        element is not splittable and it will not fit on any column      */
+/*  NOTE: only text elements are actually split here; boxes and figures    */
+/*        that are split are handled elsewhere and should always fit       */
+/***************************************************************************/
+
+static void fill_column( doc_element * a_element )
+{
+    doc_element *   split_el;
+    text_line   *   cur_line;
+    text_line   *   last        =   NULL;
+    uint32_t        cur_depth   =   0;
+
+    switch( a_element->type ) {
+    // add/move code for other element types as appropriate/desired
+    case el_binc :
+    case el_dbox :
+    case el_graph :
+    case el_hline :
+    case el_vline :
+    case el_vspace :
+        break;
+    case el_text :
+
+        cur_line = a_element->element.text.first;
+
+        /* Error if first line will not fit on any page */
+
+        if( ( cur_line->line_height + cur_line->units_spacing ) > old_max_depth ) {
+            xx_err( err_text_line_too_deep );
+            break;
+        }
+        /****************************************************************/
+        /* determine how many lines will fit in the remaining space     */
+        /****************************************************************/
+
+        while( cur_line != NULL ) {
+            if( (cur_line->line_height + cur_line->units_spacing) >
+                    (t_page.max_depth - cur_depth) ) {
+                break;
+            }
+            cur_depth += (cur_line->line_height + cur_line->units_spacing);
+            last = cur_line;
+            cur_line = cur_line->next;
+        }
+
+        if( cur_line == NULL ) {        // just in case
+            break;
+        }
+
+        if( last == NULL ) {            // should not be possible
+            internal_err( __FILE__, __LINE__ );
+        }
+
+        /************************************************************/
+        /*  if we get here, a_element is splittable, cur_line is    */
+        /*  the first line of the new element, and last is the last */
+        /*  line that can be left in the original element           */
+        /************************************************************/
+
+        split_el = alloc_doc_el( el_text ); // most defaults are correct
+
+        split_el->depth = a_element->depth - cur_depth;
+        split_el->element.text.first = cur_line;
+        last->next = NULL;                  // this restricts cur_el to the lines allowed
+        a_element->depth = cur_depth;
+        if( a_element->next == NULL ) {
+            a_element->next = split_el;
+        } else {
+            split_el->next = a_element->next;
+            a_element->next = split_el;
+        }
+        break;
+    default :
+        internal_err( __FILE__, __LINE__ );
+    }
+    return;
+}
+
+
 /***************************************************************************/
 /*  update a single column from the elements in n_page                     */
 /*  the various n_page fields may or may not be empty on return            */
@@ -1263,9 +1326,10 @@ static void update_column( void )
                 if( splittable ) {
                     if( cur_el->next != NULL ) {    // cur_el was split
                         n_page.col_main = cur_el->next;
-                        if( n_page.last_col_main == NULL ) {
-                            n_page.last_col_main = n_page.col_main;
-                        }
+                        n_page.last_col_main = n_page.col_main;
+                        while( n_page.last_col_main->next != NULL ) {
+                            n_page.last_col_main = n_page.last_col_main->next;
+                        }                            
                         cur_el->next = NULL;
                     }
                     if( t_page.cur_col->main == NULL ) {
@@ -1277,6 +1341,22 @@ static void update_column( void )
                     t_page.last_col_main->next = NULL;
                     t_page.cur_depth += cur_el->depth + depth;
                 } else {                                // leave for next column
+                    fill_column( cur_el );
+                    if( cur_el->next != NULL ) {        // cur_el was split
+                        n_page.col_main = cur_el->next;
+                        if( n_page.last_col_main == NULL ) {
+                            n_page.last_col_main = n_page.col_main;
+                        }
+                        cur_el->next = NULL;
+                        if( t_page.cur_col->main == NULL ) {
+                            t_page.cur_col->main = cur_el;
+                        } else {
+                            t_page.last_col_main->next = cur_el;
+                        }
+                        t_page.last_col_main = cur_el;
+                        t_page.last_col_main->next = NULL;
+                        t_page.cur_depth += cur_el->depth + depth;
+                    }
                     break;
                 }
             } else {                                    // cur_el fits as-is
@@ -1287,16 +1367,16 @@ static void update_column( void )
                     t_page.last_col_main->next = cur_el;
                     t_page.last_col_main = t_page.last_col_main->next;
                 }
+                n_page.col_main = n_page.col_main->next;
+                if( n_page.col_main == NULL ) {
+                    n_page.last_col_main = NULL;
+                }
                 t_page.last_col_main->next = NULL;
                 if( (cur_el->type == el_text) && cur_el->element.text.overprint
                                               && cur_el->element.text.force_op ) {
                     /* do nothing, adjusts for top-of-page overprint */
                 } else {
                     t_page.cur_depth += cur_el->depth + depth;
-                }
-                n_page.col_main = n_page.col_main->next;    // only when entire doc_el_group is moved
-                if( n_page.col_main == NULL ) {
-                    n_page.last_col_main = NULL;
                 }
             }
         }
@@ -1776,8 +1856,8 @@ void insert_col_main( doc_element * a_element )
             depth = cur_skip + a_element->depth;
         }
         if( (depth + t_page.cur_depth) > t_page.max_depth ) {   // a_element fills the page
-            splittable = split_element( a_element, t_page.max_depth -
-                                        t_page.cur_depth - cur_skip );
+
+            splittable = split_element( a_element, t_page.max_depth - t_page.cur_depth - cur_skip );
             if( a_element->next != NULL ) { // a_element was split
                 if( t_page.cur_col->main == NULL ) {
                     t_page.cur_col->main = a_element;
@@ -1789,9 +1869,15 @@ void insert_col_main( doc_element * a_element )
                 t_page.cur_depth += a_element->depth + cur_skip;
                 a_element = a_element->next;
                 t_page.last_col_main->next = NULL;
-            }
+            } else if( (t_page.last_col_main->type == el_text) &&
+                    (t_page.last_col_main->element.text.prev) != NULL ) {  // detach heading and reset a_element
+                t_page.last_col_main->next = a_element;
+                a_element = t_page.last_col_main;
+                t_page.last_col_main = t_page.last_col_main->element.text.prev;
+                t_page.last_col_main->next = NULL;
+            }                                
             page_full = true;
-        } else {    // the entire element fits on the current page
+        } else {        // the entire element fits on the current page
             if( t_page.cur_col->main == NULL ) {
                 t_page.cur_col->main = a_element;
                 t_page.last_col_main = t_page.cur_col->main;
@@ -1816,6 +1902,9 @@ void insert_col_main( doc_element * a_element )
             n_page.last_col_main = n_page.col_main;
         } else {
             n_page.last_col_main->next = a_element;
+            n_page.last_col_main = n_page.last_col_main->next;
+        }
+        while( n_page.last_col_main->next != NULL ) {
             n_page.last_col_main = n_page.last_col_main->next;
         }
         text_col_out();
