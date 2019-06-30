@@ -926,7 +926,7 @@ static void do_doc_panes_out( void )
 /*  the second doc_element will contain the rest of the content            */
 /*                                                                         */
 /*  NOTE: this should only be called if split_element reports that the     */
-/*        element is not splittable and it will not fit on any column      */
+/*        element is not splittable and it will not fit in any column      */
 /*  NOTE: only text elements are actually split here; boxes and figures    */
 /*        that are split are handled elsewhere and should always fit       */
 /***************************************************************************/
@@ -957,13 +957,14 @@ static void fill_column( doc_element * a_element )
             xx_err( err_text_line_too_deep );
             break;
         }
+
         /****************************************************************/
         /* determine how many lines will fit in the remaining space     */
         /****************************************************************/
 
         while( cur_line != NULL ) {
             if( (cur_line->line_height + cur_line->units_spacing) >
-                    (t_page.max_depth - cur_depth) ) {
+                    (t_page.max_depth - t_page.cur_depth - cur_depth) ) {
                 break;
             }
             cur_depth += (cur_line->line_height + cur_line->units_spacing);
@@ -971,12 +972,8 @@ static void fill_column( doc_element * a_element )
             cur_line = cur_line->next;
         }
 
-        if( cur_line == NULL ) {        // just in case
+        if( (cur_line == NULL) || (last == NULL) ) {        // just in case
             break;
-        }
-
-        if( last == NULL ) {            // should not be possible
-            internal_err( __FILE__, __LINE__ );
         }
 
         /************************************************************/
@@ -1323,15 +1320,13 @@ static void update_column( void )
             if( (t_page.cur_depth + depth + cur_el->depth) > t_page.max_depth ) {    // cur_el will fill the column
                 splittable = split_element( cur_el, t_page.max_depth -
                                                     t_page.cur_depth - depth );
-                if( splittable ) {
-                    if( cur_el->next != NULL ) {    // cur_el was split
-                        n_page.col_main = cur_el->next;
-                        n_page.last_col_main = n_page.col_main;
-                        while( n_page.last_col_main->next != NULL ) {
-                            n_page.last_col_main = n_page.last_col_main->next;
-                        }                            
-                        cur_el->next = NULL;
-                    }
+                if( splittable ) {              // cur_el was split
+                    n_page.col_main = cur_el->next;
+                    n_page.last_col_main = n_page.col_main;
+                    while( n_page.last_col_main->next != NULL ) {
+                        n_page.last_col_main = n_page.last_col_main->next;
+                    }                            
+                    cur_el->next = NULL;
                     if( t_page.cur_col->main == NULL ) {
                         t_page.cur_col->main = cur_el;
                     } else {
@@ -1340,7 +1335,8 @@ static void update_column( void )
                     t_page.last_col_main = cur_el;
                     t_page.last_col_main->next = NULL;
                     t_page.cur_depth += cur_el->depth + depth;
-                } else {                                // leave for next column
+                    break;
+                } else {
                     fill_column( cur_el );
                     if( cur_el->next != NULL ) {        // cur_el was split
                         n_page.col_main = cur_el->next;
@@ -2382,6 +2378,7 @@ bool split_element( doc_element * a_element, uint32_t req_depth )
             }
 
             if( cur_line == NULL ) {                // all lines fit; unlikely, but seen
+                splittable = false;
                 break;
             }
 
@@ -2432,6 +2429,7 @@ bool split_element( doc_element * a_element, uint32_t req_depth )
         }
 
         if( cur_line == NULL ) {        // all lines fit; unlikely, but seen
+            splittable = false;
             break;
         }
 
