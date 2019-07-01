@@ -96,6 +96,10 @@ static void do_el_list_out( doc_element * in_element )
             }
             break;
         case el_text :
+            if( in_element->element.text.entry != NULL ) {       // heading
+                out_head_page( in_element->element.text.entry,
+                               in_element->element.text.ref, page );
+            }
             if( GlobalFlags.lastpass ) {
                 ProcFlags.force_op = in_element->element.text.force_op;
                 for( cur_line = in_element->element.text.first;
@@ -1335,7 +1339,6 @@ static void update_column( void )
                     t_page.last_col_main = cur_el;
                     t_page.last_col_main->next = NULL;
                     t_page.cur_depth += cur_el->depth + depth;
-                    break;
                 } else {
                     fill_column( cur_el );
                     if( cur_el->next != NULL ) {        // cur_el was split
@@ -1353,8 +1356,8 @@ static void update_column( void )
                         t_page.last_col_main->next = NULL;
                         t_page.cur_depth += cur_el->depth + depth;
                     }
-                    break;
                 }
+                break;
             } else {                                    // cur_el fits as-is
                 if( t_page.cur_col->main == NULL ) {
                     t_page.cur_col->main = cur_el;

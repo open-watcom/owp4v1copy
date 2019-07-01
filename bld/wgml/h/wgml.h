@@ -209,6 +209,7 @@ extern  condcode    getnum( getnum_block * gn );
 
 /* ghx.c                                */
 extern  void    gen_heading( char * h_text, char * id, hdsrc hn_lvl, hdsrc hds_lvl );
+extern  void    out_head_page( ffh_entry * in_entry, ref_entry * in_ref, uint32_t in_pageno );
 
 
 /* gindexut.c                           */

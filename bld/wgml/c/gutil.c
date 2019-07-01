@@ -26,26 +26,6 @@
 *
 * Description:  some WGML utility functions
 *
-*               att_val_to_su
-*               conv_hor_unit
-*               conv_vert_unit
-*               cw_val_to_su
-*               format_num
-*               free_ffh_list
-*               free_fwd_ref
-*               get_att_start
-*               get_att_value
-*               get_tag_value
-*               init_ffh_entry
-*               init_fwd_refs
-*               int_to_roman
-*               internal_to_su
-*               lay_init_su
-*               len_to_trail_space
-*               skip_to_quote
-*               su_expression
-*               su_layout_special
-*
 ****************************************************************************/
 
 
@@ -1229,7 +1209,7 @@ ffh_entry * init_ffh_entry( ffh_entry * ffh_list )
         curr = curr->next;
     }
     curr->next = NULL;
-    curr->pageno = page + 1;
+    curr->pageno = 0;
     curr->number = 0;
     curr->prefix = NULL;
     curr->text = NULL;

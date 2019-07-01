@@ -30,8 +30,9 @@
 *               are not implemented:
 *                   align
 *                   stitle
-*           Only one of the attributes of tag :HEADING is implemented:
+*           Only two of the attributes of tag :HEADING is implemented:
 *                   delim
+*                   threshold
 ****************************************************************************/
 
 /***************************************************************************/
@@ -166,7 +167,7 @@ void gen_heading( char * h_text, char * id, hdsrc hn_lvl, hdsrc hds_lvl )
     size_t          prefixlen;
     size_t          txtlen;
     page_pos        old_line_pos;
-    ref_entry   *   cur_ref;
+    ref_entry   *   cur_ref         = NULL;
     uint32_t        bot_depth;
     uint32_t        hx_depth;
     uint32_t        old_bot_depth;
@@ -175,8 +176,8 @@ void gen_heading( char * h_text, char * id, hdsrc hn_lvl, hdsrc hds_lvl )
     uint32_t        page_diff;
     uint32_t        top_depth;
 
-    static char     headx[7]    = "$headX";
-    static char     htextx[8]   = "$htextX";
+    static char     headx[7]        = "$headX";
+    static char     htextx[8]       = "$htextX";
 
     headx[5] = '0' + hn_lvl;
     htextx[6] = '0' + hn_lvl;
@@ -370,6 +371,7 @@ void gen_heading( char * h_text, char * id, hdsrc hn_lvl, hdsrc hds_lvl )
                 cur_doc_el_group->first->element.text.prev = t_page.last_col_main;
             }
             cur_doc_el_group->first->element.text.entry = hd_entry;
+            cur_doc_el_group->first->element.text.ref = cur_ref;
         }
 
         if( hds_lvl < hds_appendix ) {      // Hx only, but not APPENDIX H1
@@ -533,22 +535,6 @@ void gen_heading( char * h_text, char * id, hdsrc hn_lvl, hdsrc hds_lvl )
                 reset_t_page();                             // update metrics for new banners, if any
             }
         }
-
-        if( pass == 1 ) {                        // only on first pass
-            hd_entry->pageno = page + 1;
-        } else {
-            if( (page + 1) != hd_entry->pageno ) {  // page number changed
-                hd_entry->pageno = page + 1;
-                if( GlobalFlags.lastpass ) {
-                    if( (id != NULL) && id[0] ) {
-                        hd_fwd_refs = init_fwd_ref( hd_fwd_refs, id );
-                    }
-                    ProcFlags.new_pagenr = true;
-                }
-            }
-        }
-    } else if( pass == 1 ) {                        // only on first pass
-        hd_entry->pageno = page + 1;
     }
 
     if( page_width ) {
@@ -845,3 +831,28 @@ void gml_h6( const gmltag * entry )
     gml_hx_common( entry, hds_h6 );
 }
 
+
+/******************************************************************************/
+/*  Manages heading page numbers, to include creating any warnings needed     */
+/*                                                                            */
+/*  NOTE: a heading will always have an ffh_entry, but will not have a        */
+/*        ref_entry unless it has an id                                       */
+/******************************************************************************/
+
+void out_head_page( ffh_entry * in_entry, ref_entry * in_ref, uint32_t in_pageno )
+{
+    if( pass == 1 ) {                                       // only on first pass
+        in_entry->pageno = in_pageno;
+    } else {
+        if( in_pageno != in_entry->pageno ) {    // page number changed
+            in_entry->pageno = in_pageno;
+            if( GlobalFlags.lastpass ) {
+                if( (in_ref->id != NULL) && in_ref->id[0] ) {
+                    hd_fwd_refs = init_fwd_ref( hd_fwd_refs, in_ref->id );
+                }
+                ProcFlags.new_pagenr = true;
+            }
+        }
+    }
+    return;
+}
