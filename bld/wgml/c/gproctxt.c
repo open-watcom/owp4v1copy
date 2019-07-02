@@ -26,21 +26,6 @@
 *
 * Description:  WGML Process text not tags / controlwords
 *
-*               do_c_chars              generate c_chars for wgml_tabs
-*               do_fc_comp              compute data used by fill_chars
-*               do_justify              insert spaces between words
-*               insert_hard_spaces      inserts hard spaces into the output line
-*               intrans                 perform input translation
-*               next_tab                finds next tab stop
-*               process_line_full       process text line into t_element
-*               process_text            form input text into output text lines
-*               puncadj                 insert spaces after .:?
-*               redo_tabs()             redo tabbing of preprocessed line
-*               set_h_start             set horizontal start postion
-*               split_text              split text at given position
-*               text_chars_width        width to first wgml tab
-*               wgml_tabs               expands wgml tabs
-*
 ****************************************************************************/
 
 
@@ -2435,6 +2420,7 @@ void process_text( const char *text, font_number font )
     ProcFlags.force_pc = false;
     ProcFlags.fsp = false;
     ProcFlags.para_starting = false;
+    ProcFlags.skip_blank_line = false;
     ProcFlags.titlep_starting = false;
     ProcFlags.utc = false;
     ProcFlags.zsp = false;
