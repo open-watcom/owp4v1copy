@@ -230,14 +230,14 @@ void gml_exmp( const gmltag * entry )
 
         test_depth1 = (cur_doc_el_group->depth + t_page.cur_depth);
         if( cur_doc_el_group->last->type == el_vspace ) {
-            test_depth2 = test_depth1 - cur_doc_el_group->last->depth;
+            test_depth2 = test_depth1 - cur_doc_el_group->last->blank_lines;
         } else {
             test_depth2 = test_depth1;
         }
 
         if( test_depth2 > t_page.max_depth ) {          // block moves even without final vspace element (if present)
             next_column();  //  the block won't fit on this page (or in this column)
-        } else if( test_depth2 != test_depth1 ) {      // clear final vspace element
+        } else if( test_depth2 > t_page.max_depth ) {   // clear final vspace element
             cur_doc_el_group->last->blank_lines = 0;
             cur_doc_el_group->last->depth = 0;
             cur_doc_el_group->last->subs_skip = 0;
