@@ -213,7 +213,8 @@ static void gml_e_inlne_common( const gmltag * entry, e_tags t )
 
         scan_err = false;
         p = scan_start;
-        SkipDot( p );                   // over '.'
+        SkipDot( p );                           // over '.'
+        input_cbs->fmflags &= ~II_sol;
         if( *p != '\0' ) {
             process_text( p, g_curr_font );
         }
