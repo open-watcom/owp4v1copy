@@ -484,6 +484,7 @@ extern  bool        process_tag( gtentry * ge, mac_entry * me );
 
 
 /* gutil.c                              */
+extern  void            add_dt_space( void );
 extern  bool            att_val_to_su( su * spaceunit, bool pos );
 extern  int32_t         conv_hor_unit( su * spaceunit, font_number font );
 extern  int32_t         conv_vert_unit( su * spaceunit, text_space text_spacing, font_number font );

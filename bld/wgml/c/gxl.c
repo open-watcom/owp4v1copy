@@ -1385,11 +1385,12 @@ void gml_dd( const gmltag * entry )
     g_curr_font = layout_work.dd.font;
     t_page.cur_left = nest_cb->lm + nest_cb->left_indent + nest_cb->tsize;   // left start
 
+    if( input_cbs->fmflags & II_macro ) {
+        ProcFlags.dd_macro = true;
+    }
+
     if( t_page.cur_width + wgml_fonts[g_curr_font].spc_width < t_page.cur_left ) {  // set for current line
         t_page.cur_width = t_page.cur_left;
-        if( input_cbs->fmflags & II_macro ) {
-            ProcFlags.dd_macro = true;
-        }
         ProcFlags.zsp = true;
     } else if( nest_cb->dl_break ) {
         break_done = true;
@@ -1399,9 +1400,6 @@ void gml_dd( const gmltag * entry )
         t_page.cur_width = t_page.cur_left;
         post_space = 0;
     } else {                        // cur_width > cur_left and no break
-        if( input_cbs->fmflags & II_macro ) {
-            ProcFlags.dd_macro = true;
-        }
         ProcFlags.dd_space = true;
     }
     t_page.max_width = nest_cb->rm + nest_cb->right_indent;

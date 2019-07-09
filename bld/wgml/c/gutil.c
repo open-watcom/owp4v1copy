@@ -368,6 +368,81 @@ static bool su_expression( su * in_su )
 }
 
 /***************************************************************************/
+/*  insert space characters into t_element as if they were text            */
+/*  this is done at the end of the last text_line, in case of wrapping     */
+/*  t_element must be a text element                                       */
+/*  NOTE: invoked by add_dt_space()                                        */
+/*        used with items affected by DT/DD used inside a macro            */
+/***************************************************************************/
+
+static void add_spaces_t_element( char * spaces )
+{
+    font_number     font;
+    size_t          spc_cnt;
+    text_chars  *   sav_chars;
+    text_line   *   line;
+    uint32_t        start;
+
+    if( t_element->type != el_text ) {
+        internal_err( __FILE__, __LINE__ );
+    }
+
+    line = t_element->element.text.first;
+    while( line->next != NULL ) {
+        line = line->next;
+    }
+    font = line->last->font;
+    spc_cnt = strlen( spaces );
+    if( spc_cnt > 0 ) {
+        start = line->last->x_address + line->last->width;
+        sav_chars = line->last;
+        line->last->next = process_word( layout_work.note.spaces, spc_cnt, font );
+        line->last = line->last->next;
+        line->last->prev = sav_chars;
+        line->last->type = tx_norm;
+        line->last->x_address = start;
+
+        if( wgml_fonts[font].line_height > line->line_height ) {
+            line->line_height = wgml_fonts[font].line_height;
+        }
+    }
+    return;
+}
+
+/***************************************************************************/
+/* add space to DT text and re-evaluate DD text start position             */
+/* Note: only called when DT/DD were used in a macro, and then only by     */
+/*       those items that react to that event                              */
+/***************************************************************************/
+
+void add_dt_space( void )
+{
+    if( t_line == NULL ) {
+        add_spaces_t_element( " " );    // DD text will be on new line
+    } else {                                    // will need to re-evaluate DD text position
+        ProcFlags.dd_space = false;             // reset context
+        t_page.cur_width = t_line->last->x_address + t_line->last->width;
+        insert_hard_spaces( " ", t_line->last->font );
+        if( t_page.cur_width + wgml_fonts[layout_work.dd.font].spc_width < t_page.cur_left ) {  // set for current line
+            t_page.cur_width = t_page.cur_left;
+            ProcFlags.zsp = true;
+        } else if( nest_cb->dl_break ) {
+            if( t_line != NULL ) {      // break not previously applied because only needed now
+                process_line_full( t_line, ((ProcFlags.justify != ju_off) &&
+                    (ProcFlags.justify != ju_on) && (ProcFlags.justify != ju_half)) );
+                t_line = NULL;              // commit term but as part of same doc_element as definition
+                t_page.cur_width = t_page.cur_left;
+                post_space = 0;
+            }
+        } else {                        // cur_width > cur_left and no break
+            ProcFlags.dd_space = true;
+            ProcFlags.zsp = false;
+        }
+    }
+    return;
+}
+
+/***************************************************************************/
 /* return length of string without trailing spaces                         */
 /* return 1 for all blank string                                           */
 /***************************************************************************/
@@ -382,6 +457,10 @@ size_t len_to_trail_space( const char *p , size_t len )
     return( len );
 }
 
+/***************************************************************************/
+/* find matching quote char, if present                                    */
+/* will point to \0 if quote char not found                                */
+/***************************************************************************/
 
 char * skip_to_quote( char * p, char quote )
 {

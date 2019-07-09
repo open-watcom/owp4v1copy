@@ -1365,10 +1365,10 @@ void do_justify( uint32_t lm, uint32_t rm, text_line * line )
 
 
 /***************************************************************************/
-/*  insert space characters as if they were text                           */
-/*  NOTE: used with DD, NOTE, SL and UL                                        */
+/*  insert space characters into t_line as if they were text               */
+/*  NOTE: used with NOTE, SL and UL                                        */
+/*        also used by add_dt_space when t_line is not NULL                */
 /*        avoids complicating process_text() further                       */
-/*        sets ProcFlags.zsp to avoid any post_space before text           */
 /***************************************************************************/
 
 void insert_hard_spaces( char * spaces, font_number font )
@@ -1379,19 +1379,19 @@ void insert_hard_spaces( char * spaces, font_number font )
     spc_cnt = strlen( spaces );
     if( spc_cnt > 0 ) {
         if( t_line == NULL ) {
-            t_line->first = process_word( layout_work.note.spaces, spc_cnt, font );
+            t_line->first = process_word( spaces, spc_cnt, font );
             t_line->last = t_line->first;
         } else {
             sav_chars = t_line->last;
-            t_line->last->next = process_word( layout_work.note.spaces, spc_cnt, font );
+            t_line->last->next = process_word( spaces, spc_cnt, font );
             t_line->last = t_line->last->next;
             t_line->last->prev = sav_chars;
         }
         t_line->last->type = tx_norm;
         t_line->last->x_address = t_page.cur_width;
         t_page.cur_width += t_line->last->width;
-        if( wgml_fonts[FONT0].line_height > t_line->line_height ) {
-            t_line->line_height = wgml_fonts[FONT0].line_height;
+        if( wgml_fonts[font].line_height > t_line->line_height ) {
+            t_line->line_height = wgml_fonts[font].line_height;
         }
     }
     return;

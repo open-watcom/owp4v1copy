@@ -275,19 +275,8 @@ void gml_hdref( const gmltag * entry )
         }
     }
 
-    if( ProcFlags.dd_macro ) {              // special processing for DT/DD in macro followed by HDREF
-        insert_hard_spaces( " ", t_line->last->font );  // to match wgml 4.0
-        if( !ProcFlags.dd_space ) {         // DD determined DT text plus one space was to left of align/tsize position
-            t_line->last->x_address = t_line->last->prev->x_address + t_line->last->prev->width;
-            t_page.cur_width = t_line->last->x_address + t_line->last->width;
-            if( (t_page.cur_width + wgml_fonts[layout_work.dd.font].spc_width) < t_page.cur_left ) {
-                t_page.cur_width = t_page.cur_left;
-                ProcFlags.zsp = true;
-            } else {
-                ProcFlags.dd_space = true;
-                ProcFlags.zsp = false;
-            }
-        }
+    if( ProcFlags.dd_macro ) {      // special processing for DT/DD in macro followed by HDREF
+        add_dt_space();
     }
     process_text( ref_text, g_curr_font );
     mem_free( ref_text );
