@@ -277,7 +277,9 @@ void gml_hdref( const gmltag * entry )
 
     if( ProcFlags.dd_macro ) {      // special processing for DT/DD in macro followed by HDREF
         add_dt_space();
+        ProcFlags.dd_macro = false;
     }
+   
     process_text( ref_text, g_curr_font );
     mem_free( ref_text );
     ref_text = NULL;
