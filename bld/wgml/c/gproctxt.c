@@ -2010,6 +2010,18 @@ void process_text( const char *text, font_number font )
                 if( !ProcFlags.concat && (cur_group_type != gt_xmp) ) { // .co off but not XMP: include internal spaces
                     continue;
                 }
+
+                /********************************************************************/
+                /*  a symbol with a null string as its value was found              */
+                /*  DT/DD were used inside a macro                                  */
+                /*  DT text is being processed                                      */
+                /*  all spaces after the text must be included                      */
+                /********************************************************************/
+
+                if( ProcFlags.dt_space ) {
+                    continue;
+                }
+
             }
         }
         if( n_chars == NULL ) {
@@ -2417,6 +2429,7 @@ void process_text( const char *text, font_number font )
     ProcFlags.dd_space = false;
     ProcFlags.dd_macro = false;
     ProcFlags.dd_starting = false;
+    ProcFlags.dt_space = false;
     ProcFlags.force_pc = false;
     ProcFlags.fsp = false;
     ProcFlags.para_starting = false;

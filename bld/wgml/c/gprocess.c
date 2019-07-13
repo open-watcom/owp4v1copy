@@ -503,6 +503,10 @@ bool resolve_symvar_functions( char * buf )
             if( rc == 2 ) {             // variable found + resolved
                 ProcFlags.substituted = true;
 
+                if( !ProcFlags.dd_macro && !symsubval->value[0] ) {
+                    ProcFlags.null_value = true;
+                }
+
                 /* Split when called from process_line, not when called to get a parameter */
 
                 if( !ProcFlags.CW_sep_ignore && (buf == buff2) &&

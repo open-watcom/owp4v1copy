@@ -1333,6 +1333,10 @@ void gml_dt( const gmltag * entry )
     p = get_text_line( p );
 
     if( !ProcFlags.reprocess_line ) {
+        if( (input_cbs->fmflags & II_macro) && ProcFlags.null_value ) {
+            ProcFlags.dt_space = true;
+        }
+        ProcFlags.null_value = false;
         SkipSpaces( p );                    // skip initial spaces
         ProcFlags.as_text_line = true;
         if( *p != '\0' ) {
@@ -1391,6 +1395,7 @@ void gml_dd( const gmltag * entry )
 
     if( t_page.cur_width + wgml_fonts[g_curr_font].spc_width < t_page.cur_left ) {  // set for current line
         t_page.cur_width = t_page.cur_left;
+        post_space = 0;
         ProcFlags.zsp = true;
     } else if( nest_cb->dl_break ) {
         break_done = true;
