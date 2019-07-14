@@ -41,6 +41,7 @@
 static  bool        ddhd_done       = false;
 static  bool        dl_gl_starting  = false;
 static  bool        dl_gl_first     = false;
+static  bool        dt_space_set    = false;
 static  uint8_t     dl_cur_level    = 1;    // current DL list level
 static  uint8_t     gl_cur_level    = 1;    // current GL list level
 static  uint8_t     ol_cur_level    = 1;    // current OL list level
@@ -1335,6 +1336,7 @@ void gml_dt( const gmltag * entry )
     if( !ProcFlags.reprocess_line ) {
         if( (input_cbs->fmflags & II_macro) && ProcFlags.null_value ) {
             ProcFlags.dt_space = true;
+            dt_space_set = true;
         }
         ProcFlags.null_value = false;
         SkipSpaces( p );                    // skip initial spaces
@@ -1389,9 +1391,10 @@ void gml_dd( const gmltag * entry )
     g_curr_font = layout_work.dd.font;
     t_page.cur_left = nest_cb->lm + nest_cb->left_indent + nest_cb->tsize;   // left start
 
-    if( input_cbs->fmflags & II_macro ) {
+    if( !dt_space_set && input_cbs->fmflags & II_macro ) {
         ProcFlags.dd_macro = true;
     }
+    dt_space_set = false;
 
     if( t_page.cur_width + wgml_fonts[g_curr_font].spc_width < t_page.cur_left ) {  // set for current line
         t_page.cur_width = t_page.cur_left;
