@@ -1874,7 +1874,7 @@ void process_text( const char *text, font_number font )
                         post_space = wgml_fonts[font].spc_width;
                     } else if( input_cbs->fmflags & II_macro ) {
                         if( ((font != FONT0) || (g_prev_font == FONT0))
-                                && (input_cbs->s.m != prev_mac) ) {
+                                && (input_cbs->s.m != prev_mac) && !ProcFlags.utc ) {
                             post_space = wgml_fonts[FONT0].spc_width;
                         } else if( !ProcFlags.in_figcap && (font != 0) && (g_prev_font != 0) ) {
                             post_space = wgml_fonts[font].spc_width;
