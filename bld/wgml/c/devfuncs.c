@@ -506,7 +506,7 @@ static void post_text_output( void )
                 ob_insert_block( shift_rmoveto, ps_size, false, false, active_font );
                 break;
             case tx_sup:
-                ps_size = strlen( shift_scale );
+                ps_size = strlen( shift_scale ) + 1;
                 ob_insert_block( shift_scale, ps_size, false, false, active_font );
 
                 ps_size = strlen( shift_neg );
