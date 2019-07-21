@@ -693,6 +693,8 @@ void process_line( void )
 
     anything_substituted |= resolve_symvar_functions( buff2 );
 
+    classify_record( *buff2 );      // classify script CW, GML tag or nothing after symbol substitution etc
+
     buff2_lg = strnlen_s( buff2, buf_size );
 
     if( (input_cbs->fmflags & II_research) && GlobalFlags.firstpass &&
