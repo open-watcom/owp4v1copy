@@ -192,10 +192,11 @@ static  void    add_file_cb_entry( void )
     nip->hidden_tail = NULL;
     nip->if_cb       = mem_alloc( sizeof( ifcb ) );
     memset( nip->if_cb, '\0', sizeof( ifcb ) );
-    nip->pe_cb.line = NULL;
+    nip->pe_cb.line  = NULL;
     nip->pe_cb.count = 0;
-    nip->fmflags = II_file;
-    nip->s.f     = new;
+    nip->fmflags     = II_file;
+    nip->s.f         = new;
+    nip->sym_space   = false;
     init_dict( &nip->local_dict );
 
     new->lineno   = 0;

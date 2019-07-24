@@ -406,6 +406,8 @@ bool    get_line( bool display_line )
             input_cbs->fmflags &= ~II_sol;  // not at start of input line
         }
 
+        input_cbs->sym_space = pline->sym_space;
+
         mem_free( pline );
 
         if( input_cbs->hidden_head == NULL ) {  // last part of split line

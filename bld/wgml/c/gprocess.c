@@ -50,6 +50,7 @@ void split_input( char * buf, char * split_pos, bool sol )
         wk = mem_alloc( len + sizeof( inp_line ) );
         wk->next = input_cbs->hidden_head;
         wk->sol  = sol;
+        wk->sym_space = input_cbs->sym_space;
         strcpy(wk->value, split_pos );  // save second part
 
         input_cbs->hidden_head = wk;
@@ -69,7 +70,8 @@ void split_input( char * buf, char * split_pos, bool sol )
  *  used if a substituted variable starts with CW_sep_char
  */
 
-static void split_input_var( char * buf, char * split_pos, char * part2, bool sol )
+static void split_input_var( char * buf, char * split_pos, char * part2, bool sol,
+                             bool sym_space )
 {
     inp_line    *   wk;
     size_t          len;
@@ -79,6 +81,7 @@ static void split_input_var( char * buf, char * split_pos, char * part2, bool so
         wk = mem_alloc( len + sizeof( inp_line ) );
         wk->next = input_cbs->hidden_head;
         wk->sol  = sol;
+        wk->sym_space = sym_space;
 
         strcpy(wk->value, part2 );      // second part
         strcat(wk->value, split_pos );  // second part
@@ -519,7 +522,9 @@ bool resolve_symvar_functions( char * buf )
 
                     SkipDot( pchar );   // skip optional terminating dot
                     *p2 = '\0';
-                    split_input_var( buf, pchar, &symsubval->value[1], true );
+
+                    split_input_var( buf, pchar, &symsubval->value[1], true,
+                                     *(varstart - 1) == ' ');
                     pw = pwend + 1;     // stop substitution for this record
                     varstart = NULL;
 

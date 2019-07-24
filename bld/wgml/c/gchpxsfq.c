@@ -50,7 +50,7 @@ static void gml_inline_common( const gmltag * entry, int level, e_tags t )
 
     // keep any existing post_space, even if CT follows
 
-    if( (input_cbs->fmflags & II_sol) ) {
+    if( input_cbs->fmflags & II_sol ) {
         ProcFlags.fsp = true;
         if( post_space == 0 ) {
             post_space = wgml_fonts[g_curr_font].spc_width;
@@ -60,8 +60,12 @@ static void gml_inline_common( const gmltag * entry, int level, e_tags t )
                 post_space += wgml_fonts[g_curr_font].spc_width;
             }
         }
+    } else if( (t == t_SF) && (input_cbs->fmflags & II_macro) ) {   // may apply more generally
+        ProcFlags.fsp = true;
+        if( (post_space == 0) && input_cbs->sym_space ) {
+            post_space = wgml_fonts[g_curr_font].spc_width;
+        }
     }
-
     init_nest_cb();
     nest_cb->p_stack = copy_to_nest_stack();
 

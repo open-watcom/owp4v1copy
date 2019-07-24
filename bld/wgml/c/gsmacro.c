@@ -58,11 +58,12 @@ void    add_macro_cb_entry( mac_entry * me, gtentry * ge )
     nip->if_cb       = mem_alloc( sizeof( ifcb ) );
     memset( nip->if_cb, '\0', sizeof( ifcb ) );
     nip->pe_cb.count = -1;
-    nip->pe_cb.line = NULL;
+    nip->pe_cb.line  = NULL;
 
     init_dict( &nip->local_dict );
 
     nip->s.m        = new;
+    nip->sym_space  = input_cbs->sym_space;
 
     new->lineno     = 0;
     new->macline    = me->macline;
