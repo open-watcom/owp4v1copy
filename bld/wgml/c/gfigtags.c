@@ -1146,7 +1146,7 @@ void gml_figcap( const gmltag * entry )
     }
 
     if( ProcFlags.wh_device ) {             // Insert a marker
-        marker = process_word( NULL, 0, g_curr_font );
+        marker = process_word( NULL, 0, g_curr_font, false );
         marker->type = tx_figcap;           // mark as from prefix string
         marker->x_address = t_page.cur_width;
         t_line->last->next = marker;

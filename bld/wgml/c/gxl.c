@@ -895,7 +895,7 @@ static  void    gml_li_ol( const gmltag * entry )
 
     ProcFlags.keep_left_margin = true;  // keep special Note indent
     process_text( charnumber, g_curr_font );    // insert item number
-    insert_hard_spaces( " ", FONT0 );
+    insert_hard_spaces( " ", 1, FONT0 );
     ProcFlags.zsp = true;
 
     t_page.cur_left = nest_cb->lm + nest_cb->left_indent + nest_cb->align;   // left start
@@ -1007,7 +1007,7 @@ static  void    gml_li_ul( const gmltag * entry )
     ProcFlags.keep_left_margin = true;  // keep special Note indent
     g_curr_font = nest_cb->u.ul_layout->bullet_font;
     process_text( bullet, g_curr_font );    // insert bullet
-    insert_hard_spaces( " ", FONT0 );
+    insert_hard_spaces( " ", 1, FONT0 );
     ProcFlags.zsp = true;
 
     t_page.cur_left = nest_cb->lm + nest_cb->left_indent + nest_cb->align;   // left start

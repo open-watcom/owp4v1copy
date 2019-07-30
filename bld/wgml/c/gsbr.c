@@ -124,7 +124,7 @@ void  scr_process_break( void )
             /* Insert a marker if CO OFF and post_space > 0 */
 
             if( !ProcFlags.concat && (post_space > 0) ) {
-                marker = process_word( NULL, 0, g_curr_font );
+                marker = process_word( NULL, 0, g_curr_font, false );
                 marker->type = tx_norm;
                 t_page.cur_width += post_space;
                 post_space = 0;

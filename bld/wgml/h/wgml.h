@@ -323,13 +323,13 @@ extern  void    split_input( char * buf, char * split_pos, bool startofline );
 
 
 /* gproctxt.c                           */
-extern  void        do_justify( uint32_t left_m, uint32_t right_m, text_line *line );
-extern  void        insert_hard_spaces( char * spaces, font_number font );
-extern  size_t      intrans( char *text, size_t count, font_number font );
-extern  void        process_line_full( text_line *a_line, bool justify );
-extern  void        process_text( const char *text, font_number font );
-extern  text_chars  *process_word( const char *text, size_t count, font_number font );
-extern  void        set_h_start( void );
+extern  void            do_justify( uint32_t left_m, uint32_t right_m, text_line *line );
+extern  void            insert_hard_spaces( const char * spaces, size_t len, font_number font );
+extern  size_t          intrans( char *text, size_t count, font_number font );
+extern  void            process_line_full( text_line *a_line, bool justify );
+extern  void            process_text( const char *text, font_number font );
+extern  text_chars  *   process_word( const char *text, size_t count, font_number font, bool hard_spaces );
+extern  void            set_h_start( void );
 
 
 /* grefdict.c                           */

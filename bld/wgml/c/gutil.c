@@ -396,7 +396,7 @@ static void add_spaces_t_element( char * spaces )
     if( spc_cnt > 0 ) {
         start = line->last->x_address + line->last->width;
         sav_chars = line->last;
-        line->last->next = process_word( layout_work.note.spaces, spc_cnt, font );
+        line->last->next = process_word( layout_work.note.spaces, spc_cnt, font, false );
         line->last = line->last->next;
         line->last->prev = sav_chars;
         line->last->type = tx_norm;
@@ -418,11 +418,11 @@ static void add_spaces_t_element( char * spaces )
 void add_dt_space( void )
 {
     if( t_line == NULL ) {
-        add_spaces_t_element( " " );    // DD text will be on new line
+        add_spaces_t_element( " " );            // DD text will be on new line
     } else {                                    // will need to re-evaluate DD text position
         ProcFlags.dd_space = false;             // reset context
         t_page.cur_width = t_line->last->x_address + t_line->last->width;
-        insert_hard_spaces( " ", t_line->last->font );
+        insert_hard_spaces( " ", 1, t_line->last->font );
         if( t_page.cur_width + wgml_fonts[layout_work.dd.font].spc_width < t_page.cur_left ) {  // set for current line
             t_page.cur_width = t_page.cur_left;
             ProcFlags.zsp = true;

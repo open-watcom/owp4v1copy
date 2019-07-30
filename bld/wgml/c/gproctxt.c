@@ -1367,23 +1367,22 @@ void do_justify( uint32_t lm, uint32_t rm, text_line * line )
 /***************************************************************************/
 /*  insert space characters into t_line as if they were text               */
 /*  NOTE: used with NOTE, SL and UL                                        */
+/*        and in an XMP when the next word starts with a tab character     */ 
 /*        also used by add_dt_space when t_line is not NULL                */
 /*        avoids complicating process_text() further                       */
 /***************************************************************************/
 
-void insert_hard_spaces( char * spaces, font_number font )
+void insert_hard_spaces( const char * spaces, size_t len, font_number font )
 {
-    size_t          spc_cnt;
     text_chars  *   sav_chars;
 
-    spc_cnt = strlen( spaces );
-    if( spc_cnt > 0 ) {
+    if( len > 0 ) {
         if( t_line == NULL ) {
-            t_line->first = process_word( spaces, spc_cnt, font );
+            t_line->first = process_word( spaces, len, font, true );
             t_line->last = t_line->first;
         } else {
             sav_chars = t_line->last;
-            t_line->last->next = process_word( spaces, spc_cnt, font );
+            t_line->last->next = process_word( spaces, len, font, true );
             t_line->last = t_line->last->next;
             t_line->last->prev = sav_chars;
         }
@@ -1456,6 +1455,7 @@ void set_h_start( void )
 void process_line_full( text_line * a_line, bool justify )
 {
     bool            no_shift;       // shift no tab stops on new line
+    char        *   p;
     text_chars  *   split_chars;    // first text_chars of second line, if any
     text_chars  *   test_chars;     // used to find alignment of prior tab
     text_line   *   b_line  = NULL; // for second line, if any
@@ -1578,6 +1578,22 @@ void process_line_full( text_line * a_line, bool justify )
             }
         }
 
+        /************************************************************************/
+        /* In an XMP/eXMP block, it is possible for split_chars to actually be  */
+        /* pointing to a text_chars created to emit the spaces following the    */
+        /* prior word. In this case, that text_chars must be reconfigured as    */
+        /* a marker.                                                            */
+        /************************************************************************/
+
+        if( cur_group_type == gt_xmp ) {
+            p = split_chars->text;
+            while(*p && (*p == ' ' ) ) p++; // first non-space char
+            if( !*p ) {                     // all spaces
+                split_chars->count = 0;
+                split_chars->width = 0;
+            }
+        }
+
         /* Now split the line, if appropriate */
 
         if( (split_chars != NULL) && (split_chars->prev != NULL) ) {    // don't split if a_line would be left empty
@@ -1674,20 +1690,22 @@ void process_line_full( text_line * a_line, bool justify )
 /*  create a text_chars instance and fill it with a 'word'                 */
 /***************************************************************************/
 
-text_chars *process_word( const char *pword, size_t count, font_number font )
+text_chars * process_word( const char *pword, size_t count, font_number font, bool hard_spaces )
 {
     text_chars  *   n_chars;
 
     n_chars = alloc_text_chars( pword, count, font );
-    // remove end-of-line spaces if .co off before input translation
-    if( !ProcFlags.concat && (input_cbs->fmflags & II_eol) ) {
+
+    /* remove end-of-line spaces if .co off before input translation, unless hard_spaces is true */
+
+    if( !hard_spaces && !ProcFlags.concat && (input_cbs->fmflags & II_eol) ) {
         if( n_chars->text[n_chars->count - 1] == ' ' ) {
             while( n_chars->text[n_chars->count - 1] == ' ' ) {
                 n_chars->count--;
             }
-            n_chars->width = text_chars_width( n_chars->text, n_chars->count, font );
         }
     }
+
     n_chars->count = intrans( n_chars->text, n_chars->count, font );
     if( n_chars->count == 0 ) {
         n_chars->width = 0;
@@ -1846,7 +1864,7 @@ void process_text( const char *text, font_number font )
 
                 /* if no text follows, insert text_chars for post_space */
 
-                n_chars = process_word( NULL, 0, font );
+                n_chars = process_word( NULL, 0, font, false );
                 n_chars->type = tx_norm;
                 t_page.cur_width += post_space;
                 post_space = 0;
@@ -1907,7 +1925,7 @@ void process_text( const char *text, font_number font )
                     }
                 }
             } else if( ProcFlags.wrap_indent && (font != g_prev_font) ) { // font changed (INDEX see output)
-                n_chars = process_word( NULL, 0, g_prev_font );
+                n_chars = process_word( NULL, 0, g_prev_font, false );
                 n_chars->type = tx_norm;
                 t_page.cur_width += post_space;
                 post_space = 0;
@@ -1924,7 +1942,7 @@ void process_text( const char *text, font_number font )
 
         } else {                    // ".co off": increment initial spacing
             if( (post_space > 0) && (font != g_prev_font) ) { // font changed
-                n_chars = process_word( NULL, 0, g_prev_font );
+                n_chars = process_word( NULL, 0, g_prev_font, false );
                 n_chars->type = tx_norm;
                 t_page.cur_width += post_space;
                 post_space = 0;
@@ -1941,7 +1959,7 @@ void process_text( const char *text, font_number font )
             SkipSpaces( p );
             post_space += ( p - pa ) * wgml_fonts[font].spc_width;
             if( *p == '\0' ) {  // text is entirely spaces
-                n_chars = process_word( NULL, 0, font );
+                n_chars = process_word( NULL, 0, font, false );
                 n_chars->type = tx_norm;
                 t_page.cur_width += post_space;
                 post_space = 0;
@@ -1987,7 +2005,7 @@ void process_text( const char *text, font_number font )
             if( p > pword ) {
                 count = p - pword;      // no of bytes
 
-                n_chars = process_word( pword, count, font );
+                n_chars = process_word( pword, count, font, false );
                 n_chars->type = typ;
             }
             typ = typn;
@@ -2030,7 +2048,7 @@ void process_text( const char *text, font_number font )
                 continue;
             }
             count = p - pword;          // no of bytes
-            n_chars = process_word( pword, count, font );
+            n_chars = process_word( pword, count, font, false );
             n_chars->type = typ;
             typ = typn;
         }
@@ -2339,20 +2357,30 @@ void process_text( const char *text, font_number font )
         stop_fnd = is_stop_char( t_line->last->text[t_line->last->count - 1] );
         if( *p == ' ' ) {                                       // spaces to process
             pword = p;
-            post_space = wgml_fonts[font].spc_width;
-            if( !ProcFlags.as_text_line && stop_fnd && (cur_group_type != gt_xmp) ) {   // exclude XMP
-                post_space += wgml_fonts[font].spc_width;
-            }
-            p++;
-            pa = p;
-            SkipSpaces( p );
-            if( (cur_group_type == gt_xmp) ) {   // multiple blanks
-                post_space += ( p - pa ) * wgml_fonts[font].spc_width;
-            }
-            p--;                    // back off non-space character, whatever it was
-            tab_space = p - pword + 1;
-            if( (input_cbs->fmflags & II_eol) && (tab_space == 0) ) {
-                tab_space = 1;
+            SkipSpaces( p );        // set up for xmp block/following tab char test
+            if( (cur_group_type == gt_xmp) && ((*p == '\t') || (*p == tab_char)) ) {
+                /* XMP block and next non-space character is a tab character */
+                insert_hard_spaces( pword, p - pword, font );
+                p--;                    // back off tab character
+                tab_space = 0;
+            } else {
+                /* normal processing */
+                p = pword;          // restore value for normal processing
+                post_space = wgml_fonts[font].spc_width;
+                if( !ProcFlags.as_text_line && stop_fnd && (cur_group_type != gt_xmp) ) {   // exclude XMP
+                    post_space += wgml_fonts[font].spc_width;
+                }
+                p++;
+                pa = p;
+                SkipSpaces( p );
+                if( (cur_group_type == gt_xmp) ) {   // multiple blanks
+                    post_space += ( p - pa ) * wgml_fonts[font].spc_width;
+                }
+                p--;                    // back off non-space character, whatever it was
+                tab_space = p - pword + 1;
+                if( (input_cbs->fmflags & II_eol) && (tab_space == 0) ) {
+                    tab_space = 1;
+                }
             }
             pword = p + 1;          // new word start or end of input record
         } else if( *p == '\0' && (input_cbs->fmflags & II_eol)
