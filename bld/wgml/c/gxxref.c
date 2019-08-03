@@ -223,6 +223,7 @@ void gml_hdref( const gmltag * entry )
     ref_entry   *   cur_re;
     size_t          bu_len;
     size_t          len;
+    uint32_t        t_depth;
 
     static  char    def_page[]  = " on page XXX";
     static  char    def_ref[]   = "\"Undefined Heading\"";
@@ -240,7 +241,22 @@ void gml_hdref( const gmltag * entry )
         page_found = false;
         ref_page = false;
     } else if( cur_re != NULL ) {
-        do_page = ((page + 1) != cur_re->u.ffh.entry->pageno);
+        t_depth = t_page.cur_depth;
+        if( t_element == NULL ) {
+            t_depth += g_subs_skip;
+        } else {
+            t_depth += t_element->blank_lines + t_element->subs_skip + t_element->depth;
+        }
+        if( t_line != NULL ) {
+            t_depth += t_line->line_height;
+        } else {
+            t_depth += wgml_fonts[g_curr_font].line_height;
+        }
+        if( t_depth > t_page.max_depth ) {
+            do_page = ((page + 2 ) != cur_re->u.ffh.entry->pageno);
+        } else {
+            do_page = ((page + 1 ) != cur_re->u.ffh.entry->pageno);
+        }
     } else {
         do_page = true;
     }
