@@ -896,9 +896,6 @@ void    scan_line( void )
                 ProcFlags.literal = false;
             }
         }
-        if( input_cbs->fmflags & II_eol ) {
-            scr_process_break();        // ensure the line is output
-        }
     }
 }
 
