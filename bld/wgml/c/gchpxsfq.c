@@ -46,6 +46,7 @@ static  uint32_t        quote_lvl   = 0;    // nesting level of Q phrases
 
 static void gml_inline_common( const gmltag * entry, int level, e_tags t )
 {
+    bool        sav_sbl = ProcFlags.skip_blank_line;
     char    *   p;
 
     // keep any existing post_space, even if CT follows
@@ -118,6 +119,11 @@ static void gml_inline_common( const gmltag * entry, int level, e_tags t )
             process_text( p, g_curr_font );
         }
     }
+
+    if( (t == t_SF) && sav_sbl ) {      // reset flag, but only if was set on entry, and only for SF
+        ProcFlags.skip_blank_line = sav_sbl;
+    }
+
     if( !ProcFlags.concat && (input_cbs->fmflags & II_eol)
             && (input_cbs->fmflags & II_file) ) {
         scr_process_break();            // ensure line is output
