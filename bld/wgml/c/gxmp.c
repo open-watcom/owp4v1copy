@@ -153,9 +153,9 @@ void gml_xmp( const gmltag * entry )
         scr_process_break();
     }
 
-    /* Set up to skip first blank line if inside macro and not at end of line */
+    /* Set up to skip first blank line if inside macro */
 
-    if( (input_cbs->fmflags & II_macro) && !(input_cbs->fmflags & II_eol) ) {
+    if( input_cbs->fmflags & II_macro ) {
         ProcFlags.skip_blank_line = true;
     }
 
