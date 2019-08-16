@@ -99,7 +99,11 @@ static void sksp_common( void )
     }
 
     if( !scanerr ) {
-        if( spskwork.su_u == SU_chars_lines ) {  // processing for integers
+        if( spskwork.su_u == SU_undefined ){            // set default if no value provided
+            spskwork.su_u = SU_chars_lines;
+            spskwork.su_whole = 1;
+        }
+        if( spskwork.su_u == SU_chars_lines ) {         // processing for integers
             if( spskwork.su_whole < 0 ) {
                 ProcFlags.overprint = true;             // enable overprint
                 vspace = 0;                             // avoid evaluating negative spacing
