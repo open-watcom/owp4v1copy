@@ -917,11 +917,17 @@ static void wgml_tabs( void )
             tab_chars.last = c_chars;
         }
 
-        // the tab marker for a tab character at the end of the input
-        c_chars = do_c_chars( c_chars, in_chars, NULL, 0, t_page.cur_width, 0,
+        /****************************************************************/
+        /* the tab marker for a tab character at the end of the input   */
+        /* provided it is not in an XMP/eXMP block with no text after   */
+        /* the tab character                                            */
+        /****************************************************************/
+        if( (cur_group_type != gt_xmp) || (in_chars->count > 1) ) {            
+            c_chars = do_c_chars( c_chars, in_chars, NULL, 0, t_page.cur_width, 0,
                                         in_chars->font, in_chars->type );
-        if( tab_chars.first == NULL) {
-            tab_chars.first = c_chars;
+            if( tab_chars.first == NULL) {
+                tab_chars.first = c_chars;
+            }
         }
         tab_chars.last = c_chars;
     }
@@ -2363,6 +2369,12 @@ void process_text( const char *text, font_number font )
                 insert_hard_spaces( pword, p - pword, font );
                 p--;                    // back off tab character
                 tab_space = 0;
+                pword--;                // char before pword -- that is, before the first space character
+                if( (*pword == '\t') || (*pword == tab_char) ) {    // no text after tab char
+                    t_line->last->count = 0;    // convert to marker at end of spaces
+                    t_line->last->x_address += t_line->last->width;
+                    t_line->last->width = 0;
+                }
             } else {
                 /* normal processing */
                 p = pword;          // restore value for normal processing
