@@ -153,17 +153,17 @@ void gml_xmp( const gmltag * entry )
         scr_process_break();
     }
 
-    /* Set up to skip first blank line if inside macro */
-
-    if( input_cbs->fmflags & II_macro ) {
-        ProcFlags.skip_blank_line = true;
-    }
-
     if( !ProcFlags.reprocess_line && *p != '\0' ) { // text after tag
         SkipDot( p );                               // possible tag end
         if( *p != '\0' ) {
             process_text( p, g_curr_font);          // if text follows
         }
+    }
+
+    /* Set up to skip first blank line if inside macro */
+
+    if( input_cbs->fmflags & II_macro ) {
+        ProcFlags.skip_blank_line = true;
     }
 
     scan_start = scan_stop + 1;
