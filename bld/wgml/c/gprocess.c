@@ -50,6 +50,7 @@ void split_input( char * buf, char * split_pos, bool sol )
         wk = mem_alloc( len + sizeof( inp_line ) );
         wk->next = input_cbs->hidden_head;
         wk->sol  = sol;
+        wk->fm_symbol = input_cbs->fm_symbol;
         wk->sym_space = input_cbs->sym_space;
         strcpy(wk->value, split_pos );  // save second part
 
@@ -81,6 +82,7 @@ static void split_input_var( char * buf, char * split_pos, char * part2, bool so
         wk = mem_alloc( len + sizeof( inp_line ) );
         wk->next = input_cbs->hidden_head;
         wk->sol  = sol;
+        wk->fm_symbol = true;
         wk->sym_space = sym_space;
 
         strcpy(wk->value, part2 );      // second part

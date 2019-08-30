@@ -2077,8 +2077,9 @@ void process_text( const char *text, font_number font )
                     t_line = alloc_text_line();
                 }
                 s_chars = t_line->last; // find multipart words
-                if( (s_chars != NULL) && !(s_chars->fmflags & II_macro) ) {
+                if( (s_chars != NULL) && (!(s_chars->fmflags & II_macro) || input_cbs->fm_symbol) ) {
                     while( t_page.cur_width == (s_chars->x_address + s_chars->width) ) {
+                        input_cbs->fm_symbol = false;
                         t_page.cur_width = s_chars->x_address;
                         s_chars = s_chars->prev;
                         if( s_chars == NULL ) break;
@@ -2103,6 +2104,7 @@ void process_text( const char *text, font_number font )
                         s_chars = NULL;
                     }
                 }
+
                 if( s_chars == NULL ) { // append n_chars to t_line & split it
                     // these conditions determine if n_chars is to be split
                     if( (t_line->first == NULL) ||

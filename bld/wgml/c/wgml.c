@@ -196,6 +196,7 @@ static  void    add_file_cb_entry( void )
     nip->pe_cb.count = 0;
     nip->fmflags     = II_file;
     nip->s.f         = new;
+    nip->fm_symbol   = false;
     nip->sym_space   = false;
     init_dict( &nip->local_dict );
 
