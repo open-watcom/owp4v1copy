@@ -407,6 +407,7 @@ bool    get_line( bool display_line )
         }
 
         input_cbs->fm_symbol = pline->fm_symbol;
+        input_cbs->sym_space = pline->sym_space;
 
         mem_free( pline );
 

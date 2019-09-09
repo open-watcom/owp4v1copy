@@ -236,6 +236,7 @@ typedef struct inp_line {
     struct inp_line *   next;           // next line
     bool                sol;            // Start Of Line if split line
     bool                fm_symbol;      // from a symbol substition
+    bool                sym_space;      // symbol substitution was preceeded by a space
     char                value[1];       // line content variable length
 } inp_line;
 
@@ -361,8 +362,8 @@ typedef enum {
 
 /***************************************************************************/
 /*  input stack for files and macros                                       */
-/*  NOTE: fm_space is a separate flag because it is not clear yet if it    */
-/*        is needed here or if a ProcFlag would be more appropriate        */
+/*  NOTE: fm_space and sym_space are separate flags because their usage    */
+/*        and even their necessity is not yet clear                        */
 /***************************************************************************/
 typedef struct  inputcb {
     struct inputcb  *   prev;
@@ -377,6 +378,7 @@ typedef struct  inputcb {
     } s;
     i_flags             fmflags;
     bool                fm_symbol;
+    bool                sym_space;
 } inputcb;
 
 

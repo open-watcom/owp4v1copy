@@ -64,6 +64,7 @@ void    add_macro_cb_entry( mac_entry * me, gtentry * ge )
 
     nip->s.m        = new;
     nip->fm_symbol  = input_cbs->fm_symbol;
+    nip->sym_space  = input_cbs->sym_space;
 
     new->lineno     = 0;
     new->macline    = me->macline;

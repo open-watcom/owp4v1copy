@@ -136,7 +136,7 @@ typedef struct proc_flags {
     unsigned        dd_macro            : 1;// DT/DD were invoked inside a macro
     unsigned        dt_space            : 1;// insert one space after DT text
     unsigned        null_value          : 1;// current symbol has "" or equivalent as its value
-    unsigned        sym_space           : 1;// current symbol was preceded by a space
+//    unsigned        sym_space           : 1;// current symbol was preceded by a space
 
     unsigned        dd_space            : 1;// insert one space before DD text
     unsigned        need_dd             : 1;// DT seen; DD must be next tag

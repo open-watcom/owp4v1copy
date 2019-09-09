@@ -63,9 +63,8 @@ static void gml_inline_common( const gmltag * entry, int level, e_tags t )
         }
     } else if( (t == t_SF) && (input_cbs->fmflags & II_macro) ) {   // may apply more generally
         ProcFlags.fsp = true;
-        if( (post_space == 0) && ProcFlags.sym_space ) {
+        if( (post_space == 0) && input_cbs->sym_space ) {
             post_space = wgml_fonts[g_curr_font].spc_width;
-            ProcFlags.sym_space = false;
         }
     }
     init_nest_cb();
