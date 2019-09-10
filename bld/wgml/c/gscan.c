@@ -439,6 +439,11 @@ static void     scan_script( void )
 
     cb = input_cbs;
     p = scan_start + 1;
+    if( !ProcFlags.literal && (*p == '\0') ) {  // catch line with only "." in it
+        *scan_start = ' ';                       // make line blank
+        return;
+    }
+
     scan_restart = scan_start;
 
     if( (*p == '*') || !strnicmp( p, "cm ", 3 ) ) {
