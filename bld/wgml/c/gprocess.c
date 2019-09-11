@@ -526,7 +526,9 @@ bool resolve_symvar_functions( char * buf )
                     *p2 = '\0';
 
                     sym_space = false;
-                    if( varstart > workb ) {                    // symbol not at start
+                    if( varstart == workb ) {                   // symbol at start of input line
+                        sym_space = true;
+                    } else {                                    // symbol not at start of input line
                         if( *workb == SCR_char ) {              // scw or macro
                             for( p = workb; *p != ' '; p++ );   // end of first token
                             if( (p + 1) != varstart) {          // not followed by current symbol
