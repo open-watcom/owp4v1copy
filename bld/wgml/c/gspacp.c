@@ -238,13 +238,14 @@ void scr_pa( void )
 
 void scr_cp( void )
 {
+    bool            scanerr;
+    char            cwcurr[4];
     char        *   pa;
     char        *   p;
     int             len;
-    getnum_block    gn;
-    condcode        cc;
-    char            cwcurr[4];
+    su              cpwork;
     uint32_t        cur_page;
+    int32_t         test_space;
 
     cwcurr[0] = SCR_char;
     cwcurr[1] = 'c';
@@ -257,19 +258,17 @@ void scr_cp( void )
     pa = p;
     SkipNonSpaces( p );                 // end of word
     len = p - pa;
-    if( len > 0 ) {                     // no action if no parm
-        gn.argstart = pa;
-        gn.argstop  = scan_stop;
-        gn.ignore_blanks = 0;
-
-        cc = getnum ( &gn );            // try to get numeric value
-        if( cc == notnum ) {
-            xx_opt_err( cwcurr, pa );
-            scan_restart = scan_stop +1;
+    if( len == 0 ) {                    // new page if no parm
+        scr_pa();
+    } else {
+        p = pa;
+        scanerr = cw_val_to_su( &p, &cpwork );
+        if( scanerr ) {
+            xx_err_cc( err_miss_inv_opt_value, cwcurr, pa );
         } else {
-            if( gn.result > 0 ) {       // ignore values < 1
-                if( ((gn.result * wgml_fonts[g_curr_font].line_height) +
-                                t_page.cur_depth) > t_page.max_depth ) {
+            test_space = conv_vert_unit( &cpwork, g_units_spacing, g_curr_font );
+            if( test_space > 0 ) {              // ignore values < 1
+                if( ( test_space + t_page.cur_depth) > t_page.max_depth ) {
                     cur_page = page;
                     last_page_out();
                     if( cur_page == page ) {        // no page output
@@ -278,11 +277,9 @@ void scr_cp( void )
                     reset_t_page();
                 }
             }
-            scan_restart = gn.argstart;
         }
-    } else {
-        scan_restart = scan_stop +1;
     }
+    scan_restart = p;
     return;
 }
 
