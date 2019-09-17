@@ -236,7 +236,7 @@ void scr_pa( void )
 /*   text area (if no footnotes are currently waiting to print).           */
 /***************************************************************************/
 
-void scr_cp( void )
+static void scr_cc_cp_common( bool do_pa )
 {
     bool            scanerr;
     char            cwcurr[4];
@@ -249,7 +249,11 @@ void scr_cp( void )
 
     cwcurr[0] = SCR_char;
     cwcurr[1] = 'c';
-    cwcurr[2] = 'p';
+    if( do_pa ) {
+        cwcurr[2] = 'p';
+    } else {
+        cwcurr[2] = 'c';
+    }
     cwcurr[3] = '\0';
 
     start_doc_sect();
@@ -258,16 +262,23 @@ void scr_cp( void )
     pa = p;
     SkipNonSpaces( p );                 // end of word
     len = p - pa;
-    if( len == 0 ) {                    // new page if no parm
-        scr_pa();
+    if( len == 0 ) {                    // new column/page if no parm
+        if( do_pa ) {
+            scr_pa();
+        } else {
+//            scr_cb();                   // not implemented yet as not needed for OW docs
+        }
     } else {
         p = pa;
         scanerr = cw_val_to_su( &p, &cpwork );
         if( scanerr ) {
             xx_err_cc( err_miss_inv_opt_value, cwcurr, pa );
         } else {
-            test_space = conv_vert_unit( &cpwork, g_units_spacing, g_curr_font );
-            if( test_space > 0 ) {              // ignore values < 1
+            test_space = conv_vert_unit( &cpwork, 0, g_curr_font );
+            if( test_space > 0 ) {                  // ignore values < 1
+                if( cpwork.su_u == SU_chars_lines ) {   // recompute value if from line count
+                    test_space = (cpwork.su_whole * g_text_spacing * g_resv) / LPI;
+                }
                 if( ( test_space + t_page.cur_depth) > t_page.max_depth ) {
                     cur_page = page;
                     last_page_out();
@@ -280,6 +291,18 @@ void scr_cp( void )
         }
     }
     scan_restart = p;
+    return;
+}
+
+void scr_cc( void )
+{
+    scr_cc_cp_common( false );
+    return;
+}
+
+void scr_cp( void )
+{
+    scr_cc_cp_common( true );
     return;
 }
 
