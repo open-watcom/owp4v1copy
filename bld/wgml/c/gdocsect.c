@@ -1137,6 +1137,7 @@ static void set_cols( doc_pane * a_pane )
 
 void start_doc_sect( void )
 {
+    bool                clear_banners;
     bool                first_section;
     bool                header;
     bool                lvl_reset;
@@ -1175,6 +1176,7 @@ void start_doc_sect( void )
     /*  process special section attributes                                 */
     /***********************************************************************/
 
+    clear_banners = false;
     switch( ds ) {
     case   doc_sect_titlep :
         page_c = layout_work.titlep.columns;
@@ -1253,6 +1255,7 @@ void start_doc_sect( void )
         lvl_reset = true;
         break;
     case   doc_sect_index :
+        clear_banners = true;
         page_c = layout_work.index.columns;
         page_e = layout_work.index.page_eject;
         page_r = layout_work.index.page_reset;
@@ -1311,10 +1314,18 @@ void start_doc_sect( void )
 
         if( page_e == ej_odd ) {
             if( (page & 1) ) {          // first page will be odd
+                if( clear_banners ) {   // emit blank page: no banners
+                    t_page.top_banner = NULL;
+                    t_page.bottom_banner = NULL;
+                }
                 do_page_out();          // emit blank page
             }
         } else if( page_e == ej_even ) {
             if( !(page & 1) ) {         // first page will be even
+                if( clear_banners ) {   // emit blank page: no banners
+                    t_page.top_banner = NULL;
+                    t_page.bottom_banner = NULL;
+                }
                 do_page_out();          // emit blank page
             }
         } else if( page_e != ej_yes ) {
