@@ -40,6 +40,29 @@
 
 #include "wgml.h"
 
+/**************************************************************************/
+/*  Actually output the page or column, when required                     */
+/**************************************************************************/
+
+static void do_output( bool do_pa )
+{
+    uint32_t        cur_page;
+
+    cur_page = page;
+    if( do_pa ) {
+        last_page_out();
+    } else {
+        last_col_out();
+    }
+    if( cur_page == page ) {
+        do_page_out();              // needed at start of doc, at least
+    }
+    if( do_pa || (cur_page != page) ) {
+        reset_t_page();
+    }
+    return;
+}
+
 
 /**************************************************************************/
 /* PAGE EJECT positions output to the top of the next physical page.      */
@@ -96,7 +119,6 @@ void scr_pa( void )
     char        *   p;
     int             len;
     char            cwcurr[4];
-    uint32_t        cur_page;
 
     cwcurr[0] = SCR_char;
     cwcurr[1] = 'p';
@@ -117,12 +139,7 @@ void scr_pa( void )
         }
         /* fallthru for NOSTART */
     case 0 :
-        cur_page = page;
-        last_page_out();                // default action
-        if( cur_page == page ) {        // no page output
-            do_page_out();              // needed at start of doc, at least
-        }
-        reset_t_page();
+        do_output( true );
         break;
     case 3 :
         if( !strnicmp( "ODD", pa, 3 ) ) {
@@ -244,7 +261,6 @@ static void scr_cc_cp_common( bool do_pa )
     char        *   p;
     int             len;
     su              cpwork;
-    uint32_t        cur_page;
     int32_t         test_space;
 
     cwcurr[0] = SCR_char;
@@ -263,11 +279,7 @@ static void scr_cc_cp_common( bool do_pa )
     SkipNonSpaces( p );                 // end of word
     len = p - pa;
     if( len == 0 ) {                    // new column/page if no parm
-        if( do_pa ) {
-            scr_pa();
-        } else {
-//            scr_cb();                   // not implemented yet as not needed for OW docs
-        }
+        do_output( do_pa );
     } else {
         p = pa;
         scanerr = cw_val_to_su( &p, &cpwork );
@@ -280,12 +292,7 @@ static void scr_cc_cp_common( bool do_pa )
                     test_space = (cpwork.su_whole * g_text_spacing * g_resv) / LPI;
                 }
                 if( ( test_space + t_page.cur_depth) > t_page.max_depth ) {
-                    cur_page = page;
-                    last_page_out();
-                    if( cur_page == page ) {        // no page output
-                        do_page_out();              // needed at start of doc, at least
-                    }
-                    reset_t_page();
+                    do_output( do_pa );
                 }
             }
         }
