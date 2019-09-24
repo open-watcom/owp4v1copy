@@ -1104,6 +1104,12 @@ static void document_new_position( void )
 
 /***************************************************************************/
 /*  set up the columns                                                     */
+/*                                                                         */
+/*  matches wgml 4.0 for 1 column                                          */
+/*  matches wgml 4.0 for 2 columns generally                               */
+/*  matches wgml 4.0 for 2 column INDEX                                    */
+/*  may or may not match wgml 4.0 for more than 2 columns                  */
+/*    particularly when script is used to create the columns               */
 /***************************************************************************/
 
 static void set_cols( doc_pane * a_pane )
@@ -1115,16 +1121,25 @@ static void set_cols( doc_pane * a_pane )
     uint32_t    width_avail;
 
     col_count = a_pane->col_count;
-    gutter = layout_work.defaults.def_gutter;
-    width_avail = t_page.page_width - (gutter * (col_count - 1));
-    a_pane->col_width = width_avail / col_count;
-    t_page.max_width = a_pane->col_width;
-    a_pane->cols[0].col_left = t_page.page_left;
-    for( i = 1; i < col_count; i++ ) {
-        cur_col = a_pane->cols[i - 1].col_left;
-        cur_col += a_pane->col_width;
-        cur_col += gutter;
-        a_pane->cols[i].col_left = cur_col;
+    if( col_count == 1 ) {
+        a_pane->col_width = t_page.page_width;
+        a_pane->cols[0].col_left = t_page.page_left;
+        t_page.max_width = t_page.page_width;
+    } else {
+        gutter = layout_work.defaults.def_gutter;
+        width_avail = t_page.page_width - (gutter * (col_count - 1));
+        a_pane->col_width = width_avail / col_count;
+        a_pane->cols[0].col_left = t_page.page_left;
+        for( i = 1; i < col_count; i++ ) {
+            cur_col = a_pane->cols[i - 1].col_left;
+            cur_col += a_pane->col_width;
+            cur_col += gutter;
+            a_pane->cols[i].col_left = cur_col;
+        }
+        if( ProcFlags.doc_sect_nxt == doc_sect_index ) {    // INDEX-specific
+            a_pane->col_width -= 3 * tab_col;
+            t_page.max_width = a_pane->col_width;
+        }
     }
     return;
 }
