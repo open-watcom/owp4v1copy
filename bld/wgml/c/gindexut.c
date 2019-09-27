@@ -407,6 +407,24 @@ ix_h_blk * find_create_ix_h_entry( ix_h_blk * ixhwork, ix_h_blk * ixhbase,
 
         ixhwk = ixhwork;
 
+        /* Replace term text if differs in case */
+
+        if( strcmp( txt, ixhwork->ix_term ) ) {
+            strcpy_s( ixhwork->ix_term, txtlen + 1, txt );
+        }
+
+        /* Replace print term text if one is given and it differs at all */
+
+        if( printtxt != NULL ) {
+            if( printtxtlen > ixhwork->prt_term_len ) {
+                ixhwork->prt_term_len = printtxtlen;
+                ixhwork->prt_term = mem_realloc( ixhwork->prt_term, printtxtlen + 1 );
+                strcpy_s( ixhwork->prt_term, printtxtlen + 1, printtxt );
+            } else if( (printtxtlen == 0) || (strcmp( printtxt, ixhwork->prt_term )) ) {
+                strcpy_s( ixhwork->prt_term, printtxtlen + 1, printtxt );
+            }
+        }
+
     } else {                            // create block
 
         /* Item not found and ixhwork points to insertion point */
