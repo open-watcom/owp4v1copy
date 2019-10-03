@@ -156,7 +156,8 @@ text_line * alloc_text_line( void )
         prev->next = NULL;
     }
 
-    curr->eol_index = NULL;
+    curr->eol_index = g_eol_ix;
+    g_eol_ix = NULL;
     curr->first = NULL;
     curr->last = NULL;
     curr->units_spacing = g_units_spacing;

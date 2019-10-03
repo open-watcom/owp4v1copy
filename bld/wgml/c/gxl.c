@@ -104,6 +104,7 @@ static void gml_xl_lp_common( e_tags t )
         if( !ProcFlags.reprocess_line && *p != '\0' ) {
             process_text( p, g_curr_font );
         }
+        ProcFlags.ix_in_block = true;
     }
 
     return;

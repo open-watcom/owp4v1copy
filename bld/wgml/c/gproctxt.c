@@ -2473,6 +2473,7 @@ void process_text( const char *text, font_number font )
     ProcFlags.dt_space = false;
     ProcFlags.force_pc = false;
     ProcFlags.fsp = false;
+    ProcFlags.ix_in_block = false;
     ProcFlags.para_starting = false;
     ProcFlags.skip_blank_line = false;
     ProcFlags.titlep_starting = false;

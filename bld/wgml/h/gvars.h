@@ -133,10 +133,11 @@ typedef struct proc_flags {
     unsigned        para_has_text       : 1;// :LP, :P, :PB or :PC had text (used by PB)
     unsigned        titlep_starting     : 1;// AUTHOR or TITLE had no text (in scr_process_break())
 
+    unsigned        ix_in_block         : 1;// index tag/cw term attaches to following text
+
     unsigned        dd_macro            : 1;// DT/DD were invoked inside a macro
     unsigned        dt_space            : 1;// insert one space after DT text
     unsigned        null_value          : 1;// current symbol has "" or equivalent as its value
-//    unsigned        sym_space           : 1;// current symbol was preceded by a space
 
     unsigned        dd_space            : 1;// insert one space before DD text
     unsigned        need_dd             : 1;// DT seen; DD must be next tag
@@ -324,6 +325,7 @@ global  hd_num_data     hd_nums[hds_appendix];  // heading hierarchy numbering
 // index support
 global  bool            ixhlvl[2];      // true for levels that exist
 global  eol_ix      *   eol_ix_pool;    // eol_ix pool
+global  eol_ix      *   g_eol_ix;       // global list of eol_ix instances
 global  ix_h_blk    *   index_dict;     // index structure dictionary
 global  ix_h_blk    *   ixhtag[3];      // current entry for each level in index
 global  ref_entry   *   ix_ref_dict;    // reference id dictionary :Ix :IHx :IREF

@@ -166,6 +166,8 @@ void gml_xmp( const gmltag * entry )
         ProcFlags.skip_blank_line = true;
     }
 
+    ProcFlags.ix_in_block = true;
+
     scan_start = scan_stop + 1;
     return;
 }

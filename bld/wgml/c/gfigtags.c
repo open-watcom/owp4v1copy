@@ -705,6 +705,7 @@ void gml_fig( const gmltag * entry )
 
     t_page.cur_width = t_page.cur_left;
     ProcFlags.keep_left_margin = true;      // keep special indent
+    ProcFlags.ix_in_block = true;
 
     if( !ProcFlags.reprocess_line && *p != '\0' ) {
         SkipDot( p );                       // possible tag end

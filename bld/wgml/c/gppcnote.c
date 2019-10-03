@@ -75,6 +75,8 @@ static void proc_p_pc( p_lay_tag * p_pc )
 
     SkipDot( p );                       // over '.'
 
+    ProcFlags.ix_in_block = true;
+
     if( *p != '\0' ) {
         process_text( p, g_curr_font );
     }

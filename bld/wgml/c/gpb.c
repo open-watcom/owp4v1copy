@@ -59,6 +59,7 @@ extern  void    gml_pb( const gmltag * entry )
     } else {
         ProcFlags.skips_valid = false;  // convert g_post_skip to g_subs_skip
     }
+    ProcFlags.ix_in_block = true;
 
     SkipDot( p );                       // over '.'
     post_space = 0;

@@ -186,48 +186,59 @@ void find_create_ix_e_entry( ix_h_blk * ixhwork, char * ref, size_t len,
         case pgpageno :
         case pgstart :
         case pgend :
-            if( t_line != NULL) {
-                eol_base = &t_line->eol_index;
-            } else if( t_element != NULL) {
-                cur_tl = t_element->element.text.first;
-                while( cur_tl->next != NULL ) {
-                    cur_tl = cur_tl->next;    // find last text_line
-                }
-                eol_base = &cur_tl->eol_index;
-            } else if( t_page.last_col_main != NULL ) {
-                switch( t_page.last_col_main->type ) {
-                    case el_binc :
-                        eol_base = &t_page.last_col_main->element.binc.eol_index;
-                        break;
-                    case el_dbox :
-                        eol_base = &t_page.last_col_main->element.dbox.eol_index;
-                        break;
-                    case el_graph :
-                        eol_base = &t_page.last_col_main->element.graph.eol_index;
-                        break;
-                    case el_hline :
-                        eol_base = &t_page.last_col_main->element.hline.eol_index;
-                        break;
-                    case el_text :
-                        cur_tl = t_page.last_col_main->element.text.first;
-                        while( cur_tl->next != NULL ) {
-                            cur_tl = cur_tl->next;    // find last text_line
-                        }
-                        eol_base = &cur_tl->eol_index;
-                        break;
-                    case el_vline :
-                        eol_base = &t_page.last_col_main->element.vline.eol_index;
-                        break;
-                    case el_vspace :
-                        eol_base = &t_page.last_col_main->element.vspace.eol_index;
-                        break;
-                    default :
-                        internal_err( __FILE__, __LINE__ ); // bad element type value
-                }
-            } else {
-                internal_err( __FILE__, __LINE__ ); // no place to put index item list?
-            }
+            if( ProcFlags.ix_in_block ) {
 
+                /**********************************************************/
+                /*  some tags/control words set ProcFlags.ix_in_block to  */
+                /*  indicate that any index item preceding any following  */
+                /*  text is to be attached to the first text_line in the  */
+                /*  block                                                 */
+                /**********************************************************/
+
+                eol_base = &g_eol_ix;
+            } else {
+                if( t_line != NULL) {
+                    eol_base = &t_line->eol_index;
+                } else if( t_element != NULL) {
+                    cur_tl = t_element->element.text.first;
+                    while( cur_tl->next != NULL ) {
+                        cur_tl = cur_tl->next;    // find last text_line
+                    }
+                    eol_base = &cur_tl->eol_index;
+                } else if( t_page.last_col_main != NULL ) {
+                    switch( t_page.last_col_main->type ) {
+                        case el_binc :
+                            eol_base = &t_page.last_col_main->element.binc.eol_index;
+                            break;
+                        case el_dbox :
+                            eol_base = &t_page.last_col_main->element.dbox.eol_index;
+                            break;
+                        case el_graph :
+                            eol_base = &t_page.last_col_main->element.graph.eol_index;
+                            break;
+                        case el_hline :
+                            eol_base = &t_page.last_col_main->element.hline.eol_index;
+                            break;
+                        case el_text :
+                            cur_tl = t_page.last_col_main->element.text.first;
+                            while( cur_tl->next != NULL ) {
+                                cur_tl = cur_tl->next;    // find last text_line
+                            }
+                            eol_base = &cur_tl->eol_index;
+                            break;
+                        case el_vline :
+                            eol_base = &t_page.last_col_main->element.vline.eol_index;
+                            break;
+                        case el_vspace :
+                            eol_base = &t_page.last_col_main->element.vspace.eol_index;
+                            break;
+                        default :
+                            internal_err( __FILE__, __LINE__ ); // bad element type value
+                    }
+                } else {
+                    internal_err( __FILE__, __LINE__ ); // no place to put index item list?
+                }
+            }
             cur_eol = *eol_base;
             if( cur_eol == NULL ) {
                 cur_eol = alloc_eol_ix( ixhwork, type );

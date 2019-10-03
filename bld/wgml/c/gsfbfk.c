@@ -326,6 +326,7 @@ void scr_fk( void )
     case fbk_begin :
         g_keep_nest( "FK" );                // catch nesting errors
         ProcFlags.in_fb_fk_block = true;
+        ProcFlags.ix_in_block = true;
         save_state();
         sav_group_type = cur_group_type;
         cur_group_type = gt_fk;
