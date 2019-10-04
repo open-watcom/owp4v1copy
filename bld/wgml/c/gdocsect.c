@@ -1137,9 +1137,9 @@ static void set_cols( doc_pane * a_pane )
             a_pane->cols[i].col_left = cur_col;
         }
         if( ProcFlags.doc_sect_nxt == doc_sect_index ) {    // INDEX-specific
-            a_pane->col_width -= 3 * tab_col;
-            t_page.max_width = a_pane->col_width;
+            a_pane->col_width = 27.5 * tab_col;             // empirical, to match wgml 4.0
         }
+        t_page.max_width = a_pane->col_width;
     }
     return;
 }
