@@ -744,9 +744,11 @@ static void gen_index( void )
 
             letter[0] = my_toupper( *(ixh1->ix_term) );
 
-            if( (4 * wgml_fonts[layout_work.ixhead.font].line_height)
+            /* The factor 4.5 is empirical and chosen to match wgml 4.0 */
+
+            if( (4.5 * wgml_fonts[layout_work.ixhead.font].line_height)
                    + g_subs_skip
-                   + t_page.cur_depth > t_page.max_depth ) {
+                   + t_page.cur_depth >= t_page.max_depth ) {
                 next_column();
             }
 
