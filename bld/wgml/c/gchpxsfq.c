@@ -229,7 +229,8 @@ static void gml_e_inlne_common( const gmltag * entry, e_tags t )
             process_text( p, g_curr_font );
         }
         if( !ProcFlags.concat && (input_cbs->fmflags & II_eol)
-                && (input_cbs->fmflags & II_file) ) {
+                && ((input_cbs->fmflags & II_file) || (input_cbs->fmflags & II_macro))
+                ) {
             scr_process_break();        // ensure line is output
         }
     }
