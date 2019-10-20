@@ -877,7 +877,8 @@ void    scan_line( void )
         /*******************************************************************/
 
         if( !ProcFlags.layout && (input_cbs->fmflags & II_eol) ) {
-            if( !ProcFlags.concat && (input_cbs->fmflags & II_file) ) {
+            if( !ProcFlags.concat &&
+                ((input_cbs->fmflags & II_file) || (input_cbs->fmflags & II_macro)) ) {
 
                 /*******************************************************************/
                 /* This fixes a problem found when BX was implemented: when PA is  */
