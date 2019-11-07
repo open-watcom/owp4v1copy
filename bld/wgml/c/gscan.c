@@ -440,7 +440,11 @@ static void     scan_script( void )
     cb = input_cbs;
     p = scan_start + 1;
     if( !ProcFlags.literal && (*p == '\0') ) {  // catch line with only "." in it
-        *scan_start = ' ';                       // make line blank
+        if( ProcFlags.concat ) {
+            *scan_start = ' ';                  // make line blank
+        } else {
+            scan_start = scan_stop + 1;         // treat as comment
+        }
         return;
     }
 
