@@ -2432,9 +2432,9 @@ void process_text( const char *text, font_number font )
                 t_line = NULL;
             }
 
-            /* End of macro line: end of output line with CO OFF */
+            /* End of macro line: end of output line with CO OFF but not in XMP block */
 
-            if( (prev_mac == input_cbs->s.m)
+            if( (cur_group_type != gt_xmp) && (prev_mac == input_cbs->s.m)
                     && (prev_lineno < input_cbs->s.m->lineno) ) {
                 n_chars = t_line->last;
                 t_line->last = t_line->last->prev;
