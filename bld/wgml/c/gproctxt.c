@@ -1471,6 +1471,15 @@ void process_line_full( text_line * a_line, bool justify )
         return;
     }
 
+    /* Adjust height of first line after DD if break done */
+
+    if( ProcFlags.dd_break_done ) {
+        if( a_line->line_height < wgml_fonts[layout_work.dt.font].line_height ) {
+            a_line->line_height = wgml_fonts[layout_work.dt.font].line_height;
+        }
+        ProcFlags.dd_break_done = false;
+    }
+
     /************************************************************************/
     /* Split a_line if all of these conditions are met:                     */
     /*   concatenation is on or XMP is in effect                            */
