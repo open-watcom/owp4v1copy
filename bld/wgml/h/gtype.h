@@ -1213,7 +1213,7 @@ typedef struct {
             uint32_t            page_width;     // page right margin
             uint32_t            max_width;      // maximum width (page or column)
             int32_t             cur_left;       // net adjustment to left margin (can be negative)
-            uint32_t            cur_width;      // current width
+            int32_t             cur_width;      // current width
             doc_pane        *   last_pane;
             doc_column      *   cur_col;        // quick access to t_page.last_pane->cols[t_page.last_pane->cur_col]
             doc_element     *   last_col_main;

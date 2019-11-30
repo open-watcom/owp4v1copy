@@ -215,9 +215,9 @@ static void next_tab( void )
 {
     int                 i;
     int                 last_i;
+    int32_t             cur_h;
     tab_stop            l_tab;
     tab_stop    *       c_tab       = NULL;
-    uint32_t            cur_h;
     uint32_t            r_count;
     uint32_t            r_length;
     uint32_t            r_width;
@@ -240,7 +240,7 @@ static void next_tab( void )
             last_i = i;
         }
         for( i; i < user_tabs.current; i++ ) {
-            if( cur_h < user_tabs.tabs[i].column ) {
+            if( cur_h < ((int32_t) user_tabs.tabs[i].column) ) {
                 c_tab = &user_tabs.tabs[i];
                 break;
             }
@@ -252,7 +252,7 @@ static void next_tab( void )
     if( c_tab == NULL ) {   // no user tab or none that works, use default tab
         def_tab_count++;    // record use of default tab
         l_tab = def_tabs.tabs[def_tabs.current - 1];
-        if( cur_h >= l_tab.column ) {   // initialize more tabs
+        if( cur_h >= ((int32_t) l_tab.column) ) {   // initialize more tabs
             r_width = cur_h - l_tab.column;
             r_count = (r_width / inter_tab) + 1;
             if( (def_tabs.current + r_count) > def_tabs.length ) {
@@ -275,7 +275,7 @@ static void next_tab( void )
 
         // get the tab stop to use
         for( i = 0; i < def_tabs.current; i++ ) {
-            if( cur_h < def_tabs.tabs[i].column ) {
+            if( cur_h < ((int32_t) def_tabs.tabs[i].column) ) {
                 c_tab = &def_tabs.tabs[i];
                 break;
             }
