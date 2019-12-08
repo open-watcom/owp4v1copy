@@ -219,34 +219,33 @@ void gml_exmp( const gmltag * entry )
         t_doc_el_group = t_doc_el_group->next;  // processed doc_elements go to next group, if any
         cur_doc_el_group->next = NULL;
 
-        if( cur_doc_el_group->first->type == el_text ) {                    // only text has spacing
-            cur_doc_el_group->first->element.text.first->units_spacing = 0; // no spacing on first line
-        }
-
         if( cur_doc_el_group->first != NULL ) {
+            if( cur_doc_el_group->first->type == el_text ) {                    // only text has spacing
+                cur_doc_el_group->first->element.text.first->units_spacing = 0; // no spacing on first line
+            }
             cur_doc_el_group->depth += (cur_doc_el_group->first->blank_lines +
-                                cur_doc_el_group->first->subs_skip);
-        }
+                                        cur_doc_el_group->first->subs_skip);
 
-        /*********************************************************************/
-        /* If the last doc_element is vspace and is the only element causing */
-        /* the block to not fit on this page, then zero it out, reduce the   */
-        /* group depth, and keep the block on this page.                     */
-        /*********************************************************************/
+            /*********************************************************************/
+            /* If the last doc_element is vspace and is the only element causing */
+            /* the block to not fit on this page, then zero it out, reduce the   */
+            /* group depth, and keep the block on this page.                     */
+            /*********************************************************************/
 
-        test_depth1 = (cur_doc_el_group->depth + t_page.cur_depth);
-        if( cur_doc_el_group->last->type == el_vspace ) {
-            test_depth2 = test_depth1 - cur_doc_el_group->last->blank_lines;
-        } else {
-            test_depth2 = test_depth1;
-        }
+            test_depth1 = (cur_doc_el_group->depth + t_page.cur_depth);
+            if( cur_doc_el_group->last->type == el_vspace ) {
+                test_depth2 = test_depth1 - cur_doc_el_group->last->blank_lines;
+            } else {
+                test_depth2 = test_depth1;
+            }
 
-        if( test_depth2 > t_page.max_depth ) {          // block moves even without final vspace element (if present)
-            next_column();  //  the block won't fit on this page (or in this column)
-        } else if( test_depth2 > t_page.max_depth ) {   // clear final vspace element
-            cur_doc_el_group->last->blank_lines = 0;
-            cur_doc_el_group->last->depth = 0;
-            cur_doc_el_group->last->subs_skip = 0;
+            if( test_depth2 > t_page.max_depth ) {          // block moves even without final vspace element (if present)
+                next_column();  //  the block won't fit on this page (or in this column)
+            } else if( test_depth2 > t_page.max_depth ) {   // clear final vspace element
+                cur_doc_el_group->last->blank_lines = 0;
+                cur_doc_el_group->last->depth = 0;
+                cur_doc_el_group->last->subs_skip = 0;
+            }
         }
 
         while( cur_doc_el_group->first != NULL ) {
