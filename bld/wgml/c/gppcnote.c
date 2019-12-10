@@ -39,6 +39,7 @@
 static void p_pc_setup( p_lay_tag * p_pc )
 {
     ProcFlags.keep_left_margin = true;  // special Note indent
+    ProcFlags.cc_cp_done = false;       // cancel CC/CP notification
     start_doc_sect();                   // if not already done
 
     if( g_line_indent == 0 ) {

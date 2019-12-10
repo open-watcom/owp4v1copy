@@ -273,6 +273,7 @@ static void scr_cc_cp_common( bool do_pa )
     cwcurr[3] = '\0';
 
     start_doc_sect();
+    ProcFlags.cc_cp_done = true;
     p = scan_start;
     SkipSpaces( p );                    // next word start
     pa = p;

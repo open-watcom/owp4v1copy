@@ -135,6 +135,7 @@ typedef struct proc_flags {
 
     unsigned        ix_in_block         : 1;// index tag/cw term attaches to following text
 
+    unsigned        cc_cp_done          : 1;// CC or CP done; apply current inset to first line only
     unsigned        dd_break_done       : 1;// DD break done (first line of text only)
     unsigned        dd_macro            : 1;// DT/DD were invoked inside a macro
     unsigned        dt_space            : 1;// insert one space after DT text

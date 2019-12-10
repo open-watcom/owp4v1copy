@@ -1480,6 +1480,17 @@ void process_line_full( text_line * a_line, bool justify )
         ProcFlags.dd_break_done = false;
     }
 
+    /* Adjust starting position of first line after CC/CP if it started with a tab stop */
+
+    if( ProcFlags.cc_cp_done && (a_line->first->tab_pos != tt_none) ) {
+        test_chars = a_line->first;
+        while( test_chars != NULL ) {
+            test_chars->x_address += g_indent;
+            test_chars = test_chars->next;
+        }
+        ProcFlags.cc_cp_done = false;
+    }
+
     /************************************************************************/
     /* Split a_line if all of these conditions are met:                     */
     /*   concatenation is on or XMP is in effect                            */

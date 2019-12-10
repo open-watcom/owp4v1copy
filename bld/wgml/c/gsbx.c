@@ -2264,6 +2264,7 @@ void scr_bx( void )
 
     ProcFlags.box_cols_cur = false;     // new BX line: no box column list yet
     ProcFlags.no_bx_hline = false;      // emit horizontal line by default
+    ProcFlags.cc_cp_done = false;       // cancel CC/CP notification
 
     if( t_doc_el_group != NULL) {
         cur_doc_el_group = t_doc_el_group;      // detach current element group
