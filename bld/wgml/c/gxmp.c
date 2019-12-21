@@ -250,6 +250,10 @@ void gml_exmp( const gmltag * entry )
 
         while( cur_doc_el_group->first != NULL ) {
             cur_el = cur_doc_el_group->first;
+            if( (cur_el->next != NULL) && (cur_el->type == el_text) &&
+                    (cur_el->next->type == el_vspace) ) {
+                cur_el->element.text.vspace_next = true;        // special for XMP/eXMP blocks
+            }
             cur_doc_el_group->first = cur_doc_el_group->first->next;
             cur_el->next = NULL;
             insert_col_main( cur_el );

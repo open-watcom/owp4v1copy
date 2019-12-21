@@ -1092,6 +1092,7 @@ typedef struct {
             bool            bx_h_done;  // bx has added ascenders to the line
             bool            force_op;   // forces overprint at top of page
             bool            overprint;  // placement avoids padding warning
+            bool            vspace_next;// next element is a vspace_element (XMP/eXMP blocks only)
 } text_element;
 
 typedef struct {

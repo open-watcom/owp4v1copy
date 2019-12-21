@@ -1859,7 +1859,33 @@ void insert_col_main( doc_element * a_element )
         } else {
             depth = cur_skip + a_element->depth;
         }
-        if( (depth + t_page.cur_depth) > t_page.max_depth ) {   // a_element fills the page
+
+        if( ((a_element->type == el_text) && a_element->element.text.vspace_next) ) {
+
+            /****************************************************************/
+            /* Implements a wgml 4.0 bug in XMP/eXMP blocks:                */
+            /*     when a text line is followed by a blank line             */
+            /*     then it stays on the current page even if there is not   */
+            /*     enough room                                              */
+            /* This also affects CO OFF/CO ON blocks, but those do not      */
+            /* affect the OW Docs and so are not "fixed"                    */
+            /****************************************************************/
+
+            if( t_page.cur_col->main == NULL ) {
+                t_page.cur_col->main = a_element;
+                t_page.last_col_main = t_page.cur_col->main;
+            } else {
+                t_page.last_col_main->next = a_element;
+                t_page.last_col_main = t_page.last_col_main->next;
+            }
+            t_page.cur_depth += depth;
+            a_element->element.text.vspace_next = false;
+        } else if( ((depth + t_page.cur_depth) > t_page.max_depth) ) {
+
+            /****************************************************************/
+            /* Normal processing: check to see if a_element will fit only   */
+            /* if it can be split; includes special heading processing      */
+            /****************************************************************/
 
             splittable = split_element( a_element, t_page.max_depth - t_page.cur_depth - cur_skip );
             if( a_element->next != NULL ) { // a_element was split

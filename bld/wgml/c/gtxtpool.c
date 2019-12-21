@@ -362,6 +362,7 @@ doc_element * alloc_doc_el( element_type type )
         curr->element.text.bx_h_done = false;
         curr->element.text.force_op = false;
         curr->element.text.overprint = false;
+        curr->element.text.vspace_next = false;
         break;
     case el_vline :
         curr->element.vline.h_start = 0;
