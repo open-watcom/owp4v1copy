@@ -1867,6 +1867,8 @@ void insert_col_main( doc_element * a_element )
             /*     when a text line is followed by a blank line             */
             /*     then it stays on the current page even if there is not   */
             /*     enough room                                              */
+            /*     and then adjusts the vspace_element, which is now the    */
+            /*     first in cur_doc_el_group, by the excess, if any         */
             /* This also affects CO OFF/CO ON blocks, but those do not      */
             /* affect the OW Docs and so are not "fixed"                    */
             /****************************************************************/
@@ -1880,6 +1882,9 @@ void insert_col_main( doc_element * a_element )
             }
             t_page.cur_depth += depth;
             a_element->element.text.vspace_next = false;
+            if( t_page.cur_depth > t_page.max_depth ) {
+                cur_doc_el_group->first->depth -= (t_page.cur_depth - t_page.max_depth);
+            }
         } else if( ((depth + t_page.cur_depth) > t_page.max_depth) ) {
 
             /****************************************************************/
