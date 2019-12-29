@@ -2062,10 +2062,9 @@ void process_text( const char *text, font_number font )
                 /*  all spaces after the text must be included                      */
                 /********************************************************************/
 
-                if( ProcFlags.dt_space ) {
+                if( ProcFlags.dt_space || (ProcFlags.null_value && (cur_group_type == gt_xmp)) ) {
                     continue;
                 }
-
             }
         }
         if( n_chars == NULL ) {
@@ -2074,7 +2073,8 @@ void process_text( const char *text, font_number font )
                 continue;
             }
             count = p - pword;          // no of bytes
-            n_chars = process_word( pword, count, font, false );
+            n_chars = process_word( pword, count, font,
+                    ProcFlags.null_value && (!ProcFlags.concat || (cur_group_type == gt_xmp)) );
             n_chars->type = typ;
             typ = typn;
         }
@@ -2494,6 +2494,7 @@ void process_text( const char *text, font_number font )
     ProcFlags.force_pc = false;
     ProcFlags.fsp = false;
     ProcFlags.ix_in_block = false;
+    ProcFlags.null_value = false;
     ProcFlags.para_starting = false;
     ProcFlags.skip_blank_line = false;
     ProcFlags.titlep_starting = false;
