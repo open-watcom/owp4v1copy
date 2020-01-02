@@ -492,6 +492,8 @@ static void gml_ixxx_common( const gmltag * entry, int hx_lvl )
         mem_free( seetext );
     }
 
+    ProcFlags.null_value = false;
+
     scan_start = scan_stop + 1;
     return;
 }
