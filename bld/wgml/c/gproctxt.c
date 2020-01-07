@@ -1997,6 +1997,7 @@ void process_text( const char *text, font_number font )
                 }
                 t_line->last = n_chars;
                 n_chars = NULL;
+                g_prev_font = font;
                 return;
             }
         }
