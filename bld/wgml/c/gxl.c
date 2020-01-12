@@ -1259,15 +1259,15 @@ void gml_ddhd( const gmltag * entry )
     p = scan_start;
 
     t_page.cur_left = nest_cb->lm + nest_cb->left_indent + nest_cb->tsize;   // left start
-    if( t_page.cur_width < t_page.cur_left ) {  // set for current line
-        t_page.cur_width = t_page.cur_left;
-        post_space = 0;
-    }
     t_page.max_width = nest_cb->rm + nest_cb->right_indent;
 
     ju_x_start = t_page.cur_width;
 
-    if( t_page.cur_width > t_page.cur_left ) {  // ensure space between DTHD and DDHD
+    if( (t_page.cur_width + wgml_fonts[g_curr_font].spc_width) < t_page.cur_left ) {  // set for current line
+        t_page.cur_width = t_page.cur_left;
+        post_space = 0;
+        ProcFlags.zsp = true;
+    } else {
         ProcFlags.dd_space = true;
     }
 
@@ -1396,7 +1396,7 @@ void gml_dd( const gmltag * entry )
     }
     dt_space_set = false;
 
-    if( t_page.cur_width + wgml_fonts[g_curr_font].spc_width < t_page.cur_left ) {  // set for current line
+    if( (t_page.cur_width + wgml_fonts[g_curr_font].spc_width) < t_page.cur_left ) {  // set for current line
         t_page.cur_width = t_page.cur_left;
         post_space = 0;
         ProcFlags.zsp = true;
