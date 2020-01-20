@@ -173,7 +173,7 @@ static bool find_index_item( char * item, uint32_t len, ix_h_blk ** entry )
 void find_create_ix_e_entry( ix_h_blk * ixhwork, char * ref, size_t len,
                              ix_h_blk * seeidwork, ereftyp type )
 {
-    bool                found;
+    bool                found       = false;
     eol_ix      *       cur_eol;
     eol_ix      *   *   eol_base;
     ix_e_blk    *   *   base;
@@ -239,6 +239,7 @@ void find_create_ix_e_entry( ix_h_blk * ixhwork, char * ref, size_t len,
                     internal_err( __FILE__, __LINE__ ); // no place to put index item list?
                 }
             }
+
             cur_eol = *eol_base;
             if( cur_eol == NULL ) {
                 cur_eol = alloc_eol_ix( ixhwork, type );
@@ -249,6 +250,7 @@ void find_create_ix_e_entry( ix_h_blk * ixhwork, char * ref, size_t len,
                 }
                 cur_eol->next = alloc_eol_ix( ixhwork, type );
             }
+            found = true;
             break;
         case pgmajorstring :
             base = &ixhwork->entry->major_string;
@@ -335,7 +337,8 @@ void eol_index_page( eol_ix * eol_index, uint32_t page_nr )
             case pgmajor :
                 base = &eol_index->ixh->entry->major_pgnum;
                 ixework = eol_index->ixh->entry->major_pgnum;
-                found = find_num_ref( &ixework, page_nr );
+                find_num_ref( &ixework, page_nr );
+                found = false;      // allow multiple entries of same page number
                 break;
             case pgpageno :
                 base = &eol_index->ixh->entry->normal_pgnum;

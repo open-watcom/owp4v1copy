@@ -378,7 +378,15 @@ static void gen_ref_list( ix_e_blk * refs, font_number font )
         ProcFlags.ct = true;
         post_space = 0;
         if( ref_done ) {
-            process_text( ixrefval->value, layout_work.ixpgnum.font );
+
+            /* This sequence appears to be hard-wired in wgml 4.0 */
+
+            if( cur_ref->entry_typ == pgmajor ) {   // major refs differ from normal refs
+                process_text( ",", layout_work.ixpgnum.font );
+                insert_hard_spaces( " ", 1, font );
+            } else {
+                process_text( ", ", font );
+            }            
         }
 
         switch( cur_ref->entry_typ ) {
@@ -418,7 +426,8 @@ static void gen_ref_list( ix_e_blk * refs, font_number font )
             if( cur_ref->next != NULL ) {                   // done if last page number
                 predict = cur_ref->u.pagenum.page_no;
                 predict++;
-                if( cur_ref->next->u.pagenum.page_no == predict ) {   // sequence detected
+                if( (cur_ref->entry_typ != pgmajor ) &&
+                        (cur_ref->next->u.pagenum.page_no == predict) ) {   // sequence detected
                     ProcFlags.ct = true;
                     post_space = 0;
                     process_text( ixjval->value, font );
