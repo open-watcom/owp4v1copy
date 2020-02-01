@@ -1384,6 +1384,10 @@ void insert_hard_spaces( const char * spaces, size_t len, font_number font )
 
     if( len > 0 ) {
         if( t_line == NULL ) {
+            t_line = alloc_text_line();
+            t_line->first = process_word( spaces, len, font, true );
+            t_line->last = t_line->first;
+        } else if( t_line->last == NULL) {      // can happen if UL bullet is a space character
             t_line->first = process_word( spaces, len, font, true );
             t_line->last = t_line->first;
         } else {
