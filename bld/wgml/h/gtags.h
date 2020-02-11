@@ -113,12 +113,12 @@
   pickg( HP3,      3,      gml_hp3,        tag_out_txt, ip_start_tag )
   pickg( EHP3,     4,      gml_ehp3,       tag_out_txt, ip_end_tag )
 
-  pickg( I1,       2,      gml_i1,         tag_out_txt, 0 )
-  pickg( I2,       2,      gml_i2,         tag_out_txt, 0 )
-  pickg( I3,       2,      gml_i3,         tag_out_txt, 0 )
-  pickg( IH1,      3,      gml_ih1,        tag_out_txt, 0 )
-  pickg( IH2,      3,      gml_ih2,        tag_out_txt, 0 )
-  pickg( IH3,      3,      gml_ih3,        tag_out_txt, 0 )
+  pickg( I1,       2,      gml_i1,         tag_out_txt, ip_end_tag )    // needed for WHELP
+  pickg( I2,       2,      gml_i2,         tag_out_txt, ip_end_tag )    // needed for WHELP
+  pickg( I3,       2,      gml_i3,         tag_out_txt, ip_end_tag )    // needed for WHELP
+  pickg( IH1,      3,      gml_ih1,        tag_out_txt, ip_end_tag )    // needed for WHELP
+  pickg( IH2,      3,      gml_ih2,        tag_out_txt, ip_end_tag )    // needed for WHELP
+  pickg( IH3,      3,      gml_ih3,        tag_out_txt, ip_end_tag )    // needed for WHELP
   pickg( IMBED,    5,      gml_include,    tag_is_general, 0 )
   pickg( INCLUDE,  7,      gml_include,    tag_is_general, 0 )
   pickg( INDEX,    5,      gml_index,      tag_out_txt, 0 )
