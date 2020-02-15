@@ -542,7 +542,7 @@ extern  void    show_include_stack( void );
  * prototypes for the gml tag processing routines
  */
 
-#define pickg( name, length, routine, gmlflags, locflags )  extern void routine( const gmltag * entry );
+#define pickg( name, length, routine, gmlflags, locflags, classflags )  extern void routine( const gmltag * entry );
 #include "gtags.h"
 
 /*

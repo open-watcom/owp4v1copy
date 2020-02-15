@@ -402,6 +402,7 @@ typedef struct scrtag {
 /***************************************************************************/
 
 typedef enum {
+    tag_no_flag     = 0,                // none of the below
     tag_only        = 1,                // tag without any attribute
     tag_basic       = 2,                // basic elements possible on tag line.
     tag_text        = 4,                // text line possible
@@ -413,30 +414,34 @@ typedef enum {
 } gmlflags;
 
 /************************************************************************/
-/*  Restricted location tags:                                           */
-/*      When assigned to rs_loc, limits tags allowed to those with the  */
-/*      corresponding flag set in gmltag.taglocs.                       */
-/*  Special use tags:                                                   */
-/*      def_tag is used to mark a DL/GL list definition tag             */
-/*      ip_start_tag is used to mark inline phrase tags for tag LQ      */
-/*      ip_start_tag and ip_end_tag are used to mark inline phrase tags */
-/*      for processing text after certain blocks                        */
-/*      li_lp_tag is used with ProcFlags.need_li_lp.                    */
+/*  These are used in two places:                                       */
+/*    In rs_loc, they indicate that a restricted area has been endered  */
+/*    In gmltag.taglocs, they indicate that this tag is allowed in that */
+/*      restricted area                                                 */
 /************************************************************************/
 
 typedef enum {
-    /*  restricted location tags */
+    restricted_tag  = 0,                // tag is not allowed in any restricted section
     titlep_tag      = 1,                // tag allowed in TITLEP section
     address_tag     = 2,                // tag allowed in ADDRESS section
     figcap_tag      = 4,                // tag allowed after FIGCAP
     banner_tag      = 8,                // tag allowed in BANNER (BANREGION, eBANNER)
     banreg_tag      = 16,               // tag allowed in BANREGION (eBANREGION)
-    /*  special use tags */
-    def_tag         = 32,               // marks DDHD, DD, GD
-    ip_start_tag    = 64,               // marks CIT, HP0, HP1, HP2, HP3, SF, Q
-    ip_end_tag      = 128,              // marks eCIT, eHP0, eHP1, eHP2, eHP3, eSF, eQ
-    li_lp_tag       = 256,              // marks LI LP
 } locflags;
+
+/************************************************************************/
+/*  Tag classes are used to identify certain tags as belonging to       */
+/*  certain classes. These classes are then used in processing.         */
+/************************************************************************/
+
+typedef enum {
+    no_class        = 0,                // tag is not assigned a class
+    def_tag         = 1,                // marks DDHD, DD, GD
+    ip_start_tag    = 2,                // marks CIT, HP0, HP1, HP2, HP3, SF, Q
+    ip_end_tag      = 4,                // marks eCIT, eHP0, eHP1, eHP2, eHP3, eSF, eQ
+    li_lp_tag       = 8,                // marks LI LP
+    index_tag       = 16,               // marks I1, I2, I3, IH1, IH2, IH3
+} classflags;
 
 typedef struct gmltag {
    char             tagname[TAG_NAME_LENGTH + 1];
@@ -444,6 +449,7 @@ typedef struct gmltag {
    void             (*gmlproc)( const struct gmltag * entry );
    gmlflags         tagflags;
    locflags         taglocs;
+   classflags       tagclass;
 } gmltag;
 
 
@@ -828,7 +834,7 @@ typedef enum functs {
 
 typedef enum e_tags {
     t_NONE,
-    #define pickg( name, length, routine, gmlflags, locflags )  t_##name,
+    #define pickg( name, length, routine, gmlflags, locflags, classname )  t_##name,
     #include "gtags.h"
 //    #define picklab( name, routine, flags )  t_label,
 //    #define picks( name, routine, flags )  t_##name,

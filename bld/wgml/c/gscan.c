@@ -37,7 +37,7 @@
 /***************************************************************************/
 
 static  const   gmltag  gml_tags[] = {
-    #define pickg( name, length, routine, gmlflags, locflags ) { #name, length, routine, gmlflags, locflags },
+    #define pickg( name, length, routine, gmlflags, locflags, classflags ) { #name, length, routine, gmlflags, locflags, classflags },
     #include "gtags.h"
     { "   ", 0, NULL, 0, 0 }            // end
 };
@@ -293,8 +293,9 @@ static void scan_gml( void )
                         /*  phrase or is an index tag (I1, I2, I3, IH1, IH2, IH3).         */
                         /*******************************************************************/
 
-                        if( ((gml_tags[k].taglocs & ip_start_tag) == 0) &&
-                                ((gml_tags[k].taglocs & ip_end_tag) == 0) ) {
+                        if( ((gml_tags[k].tagclass & ip_start_tag) == 0) &&
+                                ((gml_tags[k].tagclass & ip_end_tag) == 0) &&
+                                ((gml_tags[k].tagclass & index_tag) == 0) ) {
                             ProcFlags.force_pc = false;
                         }
 
@@ -303,34 +304,46 @@ static void scan_gml( void )
                         /*  reported for every tag until the proper end tag is found.      */
                         /*  If the number of errors reported is limited at some point,     */
                         /*  then those lines can be removed.                               */
+                        /*  The index tags (I1, I2, I3, IH1, IH2, IH3) are exceptions      */
                         /*******************************************************************/
 
                         if( ProcFlags.need_ddhd ) {
-                            if( (gml_tags[k].taglocs & def_tag) != 0 ) {
+                            if( (gml_tags[k].tagclass & index_tag) != 0 ) {
+                                // tag is index tag
+                                gml_tags[k].gmlproc( &gml_tags[k] );
+                            } else if( (gml_tags[k].tagclass & def_tag) != 0 ) {
                                 // tag is DD, DDHD or GD
                                 gml_tags[k].gmlproc( &gml_tags[k] );
+                                ProcFlags.need_ddhd = false;
                             } else {
                                 xx_tag_err( err_tag_expected, "DDHD");
+                                ProcFlags.need_ddhd = false;
                             }
-                            ProcFlags.need_ddhd = false;
                         } else if( ProcFlags.need_dd ) {
-                            if( (gml_tags[k].taglocs & def_tag) != 0 ) {
-                                // tag is DD, DDHD or GD
+                            if( (gml_tags[k].tagclass & index_tag) != 0 ) {
+                                // tag is index tag
                                 gml_tags[k].gmlproc( &gml_tags[k] );
+                            } else if( (gml_tags[k].tagclass & def_tag) != 0 ) {                                    // tag is DD, DDHD or GD
+                                gml_tags[k].gmlproc( &gml_tags[k] );
+                                ProcFlags.need_dd = false;
                             } else {
                                 xx_tag_err( err_tag_expected, "DD");
+                                ProcFlags.need_dd = false;
                             }
-                            ProcFlags.need_dd = false;
                         } else if( ProcFlags.need_gd ) {
-                            if( (gml_tags[k].taglocs & def_tag) != 0 ) {
+                            if( (gml_tags[k].tagclass & index_tag) == 0 ) {
+                                // tag is index tag
+                                gml_tags[k].gmlproc( &gml_tags[k] );
+                            } else if( (gml_tags[k].tagclass & def_tag) != 0 ) {                                    // tag is DD, DDHD or GD
                                 // tag is DD, DDHD or GD
                                 gml_tags[k].gmlproc( &gml_tags[k] );
+                                ProcFlags.need_gd = false;
                             } else {
                                 xx_tag_err( err_tag_expected, "GD");
+                                ProcFlags.need_gd = false;
                             }
-                            ProcFlags.need_gd = false;
                         } else if( ProcFlags.need_li_lp ) {
-                            if( (gml_tags[k].taglocs & li_lp_tag) != 0 ) {
+                            if( (gml_tags[k].tagclass & li_lp_tag) != 0 ) {
                                 // tag is LP or LI
                                 gml_tags[k].gmlproc( &gml_tags[k] );
                             } else {
@@ -966,7 +979,7 @@ bool is_ip_tag( e_tags offset )
     if( (offset < t_NONE) || (offset >= t_MAX) ) {  // catch invalid offset values
         internal_err( __FILE__, __LINE__ );
     } else if( offset != t_NONE ) {                 // t_NONE is valid, but is not an ip_start_tag
-        return( gml_tags[offset - 1].taglocs & ip_start_tag );
+        return( gml_tags[offset - 1].tagclass & ip_start_tag );
     }
     return( false );                                // not found
 }

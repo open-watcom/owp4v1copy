@@ -430,7 +430,7 @@ global char str_tags[t_MAX + 1][10]
 #if defined(tag_strings)
   = {
     { "NONE" },
-    #define pickg( name, length, routine, gmlflags, locflags )  { #name },
+    #define pickg( name, length, routine, gmlflags, locflags, classflags )  { #name },
     #include "gtags.h"
 //    #define picklab( name, routine, flags )  extern void routine( void );
 //    #define picks( name, routine, flags )  extern void routine( void );
