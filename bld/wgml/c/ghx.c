@@ -60,34 +60,34 @@ static void update_headnumx( hdsrc hn_lvl, hdsrc hds_lvl )
 
     hd_nums[hn_lvl].hnumstr[0] = '\0';
     pos = 0;
-    if( layout_work.hx.hx_head[hds_lvl].number_form == none ) {
-        return;                         // no number output
-    }
 
-    if( hn_lvl > 0 ) {              // reuse formatted number from previous lvl
+    if( (hn_lvl > 0) && (layout_work.hx.hx_head[hds_lvl - 1].number_form != none) ) {
+
+        /* reuse formatted number from previous lvl */
+
         if( (layout_work.hx.hx_head[hds_lvl].number_form == num_prop) &&
                 (hd_nums[hn_lvl - 1].hnumsub != NULL) ) {
             strcpy( hd_nums[hn_lvl].hnumstr, hd_nums[hn_lvl - 1].hnumstr );
             pos = strlen( hd_nums[hn_lvl].hnumstr );
         }
-    }
-    if( *(hd_nums[hn_lvl].hnumstr + pos - 1) != layout_work.heading.delim ) {   // if not already delimited
-        if( pos > 0 ) {             // we have a formatted number from parent lvl
-           *(hd_nums[hn_lvl].hnumstr + pos) = layout_work.heading.delim;
-           pos++;
-           *(hd_nums[hn_lvl].hnumstr + pos) = 0;
+        if( *(hd_nums[hn_lvl].hnumstr + pos - 1) != layout_work.heading.delim ) {   // if not already delimited
+            if( pos > 0 ) {             // we have a formatted number from parent lvl
+                *(hd_nums[hn_lvl].hnumstr + pos) = layout_work.heading.delim;
+                pos++;
+                *(hd_nums[hn_lvl].hnumstr + pos) = 0;
+            }
         }
     }
     pn = format_num( hd_nums[hn_lvl].headn, hd_nums[hn_lvl].hnumstr + pos,
-                                    sizeof( hd_nums[hn_lvl].hnumstr ) - pos,
-                                    layout_work.hx.hx_head[hds_lvl].number_style );
+                     sizeof( hd_nums[hn_lvl].hnumstr ) - pos,
+                     layout_work.hx.hx_head[hds_lvl].number_style );
     if( pn != NULL ) {
-         pos += strlen( pn );           // all ok
+        pos += strlen( pn );           // all ok
     } else {
-         pn = hd_nums[hn_lvl].hnumstr + pos;
-         *pn = '?';                     // create dummy number
-         *(pn + 1) = 0;
-         pos++;
+        pn = hd_nums[hn_lvl].hnumstr + pos;
+        *pn = '?';                     // create dummy number
+        *(pn + 1) = 0;
+        pos++;
     }
 }
 
@@ -653,9 +653,9 @@ static void gml_hx_common( const gmltag * entry, hdsrc hn_lvl )
         hds_lvl = hn_lvl;
     }
 
-    if( layout_work.hx.hx_head[hds_lvl].number_form != num_none ) {
+//    if( layout_work.hx.hx_head[hds_lvl].number_form != num_none ) {
         hd_nums[hn_lvl].headn++;
-    }
+//    }
 
     p = scan_start;
     SkipSpaces( p );
