@@ -270,6 +270,9 @@ void gen_heading( char * h_text, char * id, hdsrc hn_lvl, hdsrc hds_lvl )
             current = strlen( prefix );
             hd_entry->prefix = (char *) mem_alloc( current + 1 );
             strcpy_s(hd_entry->prefix, current + 1, prefix );
+            if( layout_work.hx.hx_head[hds_lvl].number_form != num_none ) {
+                hd_entry->flags |= ffh_prefix;  // mark prefix for use
+            }
         }
         txtlen = strlen( h_text );
         if( txtlen > 0 ) {              // text line not empty
@@ -653,9 +656,7 @@ static void gml_hx_common( const gmltag * entry, hdsrc hn_lvl )
         hds_lvl = hn_lvl;
     }
 
-//    if( layout_work.hx.hx_head[hds_lvl].number_form != num_none ) {
-        hd_nums[hn_lvl].headn++;
-//    }
+    hd_nums[hn_lvl].headn++;
 
     p = scan_start;
     SkipSpaces( p );

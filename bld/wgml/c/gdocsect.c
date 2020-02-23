@@ -1012,7 +1012,7 @@ static void gen_toc( void )
             t_page.cur_left = indent[cur_level];
             t_page.cur_width = t_page.cur_left;
 
-            if( (curr->prefix != NULL) && (layout_work.hx.hx_head[cur_level].number_form != none) ) {
+            if( curr->flags & ffh_prefix ) {
                 process_text( curr->prefix, g_curr_font );
                 t_page.cur_left = t_line->last->x_address + t_line->last->width +
                                   wgml_fonts[g_curr_font].spc_width;
