@@ -421,12 +421,6 @@ ix_h_blk * find_create_ix_h_entry( ix_h_blk * ixhwork, ix_h_blk * ixhbase,
 
         ixhwk = ixhwork;
 
-        /* Replace term text if differs in case */
-
-        if( strcmp( txt, ixhwork->ix_term ) ) {
-            strcpy_s( ixhwork->ix_term, txtlen + 1, txt );
-        }
-
         /* Replace print term text if one is given and it differs at all */
 
         if( printtxt != NULL ) {
@@ -438,7 +432,6 @@ ix_h_blk * find_create_ix_h_entry( ix_h_blk * ixhwork, ix_h_blk * ixhbase,
                 strcpy_s( ixhwork->prt_term, printtxtlen + 1, printtxt );
             }
         }
-
     } else {                            // create block
 
         /* Item not found and ixhwork points to insertion point */
