@@ -166,8 +166,8 @@ static void scan_gml( void )
             xx_err( err_text_not_tag_cw );
         }
         *p = csave;
-        if( ge->tagflags & tag_off ) {  // inactive, treat as text
-            scan_start = tok_start;
+        if( ge->tagflags & tag_off ) {  // inactive, treat as comment
+            scan_start = scan_stop + 1;
             return;
         }
         me = find_macro( macro_dict, ge->macname );
