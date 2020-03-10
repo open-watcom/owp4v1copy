@@ -406,7 +406,10 @@ condcode    scr_wordpos( parm parms[MAX_FUN_PARMS], size_t parmcount, char * * r
             inword = true;
         }
         if( *pstr == *pp ) {
-            if( pp == phrasend ) {      // all equal
+
+            /* at end of phrase, but must also be at end of token */
+
+            if( (pp == phrasend) && ((*(pstr + 1) == ' ') || (*(pstr + 1) == '\0')) ) {
                 found = true;
                 break;
             } else {
@@ -445,7 +448,7 @@ condcode    scr_wordpos( parm parms[MAX_FUN_PARMS], size_t parmcount, char * * r
         }
     }
     if( found ) {
-        index = n;
+        index = n + 1;  // n is current word - 1, need current word
     }
     *result += sprintf( *result, "%d", index );
     **result = '\0';
