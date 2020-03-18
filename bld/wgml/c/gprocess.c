@@ -515,6 +515,7 @@ bool resolve_symvar_functions( char * buf )
                 /* Split when called from process_line, not when called to get a parameter */
 
                 if( !ProcFlags.CW_sep_ignore && (buf == buff2) &&
+                    CW_sep_char != 0x00 &&
                     symsubval->value[0] == CW_sep_char &&
                     symsubval->value[1] != CW_sep_char ) {
 
