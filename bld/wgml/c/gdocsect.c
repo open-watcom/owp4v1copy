@@ -557,6 +557,7 @@ static void gen_figlist( void )
 
     concat_save = ProcFlags.concat;
     ProcFlags.concat = true;
+    ProcFlags.in_figlist_toc = true;
     justify_save = ProcFlags.justify;
     ProcFlags.justify = ju_off;
     ProcFlags.keep_left_margin = true;  // keep all indents while outputting text
@@ -612,6 +613,7 @@ static void gen_figlist( void )
     }
 
     ProcFlags.concat = concat_save;
+    ProcFlags.in_figlist_toc = false;
     ProcFlags.justify = justify_save;
 
     /* Re-establish current section */
@@ -987,6 +989,7 @@ static void gen_toc( void )
 
     concat_save = ProcFlags.concat;
     ProcFlags.concat = true;
+    ProcFlags.in_figlist_toc = true;
     justify_save = ProcFlags.justify;
     ProcFlags.justify = ju_off;
     ProcFlags.keep_left_margin = true;  // keep all indents while outputting text
@@ -1058,6 +1061,7 @@ static void gen_toc( void )
     }
 
     ProcFlags.concat = concat_save;
+    ProcFlags.in_figlist_toc = false;
     ProcFlags.justify = justify_save;
 
     /* Re-establish current section */

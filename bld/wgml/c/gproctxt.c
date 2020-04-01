@@ -2056,6 +2056,7 @@ void process_text( const char *text, font_number font )
                         continue;           // guarded space no word end
                     }
                 }
+
                 if( !ProcFlags.concat && (cur_group_type != gt_xmp) ) { // .co off but not XMP: include internal spaces
                     continue;
                 }
@@ -2411,7 +2412,8 @@ void process_text( const char *text, font_number font )
                 p++;
                 pa = p;
                 SkipSpaces( p );
-                if( (cur_group_type == gt_xmp) ) {   // multiple blanks
+                if( (cur_group_type == gt_xmp) || ProcFlags.as_text_line ||
+                        ProcFlags.in_figlist_toc ) {  // multiple blanks
                     post_space += ( p - pa ) * wgml_fonts[font].spc_width;
                 }
                 p--;                    // back off non-space character, whatever it was
