@@ -524,7 +524,8 @@ static void     scan_script( void )
 
         toklen = pt - token_buf;
 
-        if( !ProcFlags.CW_sep_ignore && (*p != '\0' && (*p != ' ') || toklen == 0) ) {
+        if( !ProcFlags.CW_sep_ignore &&
+                ((*token_buf == '\0') || (*token_buf == ' ') || (toklen == 0)) ) {
             // no valid script controlword / macro, treat as text
             scan_start = scan_restart;
             return;
