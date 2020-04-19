@@ -508,7 +508,7 @@ bool resolve_symvar_functions( char * buf )
             if( rc == 2 ) {             // variable found + resolved
                 ProcFlags.substituted = true;
 
-                if( !ProcFlags.dd_macro && !symsubval->value[0] ) {
+                if( !ProcFlags.if_cond && !ProcFlags.dd_macro && !symsubval->value[0] ) {
                     ProcFlags.null_value = true;
                 }
 
@@ -652,9 +652,9 @@ void classify_record( char c )
     } else {
         ProcFlags.gml_tag = false;
         if( c == SCR_char ) {
-           ProcFlags.scr_cw = true;
+            ProcFlags.scr_cw = true;
         } else {
-           ProcFlags.scr_cw = false;
+            ProcFlags.scr_cw = false;
         }
     }
 }
@@ -711,6 +711,11 @@ void process_line( void )
         return;                         // .* .cm .dm :cmt found
     }
 
+    if( ProcFlags.scr_cw && (toupper(*(buff2 + 1)) == 'I') && (toupper(*(buff2 + 2)) == 'F') ) {
+        ProcFlags.if_cond = true;
+    } else {
+        ProcFlags.if_cond = false;
+    }
     anything_substituted |= resolve_symvar_functions( buff2 );
 
     classify_record( *buff2 );      // classify script CW, GML tag or nothing after symbol substitution etc

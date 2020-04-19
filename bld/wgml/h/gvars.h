@@ -90,6 +90,7 @@ typedef struct proc_flags {
     unsigned        newLevelFile        : 1;// start new include Level (file)
     unsigned        gml_tag             : 1;// input buf starts with GML_char
     unsigned        scr_cw              : 1;// input buf starts with SCR_char
+    unsigned        if_cond             : 1;// symbol substitution in if condition
     unsigned        macro_ignore        : 1;// .. in col 1-2
     unsigned        CW_indented         : 1;// scr cw line was indented
     unsigned        CW_sep_ignore       : 1;// ignore scr cw separator
