@@ -290,12 +290,14 @@ static void scan_gml( void )
                         /*  When text occurs after certain blocks, it is processed as if   */
                         /*  it were preceded by tag PC. This is cancelled when a tag comes */
                         /*  before the text, but not if the tag starts or ends an inline   */
-                        /*  phrase or is an index tag (I1, I2, I3, IH1, IH2, IH3).         */
+                        /*  phrase or is an index tag (I1, I2, I3, IH1, IH2, IH3) or is    */
+                        /*  tag SET.                                                       */
                         /*******************************************************************/
 
                         if( ((gml_tags[k].tagclass & ip_start_tag) == 0) &&
                                 ((gml_tags[k].tagclass & ip_end_tag) == 0) &&
-                                ((gml_tags[k].tagclass & index_tag) == 0) ) {
+                                ((gml_tags[k].tagclass & index_tag) == 0) &&
+                                strcmp( gml_tags[k].tagname, "SET") ) {
                             ProcFlags.force_pc = false;
                         }
 
