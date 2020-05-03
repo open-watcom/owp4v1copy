@@ -1490,6 +1490,12 @@ void do_page_out( void )
     apage++;
     page++;
 
+    /* Process any page-specific index items */
+
+    if( t_page.eol_index != NULL ) {
+        eol_index_page( t_page.eol_index, page );
+    }
+
     /* Get the banner text into the proper sections */
 
     if( ProcFlags.keep_left_margin ) {
@@ -2267,6 +2273,7 @@ void reset_t_page( void )
     }
     t_page.panes->cur_col = 0;
     t_page.cur_col = &t_page.panes->cols[0];
+    t_page.eol_index = NULL;
     ProcFlags.col_started = false;
 }
 

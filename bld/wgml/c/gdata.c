@@ -162,6 +162,7 @@ void init_global_vars( void )
     t_page.top_ban          = NULL;
     t_page.panes            = t_page.last_pane;
     t_page.bot_ban          = NULL;
+    t_page.eol_index        = NULL;
 
     t_page.panes->next              = NULL;
     t_page.panes->page_width_top    = 0;

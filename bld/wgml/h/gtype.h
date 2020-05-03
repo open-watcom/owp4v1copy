@@ -1232,6 +1232,7 @@ typedef struct {
             doc_element     *   top_ban;
             doc_pane        *   panes;
             doc_element     *   bot_ban;
+    struct  eol_ix          *   eol_index;
 } doc_page;
 
 typedef struct {
