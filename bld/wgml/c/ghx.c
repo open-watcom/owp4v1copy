@@ -146,6 +146,11 @@ static void hx_header( char * h_num, char * h_text, hdsrc hn_lvl, hdsrc hds_lvl 
             ProcFlags.as_text_line = true;      // treat as <text_line>
             process_text( h_text, layout_work.hx.hx_sect[hds_lvl].text_font );
         }
+    } else {    // needed for setting page numbers on headings that are not displayed
+        t_element = init_doc_el( el_text, 0 );
+        insert_col_main( t_element );
+        t_element = NULL;
+        t_el_last = NULL;
     }
 }
 
@@ -332,28 +337,10 @@ void gen_heading( char * h_text, char * id, hdsrc hn_lvl, hdsrc hds_lvl )
     t_doc_el_group = cur_doc_el_group;
     cur_doc_el_group = NULL;
 
-    /***********************************************************************/
-    /* If this is a section heading (hds_lvl > hds_appendix) then this     */
-    /* function is only called if the heading is to be displayed: there    */
-    /* is no display_heading attribute. Note that APPENDIX has no section  */
-    /* heading as such, but instead modifies the H1 headings.              */
-    /* Otherwise, this is an Hx tag, possibly an H1 tag in APPENDIX, and   */
-    /* the value of display_heading does determine whether or not the      */
-    /* heading is displayed.                                               */
-    /***********************************************************************/
-
     old_cur_left = t_page.cur_left;
     old_line_pos = line_position;
     hx_header( prefix, h_text, hn_lvl, hds_lvl );
 
-    /************************************************************/
-    /* Calling scr_process_break() here forces the header to be */
-    /* place on the line following the Hx tag, something that   */
-    /* wgml 4.0 does not do. This allows the doc_el_group which */
-    /* contains the header to be processed here instead of      */
-    /* somewhere else, probably in scr_process_break with a new */
-    /* ProcFlags flag to control the processing                 */
-    /************************************************************/
     scr_process_break();                    // commit the header
     line_position = old_line_pos;
     t_page.cur_left = old_cur_left;
@@ -488,54 +475,41 @@ void gen_heading( char * h_text, char * id, hdsrc hn_lvl, hdsrc hds_lvl )
             }
         }
 
-        /* display_heading is always "true" for section headings */
-
-        if( (hds_lvl > hds_appendix) || layout_work.hx.hx_head[hds_lvl].display_heading ) {
-            if( !ProcFlags.page_ejected ) {
-                while( cur_doc_el_group->first != NULL ) {
-                    cur_el = cur_doc_el_group->first;
-                    cur_doc_el_group->first = cur_doc_el_group->first->next;
-                    cur_el->next = NULL;
-                    insert_col_main( cur_el );
-                }
-                add_doc_el_group_to_pool( cur_doc_el_group );
-                cur_doc_el_group = NULL;
-            } else {                                        // page was ejected
-                reset_t_page();                             // update metrics for new banners, if any
-                cur_doc_el_group->depth -= cur_doc_el_group->first->subs_skip;  // top of page: no subs_skip
-                cur_doc_el_group->depth += cur_doc_el_group->first->top_skip;   // top of page: top_skip
-                cur_doc_el_group->first->subs_skip = 0;
-                if( cur_doc_el_group->depth > t_page.max_depth ) {
-                    xx_err( err_heading_too_deep );     // the block won't fit on any page
-                } else {
-                    if( page_width ) {
-
-                        /****************************************************/
-                        /* this is for multi-column pages where the heading */
-                        /* goes to the top of the page                      */
-                        /* each column must start at the same vertical      */
-                        /* position, whether some of the heading text       */
-                        /* above it or not, hence the post_skip is included */
-                        /* in the depth -- this appears to match wgml 4.0   */
-                        /****************************************************/
-
-                        cur_doc_el_group->post_skip = g_post_skip;
-                        insert_page_width( cur_doc_el_group );
-                        g_post_skip = 0;
-                    } else {
-                        insert_col_width( cur_doc_el_group );
-                    }
-                    cur_doc_el_group = NULL;
-                }
+        if( !ProcFlags.page_ejected ) {
+            while( cur_doc_el_group->first != NULL ) {
+                cur_el = cur_doc_el_group->first;
+                cur_doc_el_group->first = cur_doc_el_group->first->next;
+                cur_el->next = NULL;
+                insert_col_main( cur_el );
             }
-        } else {
-
-            /* cur_doc_group will contain a single doc_element with no content at all */
-
             add_doc_el_group_to_pool( cur_doc_el_group );
             cur_doc_el_group = NULL;
-            if( ProcFlags.page_ejected ) {
-                reset_t_page();                             // update metrics for new banners, if any
+        } else {                                        // page was ejected
+            reset_t_page();                             // update metrics for new banners, if any
+            cur_doc_el_group->depth -= cur_doc_el_group->first->subs_skip;  // top of page: no subs_skip
+            cur_doc_el_group->depth += cur_doc_el_group->first->top_skip;   // top of page: top_skip
+            cur_doc_el_group->first->subs_skip = 0;
+            if( cur_doc_el_group->depth > t_page.max_depth ) {
+                xx_err( err_heading_too_deep );     // the block won't fit on any page
+            } else {
+                if( page_width ) {
+
+                    /****************************************************/
+                    /* this is for multi-column pages where the heading */
+                    /* goes to the top of the page                      */
+                    /* each column must start at the same vertical      */
+                    /* position, whether some of the heading text       */
+                    /* above it or not, hence the post_skip is included */
+                    /* in the depth -- this appears to match wgml 4.0   */
+                    /****************************************************/
+
+                    cur_doc_el_group->post_skip = g_post_skip;
+                    insert_page_width( cur_doc_el_group );
+                    g_post_skip = 0;
+                } else {
+                    insert_col_width( cur_doc_el_group );
+                }
+                cur_doc_el_group = NULL;
             }
         }
     }

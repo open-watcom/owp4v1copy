@@ -253,14 +253,22 @@ void find_create_ix_e_entry( ix_h_blk * ixhwork, char * ref, size_t len,
                             break;
                         case el_text :
                             cur_tl = t_page.last_col_main->element.text.first;
-                            while( cur_tl->next != NULL ) {
-                                cur_tl = cur_tl->next;    // find last text_line
+                            if( cur_tl != false ) {         // text_lines exist
+                                while( cur_tl->next != NULL ) {
+                                    cur_tl = cur_tl->next;      // find last text_line
+                                }
+                                if( cur_tl->eol_index == NULL ) {
+                                    cur_tl->eol_index = alloc_eol_ix( ixhwork, type );
+                                    found = false;
+                                }
+                                cur_eol = cur_tl->eol_index;
+                            } else {    // only t_page is left!
+                                if( t_page.eol_index == NULL ) {
+                                    t_page.eol_index = alloc_eol_ix( ixhwork, type );
+                                    found = false;
+                                }
+                                cur_eol = t_page.eol_index;
                             }
-                            if( cur_tl->eol_index == NULL ) {
-                                cur_tl->eol_index = alloc_eol_ix( ixhwork, type );
-                                found = false;
-                            }
-                            cur_eol = cur_tl->eol_index;
                             break;
                         case el_vline :
                             if( t_page.last_col_main->element.vline.eol_index == NULL ) {

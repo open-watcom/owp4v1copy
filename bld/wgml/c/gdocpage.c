@@ -688,87 +688,98 @@ static void set_positions( doc_element * list, uint32_t h_start, uint32_t v_star
             at_top = false;
             break;
         case el_text :
-            for( cur_line = cur_el->element.text.first; cur_line != NULL;
-                                                cur_line = cur_line->next ) {
-                if( (cur_line->first != NULL) &&
-                        ((int32_t)(cur_line->first->x_address + h_start)) < 0 ) {
-                    offset = -1 * (int32_t)cur_line->first->x_address + h_start;
-                    cur_text = cur_line->first;
-                    while( cur_text != NULL ) {         // rebase line to keep on physical page
-                        cur_text->x_address += offset;
-                        cur_text = cur_text->next;
-                    }
-                }
-                cur_text = cur_line->first;
-                while( cur_text != NULL ) {
-                    cur_text->x_address += h_start;
-                    cur_text = cur_text->next;
-                }
-                if( use_spacing ) {
-                    cur_spacing += cur_line->units_spacing + cur_line->line_height;
-                } else {
-                    cur_spacing += cur_line->line_height;
-                    use_spacing = true;         // use between lines
-                }
-                if( !at_top ) {                 // not first element
-                    if( cur_el->element.text.overprint ) {  // overprint
-                        cur_spacing -= cur_line->line_height;
-                        cur_el->element.text.overprint = false;
-                    }
-                } else {
+            if( cur_el->element.text.first == NULL ) {          // empty title line
 
-                    /********************************************************/
-                    /*  Possible future complexities:                       */
-                    /*    it is not clear how forced overprint & minimum    */
-                    /*      height interact                                 */
-                    /*    it applies to the very first line on the top,     */
-                    /*      even if that is a banner, and so does not       */
-                    /*      automatically apply if Proc_flags.page_started  */
-                    /*      is true, as that happens at the start of each   */
-                    /*      section of the page to suppress any subs_skip   */
-                    /********************************************************/
-
-                    if( cur_el->element.text.overprint && cur_el->element.text.force_op ) {
-                        if( use_spacing ) {
-                            cur_spacing -= cur_line->units_spacing + cur_line->line_height;
-                        } else {
-                            cur_spacing -= cur_line->line_height;
-                        }
-                    } else if( (t_page.top_banner == NULL) &&
-                                (t_page.panes->page_width == NULL) ) {    // minimum height
-                        if( cur_spacing < wgml_fonts[g_curr_font].line_height ) {
-                            cur_spacing = wgml_fonts[g_curr_font].line_height;
-                        }
-                    }
-                    at_top = false;
-                }
-
-                /****************************************************/
-                /* Apply cur_spacing to the vertical position       */
-                /* Then fix an overprint line at the top of the     */
-                /* page, at least for character devices like TASA.  */
-                /* g_cur_v_start cannot be above the y_start which  */
-                /* the device specified for the overprint line, but */
-                /* must be restored for the remaining lines.        */
-                /****************************************************/
+                /* Use cur_spacing to adjust vertical position */
 
                 if( bin_driver->y_positive == 0x00 ) {
                     g_cur_v_start -= cur_spacing;
-                    old_v_start = g_cur_v_start;
-                    if( g_cur_v_start > bin_device->y_start ) {
-                        g_cur_v_start = bin_device->y_start;
-                    }
                 } else {
                     g_cur_v_start += cur_spacing;
-                    old_v_start = g_cur_v_start;
-                    if( g_cur_v_start < bin_device->y_start ) {
-                        g_cur_v_start = bin_device->y_start;
-                    }
                 }
+            } else {
+                for( cur_line = cur_el->element.text.first; cur_line != NULL;
+                                                    cur_line = cur_line->next ) {
+                    if( (cur_line->first != NULL) &&
+                            ((int32_t)(cur_line->first->x_address + h_start)) < 0 ) {
+                        offset = -1 * (int32_t)cur_line->first->x_address + h_start;
+                        cur_text = cur_line->first;
+                        while( cur_text != NULL ) {         // rebase line to keep on physical page
+                            cur_text->x_address += offset;
+                            cur_text = cur_text->next;
+                        }
+                    }
+                    cur_text = cur_line->first;
+                    while( cur_text != NULL ) {
+                        cur_text->x_address += h_start;
+                        cur_text = cur_text->next;
+                    }
+                    if( use_spacing ) {
+                        cur_spacing += cur_line->units_spacing + cur_line->line_height;
+                    } else {
+                        cur_spacing += cur_line->line_height;
+                        use_spacing = true;         // use between lines
+                    }
+                    if( !at_top ) {                 // not first element
+                        if( cur_el->element.text.overprint ) {  // overprint
+                            cur_spacing -= cur_line->line_height;
+                            cur_el->element.text.overprint = false;
+                        }
+                    } else {
 
-                cur_line->y_address = g_cur_v_start;
-                cur_spacing = 0;
-                g_cur_v_start = old_v_start;
+                        /********************************************************/
+                        /*  Possible future complexities:                       */
+                        /*    it is not clear how forced overprint & minimum    */
+                        /*      height interact                                 */
+                        /*    it applies to the very first line on the top,     */
+                        /*      even if that is a banner, and so does not       */
+                        /*      automatically apply if Proc_flags.page_started  */
+                        /*      is true, as that happens at the start of each   */
+                        /*      section of the page to suppress any subs_skip   */
+                        /********************************************************/
+
+                        if( cur_el->element.text.overprint && cur_el->element.text.force_op ) {
+                            if( use_spacing ) {
+                                cur_spacing -= cur_line->units_spacing + cur_line->line_height;
+                            } else {
+                                cur_spacing -= cur_line->line_height;
+                            }
+                        } else if( (t_page.top_banner == NULL) &&
+                                    (t_page.panes->page_width == NULL) ) {    // minimum height
+                            if( cur_spacing < wgml_fonts[g_curr_font].line_height ) {
+                                cur_spacing = wgml_fonts[g_curr_font].line_height;
+                            }
+                        }
+                        at_top = false;
+                    }
+
+                    /****************************************************/
+                    /* Apply cur_spacing to the vertical position       */
+                    /* Then fix an overprint line at the top of the     */
+                    /* page, at least for character devices like TASA.  */
+                    /* g_cur_v_start cannot be above the y_start which  */
+                    /* the device specified for the overprint line, but */
+                    /* must be restored for the remaining lines.        */
+                    /****************************************************/
+
+                    if( bin_driver->y_positive == 0x00 ) {
+                        g_cur_v_start -= cur_spacing;
+                        old_v_start = g_cur_v_start;
+                        if( g_cur_v_start > bin_device->y_start ) {
+                            g_cur_v_start = bin_device->y_start;
+                        }
+                    } else {
+                        g_cur_v_start += cur_spacing;
+                        old_v_start = g_cur_v_start;
+                        if( g_cur_v_start < bin_device->y_start ) {
+                            g_cur_v_start = bin_device->y_start;
+                        }
+                    }
+
+                    cur_line->y_address = g_cur_v_start;
+                    cur_spacing = 0;
+                    g_cur_v_start = old_v_start;
+                }
             }
             at_top = false;
             break;
