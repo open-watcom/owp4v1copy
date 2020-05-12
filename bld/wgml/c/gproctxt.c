@@ -1913,7 +1913,7 @@ void process_text( const char *text, font_number font )
                 // compute initial spacing if needed; .ct and some user tags affect this
                 if( *p == ' ' ) {
                     post_space = wgml_fonts[font].spc_width;
-                } else if( ProcFlags.dd_space) {    // DD text needs preceding space
+                } else if( ProcFlags.dd_space ) {   // DD text needs preceding space
                     post_space = wgml_fonts[font].spc_width;
                 } else if( !ProcFlags.ct && (ju_x_start <= t_line->last->x_address) ) {
                     if( input_cbs->fmflags & II_sol ) {
@@ -1930,7 +1930,8 @@ void process_text( const char *text, font_number font )
                     }
                 }
                 if( post_space > 0 ) {
-                    if( !ProcFlags.as_text_line && is_stop_char( t_line->last->text[t_line->last->count - 1] ) ) {
+                    if( !ProcFlags.dd_space && !ProcFlags.as_text_line &&
+                            is_stop_char( t_line->last->text[t_line->last->count - 1] ) ) {
                         post_space += wgml_fonts[font].spc_width;
                     }
                     if( (c_stop != NULL) && (t_line->last->width == 0) ) {
