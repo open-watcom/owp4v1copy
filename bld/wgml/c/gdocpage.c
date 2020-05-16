@@ -585,9 +585,10 @@ static void consolidate_array( doc_element * array[MAX_COL], uint8_t count )
 
 /***************************************************************************/
 /*  set the horizontal and vertical positions in a linked list of elements */
+/*  returns value of at_top                                                */
 /***************************************************************************/
 
-static void set_positions( doc_element * list, uint32_t h_start, uint32_t v_start )
+static bool set_positions( doc_element * list, uint32_t h_start, uint32_t v_start )
 {
     bool            use_spacing;
     bool            at_top;
@@ -780,8 +781,8 @@ static void set_positions( doc_element * list, uint32_t h_start, uint32_t v_star
                     cur_spacing = 0;
                     g_cur_v_start = old_v_start;
                 }
+                at_top = false;
             }
-            at_top = false;
             break;
         case el_vline :
             cur_el->element.vline.h_start += h_start;
@@ -820,7 +821,7 @@ static void set_positions( doc_element * list, uint32_t h_start, uint32_t v_star
         }
     }
 
-    return;
+    return( at_top );
 }
 
 
@@ -864,8 +865,8 @@ static void do_doc_panes_out( void )
         for( i = 0; i < cur_pane->col_count; i++ ) {
             ProcFlags.page_started = false;
             if( cur_pane->cols[i].col_width != NULL ) {
-                set_positions( cur_pane->cols[i].col_width, cur_pane->cols[i].col_left,
-                               cur_pane->col_width_top );
+                ProcFlags.page_started = !set_positions( cur_pane->cols[i].col_width,
+                               cur_pane->cols[i].col_left, cur_pane->col_width_top );
                 if( out_el[i] == NULL ) {
                     out_el[i] = cur_pane->cols[i].col_width;
                 }
@@ -876,7 +877,6 @@ static void do_doc_panes_out( void )
                 }
                 while( cur_el[i]->next != NULL ) cur_el[i] = cur_el[i]->next;
                 cur_pane->cols[i].col_width = NULL;
-                ProcFlags.page_started = true;
             }
             if( cur_pane->cols[i].main != NULL ) {
                 set_positions( cur_pane->cols[i].main, cur_pane->cols[i].col_left,
