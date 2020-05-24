@@ -7,7 +7,7 @@
 *  ========================================================================
 *
 *    This file contains Original Code and/or Modifications of Original
-*    Code as defined in and tha/fb_overprint_vertical_positioningt are subject to the Sybase Open Watcom
+*    Code as defined in and that are subject to the Sybase Open Watcom
 *    Public License version 1.0 (the 'License'). You may not use this file
 *    except in compliance with the License. BY USING THIS FILE YOU AGREE TO
 *    ALL TERMS AND CONDITIONS OF THE LICENSE. A copy of the License is
