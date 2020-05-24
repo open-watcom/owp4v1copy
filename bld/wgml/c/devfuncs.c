@@ -7,7 +7,7 @@
 *  ========================================================================
 *
 *    This file contains Original Code and/or Modifications of Original
-*    Code as defined in and that are subject to the Sybase Open Watcom
+*    Code as defined in and tha/fb_overprint_vertical_positioningt are subject to the Sybase Open Watcom
 *    Public License version 1.0 (the 'License'). You may not use this file
 *    except in compliance with the License. BY USING THIS FILE YOU AGREE TO
 *    ALL TERMS AND CONDITIONS OF THE LICENSE. A copy of the License is
@@ -2675,7 +2675,7 @@ static void fb_initial_horizontal_positioning( void )
 
     x_address = desired_state.x_address;
     if( ProcFlags.has_aa_block ) {
-        if( current_state.y_address == desired_state.y_address ) {
+        if( (current_state.y_address == desired_state.y_address) && !ProcFlags.overprint ) {
             fb_htab();
         } else {
             fb_absoluteaddress();
@@ -3168,8 +3168,6 @@ static void fb_normal_vertical_positioning( void )
         if( page_start && !ProcFlags.force_op ) {
             page_start = false;
         } else {
-            current_state.x_address = bin_device->x_start;
-            x_address = current_state.x_address;
             fb_overprint_vertical_positioning();
         }
     } else {

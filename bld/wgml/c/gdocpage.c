@@ -102,6 +102,7 @@ static void do_el_list_out( doc_element * in_element )
             }
             if( GlobalFlags.lastpass ) {
                 ProcFlags.force_op = in_element->element.text.force_op;
+                ProcFlags.overprint = in_element->element.text.overprint;
                 for( cur_line = in_element->element.text.first;
                         cur_line != NULL; cur_line = cur_line ->next ) {
                     fb_output_textline( cur_line );
@@ -590,8 +591,9 @@ static void consolidate_array( doc_element * array[MAX_COL], uint8_t count )
 
 static bool set_positions( doc_element * list, uint32_t h_start, uint32_t v_start )
 {
-    bool            use_spacing;
     bool            at_top;
+    bool            op_done;
+    bool            use_spacing;
     doc_element *   cur_el;
     text_chars  *   cur_text;
     text_line   *   cur_line;
@@ -699,6 +701,7 @@ static bool set_positions( doc_element * list, uint32_t h_start, uint32_t v_star
                     g_cur_v_start += cur_spacing;
                 }
             } else {
+                op_done = false;
                 for( cur_line = cur_el->element.text.first; cur_line != NULL;
                                                     cur_line = cur_line->next ) {
                     if( (cur_line->first != NULL) &&
@@ -722,9 +725,9 @@ static bool set_positions( doc_element * list, uint32_t h_start, uint32_t v_star
                         use_spacing = true;         // use between lines
                     }
                     if( !at_top ) {                 // not first element
-                        if( cur_el->element.text.overprint ) {  // overprint
+                        if( !op_done && cur_el->element.text.overprint ) {  // overprint
                             cur_spacing -= cur_line->line_height;
-                            cur_el->element.text.overprint = false;
+                            op_done = true;
                         }
                     } else {
 
