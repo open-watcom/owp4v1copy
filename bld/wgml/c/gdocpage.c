@@ -1869,6 +1869,9 @@ void insert_col_main( doc_element * a_element )
         /*  overprint lines pose a problem:                             */
         /*    anywhere but at the top of the page, they do not count as */
         /*      part of the page depth                                  */
+        /*    they do, however, decrease t_page.max_depth by the height */
+        /*      of the line; this affects how many lines can appear,    */
+        /*      but not where they appear                               */
         /*    if the page is full (t_page.cur_depth == t_page.max_depth)*/
         /*      they do count ... and start a new page                  */
         /****************************************************************/
@@ -1876,6 +1879,7 @@ void insert_col_main( doc_element * a_element )
         if( (a_element->type == el_text) && a_element->element.text.overprint &&
                                         (t_page.cur_depth != t_page.max_depth) ) {
             depth = cur_skip;
+            t_page.max_depth -= a_element->element.text.first->line_height;
         } else {
             depth = cur_skip + a_element->depth;
         }
