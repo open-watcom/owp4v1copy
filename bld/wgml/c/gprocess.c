@@ -327,29 +327,36 @@ static bool split_input_buffer( void )
 /*  this function may be called recursively via scr_multi_funcs()          */
 /*  and scr_multi_funcs() may be called recursively from here              */
 /*  until the buffer is processed                                          */
+/*  symsub_skipped was added when recursioin actually occurred in the      */
+/*  construct &__sysl(&'vecpos(&*,fnclst)) and it turned out that the      */
+/*  result was to clear ProcFlags.unresolved when the &* was resolved      */
+/*  which caused the initial "&" to be ignored and __sysl() not actually   */
+/*  resolved                                                               */
+/*  such is the cost of using globals in recursive functions               */
 /***************************************************************************/
 
 bool resolve_symvar_functions( char * buf )
 {
-    static const char   ampchar = '&';
-    inp_line        *   in_wk;
+    bool                anything_substituted;
+    bool                functions_found;
+    bool                symsub_skipped;
     char            *   p;
     char            *   p2;
     char            *   pchar;
     char            *   pw;
     char            *   pwend;
+    char            *   var_unresolved; // ptr for resume search
+    char            *   var_unresolved2;// ptr for resume search
     char            *   varstart;
     char            *   workb;
+    inp_line        *   in_wk;
+    int                 rc;
     sub_index           var_ind;
     symvar              symvar_entry;
     symsub          *   symsubval;
     size_t              buf_lg;
-    int                 rc;
-    bool                functions_found;
-    bool                anything_substituted;
 
-    char            *   var_unresolved; // ptr for resume search
-    char            *   var_unresolved2;// ptr for resume search
+    static const char   ampchar = '&';
 
     ProcFlags.substituted = false;
     ProcFlags.unresolved  = false;
@@ -368,6 +375,7 @@ bool resolve_symvar_functions( char * buf )
     workb = in_wk->value;               // allocate workbuffer
 
     do {                                // until no more substitutions
+        symsub_skipped = false;
         strcpy_s( workb, buf_size, buf );   // copy input buffer
         buf_lg = strnlen_s( buf, buf_size );
         pwend = workb + buf_lg - 1;
@@ -489,6 +497,7 @@ bool resolve_symvar_functions( char * buf )
                         ProcFlags.unresolved  = true;
                     }
                 }
+                symsub_skipped = true;
 
                 *p2++ = ampchar;                // effectively copy &
                 pchar = strchr( pw, ampchar );  // look for next & in buffer
@@ -630,7 +639,7 @@ bool resolve_symvar_functions( char * buf )
         }
         *p2 = 0;                        // terminate string
 
-    } while( ProcFlags.unresolved && ProcFlags.substituted );
+    } while( symsub_skipped || (ProcFlags.unresolved && ProcFlags.substituted) );
 
     anything_substituted |= ProcFlags.substituted;
 
