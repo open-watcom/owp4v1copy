@@ -55,7 +55,7 @@ static void gml_inline_common( const gmltag * entry, int level, e_tags t )
         ProcFlags.fsp = true;
         if( post_space == 0 ) {
             post_space = wgml_fonts[g_curr_font].spc_width;
-            if( t_line != NULL && (ProcFlags.utc || (level == g_prev_font)) ) {  // add second space after stop
+            if( (t_line != NULL) && (t_line->last != NULL) ) {                                  // add second space after stop
                 if( is_stop_char( t_line->last->text[t_line->last->count - 1] ) ) {
                     post_space += wgml_fonts[g_curr_font].spc_width;
                 }
