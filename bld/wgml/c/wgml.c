@@ -465,6 +465,9 @@ static  void    proc_input( char * filename )
             }
             inc_inc_level();            // record max include level
             add_file_cb_entry();
+            if( new_file_parms != NULL ) {
+               add_macro_parms( new_file_parms );
+            }
             cb = input_cbs->s.f;
             cb->flags |= FF_crlf;       // delete crlf at end
             if( attrwork[0] ) {

@@ -558,7 +558,7 @@ static void     scan_script( void )
         }
         add_macro_cb_entry( me, NULL );
         inc_inc_level();
-        add_macro_parms( p );
+        add_macro_parms( p + 1 );
         scan_restart = scan_stop + 1;
     } else if( !ProcFlags.literal ) {    // try script controlword if not in LI
         cwfound = false;

@@ -27,7 +27,7 @@
 * Description:  macro utility functions
 *
 *             add_macro_cb_entry  -- add macro as input source
-*             add_macro_parms     -- add macro call parms to local dictionary
+*             add_macro_parms     -- add macro call/file include parms to local dictionary
 *             free_lines          -- free macro source lines
 *
 *             scr_dm              -- .dm control word define macro
@@ -89,6 +89,7 @@ void    add_macro_cb_entry( mac_entry * me, gtentry * ge )
 
 /***************************************************************************/
 /* add macro parameters from input line as local automatic symbols         */
+/* also used with IN/AP to do the same for tokens following the file name  */
 /* for non delimited parameters try to assign local set symbols            */
 /* i.e. .mac     a b c *xyz="1.8" d "1 + 2"                                */
 /*          01234 -- only 1 space after mac is ignored                     */
@@ -138,9 +139,6 @@ void    add_macro_parms( char * p )
     condcode    cc;
     int         star0;
 
-    garginit();                         // resets scan_start to space after macro name
-    p = scan_start;
-    p++;                                // over space between macro name and first parm
     if( *p != '\0' ) {
 
         /* the name used for * is a macro because it may have to be changed -- TBD */
