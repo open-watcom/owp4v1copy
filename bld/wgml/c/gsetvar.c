@@ -162,6 +162,7 @@ char    *scan_sym( char * p, symvar * sym, sub_index * subscript )
                     p++;
                 }
                 SkipDot( p );
+                sym->flags |= subscripted;
             } else {
                 if( !scan_err && !ProcFlags.suppress_msg ) {
                     g_err( err_sub_invalid, psave );

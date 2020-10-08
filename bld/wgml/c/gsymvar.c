@@ -489,6 +489,7 @@ int add_symvar_addr( symvar * * dict, char * name, char * val,
             break;
         case 1 :                        // symbol found, but not subscript
             newsub->base->flags &= ~deleted;// reset deleted switch
+            newsub->base->flags |= f;   // use flags given
             ok = add_symvar_sub( newsub->base, val, subscript, sub );
             if( !ok ) {
                 rc = 3;
@@ -502,6 +503,7 @@ int add_symvar_addr( symvar * * dict, char * name, char * val,
             break;
         case 2 :              // symbol + subscript found, or not subscripted
             newsub->base->flags &= ~deleted;// reset deleted switch
+            newsub->base->flags |= f;   // use flags given
             if( (newsub->base->flags & ro) || !strcmp( newsub->value, val ) ) {
                 ;             // do nothing var is readonly or value is unchanged
             } else {
