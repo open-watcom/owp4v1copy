@@ -316,6 +316,8 @@ doc_element * alloc_doc_el( element_type type )
     curr->type = type;
     curr->h_pos = 0;
     curr->v_pos = 0;
+    curr->sk = ProcFlags.sk_co;
+    ProcFlags.sk_co = false;
 
     switch( type ) {
     case el_binc :

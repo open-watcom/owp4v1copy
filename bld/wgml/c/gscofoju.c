@@ -127,16 +127,16 @@
 /* Justify.                                                                 */
 /****************************************************************************/
 
-static  uint32_t    save_post_skip;     // save post_skip existing before CO ON
-
 /***************************************************************************/
 /*  process .ju setting, .co too if both set                               */
 /*                                                                         */
 /*  NOTE: the implementation is correct for FO; CO actually behaves a bit  */
 /*        differently                                                      */
+/*        this implementation does not use doc_el_group; this may need to  */
+/*        be changed in the future                                         */
 /***************************************************************************/
 
-static void process_co_ju( bool both , char *cwcurr )
+static void process_fo_ju( bool both , char *cwcurr )
 {
     char        *   pa;
     char        *   p;
@@ -256,14 +256,21 @@ static void process_co_ju( bool both , char *cwcurr )
 /*                                                                         */
 /*  NOTE: the implementation is correct for CO; FO actually behaves a bit  */
 /*        differently                                                      */
+/*        each text line is assumed to be in its own doc_element           */
+/*        until the block is split, there is only one doc_el_group to be   */
+/*        processed                                                        */           
+/*        further work may be needed                                       */
 /***************************************************************************/
 
 void    scr_co( void )
 {
-    char        *   pa;
-    char        *   p;
-    int             len;
-    char            cwcurr[4 ];
+    char                cwcurr[4 ];
+    char            *   pa;
+    char            *   p;
+    doc_element     *   cur_el;
+    doc_el_group    *   cur_group;  // current group from n_page, not cur_doc_el_group
+    doc_el_group    *   last_group; // group to which doc_elements are to be added
+    int                 len;
 
     cwcurr[0] = SCR_char;
     cwcurr[1] = 'c';
@@ -282,11 +289,92 @@ void    scr_co( void )
         break;
     case 2 :                            // only ON valid
         if( !strnicmp( "ON", pa, 2 ) ) {
-            if( save_post_skip > 0 ) {     // only if it exists
-                g_post_skip = save_post_skip;
-                save_post_skip = 0;
-            }
             ProcFlags.concat = true;
+            ProcFlags.sk_co = false;
+
+            /* must have text and it must have been started by CO OFF */
+
+            if( (t_doc_el_group != NULL) && (t_doc_el_group->owner == gt_co) ) {
+                cur_doc_el_group = t_doc_el_group;      // detach current element group
+                t_doc_el_group = t_doc_el_group->next;  // processed doc_elements go to next group, if any
+                cur_doc_el_group->next = NULL;
+
+                if( ((cur_doc_el_group->depth + t_page.cur_depth) <= t_page.max_depth) ) {
+
+                    /* the entire block will fit on the current page */
+
+                    while( cur_doc_el_group->first != NULL ) {
+                        cur_el = cur_doc_el_group->first;
+                        cur_doc_el_group->first = cur_doc_el_group->first->next;
+                        cur_el->next = NULL;
+                        insert_col_main( cur_el );
+                    }
+                    add_doc_el_group_to_pool( cur_doc_el_group );
+                    cur_doc_el_group = NULL;
+                } else {
+
+                    /* divide block into sub-blocks at each SK */
+
+                    last_group = cur_doc_el_group;              // initialize last_group
+                    cur_el = last_group->first->next;           // detach doc_elements after first
+                    last_group->first->next = NULL;
+                    last_group->last = last_group->first;
+                    last_group->depth = last_group->last->blank_lines +
+                                        last_group->last->subs_skip + last_group->last->depth;
+
+                    while( cur_el != NULL ) {
+                        if( cur_el->sk ) {                      // new sub-block
+                            last_group->next = alloc_doc_el_group( gt_co );
+                            last_group = last_group->next;
+                            last_group->first = cur_el;
+                            last_group->last = last_group->first;
+                        } else {                                // add to current sub-block
+                            last_group->last->next = cur_el;
+                            last_group->last = last_group->last->next;
+                        }
+                        cur_el = cur_el->next;                  // detach from list
+                        last_group->last->next = NULL;                                
+                        last_group->depth += last_group->last->blank_lines +
+                                        last_group->last->subs_skip + last_group->last->depth;
+                    }
+
+                    /* output sub-blocks */
+
+                    while( (cur_doc_el_group != NULL) && (cur_doc_el_group->first != NULL) ) {
+
+                        /****************************************************************/
+                        /* The text starts at the top of the next column under these    */
+                        /* conditions:                                                  */
+                        /* 1. An SK with -1 or an argument greater than 0 preceded the  */
+                        /*    text in the block.                                        */
+                        /* 2. The block will not fit in the current column              */
+                        /* 3. The block will fit in a column with no other text         */
+                        /****************************************************************/
+
+                        if( cur_doc_el_group->first->sk
+                            && ((cur_doc_el_group->depth + t_page.cur_depth) > t_page.max_depth)
+                            && (cur_doc_el_group->depth <= t_page.max_depth) ) {
+
+                            next_column();
+                        }
+
+                        /* Now output the text */
+
+                        while( cur_doc_el_group->first != NULL ) {
+                            cur_el = cur_doc_el_group->first;
+                            cur_doc_el_group->first = cur_doc_el_group->first->next;
+                            cur_el->next = NULL;
+                            insert_col_main( cur_el );
+                        }
+
+                        cur_group = cur_doc_el_group;
+                        cur_doc_el_group = cur_doc_el_group->next;
+                        cur_group->next = NULL;
+                        add_doc_el_group_to_pool( cur_group );
+                        cur_group = NULL;
+                    }
+                }
+            }
             scan_restart = pa + len;
         } else {
             xx_opt_err( cwcurr, pa );
@@ -294,11 +382,10 @@ void    scr_co( void )
         break;
     case 3 :                            // only OFF valid
         if( !strnicmp( "OFF", pa, 3 ) ) {
-            if( g_post_skip > 0 ) {     // only if it exists
-                save_post_skip = g_post_skip;
-                g_post_skip = 0;
-            }
             ProcFlags.concat = false;
+            cur_doc_el_group = alloc_doc_el_group( gt_co );
+            cur_doc_el_group->next = t_doc_el_group;
+            t_doc_el_group = cur_doc_el_group;
             scan_restart = pa + len;
         } else {
             xx_opt_err( cwcurr, pa );
@@ -325,7 +412,7 @@ void    scr_fo( void )
     cwcurr[2] = 'o';
     cwcurr[3] = '\0';
 
-    process_co_ju( true, cwcurr );      // .ju and .co processing
+    process_fo_ju( true, cwcurr );      // .ju and .co processing
 }
 
 
@@ -342,6 +429,6 @@ void    scr_ju( void )
     cwcurr[2] = 'u';
     cwcurr[3] = '\0';
 
-    process_co_ju( false, cwcurr );     // only .ju processing
+    process_fo_ju( false, cwcurr );     // only .ju processing
 
 }

@@ -177,6 +177,9 @@ void    scr_sk( void )
 {
     scr_process_break();
     sksp_common();                  // set vspace
+    if( !ProcFlags.concat && (ProcFlags.overprint || (vspace > 0 )) ) {
+        ProcFlags.sk_co = true;     // CO OFF and SK -1 or SK n, n < 0
+    }
     if( g_skip < vspace ) {         // merge with existing value
         g_skip = vspace;
     }
