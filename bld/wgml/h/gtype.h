@@ -187,10 +187,10 @@ typedef enum {
     deleted     = 0x0800
 } symbol_flags;
 
-
 /***************************************************************************/
 /*  entry for a (subscripted) symbolic variable                            */
 /***************************************************************************/
+
 typedef struct symsub {
     struct symsub   *   next;           // next subscript entry
     struct symvar   *   base;           // the base symvar
@@ -198,10 +198,10 @@ typedef struct symsub {
     char            *   value;          // the value ptr
 } symsub;
 
-
 /***************************************************************************/
 /*  Symbolic variable base entry                                           */
 /***************************************************************************/
+
 typedef struct symvar {
     struct symvar   *   next;           // next base entry
     char                name[SYM_NAME_LENGTH + 2];
@@ -213,10 +213,10 @@ typedef struct symvar {
     symbol_flags        flags;
 } symvar;
 
-
 /***************************************************************************/
 /*  Flags for filecb and macrocb                                           */
 /***************************************************************************/
+
 typedef enum {
     FF_clear        = 0x0000,           // clear all flags
     FF_eof          = 0x0002,           // eof
@@ -227,23 +227,23 @@ typedef enum {
     FF_open         = 0x8000            // file is open
 } fflags;
 
-
 /***************************************************************************/
 /*  List of (defined macro / input) lines                                  */
 /*    also used for in_buf_pool in this case fixed length buf_size         */
 /***************************************************************************/
+
 typedef struct inp_line {
     struct inp_line *   next;           // next line
     bool                sol;            // Start Of Line if split line
-    bool                fm_symbol;      // from a symbol substition
+    bool                fm_symbol;      // hidden_head is from a symbol substition
     bool                sym_space;      // symbol substitution was preceeded by a space
     char                value[1];       // line content variable length
 } inp_line;
 
-
 /***************************************************************************/
 /*  label control block                                                    */
 /***************************************************************************/
+
 typedef struct labelcb {
     struct labelcb  *   prev;
     fpos_t              pos;            // file position for label if file
@@ -251,10 +251,10 @@ typedef struct labelcb {
     char                label_name[LABEL_NAME_LENGTH + 1];
 } labelcb;
 
-
 /***************************************************************************/
 /*  macro definition entry  for macro dictionary                           */
 /***************************************************************************/
+
 typedef struct mac_entry {
     struct mac_entry    *   next;
     inp_line            *   macline;    // macro definition lines
@@ -263,7 +263,6 @@ typedef struct mac_entry {
     char                *   mac_file_name;  // file name macro definition
     char                    name[MAC_NAME_LENGTH + 1];  // macro name
 } mac_entry;
-
 
 /***************************************************************************/
 /*  entry for an (included) input file                                     */
@@ -285,12 +284,12 @@ typedef struct filecb {
 /***************************************************************************/
 /*  parameter structure for macro call                                     */
 /***************************************************************************/
+
 typedef struct mac_parms {
     char        *   star;               // &*  complete parmline
     int             star0;              // &*0 parmcount
     inp_line    *   starx;              // &*1 - &*x parms
 } mac_parms;
-
 
 /***************************************************************************/
 /*  Entry for an included macro                                            */
@@ -303,7 +302,6 @@ typedef struct  macrocb {
     struct gtentry  *   tag;            // tag entry if macro called via tag
     fflags              flags;
 } macrocb;
-
 
 /***************************************************************************/
 /*  Stack for .if .th .el .do processing                                   */
@@ -328,7 +326,6 @@ typedef struct ifflags {
 
 } ifflags;
 
-
 typedef struct ifcb {
     int             if_level;           // nesting level
     ifflags         if_flags[MAX_IF_LEVEL + 1]; // index 0 not used
@@ -337,12 +334,12 @@ typedef struct ifcb {
 /***************************************************************************/
 /*  for .pe processing                                                     */
 /***************************************************************************/
+
 typedef struct pecb {                   // for .pe control
     char *  line;                       // line to perform n times
     int     ll;                         // length of line
     int     count;                      // value of .pe n  active if > 0
 } pecb;
-
 
 /***************************************************************************/
 /*  Flags for input                                                        */
@@ -362,9 +359,8 @@ typedef enum {
 
 /***************************************************************************/
 /*  input stack for files and macros                                       */
-/*  NOTE: fm_space and sym_space are separate flags because their usage    */
-/*        and even their necessity is not yet clear                        */
 /***************************************************************************/
+
 typedef struct  inputcb {
     struct inputcb  *   prev;
     inp_line        *   hidden_head;    // manage lines split at ; or :
@@ -377,14 +373,14 @@ typedef struct  inputcb {
         macrocb     *   m;              // used if input is from macro/tag
     } s;
     i_flags             fmflags;
-    bool                fm_symbol;
-    bool                sym_space;
+    bool                fm_symbol;      // logical input record is from a symbol substition
+    bool                sym_space;      // symbol substitution was preceeded by a space
 } inputcb;
-
 
 /***************************************************************************/
 /*  scr keywords                                                           */
 /***************************************************************************/
+
 typedef enum {
     cw_break    = 1,           // control word causes break, ie. flush output
     cw_o_t                              // control word produces output text
@@ -395,7 +391,6 @@ typedef struct scrtag {
     void            (*tagproc)( void );
     scrflags        cwflags;
 } scrtag;
-
 
 /***************************************************************************/
 /*  GML tags    predefined                                                 */
@@ -452,7 +447,6 @@ typedef struct gmltag {
    classflags       tagclass;
 } gmltag;
 
-
 /***************************************************************************/
 /*  GML tags   user defined                                                */
 /*  i.e.  via .gt and .ga script control words                             */
@@ -470,7 +464,6 @@ typedef enum gavalflags {
     val_reset   = 128                   // reset (not used / implemented)
 } gavalflags;
 
-
 /***************************************************************************/
 /*  options B   from .ga control word                                      */
 /***************************************************************************/
@@ -485,7 +478,6 @@ typedef struct gavalentry {
     } a;
     gavalflags              valflags;
 } gavalentry;
-
 
 /***************************************************************************/
 /*  options A   from .ga control word                                      */
@@ -510,7 +502,6 @@ typedef enum {
     att_proc_val    = 0x0800            // ... with value specified
 } gaflags;
 
-
 /***************************************************************************/
 /*  entry from .ga control word                                            */
 /***************************************************************************/
@@ -521,7 +512,6 @@ typedef struct gaentry {
     char                name[ATT_NAME_LENGTH + 1];
     gaflags             attflags;
 } gaentry;
-
 
 /***************************************************************************/
 /*  GML tag options from the .gt Control word                              */
@@ -541,7 +531,6 @@ typedef enum {
     tag_off      = 512                  // tag OFF specified
 } gtflags;
 
-
 /***************************************************************************/
 /*  Tag entry  from .gt control word                                       */
 /***************************************************************************/
@@ -556,7 +545,6 @@ typedef struct gtentry {
     gtflags             tagflags;
     bool                overload;       // user tag has same name as predefined tag
 } gtentry;
-
 
 /***************************************************************************/
 /*  condcode  returncode for several conditions during parameterchecking   */
@@ -574,7 +562,6 @@ typedef enum condcode {            // return code for some scanning functions
     notnum          = 32                // value not numeric / overflow
 }  condcode;
 
-
 /***************************************************************************/
 /*  scr string functions                                                   */
 /***************************************************************************/
@@ -585,7 +572,6 @@ typedef struct parm {
     bool            incomplete;         // parm contains symvar or function
 } parm;
 
-
 typedef struct scrfunc {
     const   char    fname[FUN_NAME_LENGTH + 1];   // function name
     const   size_t  length;             // actual length of fname
@@ -595,11 +581,9 @@ typedef struct scrfunc {
                             char * * ppval, int32_t valsize );
 } scrfunc;
 
-
 /***************************************************************************/
 /*  definitions for getnum routine  to be reworked  TBD                    */
 /***************************************************************************/
-
 
 typedef enum {
     selfdef     = 4,
@@ -642,6 +626,7 @@ typedef struct opt_font {
 /***************************************************************************/
 /*  message numbers  + severities                                          */
 /***************************************************************************/
+
 typedef enum msg_ids  {
     #include "wgmlmsge.gh"              // as lowercase enums
 } msg_ids;
@@ -657,7 +642,6 @@ typedef enum {
     SEV_FATAL_ERR
 } severity;
 
-
 /***************************************************************************/
 /* enum for generated document sections                                    */
 /***************************************************************************/
@@ -667,7 +651,6 @@ typedef enum {
     gs_figlist  = 1,    // document specification includes FIGLIST
     gs_toc      = 2,    // document specification includes TOC
 } gen_sect;
-
 
 /***************************************************************************/
 /* enum for sections with page number styles and conversion struct         */
@@ -709,6 +692,7 @@ typedef enum doc_section {
 /***************************************************************************/
 /* enum for justify values                                                 */
 /***************************************************************************/
+
 typedef enum ju_enum {                  // for .ju(stify)
     ju_off,                             // ju_off must have lowest value
     ju_on,                              // ju_on next
@@ -827,7 +811,6 @@ typedef enum functs {
     function_sup_end        = '\x05'
 } functs;
 
-
 /***************************************************************************/
 /*  tags and controlwords as enums for distinction during processing       */
 /***************************************************************************/
@@ -841,7 +824,6 @@ typedef enum e_tags {
 //    #include "gscrcws.h" TBD
     t_MAX                               // the last one for range check
 } e_tags;
-
 
 /***************************************************************************/
 /*  nesting stack for open tags even if input file is not active any more  */
@@ -906,7 +888,6 @@ typedef struct tag_cb {
     e_tags                  c_tag;          // enum of tag
 } tag_cb;
 
-
 /***************************************************************************/
 /*  for constructing a filename stack                                      */
 /***************************************************************************/
@@ -916,7 +897,6 @@ typedef struct fnstack {
     char    fn[1];                      // var length file name
 } fnstack;
 
-
 /***************************************************************************/
 /*  for cmdline specified layout files stack (FIFO)                        */
 /***************************************************************************/
@@ -925,7 +905,6 @@ typedef struct laystack {
     struct  laystack * next;
     char    layfn[1];                   // var length file name
 } laystack;
-
 
 /***************************************************************************/
 /*  box column definition for use with control word BX                     */
@@ -1132,6 +1111,7 @@ typedef struct doc_element {
             vspace_element      vspace;
     } element;
             element_type        type;   // placement avoids padding warning
+            bool                sk;     // true if preceded by SK -1 or SK > 0 (used with CO)
 } doc_element;
 
 /********************************************************************/
@@ -1159,6 +1139,7 @@ typedef enum {
     gt_none,    // no doc_el_group in use
     gt_address, // tag ADDRESS
     gt_bx,      // control word BX
+    gt_co,      // control word CO
     gt_fn,      // tag FN
     gt_fig,     // tag FIG
     gt_fb,      // control word FB

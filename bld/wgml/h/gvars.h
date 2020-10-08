@@ -114,6 +114,7 @@ typedef struct proc_flags {
     unsigned        in_trans            : 1;// esc char is specified (.ti set x)
     unsigned        reprocess_line      : 1;// unget for current input line
     unsigned        sk_2nd              : 1;// .sk follows blank lines of .sp
+    unsigned        sk_co               : 1;// .sk -1/.sk n, n >0 processed with CO OFF
     unsigned        overprint           : 1;// .sk -1 active or not
     unsigned        tag_end_found       : 1;// '.' ending tag found
     unsigned        skips_valid         : 1;// controls set_skip_vars() useage
@@ -129,13 +130,14 @@ typedef struct proc_flags {
     unsigned        vline_done          : 1;// determines if a vertical line was done
     unsigned        keep_left_margin    : 1;// for indent NOTE tag paragraph
     unsigned        skip_blank_line     : 1;// for XMP/eXMP blocks in macros -- scope TBD
-
+    unsigned        in_reduced          : 1;// position resulting from IN reduced to left edge of device page
     unsigned        dd_starting         : 1;// DD after break had no text (in next scr_process_break())
     unsigned        para_starting       : 1;// :LP, :P or :PC had no text (in scr_process_break())
     unsigned        para_has_text       : 1;// :LP, :P, :PB or :PC had text (used by PB)
     unsigned        titlep_starting     : 1;// AUTHOR or TITLE had no text (in scr_process_break())
 
     unsigned        ix_in_block         : 1;// index tag/cw term attaches to following text
+    unsigned        post_ix             : 1;// index tag/cw preceded current text
 
     unsigned        cc_cp_done          : 1;// CC or CP done; apply current inset to first line only
     unsigned        dd_break_done       : 1;// DD break done (first line of text only)
@@ -188,6 +190,7 @@ global  jmp_buf     *   environment;    // var for GSuicide()
 
 global  char        *   scan_start;
 global  char        *   scan_stop;
+global  char        *   new_file_parms; // command tail for IM/AP
 global  char        *   scan_char_ptr;  // used by character scanning routines
 global  char        *   scan_restart;   // used by character scanning routines
 global  bool            scan_err;       // used by character scanning routines
@@ -347,7 +350,7 @@ global  tag_cb      *   tt_stack;       // font stack entry to modify for tab ta
 
 // the document page and related items
 global doc_element      *   doc_el_pool;        // for reuse of doc_element structs
-global group_type           cur_group_type;     // current tag/cw in effect (gt_bx is not allowed)
+global group_type           cur_group_type;     // current tag/cw in effect (gt_bx, gt_co not allowed)
 global doc_el_group     *   cur_doc_el_group;   // current doc_el_group, if any
 global doc_el_group     *   t_doc_el_group;     // stack of groups of doc_elements
 global doc_el_group     *   doc_el_group_pool;  // for reuse of doc_el_group structs
