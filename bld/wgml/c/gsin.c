@@ -101,6 +101,7 @@ void    scr_in( void )
     cwcurr[2] = 'n';
     cwcurr[3] = '\0';
 
+    ProcFlags.in_reduced = false;       // flag, if on, is active until next IN
     p = scan_start;
     SkipSpaces( p );                    // next word start
     pa = p;
@@ -173,6 +174,13 @@ void    scr_in( void )
 
     t_page.max_width = t_page.last_pane->col_width + g_indentr + nest_cb->right_indent;
     t_page.cur_left = g_indent + nest_cb->left_indent + nest_cb->align;
+
+    /* Reduce t_page.cur_left to 0 if g_indent made it negative */
+
+    if( ((int32_t) t_page.page_left + t_page.cur_left) < 0 ) {
+        t_page.cur_left = 0;
+        ProcFlags.in_reduced = true;        // set flag to record virtual reduction of in value
+    }
     t_page.cur_width = t_page.cur_left;
 
     scan_restart = p;
