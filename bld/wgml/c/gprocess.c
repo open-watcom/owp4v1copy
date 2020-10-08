@@ -50,8 +50,8 @@ void split_input( char * buf, char * split_pos, bool sol )
         wk = mem_alloc( len + sizeof( inp_line ) );
         wk->next = input_cbs->hidden_head;
         wk->sol  = sol;
-        wk->fm_symbol = input_cbs->fm_symbol;
-        wk->sym_space = input_cbs->sym_space;
+        wk->fm_symbol = false;
+        wk->sym_space = false;
         strcpy(wk->value, split_pos );  // save second part
 
         input_cbs->hidden_head = wk;
@@ -81,7 +81,7 @@ static void split_input_var( char * buf, char * split_pos, char * part2, bool so
         wk = mem_alloc( len + sizeof( inp_line ) );
         wk->next = input_cbs->hidden_head;
         wk->sol  = sol;
-        wk->fm_symbol = true;
+        wk->fm_symbol = false;
         wk->sym_space = sym_space;
 
         strcpy(wk->value, part2 );      // second part
@@ -355,6 +355,7 @@ bool resolve_symvar_functions( char * buf )
     symvar              symvar_entry;
     symsub          *   symsubval;
     size_t              buf_lg;
+    size_t              cw_lg;
 
     static const char   ampchar = '&';
 
@@ -521,6 +522,20 @@ bool resolve_symvar_functions( char * buf )
                     ProcFlags.null_value = true;
                 }
 
+                if( input_cbs->fm_symbol ) {                    
+                    /* keep value if from prior symbol which created its own logical input record */
+                    sym_space = input_cbs->sym_space;
+                } else {
+                    sym_space = false;
+                    if( varstart == workb ) {                   // symbol at start of input line
+                        sym_space = true;
+                    } else {                                    // symbol not at start of input line
+                        if( *workb == !SCR_char ) {             // not an scw or macro
+                            sym_space = (*(varstart - 1) == ' ');
+                        }
+                    }
+                }
+
                 /* Split when called from process_line, not when called to get a parameter */
 
                 if( !ProcFlags.CW_sep_ignore && (buf == buff2) &&
@@ -535,26 +550,28 @@ bool resolve_symvar_functions( char * buf )
                     SkipDot( pchar );   // skip optional terminating dot
                     *p2 = '\0';
 
-                    sym_space = false;
-                    if( varstart == workb ) {                   // symbol at start of input line
-                        sym_space = true;
-                    } else {                                    // symbol not at start of input line
-                        if( *workb == SCR_char ) {              // scw or macro
-                            for( p = workb; *p != ' '; p++ );   // end of first token
-                            if( (p + 1) != varstart) {          // not followed by current symbol
-                                sym_space = (*(varstart - 1) == ' ');
-                            }
-                        } else {                        // text
-                            sym_space = (*(varstart - 1) == ' ');
+                    split_input_var( buf, pchar, &symsubval->value[1], true );
+                    input_cbs->hidden_head->fm_symbol = true;   // new logical input record
+                    cw_lg = 0;
+                    for( p = buf; *p != ' '; p++ ) cw_lg++;     // length of . plus CW
+                    cw_lg++;                                    // plus space after CW
+                    if( ProcFlags.scr_cw && (workb + cw_lg == varstart) ) {
+                        input_cbs->hidden_head->sym_space = false;  // space is space after cw
+                    } else {
+                        if( varstart == workb ) {                   // symbol at start of input line
+                            sym_space = true;
+                        } else {                                    // symbol not at start of input line
+                            input_cbs->hidden_head->sym_space = (*(varstart - 1) == ' ');
                         }
                     }
-                    split_input_var( buf, pchar, &symsubval->value[1], true );
                     pw = pwend + 1;     // stop substitution for this record
                     varstart = NULL;
 
                     break;
 
                 } else {
+                    input_cbs->fm_symbol = false;               // no new logical input record
+                    input_cbs->sym_space = sym_space;
                     pw = symsubval->value;
                     if( symsubval->value[0] == CW_sep_char &&
                         symsubval->value[1] == CW_sep_char ) {

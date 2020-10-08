@@ -84,6 +84,8 @@ void    scr_ct( void )
             if( (*p == SCR_char) ||     // script control word follows
                 (*p == GML_char) ) {    // GML tag follows
                 split_input( scan_start, p, false ); // TBD, fixes problem with macro
+                input_cbs->hidden_head->fm_symbol = input_cbs->fm_symbol;
+                input_cbs->hidden_head->sym_space = input_cbs->sym_space;
             } else {
                 process_text( p, g_curr_font ); // text follows
             }
