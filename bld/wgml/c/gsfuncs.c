@@ -89,7 +89,6 @@ static  char    * find_end_of_parm( char * pchar, char * pend )
     char    quotechar[MAX_PAREN];
     bool    instring[MAX_PAREN];
     int     paren_level;
-    int     delta_paren;
     char    c;
     char    cm1;
     char    cm2;
@@ -97,7 +96,6 @@ static  char    * find_end_of_parm( char * pchar, char * pend )
     bool    test_for_quote;             // only at first char after ( or ,
 
     paren_level = 0;
-    delta_paren = 0;
     quotechar[paren_level] ='\0';
     instring[paren_level] = false;
     instring[1] = false;
@@ -111,58 +109,67 @@ static  char    * find_end_of_parm( char * pchar, char * pend )
         c = *pchar;
         if( cm1 == ampchar ) {
             if( c == '\'' ) {
-                multiletter_function = true;// parm contains a function
-                delta_paren = 1;
-                instring[paren_level + 1] = false;
+                multiletter_function = true;    // parm contains a function
             } else {
-                var_in_parm = true;     // parm contains variable
+                var_in_parm = true;             // parm contains variable
             }
         }
-        if( instring[paren_level] ) {
-            if( c == quotechar[paren_level] ) {
-                instring[paren_level] = false;
+        if( multiletter_function ) {
+            multiletter_function = false;       // multiletter_function is static, reset
+            pchar++;                            // over "'"
+            pchar = find_end_of_parm( pchar, pend );
+            if( *pchar == ',' ) {                // end of parm
+                break;
             }
         } else {
-            if( test_for_quote && is_quote_char( c ) ) {
-                if( (cm1 == ampchar) || // &' sequence
-                    ((cm2 == ampchar) && my_isalpha( cm1 )) ) {// &X' sequence
-                            /* no instring change */
-                } else {
-                    instring[paren_level] = true;
-                    quotechar[paren_level] = c;
+            if( instring[paren_level] ) {
+                if( c == quotechar[paren_level] ) {
+                    instring[paren_level] = false;
                 }
-                test_for_quote = false;
             } else {
-                switch( c ) {
-                case    '(' :
-                    paren_level += 1 + delta_paren;
-                    delta_paren = 0;
-                    test_for_quote = true;
-                    if( paren_level < MAX_PAREN ) {
-                        instring[paren_level] = false;
+                if( test_for_quote && is_quote_char( c ) ) {
+                    if( (cm1 == ampchar) || // &' sequence
+                        ((cm2 == ampchar) && my_isalpha( cm1 )) ) {// &X' sequence
+                                /* no instring change */
                     } else {
-                        paren_level--;
-                        finished = true;// error msg ??? TBD
+                        instring[paren_level] = true;
+                        quotechar[paren_level] = c;
                     }
-                    break;
-                case    ')' :
-                    paren_level--;
-                    if( paren_level <= 0 ) {
-                        finished = true;
-                        if( pchar < pend ) {
-                            pchar++;    // step over final ')'
-                        }
-                    }
-                    break;
-                case    ',' :
-                    if( paren_level == 0 ) {
-                        finished = true;
-                    }
-                    test_for_quote = true;
-                    break;
-                default:
                     test_for_quote = false;
-                    break;
+                } else {
+                    switch( c ) {
+                    case    '(' :
+                        paren_level += 1;
+                        test_for_quote = true;
+                        if( paren_level < MAX_PAREN ) {
+                            instring[paren_level] = false;
+                        } else {
+                            paren_level--;
+                            finished = true;// error msg ??? TBD
+                        }
+                        break;
+                    case    ')' :
+                        paren_level--;
+                        if( paren_level <= 0 ) {
+                            finished = true;
+                            if( pchar < pend ) {
+                                pchar++;    // step over final ')'
+                            }
+                            if( *pchar == '.' ) {
+                                pchar++;    // step over '.' terminating subscripted symbol
+                            }
+                        }
+                        break;
+                    case    ',' :
+                        if( paren_level == 0 ) {
+                            finished = true;
+                        }
+                        test_for_quote = true;
+                        break;
+                    default:
+                        test_for_quote = false;
+                        break;
+                    }
                 }
             }
         }
@@ -219,23 +226,23 @@ static  void    err_info( char * * result )
 
 char  * scr_multi_funcs( char * in, char * end, char ** result, int32_t valsize )
 {
-    char            *   pchar;
-    int                 rc;
-    size_t              fnlen;
-    int                 funcind;
-    int                 k;
-    int                 m;
-    char                fn[FUN_NAME_LENGTH + 1];
     bool                found;
-    parm                parms[MAX_FUN_PARMS];
-    int                 parmcount;
-    int                 p_level;
-    condcode            cc;
+    char                fn[FUN_NAME_LENGTH + 1];
     char            *   p;
+    char            *   pchar;
     char            *   pend;
     char            *   ps;
     char            *   resbuf;
+    condcode            cc;
     inp_line        *   in_wk;
+    int                 funcind;
+    int                 k;
+    int                 m;
+    int                 parmcount;
+    int                 p_level;
+    int                 rc;
+    parm                parms[MAX_FUN_PARMS];
+    size_t              fnlen;
 
     in_wk = NULL;                       // no result buffer yet
     rc = 0;
