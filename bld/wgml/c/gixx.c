@@ -493,6 +493,7 @@ static void gml_ixxx_common( const gmltag * entry, int hx_lvl )
     }
 
     ProcFlags.null_value = false;
+    ProcFlags.post_ix = true;
 
     scan_start = scan_stop + 1;
     return;

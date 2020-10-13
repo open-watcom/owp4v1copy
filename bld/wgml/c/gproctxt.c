@@ -6,7 +6,7 @@
 *
 *  ========================================================================
 *
-*    This file contains Original Code and/or Modifications of Original
+*    This file contains Original Code/ and/or Modifications of Original
 *    Code as defined in and that are subject to the Sybase Open Watcom
 *    Public License version 1.0 (the 'License'). You may not use this file
 *    except in compliance with the License. BY USING THIS FILE YOU AGREE TO
@@ -1764,8 +1764,8 @@ void process_text( const char *text, font_number font )
     const char          *   p;
     const char          *   pa;
 
-    bool                    wrap_done       = false;
     bool                    stop_fnd;
+    bool                    wrap_done       = false;
     font_number             temp_font       = 0;
     i_flags                 flags_x_eol;                // fmflags with II_eol removed
     size_t                  count;
@@ -1780,6 +1780,7 @@ void process_text( const char *text, font_number font )
     // when hyph can be set, it will need to be used here & below
     uint32_t                hy_width        = wgml_fonts[FONT0].width_table['-'];
 
+    static      bool            keep_together   = true;    // set false when mult-part word is not to be treated as one word
     static      line_number     prev_lineno     = -1;
     static      macrocb     *   prev_mac        = NULL;
     static      text_type       typ             = tx_norm;
@@ -1814,15 +1815,14 @@ void process_text( const char *text, font_number font )
     /********************************************************************/
 
     p = text;
-    while( *p != '\0' && *p != '\t' && *p != tab_char ) {   // locate the first wgml tab, if any
+    while( (*p != '\0') && (*p != tab_char) ) { // locate the first wgml tab, if any
         p++;
     }
-    count = p - text;
-    p = text;                               // restore p to start of text
 
+    p = text;                               // restore p to start of text
     if( (tt_stack != NULL)
             && (input_cbs->fmflags & II_sol)
-            && ((*p == '\t') || (*p == tab_char)) ) {    // adjust parent font, see Wiki
+            && (*p == tab_char) ) {    // adjust parent font, see Wiki
         tt_stack->font = FONT0; // hard-wired: LAYOUT DEFAULT FONT does not affect this
         font = FONT0;
         g_curr_font = FONT0;
@@ -1848,7 +1848,7 @@ void process_text( const char *text, font_number font )
 
                 if( ((c_stop != NULL) && (c_stop->column >=
                     user_tabs.tabs[user_tabs.current - 1].column)) ||
-                    (*p == '\t') || (*p == tab_char) ) {    // the final test
+                    (*p == tab_char) ) {    // the final test
 
                     /********************************************************/
                     /* scr_process_break() can produce a doc_element with a */
@@ -1879,16 +1879,29 @@ void process_text( const char *text, font_number font )
         t_line = alloc_text_line();
     }
     if( t_line->first == NULL ) {    // first phrase in paragraph
-        // skip initial spaces
-        pa = p;
-        SkipSpaces( p );
-        tab_space = p - pa;
-        if( !ProcFlags.in_fb_fk_block ) {
-            post_space = 0;
-        }
-        // ".co on": skip initial spaces
-        // ".co off": compute initial spacing from initial spaces
-        if( !ProcFlags.concat ) {
+        if( ProcFlags.concat ) {
+            // ".co on": skip initial spaces
+            pa = p;
+            SkipSpacesTabs( p );
+            tab_space = p - pa;
+            if( !ProcFlags.in_fb_fk_block ) {
+                post_space = 0;
+            }
+        } else {
+            // ".co off": compute initial spacing from initial spaces
+            tab_space = 0;
+            while( (*p == '\t') || (*p == ' ') || (*p == '\0') ) {
+                if( *p == '\0' ) break;     // done at end of input text fragment
+                if( *p == ' ') {
+                    p++;                    // count one space and loop
+                    tab_space++;
+                    continue;
+                }
+                // at this point, *p is a keyboard tab
+                offset = 8 - (tab_space % 8);   // adjust to next keyboard tab stop
+                tab_space += offset;            // increment tab_space to tab stop
+                p++;
+            }
             post_space = tab_space * wgml_fonts[font].spc_width;
             if( *p == '\0' && !(input_cbs->fmflags & II_eol) ) {
 
@@ -2090,120 +2103,164 @@ void process_text( const char *text, font_number font )
         n_chars->x_address = t_page.cur_width;
         o_count = n_chars->count;       // used below if n_chars must be split
 
+        /************************************************************/
+        /* keep_together was set below on the prior call based on   */
+        /* conditions prelevant at that time                        */
+        /* here, it is further adjusted based on conditions         */
+        /* prelevant at this time                                   */
+        /************************************************************/
+
+        if( (t_line != NULL) && (t_line->last != NULL) ) {
+            if( (t_line->last->font == n_chars->font) || !ProcFlags.post_ix ) {
+                keep_together = true;
+            }
+        }
+
         if( ProcFlags.concat || (cur_group_type == gt_xmp) ) { // .co on or XMP
 
             /***********************************************************/
-            /* test if word exceeds right margin                       */
+            /* test if n_char exceeds right margin                     */
             /* this excludes cases where tabbing == true               */
             /* this avoids breaking tab scopes, but it is correct?     */
             /***********************************************************/
 
             while( !tabbing &&
                     ((int32_t)(n_chars->x_address + n_chars->width) > (int32_t)t_page.max_width) ) {
+
                 if( t_line == NULL ) {  // added when INDEX implemented
                     t_line = alloc_text_line();
                 }
-                s_chars = t_line->last; // find multipart words
-                if( (s_chars != NULL) && (!(s_chars->fmflags & II_macro) || input_cbs->fm_symbol) ) {
+
+                /************************************************************/
+                /* Use s_chars to form an existing multipart word, if there */
+                /* is one, or to start a new one, provided keep_together is */
+                /* true and n_chars starts at the current end of t_line     */
+                /************************************************************/
+
+                s_chars = NULL;
+                if( (t_line->last != NULL)
+                        && (t_line->last->x_address + t_line->last->width == n_chars->x_address)
+                        && keep_together ) {
+                    s_chars = t_line->last;
                     while( t_page.cur_width == (s_chars->x_address + s_chars->width) ) {
                         input_cbs->fm_symbol = false;
                         t_page.cur_width = s_chars->x_address;
                         s_chars = s_chars->prev;
                         if( s_chars == NULL ) break;
                     }
-                }
 
-                /* Identify when s_chars must be moved to a new line. */
+                    /* Identify when s_chars must be moved to a new line. */
 
-                if( s_chars != NULL ) {
-                    // t_line ends in a multi-part word or an empty text_chars
+                    /************************************************************/
+                    /* if s_chars points to t_line->last, then it also points   */
+                    /* to t_line->first and so must be kept as it is the only   */
+                    /* text_chars in t_line                                     */
+                    /* otherwise, s_chars points to the first text_chars before */
+                    /* the multi-part word at the end of t_line, provided       */
+                    /* n_chars will fit on a single text_line or s_chars has    */
+                    /* no text, and s_chars must be detached from t_line and    */
+                    /* moved to the next output line (eventually)               */
+                    /************************************************************/
+
                     if( ((s_chars != t_line->last) &&
-                        ((t_page.cur_left + n_chars->width) <= t_page.max_width)) ||
-                                                (s_chars->count == 0) ) {
-                        // s_chars itself belongs to t_line
+                            ((t_page.cur_left + n_chars->width) <= t_page.max_width))
+                            || (s_chars->count == 0) ) {
                         t_line->last = s_chars;
                         s_chars = s_chars->next;
                         if( s_chars != NULL ) {
                             s_chars->prev = NULL;
                         }
                         t_line->last->next = NULL;
-                    } else { // s_chars will not be used; this prevents a loop
-                        s_chars = NULL;
                     }
                 }
 
-                if( s_chars == NULL ) { // append n_chars to t_line & split it
-                    // these conditions determine if n_chars is to be split
-                    if( (t_line->first == NULL) ||
-                        ((t_line->last->x_address + t_line->last->width)
-                                                == n_chars->x_address) ||
-                            ((t_page.cur_left + n_chars->width) > t_page.max_width) ) {
-                        // find the split position with a hyphen's width
-                        count = split_text( n_chars, t_page.max_width - hy_width );
-                        if( count == 0 ) { // n_chars fits entirely
-                            break;
-                        }
-                        if( count == o_count ) {
-                            if( t_line->first == NULL ) {    // prevents loop
-                                xx_err( err_page_width_too_small );
-                                g_suicide();
-                            }
-                        } else {                 // split n_chars with hyphenation
-                            // first attach n_chars to tline
-                            if( t_line->first == NULL ) {
-                                t_line->first = n_chars;
-                            } else {
-                                n_chars->prev = t_line->last;
-                                t_line->last->next = n_chars;
-                            }
-                            t_line->last = n_chars;
-                            // now do the split
-                            n_chars = alloc_text_chars(
-                                    &t_line->last->text[t_line->last->count],
-                                            count, t_line->last->font );
-                            n_chars->type = t_line->last->type;
+                /************************************************************/
+                /* if s_chars is NULL and keep_together is true, then       */
+                /* n_chars is to be appended to t_line and split if it is   */
+                /* too long to fit on the line                              */
+                /* the conditions used are:                                 */
+                /*   t_line is empty and n_chars is too long to fit on an   */
+                /*   empty text line                                        */
+                /*   n_chars is part of a multi-part word which occupies    */
+                /*     all of t_line                                        */
+                /* Note: the outer loop condition guarantees that n_chars   */
+                /* will not fit on the line at that point, but not that it  */
+                /* will not fit on an empty line unless, of course, t_line  */
+                /* happens to be empty                                      */
+                /************************************************************/
 
-                            if( t_line->first == t_line->last ) {
-                                fm_chars = NULL;
-                            } else {
-                                fm_chars = t_line->last->prev;
+                if( s_chars == NULL ) {
+                    if( keep_together ) {
+                        // these conditions determine if n_chars is to be split
+                        if( (t_line->first == NULL) ||
+                                ((t_line->last->x_address + t_line->last->width)
+                                                        == n_chars->x_address) ||
+                                ((t_page.cur_left + n_chars->width) > t_page.max_width) ) {
+                            // find the split position with a hyphen's width
+                            count = split_text( n_chars, t_page.max_width - hy_width );
+                            if( count == 0 ) { // n_chars fits entirely
+                                break;
                             }
-                            wgml_tabs();
-                            if( fm_chars == NULL ) {
-                                fm_chars = t_line->first;
-                            } else {
-                                if( fm_chars->next != NULL ) {
+                            if( count == o_count ) {
+                                if( t_line->first == NULL ) {    // prevents loop
+                                    xx_err( err_page_width_too_small );
+                                    g_suicide();
+                                }
+                            } else {                 // split n_chars with hyphenation
+                                // first attach n_chars to tline
+                                if( t_line->first == NULL ) {
+                                    t_line->first = n_chars;
+                                } else {
+                                    n_chars->prev = t_line->last;
+                                    t_line->last->next = n_chars;
+                                }
+                                t_line->last = n_chars;
+                                // now do the split
+                                n_chars = alloc_text_chars( &t_line->last->text[t_line->last->count],
+                                                                    count, t_line->last->font );
+                                n_chars->type = t_line->last->type;
+
+                                if( t_line->first == t_line->last ) {
+                                    fm_chars = NULL;
+                                } else {
+                                    fm_chars = t_line->last->prev;
+                                }
+                                wgml_tabs();
+                                if( fm_chars == NULL ) {
+                                    fm_chars = t_line->first;
+                                } else {
+                                    if( fm_chars->next != NULL ) {
+                                        fm_chars = fm_chars->next;
+                                    }
+                                }
+                                if( t_line->line_height < wgml_fonts[font].line_height ) {
+                                    t_line->line_height = wgml_fonts[font].line_height;
+                                }
+                                // each line must have its own hyphen
+                                h_chars = alloc_text_chars( "-", 1, 0 );
+                                h_chars->type = tx_norm;
+                                h_chars->width = hy_width;
+
+                                h_chars->x_address = t_line->last->x_address + t_line->last->width;
+                                h_chars->prev = t_line->last;
+                                t_line->last->next = h_chars;
+                                t_line->last = h_chars;
+                                h_chars = NULL;
+
+                                if( t_line->line_height < wgml_fonts[font].line_height ) {
+                                    t_line->line_height = wgml_fonts[font].line_height;
+                                }
+
+                                /* Now set fmflags inside the text_chars */
+
+                                flags_x_eol = input_cbs->fmflags & ~II_eol;
+                                fm_chars->fmflags = flags_x_eol;
+                                input_cbs->fmflags &= ~II_sol;   // clear flag
+                                fm_chars = fm_chars->next;
+                                while( fm_chars != NULL ) {
+                                    fm_chars->fmflags = flags_x_eol;
                                     fm_chars = fm_chars->next;
                                 }
-                            }
-                            if( t_line->line_height < wgml_fonts[font].line_height ) {
-                                t_line->line_height = wgml_fonts[font].line_height;
-                            }
-                            // each line must have its own hyphen
-                            h_chars = alloc_text_chars( "-", 1, 0 );
-                            h_chars->type = tx_norm;
-                            h_chars->width = hy_width;
-
-                            h_chars->x_address = t_line->last->x_address
-                                                    + t_line->last->width;
-                            h_chars->prev = t_line->last;
-                            t_line->last->next = h_chars;
-                            t_line->last = h_chars;
-                            h_chars = NULL;
-
-                            if( t_line->line_height < wgml_fonts[font].line_height ) {
-                                t_line->line_height = wgml_fonts[font].line_height;
-                            }
-
-                            /* Now set fmflags inside the text_chars */
-
-                            flags_x_eol = input_cbs->fmflags & ~II_eol;
-                            fm_chars->fmflags = flags_x_eol;
-                            input_cbs->fmflags &= ~II_sol;   // clear flag
-                            fm_chars = fm_chars->next;
-                            while( fm_chars != NULL ) {
-                                fm_chars->fmflags = flags_x_eol;
-                                fm_chars = fm_chars->next;
                             }
                         }
                     }
@@ -2383,7 +2440,6 @@ void process_text( const char *text, font_number font )
         }
 
         // exit at end of text unless at end of input line
-
         if( !(input_cbs->fmflags & II_eol) && *p == '\0' ) {
             break;
         }
@@ -2424,8 +2480,7 @@ void process_text( const char *text, font_number font )
                 }
             }
             pword = p + 1;          // new word start or end of input record
-        } else if( *p == '\0' && (input_cbs->fmflags & II_eol)
-                && (input_cbs->fmflags & II_file)
+        } else if( (*p == '\0') && (input_cbs->fmflags & II_eol) && (input_cbs->fmflags & II_file)
                 && !ProcFlags.wrap_indent) { // insert spaces at actual end-of-line, except in INDEX
             pword = p;
             post_space = wgml_fonts[font].spc_width;
@@ -2491,6 +2546,14 @@ void process_text( const char *text, font_number font )
     }
     g_prev_font = font; // save font number for potential use with BX - TBD
 
+    /* Set/clear keep_together for next text to be processed */
+
+    if( ProcFlags.substituted && (input_cbs->fmflags & II_macro) ) {
+        keep_together = false;
+    } else {
+        keep_together = true;
+    }
+
     /* Clear various control flags/variables */
 
     ProcFlags.as_text_line = false;
@@ -2504,6 +2567,7 @@ void process_text( const char *text, font_number font )
     ProcFlags.ix_in_block = false;
     ProcFlags.null_value = false;
     ProcFlags.para_starting = false;
+    ProcFlags.post_ix = false;
     ProcFlags.skip_blank_line = false;
     ProcFlags.titlep_starting = false;
     ProcFlags.utc = false;

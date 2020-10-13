@@ -311,6 +311,8 @@ void scr_ix( void )
         xx_line_err( err_extra_data, tok_start );
     }
 
+    ProcFlags.post_ix = true;
+
     if( !GlobalFlags.lastpass ) {
         return;
     }
