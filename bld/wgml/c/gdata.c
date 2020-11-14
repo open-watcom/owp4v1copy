@@ -77,6 +77,7 @@ void init_global_vars( void )
     *alt_ext            = '\0';
     def_ext             = mem_alloc( sizeof( GML_EXT ) );
     strcpy_s( def_ext, sizeof( GML_EXT ), GML_EXT );
+    ampchar             = '&';
 
     gotarget[0]         = '\0';         // no .go to target yet
     gotargetno          = 0;            // no .go to target lineno

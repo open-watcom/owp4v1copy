@@ -205,6 +205,7 @@ global  locflags        rs_loc;         // restricted location
 global  int             switch_char;    // DOS switch character
 global  char        *   alt_ext;        // alternate extension
 global  char        *   def_ext;        // default extension
+global  char            ampchar;        // symbol substitution/attribute/function marker
 
 global  char        *   master_fname;   // Primary input file name
 global  char        *   master_fname_attr;// Primary input file name attributes
@@ -339,6 +340,10 @@ global  ref_entry   *   ix_ref_dict;    // reference id dictionary :Ix :IHx :IRE
 
 // page number format
 global  num_style       pgnum_style[pns_max];
+
+// symbol support
+global  sym_list_entry  *   sym_list_pool;  // sym_list_entry pool
+//global  sym_list_entry  *   g_sym_list;     // global stack of sym_list_entry instances
 
 // tab support
 global  tab_stop    *   c_stop;         // current tab_stop

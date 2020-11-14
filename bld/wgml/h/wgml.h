@@ -315,11 +315,11 @@ extern  void    do_force_pc( char * p );
 
 
 /* gprocess.c                           */
-extern  void    classify_record( char firstchar );
-extern  void    process_late_subst( void );
-extern  void    process_line( void );
-extern  bool    resolve_symvar_functions( char * buf );
-extern  void    split_input( char * buf, char * split_pos, bool startofline );
+extern  void                classify_record( char firstchar );
+extern  void                process_late_subst( void );
+extern  void                process_line( void );
+extern  bool                resolve_symvar_functions( char * buf, bool breakable );
+extern  void                split_input( char * buf, char * split_pos, bool startofline );
 
 
 /* gproctxt.c                           */
@@ -387,7 +387,7 @@ extern  void                fb_blocks_out( void );
 
 
 /* gsfuncs.c                            */
-extern  char    *   scr_multi_funcs( char * in, char * end, char * * ppval, int32_t valsize );
+extern  char    *   scr_multi_funcs( char * in, char * * ppval, int32_t valsize );
 
 
 /* gsfunelu.c                           */
@@ -429,6 +429,7 @@ extern  void    close_all_pu_files( void );
 /* gsymvar.c                            */
 extern void     init_dict( symvar * * dict );
 extern void     free_dict( symvar * * dict );
+extern char *   finalize_subscript(  char * in, char ** result, bool breakable );
 extern int      find_symvar( symvar * * dict, char * name, sub_index subscript, symsub * * symsubval );
 extern int      find_symvar_l( symvar * * dict, char * name, sub_index subscript, symsub * * symsubval );
 extern int      add_symvar( symvar * * dict, char * name, char * val, sub_index subscript, symbol_flags f );
@@ -468,6 +469,8 @@ extern  void                add_doc_el_group_to_pool( doc_el_group * a_group );
 extern  doc_el_group    *   alloc_doc_el_group( group_type type );
 extern  void                add_eol_ix_to_pool( eol_ix * an_eol_ix );
 extern  eol_ix          *   alloc_eol_ix( ix_h_blk * in_ixh, ereftyp in_type );
+extern  void                add_sym_list_entry_to_pool( sym_list_entry * cb );
+extern  sym_list_entry  *   alloc_sym_list_entry( void );
 extern  void                add_tag_cb_to_pool( tag_cb * cb );
 extern  tag_cb          *   alloc_tag_cb( void );
 extern  void                clear_doc_element( doc_element * a_element );

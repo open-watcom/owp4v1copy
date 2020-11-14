@@ -32,10 +32,9 @@
 #include "wgml.h"
 
 
-/* construct symbol name and optionally subscript from input
- *
- *
- */
+/***************************************************************************/
+/* construct symbol name and optionally subscript from input               */
+/***************************************************************************/
 
 char    *scan_sym( char * p, symvar * sym, sub_index * subscript )
 {

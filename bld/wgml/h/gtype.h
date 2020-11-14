@@ -213,6 +213,34 @@ typedef struct symvar {
     symbol_flags        flags;
 } symvar;
 
+
+/***************************************************************************/
+/*  Flags for sym_list                                                     */
+/***************************************************************************/
+
+typedef enum {
+    sl_none     = 0,    // for initialization
+    sl_attrib   = 1,    // single-letter attribute function ("&e'")
+    sl_funct    = 2,    // multi-letter function ("&'upper")
+    sl_text     = 3,    // treat as text ("& " and malformed items)
+    sl_symbol   = 4,    // symbol ("&<text>" and "&<text>.") -- but not one of the above items
+    sl_split    = 5,    // symbol value requires line be split
+} slflags;
+
+
+/***************************************************************************/
+/*  Symbol list entry                                                      */
+/***************************************************************************/
+
+typedef struct sym_list_entry {
+    struct sym_list_entry   *   prev;                   // next entry
+    char                        value[BUF_SIZE];        // value of attribute, function, or symbol
+    char                    *   start;                  // position of "&" in original buffer
+    char                    *   end;                    // position of byte after item in original buffer
+    slflags                     type;
+} sym_list_entry;
+
+
 /***************************************************************************/
 /*  Flags for filecb and macrocb                                           */
 /***************************************************************************/
@@ -569,7 +597,7 @@ typedef enum condcode {            // return code for some scanning functions
 typedef struct parm {
     char    *       a;                  // start of parm ptr
     char    *       e;                  // end of parm ptr
-    bool            incomplete;         // parm contains symvar or function
+    bool            redo;               // parm starts with "&"
 } parm;
 
 typedef struct scrfunc {

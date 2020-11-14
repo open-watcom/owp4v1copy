@@ -138,6 +138,129 @@ static void print_sym_entry( symvar * wk, int * symcnt, int * symsubcnt )
 
 
 /***************************************************************************/
+/*  finalize the subscript value                                           */
+/***************************************************************************/
+
+char * finalize_subscript( char * in, char ** result, bool breakable )
+{
+    char            *       p;                  // points into input buffer
+    char            *       pa;                 // start of valbuf
+    char            *       pchar;              // points into input buffer
+    char            *       pend;               // points into resbuf
+    char            *   *   ppval;              // points to pointer into resbuf
+    char            *       pret;               // end of subscript in input buffer
+    char            *       symstart;           // start of symbol name
+    char                    valbuf[BUF_SIZE];   // buffer for attribute function and function values
+    int                     p_level;
+    int                     rc;
+    int32_t                 valsize;
+    sub_index               var_ind;            // subscript value
+    symsub          *       symsubval;          // value of symbol
+    symvar                  symvar_entry;
+
+    pchar = in + 1;                     // over & to subscript token start
+    p_level = 0;
+
+    // find true end of subscript
+    p = pchar;
+    while( *p != '\0' ) {               // to end of buffer
+        if( *p == '(' ) {
+            p_level++;
+        } else if( *p == ')' ) {
+            p_level--;
+            if( p_level == 0 ) {
+                pend = p;               // pend points to outermost ')'
+                break;
+            }
+        }
+        p++;
+    }
+
+    if( p_level > 0 ) {                 // at least one missing ')'
+        xx_line_err( err_func_parm_end, buff2 );
+    }
+
+    pret = p;                           // save for return (points to final ')')
+
+    p = strchr( pchar, ampchar );       // look for & in buffer
+    while( p != NULL ) {                // & found
+        if( *(p + 1) == ' ' ) {         // not a symbol substition, attribute, or function
+            p++;                        // over '&'
+        } else if( my_isalpha( p[1] ) && p[2] == '\'' && p[3] > ' ' ) { // attribute
+            pchar = p;
+            while( !is_space_tab_char( *pchar ) && (*pchar != '\0') ) pchar++;
+            pa = valbuf;
+            ppval = &pa;
+
+            if( GlobalFlags.firstpass && (input_cbs->fmflags & II_research) ) {
+                add_single_func_research( p + 1 );
+            }
+
+            pchar = scr_single_funcs( p, pchar, ppval );
+            strcpy_s( *result, buf_size, valbuf );
+        } else if( *(p + 1) == '\'' ) {                 // function or text
+            pchar = p + 2;                              // over "&'"
+            while( is_function_char(*pchar) ) pchar++;  // find end of function name
+
+            if( *p == '(' ) {                           // &'xyz( is start of multi char function
+                pa = valbuf;
+                ppval = &pa;
+                valsize = buf_size - (pchar - p);
+                pchar = scr_multi_funcs( p, ppval, valsize );
+                strcpy_s( *result, buf_size, valbuf );  // save value in current stack entry
+            } else {
+                pchar = p;
+            }
+        } else {                                        // symbol
+            pchar = p;
+            pchar++;                                    // over '&'
+            symstart = pchar;                           // remember start of symbol name
+            scan_err = false;
+            ProcFlags.suppress_msg = true;
+            pchar = scan_sym( symstart, &symvar_entry, &var_ind );
+            ProcFlags.suppress_msg = false;
+            if( scan_err && *p == '(' ) {    // problem with subscript
+                pa = valbuf;
+                ppval = &pa;
+                pchar = finalize_subscript( p + 1, ppval, valsize );
+                strcpy_s( *result, buf_size, valbuf );  // save value in current stack entry
+                var_ind = atol( valbuf );  // save value for use
+                **result = '\0';            // overwrite with nothing
+                while( *pchar != ')' ) {
+                    pchar++;      // forward to ')'
+                }
+            } else {
+                if( symvar_entry.flags & local_var ) {  // lookup var in dict
+                    rc = find_symvar_l( &input_cbs->local_dict, symvar_entry.name,
+                                        var_ind, &symsubval );
+                } else {
+                    rc = find_symvar( &global_dict, symvar_entry.name, var_ind,
+                                      &symsubval );
+                }
+                if( rc == 2 ) {             // variable found + resolved
+                    if( !ProcFlags.CW_sep_ignore && breakable && (CW_sep_char != 0x00) &&
+                            (symsubval->value[0] == CW_sep_char) &&
+                            (symsubval->value[1] != CW_sep_char) ) {
+                        strcpy_s( *result, buf_size, symsubval->value );  // overwrite entry
+                        break;              // line split terminates processing
+                    } else {
+                        strcpy_s( *result, buf_size, symsubval->value );  // overwrite entry
+                    }
+                } else {
+                }
+            }
+        }
+        if( *pchar == '\0' ) {
+            break;                      // end of text terminates processing
+        }
+        p = pchar;                      // skip argument
+        p = strchr( p, ampchar );       // look for next & in buffer
+    }
+    return( pret );
+}
+
+
+/***************************************************************************/
 /*  search symbol and subscript entry in specified  dictionary             */
 /*  fills symsub structure pointer if found                                */
 /*                                                                         */

@@ -31,6 +31,7 @@
 *                   doc_el_group
 *                   doc_element
 *                   eol_ix
+*                   sym_list_entry
 *                   tag_cb
 *                   text_chars
 *                   text_line
@@ -557,6 +558,60 @@ void    add_tag_cb_to_pool( tag_cb * a_cb )
     }
     a_cb->prev = tag_pool;
     tag_pool = a_cb;
+}
+
+
+/***************************************************************************/
+/*  allocate / reuse a sym_list_entry instance                             */
+/***************************************************************************/
+
+sym_list_entry * alloc_sym_list_entry( void )
+{
+    sym_list_entry  *   curr;
+    sym_list_entry  *   prev;
+    int                 k;
+
+    curr = sym_list_pool;
+    if( curr != NULL ) {                // there is one to use
+        sym_list_pool = curr->prev;
+    } else {                            // pool is empty
+        curr = mem_alloc( sizeof( sym_list_entry ) );
+
+        prev = mem_alloc( sizeof( *prev ) );
+        sym_list_pool = prev;
+        for( k = 0; k < 10; k++ ) { // alloc 10 tag_cb if pool empty
+            prev->prev = mem_alloc( sizeof( *prev ) );
+            prev = prev->prev;
+        }
+        prev->prev = NULL;
+    }
+
+    curr->prev = NULL;
+    curr->value[0] = '\0';
+    curr->start = 0;
+    curr->end = 0;
+    curr->type = sl_none;
+
+    return( curr );
+}
+
+
+/***************************************************************************/
+/*  add a sym_list_entry instance to free pool for reuse                   */
+/***************************************************************************/
+
+void add_sym_list_entry_to_pool( sym_list_entry * a_sl )
+{
+    sym_list_entry  *   curr;
+
+    if( a_sl == NULL ) {
+        return;
+    }
+
+    curr = a_sl;
+    while( curr->prev != NULL) curr = curr->prev;
+    curr->prev = sym_list_pool;
+    sym_list_pool = a_sl;
 }
 
 
