@@ -675,6 +675,12 @@ void    free_pool_storage( void )
         v = wv;
     }
 
+    for( v = sym_list_pool; v != NULL; ) {
+        wv = ( (sym_list_entry *) v)->prev;
+        mem_free( v );
+        v = wv;
+    }
+
     for( v = tag_pool; v != NULL; ) {
         wv = ( (tag_cb *) v)->prev;
         mem_free( v );
