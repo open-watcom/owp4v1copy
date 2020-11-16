@@ -303,8 +303,10 @@ char  * scr_multi_funcs( char * in, char ** result, int32_t valsize )
         }
     }
     if( !found ) {
-        g_err( err_func_name, fn );
-        err_info( result );
+        xx_val_line_warn( err_func_name, fn, in + 2 );
+        **result = '&';                 // result is & to preserve the input
+        *result += 1;
+        **result = '\0';
         return( in + 1 );               // avoid endless loop
     }
     funcind = k;
