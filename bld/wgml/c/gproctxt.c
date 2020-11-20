@@ -1758,7 +1758,7 @@ text_chars * process_word( const char *pword, size_t count, font_number font, bo
 /*      handle line and page overflow conditions                           */
 /***************************************************************************/
 
-void process_text( const char *text, font_number font )
+void process_text( char *text, font_number font )
 {
     const char          *   pword;
     const char          *   p;
@@ -1807,6 +1807,8 @@ void process_text( const char *text, font_number font )
             return;
         }
     }
+
+    process_late_subst( text );
 
     /********************************************************************/
     /*  force a break in when certain conditions involving new input    */

@@ -307,7 +307,7 @@ char  * scr_multi_funcs( char * in, char ** result, int32_t valsize )
         **result = '&';                 // result is & to preserve the input
         *result += 1;
         **result = '\0';
-        return( in + 1 );               // avoid endless loop
+        return( pret );                 // avoid endless loop
     }
     funcind = k;
 

@@ -316,7 +316,7 @@ extern  void    do_force_pc( char * p );
 
 /* gprocess.c                           */
 extern  void                classify_record( char firstchar );
-extern  void                process_late_subst( void );
+extern  void                process_late_subst( char * buf );
 extern  void                process_line( void );
 extern  bool                resolve_symvar_functions( char * buf, bool breakable );
 extern  void                split_input( char * buf, char * split_pos, bool startofline );
@@ -327,7 +327,7 @@ extern  void            do_justify( uint32_t left_m, uint32_t right_m, text_line
 extern  void            insert_hard_spaces( const char * spaces, size_t len, font_number font );
 extern  size_t          intrans( char *text, size_t count, font_number font );
 extern  void            process_line_full( text_line *a_line, bool justify );
-extern  void            process_text( const char *text, font_number font );
+extern  void            process_text( char *text, font_number font );
 extern  text_chars  *   process_word( const char *text, size_t count, font_number font, bool hard_spaces );
 extern  void            set_h_start( void );
 

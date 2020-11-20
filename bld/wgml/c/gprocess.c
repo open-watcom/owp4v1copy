@@ -33,6 +33,72 @@
 
 static  bool        sym_space;          // compiler workaround
 
+/***************************************************************************/
+/*  perform symbol substitution on certain special symbols:                */
+/*    AMP (identied by the late_subst tag)                                 */
+/*    any symbol whose value is a single character matching GML_char (':'  */
+/*      by default)                                                        */
+/*  all other items starting with '&' are treated as text                  */
+/***************************************************************************/
+void process_late_subst( char * buf )
+{
+    char    *   p;
+    char    *   symstart;
+    char        tail[BUF_SIZE];
+    char    *   tokenend;       // save end of current token
+    char    *   tokenstart;     // save position of current '&'
+    int         rc;
+    sub_index   var_ind;        // subscript value (if symbol is subscripted)
+    symsub  *   symsubval;      // value of symbol
+    symvar      symvar_entry;
+
+    p = strchr( buf, ampchar );  // look for & in buffer
+    while( p != NULL ) {         // & found
+        if( *(p + 1) == ' ' ) {  // not a symbol substition, attribute, or function
+        } else if( my_isalpha( p[1] ) && p[2] == '\'' && p[3] > ' ' ) {   // attribute
+        } else if( *(p + 1) == '\'' ) {          // function or text
+            /* all above are ignored */
+        } else {                                // symbol
+            tokenstart = p;
+            p++;                                // over '&'
+            symstart = p;                       // remember start of symbol name
+            scan_err = false;
+            ProcFlags.suppress_msg = true;
+            p = scan_sym( symstart, &symvar_entry, &var_ind );
+            ProcFlags.suppress_msg = false;
+            tokenend = p;
+            if( !scan_err ) {                   // potentially qualifying symbol
+                if( symvar_entry.flags & local_var ) {  // lookup var in dict
+                    rc = find_symvar_l( &input_cbs->local_dict, symvar_entry.name,
+                                        var_ind, &symsubval );
+                } else {
+                    rc = find_symvar( &global_dict, symvar_entry.name, var_ind,
+                                      &symsubval );
+                }
+                if( rc == 2 ) {             // variable found + resolved
+                    if( (symsubval->base->flags & late_subst) ||
+                            ((symsubval->value[0] == GML_char) && (symsubval->value[1] == '\0')) ) {
+                        /* replace symbol with value */
+                        strcpy_s( tail, buf_size, tokenend );       // copy tail
+                        p = tokenstart;
+                        strcpy_s( p, buf_size, symsubval->value );  // copy value
+                        if( tail[0] == '.' ) {
+                            strcat_s( buf, buf_size, tail + 1);     // append tail to buf, skipping initial "."
+                        } else {
+                            strcat_s( buf, buf_size, tail );        // append tail to buf
+                        }
+                    }
+                    /* all other symbols are ignored */
+                }
+            }
+        }
+        p = tokenend;                   // skip argument
+        p = strchr( p, ampchar );       // look for next & in buffer
+    }
+    return;
+}
+
+
 /*  split_input
  *  The (physical) line is split
  *  The second part will be processed by the next getline()
@@ -341,8 +407,8 @@ static bool parse_r2l( sym_list_entry * stack, char * buf )
 {
     char            *   p;
     char                tail[BUF_SIZE];
-    size_t              cw_lg;              //TBD
-    sym_list_entry  *   curr                    = stack;
+    size_t              cw_lg;
+    sym_list_entry  *   curr            = stack;
 
     ProcFlags.substituted = false;
     tail[0] = '\0';
@@ -463,20 +529,16 @@ static sym_list_entry * parse_l2r( char * buf, bool breakable )
     char            *       pa;
     char            *   *   ppval;
     char            *       symstart;           // start of symbol name
-    symsub          *       symsubval;          // value of symbol
     char                    valbuf[BUF_SIZE];   // buffer for attribute function and function values
     int                     rc;
     int32_t                 valsize;
     sub_index               var_ind;            // subscript value (if symbol is subscripted)
+    symsub          *       symsubval;          // value of symbol
     symvar                  symvar_entry;
     sym_list_entry  *       curr    = NULL;     // current top-of-stack
     sym_list_entry  *       temp    = NULL;     // used to create new top-of-stack
 
     p = strchr( buf, ampchar );  // look for & in buffer
-    if( p == NULL ) {
-        return( NULL );                     // no ampchar found, nothing to resolve
-    }
-
     while( p != NULL ) {         // & found
         temp = alloc_sym_list_entry();
         if( curr == NULL ) {
@@ -550,6 +612,9 @@ static sym_list_entry * parse_l2r( char * buf, bool breakable )
                     curr->type = sl_split;
                     strcpy_s( curr->value, buf_size, symsubval->value );  // save value in current stack entry
                     break;              // line split terminates processing
+                } else if( (symsubval->base->flags & late_subst) ||
+                        ((symsubval->value[0] == GML_char) && (symsubval->value[1] == '\0')) ) {
+                    curr->type = sl_text;   // save for late substitution
                 } else {
                     curr->type = sl_symbol;
                     strcpy_s( curr->value, buf_size, symsubval->value );  // save value in current stack entry
@@ -576,6 +641,7 @@ static sym_list_entry * parse_l2r( char * buf, bool breakable )
 
 bool resolve_symvar_functions( char * buf, bool breakable )
 {
+    bool                anything_substituted    = false;
     sym_list_entry  *   stack;
 
     if( buf == NULL ) {
@@ -585,7 +651,18 @@ bool resolve_symvar_functions( char * buf, bool breakable )
     if( stack == NULL ) {
         return( false);                     // no stack to process
     }
-   return( parse_r2l( stack, buf ) );
+    parse_r2l( stack, buf );
+    anything_substituted |= ProcFlags.substituted;
+    while( ProcFlags.substituted ) {
+        stack = parse_l2r( buf, breakable );
+        if( stack == NULL ) {
+            break;                      // no stack to process
+        }
+        parse_r2l( stack, buf );
+        anything_substituted |= ProcFlags.substituted;
+    }
+    
+    return( anything_substituted );
 }
 
 

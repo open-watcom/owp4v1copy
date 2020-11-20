@@ -240,7 +240,10 @@ static void content_reg( region_lay_tag * region )
             if( region->script_region[k].string != NULL ) {
                 strcpy_s( buf, strlen(region->script_region[k].string) + 1,
                           region->script_region[k].string );
-                while( resolve_symvar_functions( buf, false ) );    // loop until return shows no substitution done
+                process_late_subst( buf );
+                while( resolve_symvar_functions( buf, false ) ) {   // until all resolutions done
+                    process_late_subst( buf );
+                }
                 while( region->final_content[k].len < strlen( buf ) ) {
                     if( region->final_content[k].string == NULL ) {
                         region->final_content[k].len = str_size;
@@ -261,7 +264,10 @@ static void content_reg( region_lay_tag * region )
         switch( region->contents.content_type ) {
         case   string_content:
             strcpy_s( buf, strlen(region->contents.string) + 1, region->contents.string );
-            while( resolve_symvar_functions( buf, false ) );    // loop until return shows no substitution done
+            process_late_subst( buf );
+            while( resolve_symvar_functions( buf, false ) ) {   // until all resolutions done
+                process_late_subst( buf );
+            }
             break;
         case author_content :
             rc = find_symvar( &global_dict, "$author", no_subscript, &symsubval );
