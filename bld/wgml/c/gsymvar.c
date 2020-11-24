@@ -202,11 +202,11 @@ char * finalize_subscript( char * in, char ** result, bool breakable )
             pchar = p + 2;                              // over "&'"
             while( is_function_char(*pchar) ) pchar++;  // find end of function name
 
-            if( *p == '(' ) {                           // &'xyz( is start of multi char function
+            if( *pchar == '(' ) {                       // &'xyz( is start of multi char function
                 pa = valbuf;
                 ppval = &pa;
                 valsize = buf_size - (pchar - p);
-                pchar = scr_multi_funcs( p, ppval, valsize );
+                pchar = scr_multi_funcs( p, pchar, ppval, valsize );
                 strcpy_s( *result, buf_size, valbuf );  // save value in current stack entry
             } else {
                 pchar = p;

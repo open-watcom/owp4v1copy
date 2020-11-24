@@ -387,7 +387,7 @@ extern  void                fb_blocks_out( void );
 
 
 /* gsfuncs.c                            */
-extern  char    *   scr_multi_funcs( char * in, char * * ppval, int32_t valsize );
+extern  char    *   scr_multi_funcs( char * in, char * pstart, char * * ppval, int32_t valsize );
 
 
 /* gsfunelu.c                           */

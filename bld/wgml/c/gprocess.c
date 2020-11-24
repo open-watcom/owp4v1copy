@@ -56,8 +56,11 @@ void process_late_subst( char * buf )
     while( p != NULL ) {         // & found
         if( *(p + 1) == ' ' ) {  // not a symbol substition, attribute, or function
         } else if( my_isalpha( p[1] ) && p[2] == '\'' && p[3] > ' ' ) {   // attribute
+            tokenend = p + 3;
         } else if( *(p + 1) == '\'' ) {          // function or text
-            /* all above are ignored */
+            p += 2;
+            while( is_function_char(*p) ) p++;  // find end of function name
+            tokenend = p;
         } else {                                // symbol
             tokenstart = p;
             p++;                                // over '&'
@@ -88,7 +91,6 @@ void process_late_subst( char * buf )
                             strcat_s( buf, buf_size, tail );        // append tail to buf
                         }
                     }
-                    /* all other symbols are ignored */
                 }
             }
         }
@@ -480,11 +482,9 @@ static bool parse_r2l( sym_list_entry * stack, char * buf )
             input_cbs->sym_space = sym_space;
             break;
         case sl_split:
-            ProcFlags.substituted = true;
             if( !ProcFlags.if_cond && !ProcFlags.dd_macro && !curr->value[0] ) {
                 ProcFlags.null_value = true;
             }
-            strcat_s( buf, buf_size, tail);             // append tail to buf
             split_input_var( buf, p, &curr->value[1], true );
             input_cbs->hidden_head->fm_symbol = true;   // new logical input record
             cw_lg = 0;
@@ -499,6 +499,7 @@ static bool parse_r2l( sym_list_entry * stack, char * buf )
                     input_cbs->hidden_head->sym_space = (*(curr->start - 1) == ' ');
                 }
             }
+            *curr->start = '\0';
             break;
         default:
             internal_err( __FILE__, __LINE__ );
@@ -555,7 +556,6 @@ static sym_list_entry * parse_l2r( char * buf, bool breakable )
             curr->start = p;
             curr->end = curr->start;
             while( !is_space_tab_char( *curr->end ) && (*curr->end != '\0') ) curr->end++;
-            curr->type = sl_attrib;
             pa = valbuf;
             ppval = &pa;
 
@@ -564,19 +564,27 @@ static sym_list_entry * parse_l2r( char * buf, bool breakable )
             }
 
             curr->end = scr_single_funcs( curr->start, curr->end, ppval );
-            strcpy_s( curr->value, buf_size, valbuf );      // save value in current stack entry
+            if( ProcFlags.unresolved ) {
+                curr->type = sl_text;
+            } else {
+                curr->type = sl_attrib;
+                strcpy_s( curr->value, buf_size, valbuf );      // save value in current stack entry
+            }
         } else if( *(p + 1) == '\'' ) {          // function or text
             curr->start = p;
             p += 2;                             // over "&'"
             while( is_function_char(*p) ) p++;  // find end of function name
-
             if( *p == '(' ) {                   // &'xyz( is start of multi char function
-                curr->type = sl_funct;
                 pa = valbuf;
                 ppval = &pa;
                 valsize = buf_size - (curr->end - curr->start);
-                curr->end = scr_multi_funcs( curr->start, ppval, valsize );
-                strcpy_s( curr->value, buf_size, valbuf );  // save value in current stack entry
+                curr->end = scr_multi_funcs( curr->start, p, ppval, valsize );
+                if( ProcFlags.unresolved ) {
+                    curr->type = sl_text;
+                } else {
+                    strcpy_s( curr->value, buf_size, valbuf );  // save value in current stack entry
+                    curr->type = sl_funct;
+                }
             } else {
                 curr->end = p;
                 curr->type = sl_text;           // text
@@ -608,7 +616,8 @@ static sym_list_entry * parse_l2r( char * buf, bool breakable )
             }
             if( rc == 2 ) {             // variable found + resolved
                 if( !ProcFlags.CW_sep_ignore && breakable && CW_sep_char != 0x00 &&
-                        curr->value[0] == CW_sep_char && curr->value[1] != CW_sep_char ) {
+                        symsubval->value[0] == CW_sep_char &&
+                        symsubval->value[1] != CW_sep_char ) {
                     curr->type = sl_split;
                     strcpy_s( curr->value, buf_size, symsubval->value );  // save value in current stack entry
                     break;              // line split terminates processing
@@ -620,7 +629,7 @@ static sym_list_entry * parse_l2r( char * buf, bool breakable )
                     strcpy_s( curr->value, buf_size, symsubval->value );  // save value in current stack entry
                 }
             } else {
-                curr->type = sl_text;   // TBD
+                curr->type = sl_text;       // TBD
             }
         }
         if( *curr->end == '\0' ) {

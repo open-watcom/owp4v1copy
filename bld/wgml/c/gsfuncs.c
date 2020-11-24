@@ -194,36 +194,12 @@ static  char    * find_start_of_parm( char * pchar )
 
 
 /***************************************************************************/
-/*  err_info  give some info about error                                   */
-/***************************************************************************/
-
-static  void    err_info( char * * result )
-{
-    char                linestr[MAX_L_AS_STR];
-
-    if( input_cbs->fmflags & II_tag_mac ) {
-        ulongtodec( input_cbs->s.m->lineno, linestr );
-        g_info( inf_mac_line, linestr, input_cbs->s.m->mac->name );
-    } else {
-        ulongtodec( input_cbs->s.f->lineno, linestr );
-        g_info( inf_file_line, linestr, input_cbs->s.f->filename );
-    }
-    err_count++;
-    show_include_stack();
-
-    **result = '&';                 // result is & to preserve the input
-    *result += 1;
-    **result = '\0';
-}
-
-
-/***************************************************************************/
 /*  scr_multi_funcs  isolate function name, lookup name in table           */
 /*                   scan function arguments                               */
 /*                   call corresponding function                           */
 /***************************************************************************/
 
-char  * scr_multi_funcs( char * in, char ** result, int32_t valsize )
+char * scr_multi_funcs( char * in, char * pstart, char ** result, int32_t valsize )
 {
     bool                found;
     char                fn[FUN_NAME_LENGTH + 1];
@@ -244,14 +220,16 @@ char  * scr_multi_funcs( char * in, char ** result, int32_t valsize )
     parm                parms[MAX_FUN_PARMS];
     size_t              fnlen;
 
+    /* pstart points to the outer open parenthesis ('(') */
+
+    ProcFlags.unresolved = false;
     in_wk = NULL;                       // no result buffer yet
     rc = 0;
-    fnlen = 0;
     pchar = in + 2;                     // over &' to function name
-    p_level = 0;
 
     // find true end of function
-    p = pchar;
+    p = pstart;
+    p_level = 0;
     while( *p != '\0' ) {               // to end of buffer
         if( *p == '(' ) {
             p_level++;
@@ -266,14 +244,16 @@ char  * scr_multi_funcs( char * in, char ** result, int32_t valsize )
     }
 
     if( p_level > 0 ) {                 // at least one missing ')'
-        xx_line_err( err_func_parm_end, buff2 );
+        xx_line_err( err_func_parm_end, p - 1 );
+        return( pret );                 // avoid endless loop
     }
 
     pret = p;                           // save for return (points to final ')')
 
     // collect function name
-    while( *pchar && pchar <= pend && is_function_char( *pchar ) ) {
-        fn[fnlen] = *pchar++;
+    fnlen = 0;
+    for( pchar; pchar< pstart; pchar++  ) {
+        fn[fnlen] = *pchar;
         if( fnlen < FUN_NAME_LENGTH ) {
             fnlen++;
         } else {
@@ -281,12 +261,6 @@ char  * scr_multi_funcs( char * in, char ** result, int32_t valsize )
         }
     }
     fn[fnlen] = '\0';
-
-    if( *pchar != '(' ) {         // open paren does not follow function name
-        g_err( err_func_parm_miss );
-        err_info( result );
-        return( in + 1 );               // avoid endless loop
-    }
 
     // test for valid functionname
     found = false;
@@ -304,10 +278,8 @@ char  * scr_multi_funcs( char * in, char ** result, int32_t valsize )
     }
     if( !found ) {
         xx_val_line_warn( err_func_name, fn, in + 2 );
-        **result = '&';                 // result is & to preserve the input
-        *result += 1;
-        **result = '\0';
-        return( pret );                 // avoid endless loop
+        ProcFlags.unresolved = true;
+        return( pstart );
     }
     funcind = k;
 
@@ -336,9 +308,8 @@ char  * scr_multi_funcs( char * in, char ** result, int32_t valsize )
     m = k + (k < scr_functions[funcind].parm_cnt);// mandatory parm count
 
     if( m < scr_functions[funcind].parm_cnt ) {
-        g_err( err_func_parm_miss );
-        err_info( result );
-        return( in + 1 );               // avoid endless loop
+        xx_line_err( err_func_parm_miss, p - 1 );
+        return( pret );
     }
 
     // collect the optional parm(s)
@@ -419,7 +390,7 @@ char  * scr_multi_funcs( char * in, char ** result, int32_t valsize )
 
         ProcFlags.unresolved = true;
 
-        return( in + 1 );
+        return( pstart );
     }
 
     ProcFlags.substituted = true;

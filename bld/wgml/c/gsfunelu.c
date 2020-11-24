@@ -351,19 +351,11 @@ static char *scr_single_func_x( char * in, char * end, char * * result )
 
 static char *scr_single_func_unsupport( char * in, char * * result )
 {
-    char        linestr[MAX_L_AS_STR];
     char        charstr[2];
 
     charstr[0] = *(in + 1);
     charstr[1] = '\0';
-    g_warn( wng_func_unsupport, charstr );
-    if( input_cbs->fmflags & II_tag_mac ) {
-        ulongtodec( input_cbs->s.m->lineno, linestr );
-        g_info( inf_mac_line, linestr, input_cbs->s.m->mac->name );
-    } else {
-        ulongtodec( input_cbs->s.f->lineno, linestr );
-        g_info( inf_file_line, linestr, input_cbs->s.f->filename );
-    }
+    xx_val_line_warn( wng_func_unsupport, charstr, in + 2 );
 
     // do nothing
     return( in + 3 );
@@ -391,6 +383,7 @@ char *scr_single_funcs( char * in, char * end, char * * result )
 {
     char            *   pw;
 
+    ProcFlags.unresolved = false;
     if( *(in + 2) == '\'' ) {
         switch( *(in + 1) ) {
         case  'e' :                     // exist function
@@ -416,13 +409,11 @@ char *scr_single_funcs( char * in, char * end, char * * result )
             break;
         default:
             pw = scr_single_func_unsupport( in, result );
-            wng_count++;
+            ProcFlags.unresolved = true;
             break;
         }
     } else {
-        out_msg( "ERR_Logic error in gsfunelu.c\n" );
-        err_count++;
-        g_suicide();
+        internal_err( __FILE__, __LINE__ );
     }
     ProcFlags.substituted = true;
     return( pw );
