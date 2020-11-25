@@ -243,11 +243,6 @@ char * scr_multi_funcs( char * in, char * pstart, char ** result, int32_t valsiz
         p++;
     }
 
-    if( p_level > 0 ) {                 // at least one missing ')'
-        xx_line_err( err_func_parm_end, p - 1 );
-        return( pret );                 // avoid endless loop
-    }
-
     pret = p;                           // save for return (points to final ')')
 
     // collect function name
@@ -276,6 +271,12 @@ char * scr_multi_funcs( char * in, char * pstart, char ** result, int32_t valsiz
             break;
         }
     }
+
+    if( found && (p_level > 0) ) {      // at least one missing ')'
+        xx_line_err( err_func_parm_end, p - 1 );
+        return( pret );
+    }
+
     if( !found ) {
         xx_val_line_warn( err_func_name, fn, in + 2 );
         ProcFlags.unresolved = true;

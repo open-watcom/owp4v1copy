@@ -482,6 +482,7 @@ static bool parse_r2l( sym_list_entry * stack, char * buf )
             input_cbs->sym_space = sym_space;
             break;
         case sl_split:
+            ProcFlags.substituted = true;
             if( !ProcFlags.if_cond && !ProcFlags.dd_macro && !curr->value[0] ) {
                 ProcFlags.null_value = true;
             }

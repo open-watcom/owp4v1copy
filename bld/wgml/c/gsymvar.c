@@ -177,6 +177,7 @@ char * finalize_subscript( char * in, char ** result, bool breakable )
     }
 
     if( p_level > 0 ) {                 // at least one missing ')'
+//// is this an error in wgml 4.0? the message should differ!
         xx_line_err( err_func_parm_end, buff2 );
     }
 
@@ -247,6 +248,7 @@ char * finalize_subscript( char * in, char ** result, bool breakable )
                         strcpy_s( *result, buf_size, symsubval->value );  // overwrite entry
                     }
                 } else {
+//// what should go here????
                 }
             }
         }
