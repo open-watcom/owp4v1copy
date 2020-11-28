@@ -517,15 +517,15 @@ static bool parse_r2l( sym_list_entry * stack, char * buf )
 /*  parse the current input buffer from left to right, building a stack of */
 /*  sym_list_entry instances                                               */
 /*  fully resolve all items                                                */
-/*  if breakable is true, then:                                            */
+/*  if splittable is true, then:                                           */
 /*    return when a symbol (as opposed to an attribute or a function) has  */
 /*    a value which starts with the control word separator (";" by         */
 /*    default) or the end of buf is reached                                */
-/*  if breakable is false, then:                                           */
+/*  if splittable is false, then:                                          */
 /*    return only when the end of buf is reached                           */
 /***************************************************************************/
 
-static sym_list_entry * parse_l2r( char * buf, bool breakable )
+static sym_list_entry * parse_l2r( char * buf, bool splittable )
 {
     char            *       p;
     char            *       pa;
@@ -599,14 +599,34 @@ static sym_list_entry * parse_l2r( char * buf, bool breakable )
             p = scan_sym( symstart, &symvar_entry, &var_ind );
             ProcFlags.suppress_msg = false;
             curr->end = p;
-            if( scan_err && *p == '(' ) {    // problem with subscript
-                pa = valbuf;
-                ppval = &pa;
-                curr->end = finalize_subscript( curr->start, ppval, valsize );
-                strcpy_s( curr->value, buf_size, valbuf );  // save value in current stack entry
-                var_ind = atol( curr->value );  // save value for use
-                *curr->value = '\0';            // overwrite with nothing
-                curr->end++;                    // over ')'
+             if( scan_err ) {                // problem with subscript
+                if( *p == '(' ) {   
+                    pa = valbuf;
+                    ppval = &pa;
+                    curr->end = finalize_subscript( curr->start, p, ppval, valsize );
+                    if( ProcFlags.unresolved ) {
+                        curr->type = sl_text;
+                        if( *curr->end == '\0' ) {
+                            break;                      // end of text terminates processing
+                        }
+                        p = curr->end;                  // skip argument
+                        p = strchr( p, ampchar );       // look for next & in buffer
+                        continue;                       // resume processing
+                    } else {
+                        if( !ProcFlags.CW_sep_ignore && splittable && (CW_sep_char != 0x00) &&
+                                (valbuf[0] == CW_sep_char) &&
+                                (valbuf[1] != CW_sep_char) ) {
+                            strcpy_s( curr->value, buf_size, valbuf );  // repurpose curr
+                            curr->start = p + 1;                        // & of symbol causing split
+                            curr->type = sl_split;                        
+                            break;              // line split terminates processing
+                        } else {
+                            var_ind = atol( valbuf );       // save value for use
+                            *curr->value = '\0';            // overwrite with nothing
+                            curr->end++;                    // over ')'
+                        }
+                    }
+                }
             }
             if( symvar_entry.flags & local_var ) {  // lookup var in dict
                 rc = find_symvar_l( &input_cbs->local_dict, symvar_entry.name,
@@ -616,7 +636,7 @@ static sym_list_entry * parse_l2r( char * buf, bool breakable )
                                   &symsubval );
             }
             if( rc == 2 ) {             // variable found + resolved
-                if( !ProcFlags.CW_sep_ignore && breakable && CW_sep_char != 0x00 &&
+                if( !ProcFlags.CW_sep_ignore && splittable && CW_sep_char != 0x00 &&
                         symsubval->value[0] == CW_sep_char &&
                         symsubval->value[1] != CW_sep_char ) {
                     curr->type = sl_split;
@@ -649,7 +669,7 @@ static sym_list_entry * parse_l2r( char * buf, bool breakable )
 /*  currently, this is done using two helper functions                     */
 /***************************************************************************/
 
-bool resolve_symvar_functions( char * buf, bool breakable )
+bool resolve_symvar_functions( char * buf, bool splittable )
 {
     bool                anything_substituted    = false;
     sym_list_entry  *   stack;
@@ -657,14 +677,14 @@ bool resolve_symvar_functions( char * buf, bool breakable )
     if( buf == NULL ) {
         return( false );                    // no text to process
     }
-    stack = parse_l2r( buf, breakable );
+    stack = parse_l2r( buf, splittable );
     if( stack == NULL ) {
         return( false);                     // no stack to process
     }
     parse_r2l( stack, buf );
     anything_substituted |= ProcFlags.substituted;
     while( ProcFlags.substituted ) {
-        stack = parse_l2r( buf, breakable );
+        stack = parse_l2r( buf, splittable );
         if( stack == NULL ) {
             break;                      // no stack to process
         }

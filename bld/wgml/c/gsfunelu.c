@@ -355,7 +355,6 @@ static char *scr_single_func_unsupport( char * in, char * * result )
 
     charstr[0] = *(in + 1);
     charstr[1] = '\0';
-    xx_val_line_warn( wng_func_unsupport, charstr, in + 2 );
 
     // do nothing
     return( in + 3 );

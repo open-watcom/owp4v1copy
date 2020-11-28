@@ -253,7 +253,7 @@ pick( ERR_FUNC_PARM_MISS,       "Function parms missing",
 pick( ERR_FUNC_PARM_END,        "The symbol function is missing a right parenthesis",
                                 "The symbol function is missing a right parenthesis" )
 
-pick( ERR_FUNC_NAME,            "Unknown function '%s'",
+pick( WNG_FUNC_NAME,            "Unknown function '%s'",
                                 "Unknown function '%s'" )
 
 pick( WNG_FUNC_UNSUPPORT,       "Function unsupported &%s",

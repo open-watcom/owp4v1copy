@@ -38,10 +38,12 @@
 
 char    *scan_sym( char * p, symvar * sym, sub_index * subscript )
 {
-    size_t      k;
-    char    *   sym_start;
-    char        quote;
     char        linestr[MAX_L_AS_STR];
+    char    *   pend;
+    char        quote;
+    char    *   sym_start;
+    int         p_level;
+    size_t      k;
 
     scan_err = false;
     sym->next = NULL;
@@ -121,59 +123,78 @@ char    *scan_sym( char * p, symvar * sym, sub_index * subscript )
         symsub  *   symsubval;
         int         rc;
 
-        p++;
-        if( *p == ')' ) {               // () is auto increment
+        // find true end of subscript
+        p_level = 0;
+        while( *p != '\0' ) {               // to end of buffer
+            if( *p == '(' ) {
+                p_level++;
+            } else if( *p == ')' ) {
+                p_level--;
+                if( p_level == 0 ) {
+                    break;
+                }
+            }
             p++;
-            var_ind = 0;
-            if( sym->flags & local_var )  {
-                rc = find_symvar( &input_cbs->local_dict, sym->name,
-                              var_ind, &symsubval );
-            } else {
-                rc = find_symvar( &global_dict, sym->name, var_ind,
-                                  &symsubval );
-            }
-            if( rc > 0 ) {              // variable exists use last_auto_inc
-                *subscript = symsubval->base->last_auto_inc + 1;
-            } else {
-                *subscript = 1;         // start with index 1
-            }
-            sym->flags |= auto_inc + subscripted;
+        }
+        pend = p;                           // pend points to outermost ')'
+
+        if( p_level > 0 ) {                 // at least one missing ')'
+            /* Note: missing ')' is not an error in wgml 4.0 */
+            scan_err = true;
         } else {
-            getnum_block    gn;
-            condcode        cc;
-            char            csave;
-
-            gn.argstart      = p;
-            while( *p != '\0' && (*p != ')') ) {
+            p = psave + 1;
+            if( *p == ')' ) {               // () is auto increment
                 p++;
-            }
-            gn.argstop       = p - 1;
-            csave            = *p;
-            *p               = '\0';    // make nul terminated string
-            gn.ignore_blanks = 0;
+                var_ind = 0;
+                if( sym->flags & local_var )  {
+                    rc = find_symvar( &input_cbs->local_dict, sym->name, var_ind, &symsubval );
+                } else {
+                    rc = find_symvar( &global_dict, sym->name, var_ind, &symsubval );
+                }
+                if( rc > 0 ) {              // variable exists use last_auto_inc
+                    *subscript = symsubval->base->last_auto_inc + 1;
+                } else {
+                    *subscript = 1;         // start with index 1
+                }
+                sym->flags |= auto_inc + subscripted;
+            } else {
+                getnum_block    gn;
+                condcode        cc;
+                char            csave;
 
-            cc = getnum( &gn );     // try numeric expression evaluation
-
-            *p = csave;
-            if( cc == pos || cc == neg ) {
-                *subscript = gn.result;
-                if( *p == ')' ) {
+                gn.argstart      = p;
+                while( *p != '\0' && (*p != ')') ) {
                     p++;
                 }
-                SkipDot( p );
-                sym->flags |= subscripted;
-            } else {
-                if( !scan_err && !ProcFlags.suppress_msg ) {
-                    g_err( err_sub_invalid, psave );
-                    err_count++;
-                    show_include_stack();
-                }
-                scan_err = true;
-            }
 
-            if( scan_err ) {
-               p = psave;
+                gn.argstop       = p - 1;
+                csave            = *p;
+                *p               = '\0';    // make nul terminated string
+                gn.ignore_blanks = 0;
+
+                cc = getnum( &gn );     // try numeric expression evaluation
+
+                *p = csave;
+                if( cc == pos || cc == neg ) {
+                    *subscript = gn.result;
+                    if( *p == ')' ) {
+                        p++;
+                    }
+                    SkipDot( p );
+                    sym->flags |= subscripted;
+                } else {
+                    if( !scan_err && !ProcFlags.suppress_msg ) {
+                        g_err( err_sub_invalid, psave );
+                        err_count++;
+                        show_include_stack();
+                    }
+                    scan_err = true;
+                }
+
             }
+        }
+        if( scan_err ) {
+           p = psave;
         }
     }
     return( p );

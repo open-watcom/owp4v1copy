@@ -141,7 +141,7 @@ static void print_sym_entry( symvar * wk, int * symcnt, int * symsubcnt )
 /*  finalize the subscript value                                           */
 /***************************************************************************/
 
-char * finalize_subscript( char * in, char ** result, bool breakable )
+char * finalize_subscript( char * in, char * pstart, char ** result, bool splittable )
 {
     char            *       p;                  // points into input buffer
     char            *       pa;                 // start of valbuf
@@ -158,27 +158,29 @@ char * finalize_subscript( char * in, char ** result, bool breakable )
     symsub          *       symsubval;          // value of symbol
     symvar                  symvar_entry;
 
+    ProcFlags.unresolved = false;
     pchar = in + 1;                     // over & to subscript token start
     p_level = 0;
 
     // find true end of subscript
-    p = pchar;
+    p = pstart;
     while( *p != '\0' ) {               // to end of buffer
         if( *p == '(' ) {
             p_level++;
         } else if( *p == ')' ) {
             p_level--;
             if( p_level == 0 ) {
-                pend = p;               // pend points to outermost ')'
                 break;
             }
         }
         p++;
     }
+    pend = p;                           // pend points to outermost ')'
 
     if( p_level > 0 ) {                 // at least one missing ')'
-//// is this an error in wgml 4.0? the message should differ!
-        xx_line_err( err_func_parm_end, buff2 );
+        /* Note: missing ')' is not an error in wgml 4.0 */
+        ProcFlags.unresolved = true;
+        return( pstart );
     }
 
     pret = p;                           // save for return (points to final ')')
@@ -223,8 +225,7 @@ char * finalize_subscript( char * in, char ** result, bool breakable )
             if( scan_err && *p == '(' ) {    // problem with subscript
                 pa = valbuf;
                 ppval = &pa;
-                pchar = finalize_subscript( p + 1, ppval, valsize );
-                strcpy_s( *result, buf_size, valbuf );  // save value in current stack entry
+                pchar = finalize_subscript( p + 1, pstart, ppval, valsize );
                 var_ind = atol( valbuf );  // save value for use
                 **result = '\0';            // overwrite with nothing
                 while( *pchar != ')' ) {
@@ -239,16 +240,9 @@ char * finalize_subscript( char * in, char ** result, bool breakable )
                                       &symsubval );
                 }
                 if( rc == 2 ) {             // variable found + resolved
-                    if( !ProcFlags.CW_sep_ignore && breakable && (CW_sep_char != 0x00) &&
-                            (symsubval->value[0] == CW_sep_char) &&
-                            (symsubval->value[1] != CW_sep_char) ) {
-                        strcpy_s( *result, buf_size, symsubval->value );  // overwrite entry
-                        break;              // line split terminates processing
-                    } else {
-                        strcpy_s( *result, buf_size, symsubval->value );  // overwrite entry
-                    }
+                    strcpy_s( *result, buf_size, symsubval->value );  // overwrite entry
                 } else {
-//// what should go here????
+                    ProcFlags.unresolved = true;
                 }
             }
         }
