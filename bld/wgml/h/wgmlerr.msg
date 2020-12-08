@@ -238,8 +238,8 @@ pick( ERR_SYM_LONG,             "Symbol name too long '%s'",
 pick( INF_SYM_10,               "The length of a symbol cannot exceed 10 characters\n",
                                 "The length of a symbol cannot exceed 10 characters\n" )
 
-pick( ERR_SUB_INVALID,          "Subscript invalid %s",
-                                "Subscript invalid %s" )
+pick( ERR_SUB_INVALID,          "Subscript invalid",
+                                "Subscript invalid" )
 
 pick( WNG_MISS_INV_VALUE,       "Invalid / missing value for %s: %s",
                                 "Invalid / missing value for %s: %s" )

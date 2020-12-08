@@ -135,7 +135,7 @@ static  condcode    scr_veclp( parm parms[MAX_FUN_PARMS], size_t parmcount,
         c = *(phayend + 1);
         *(phayend + 1) = '\0';
 
-        scan_sym( phay, &symvar_entry, &var_ind );
+        scan_sym( phay, &symvar_entry, &var_ind, NULL, false );
 
         *(phayend + 1) = c;
         ProcFlags.suppress_msg = suppress_msg;;

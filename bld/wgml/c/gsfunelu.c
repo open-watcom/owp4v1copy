@@ -49,7 +49,7 @@ static char *scr_single_func_e( char * in, char * end, char * * result )
 
     end   = end;
 
-    pchar = scan_sym( in + 3 + (*(in + 3) == '&'), &symvar_entry, &var_ind );
+    pchar = scan_sym( in + 3 + (*(in + 3) == '&'), &symvar_entry, &var_ind, NULL, false );
 
     if( symvar_entry.flags & local_var ) {  // lookup var in dict
         rc = find_symvar_l( &input_cbs->local_dict, symvar_entry.name,
@@ -86,7 +86,7 @@ static char *scr_single_func_l( char * in, char * end, char * * result )
     int                 len;
 
     if( *(in + 3) == '&' ) {            // symbol name
-        pchar = scan_sym( in + 4, &symvar_entry, &var_ind );
+        pchar = scan_sym( in + 4, &symvar_entry, &var_ind, NULL, false );
 
         if( symvar_entry.flags & local_var ) {  // lookup var in dict
             rc = find_symvar_l( &input_cbs->local_dict, symvar_entry.name,
@@ -139,7 +139,7 @@ static char *scr_single_func_sS( char * in, char * end, char * * result, char fu
     *result += 1;
 
     if( *(in + 3) == '&' ) {            // symbol name
-        pchar = scan_sym( in + 4, &symvar_entry, &var_ind );
+        pchar = scan_sym( in + 4, &symvar_entry, &var_ind, NULL, false );
 
         if( symvar_entry.flags & local_var ) {  // lookup var in dict
             rc = find_symvar_l( &input_cbs->local_dict, symvar_entry.name,
@@ -193,7 +193,7 @@ static char *scr_single_func_u( char * in, char * end, char * * result )
 
 
     if( *(in + 3) == '&' ) {            // symbol name
-        pchar = scan_sym( in + 4, &symvar_entry, &var_ind );
+        pchar = scan_sym( in + 4, &symvar_entry, &var_ind, NULL, false );
 
         if( symvar_entry.flags & local_var ) {  // lookup var in dict
             rc = find_symvar_l( &input_cbs->local_dict, symvar_entry.name,
@@ -243,7 +243,7 @@ static char *scr_single_func_w( char * in, char * end, char * * result )
     uint32_t            width;
 
     if( *(in + 3) == '&' ) {            // symbol name
-        pchar = scan_sym( in + 4, &symvar_entry, &var_ind );
+        pchar = scan_sym( in + 4, &symvar_entry, &var_ind, NULL, false );
 
         if( symvar_entry.flags & local_var ) {  // lookup var in dict
             rc = find_symvar_l( &input_cbs->local_dict, symvar_entry.name,

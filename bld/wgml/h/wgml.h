@@ -315,11 +315,12 @@ extern  void    do_force_pc( char * p );
 
 
 /* gprocess.c                           */
-extern  void                classify_record( char firstchar );
-extern  void                process_late_subst( char * buf );
-extern  void                process_line( void );
-extern  bool                resolve_symvar_functions( char * buf, bool splittable );
-extern  void                split_input( char * buf, char * split_pos, bool startofline );
+extern  void        classify_record( char firstchar );
+extern  void        finalize_subscript( char * * result, bool splittable );
+extern  void        process_late_subst( char * buf );
+extern  void        process_line( void );
+extern  bool        resolve_symvar_functions( char * buf, bool splittable );
+extern  void        split_input( char * buf, char * split_pos, bool startofline );
 
 
 /* gproctxt.c                           */
@@ -408,7 +409,7 @@ extern  void    show_ifcb( char * txt, ifcb * cb );
 
 
 /* gsetvar.c                            */
-extern char *   scan_sym( char * p, symvar * sym, sub_index * subscript );
+extern char *   scan_sym( char * p, symvar * sym, sub_index * subscript, char * * result, bool splittable );
 
 
 /* gsmacro.c                            */
@@ -429,7 +430,6 @@ extern  void    close_all_pu_files( void );
 /* gsymvar.c                            */
 extern void     init_dict( symvar * * dict );
 extern void     free_dict( symvar * * dict );
-extern char *   finalize_subscript(  char * in, char * pstart, char ** result, bool splittable );
 extern int      find_symvar( symvar * * dict, char * name, sub_index subscript, symsub * * symsubval );
 extern int      find_symvar_l( symvar * * dict, char * name, sub_index subscript, symsub * * symsubval );
 extern int      add_symvar( symvar * * dict, char * name, char * val, sub_index subscript, symbol_flags f );

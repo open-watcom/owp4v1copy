@@ -1062,7 +1062,7 @@ static  void    init_predefined_symbols( void )
     char    wkstring[MAX_L_AS_STR];
 
     add_symvar( &global_dict, "amp", "&", no_subscript,
-                late_subst+predefined );
+                is_AMP+predefined );
 
     wkstring[1] = '\0';
     wkstring[0] = GML_CHAR_DEFAULT;

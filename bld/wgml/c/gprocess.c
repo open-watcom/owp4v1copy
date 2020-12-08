@@ -35,7 +35,7 @@ static  bool        sym_space;          // compiler workaround
 
 /***************************************************************************/
 /*  perform symbol substitution on certain special symbols:                */
-/*    AMP (identied by the late_subst tag)                                 */
+/*    AMP (identied by the is_AMP tag)                                     */
 /*    any symbol whose value is a single character matching GML_char (':'  */
 /*      by default)                                                        */
 /*  all other items starting with '&' are treated as text                  */
@@ -67,7 +67,7 @@ void process_late_subst( char * buf )
             symstart = p;                       // remember start of symbol name
             scan_err = false;
             ProcFlags.suppress_msg = true;
-            p = scan_sym( symstart, &symvar_entry, &var_ind );
+            p = scan_sym( symstart, &symvar_entry, &var_ind, NULL, false );
             ProcFlags.suppress_msg = false;
             tokenend = p;
             if( !scan_err ) {                   // potentially qualifying symbol
@@ -79,7 +79,7 @@ void process_late_subst( char * buf )
                                       &symsubval );
                 }
                 if( rc == 2 ) {             // variable found + resolved
-                    if( (symsubval->base->flags & late_subst) ||
+                    if( (symsubval->base->flags & is_AMP) ||
                             ((symsubval->value[0] == GML_char) && (symsubval->value[1] == '\0')) ) {
                         /* replace symbol with value */
                         strcpy_s( tail, buf_size, tokenend );       // copy tail
@@ -553,23 +553,28 @@ static sym_list_entry * parse_l2r( char * buf, bool splittable )
             curr->start = p;
             curr->end = p + 2;
             curr->type = sl_text;               // text
-        } else if( my_isalpha( p[1] ) && p[2] == '\'' && p[3] > ' ' ) {   // attribute
+        } else if( my_isalpha( p[1] ) && (p[2] == '\'') ) {   // attribute or text
             curr->start = p;
-            curr->end = curr->start;
-            while( !is_space_tab_char( *curr->end ) && (*curr->end != '\0') ) curr->end++;
-            pa = valbuf;
-            ppval = &pa;
+            if( (p[3] > ' ') ) {
+                curr->end = curr->start;
+                while( !is_space_tab_char( *curr->end ) && (*curr->end != '\0') ) curr->end++;
+                pa = valbuf;
+                ppval = &pa;
 
-            if( GlobalFlags.firstpass && (input_cbs->fmflags & II_research) ) {
-                add_single_func_research( curr->start + 1 );
-            }
+                if( GlobalFlags.firstpass && (input_cbs->fmflags & II_research) ) {
+                    add_single_func_research( curr->start + 1 );
+                }
 
-            curr->end = scr_single_funcs( curr->start, curr->end, ppval );
-            if( ProcFlags.unresolved ) {
-                curr->type = sl_text;
+                curr->end = scr_single_funcs( curr->start, curr->end, ppval );
+                if( ProcFlags.unresolved ) {
+                    curr->type = sl_text;
+                } else {
+                    curr->type = sl_attrib;
+                    strcpy_s( curr->value, buf_size, valbuf );      // save value in current stack entry
+                }
             } else {
-                curr->type = sl_attrib;
-                strcpy_s( curr->value, buf_size, valbuf );      // save value in current stack entry
+                curr->type = sl_text;
+                curr->end = curr->start + 3;
             }
         } else if( *(p + 1) == '\'' ) {          // function or text
             curr->start = p;
@@ -596,61 +601,57 @@ static sym_list_entry * parse_l2r( char * buf, bool splittable )
             symstart = p;                       // remember start of symbol name
             scan_err = false;
             ProcFlags.suppress_msg = true;
-            p = scan_sym( symstart, &symvar_entry, &var_ind );
+            pa = valbuf;
+            ppval = &pa;
+            p = scan_sym( symstart, &symvar_entry, &var_ind, ppval, splittable );
             ProcFlags.suppress_msg = false;
             curr->end = p;
-             if( scan_err ) {                // problem with subscript
-                if( *p == '(' ) {   
-                    pa = valbuf;
-                    ppval = &pa;
-                    curr->end = finalize_subscript( curr->start, p, ppval, valsize );
-                    if( ProcFlags.unresolved ) {
-                        curr->type = sl_text;
-                        if( *curr->end == '\0' ) {
-                            break;                      // end of text terminates processing
-                        }
-                        p = curr->end;                  // skip argument
-                        p = strchr( p, ampchar );       // look for next & in buffer
-                        continue;                       // resume processing
+            if( scan_err ) {                        // problem with subscript
+                if( ProcFlags.unresolved ) {
+                    curr->type = sl_text;
+                    if( *curr->end == '\0' ) {
+                        break;                      // end of text terminates processing
+                    }
+                    p = curr->end;                  // skip argument
+                    p = strchr( p, ampchar );       // look for next & in buffer
+                } else {
+                    if( !ProcFlags.CW_sep_ignore && splittable && (CW_sep_char != 0x00) &&
+                            (valbuf[0] == CW_sep_char) &&
+                            (valbuf[1] != CW_sep_char) ) {
+                        strcpy_s( curr->value, buf_size, valbuf );  // repurpose curr
+                        curr->start = p + 1;                        // & of symbol causing split
+                        curr->type = sl_split;                        
+                        break;              // line split terminates processing
                     } else {
-                        if( !ProcFlags.CW_sep_ignore && splittable && (CW_sep_char != 0x00) &&
-                                (valbuf[0] == CW_sep_char) &&
-                                (valbuf[1] != CW_sep_char) ) {
-                            strcpy_s( curr->value, buf_size, valbuf );  // repurpose curr
-                            curr->start = p + 1;                        // & of symbol causing split
-                            curr->type = sl_split;                        
-                            break;              // line split terminates processing
-                        } else {
-                            var_ind = atol( valbuf );       // save value for use
-                            *curr->value = '\0';            // overwrite with nothing
-                            curr->end++;                    // over ')'
-                        }
+                        var_ind = atol( valbuf );       // save value for use
+                        *curr->value = '\0';            // overwrite with nothing
+                        curr->type = sl_text;                        
                     }
                 }
-            }
-            if( symvar_entry.flags & local_var ) {  // lookup var in dict
-                rc = find_symvar_l( &input_cbs->local_dict, symvar_entry.name,
-                                    var_ind, &symsubval );
             } else {
-                rc = find_symvar( &global_dict, symvar_entry.name, var_ind,
-                                  &symsubval );
-            }
-            if( rc == 2 ) {             // variable found + resolved
-                if( !ProcFlags.CW_sep_ignore && splittable && CW_sep_char != 0x00 &&
-                        symsubval->value[0] == CW_sep_char &&
-                        symsubval->value[1] != CW_sep_char ) {
-                    curr->type = sl_split;
-                    strcpy_s( curr->value, buf_size, symsubval->value );  // save value in current stack entry
-                    break;              // line split terminates processing
-                } else if( (symsubval->base->flags & late_subst) ||
-                        ((symsubval->value[0] == GML_char) && (symsubval->value[1] == '\0')) ) {
-                    curr->type = sl_text;   // save for late substitution
+                if( symvar_entry.flags & local_var ) {  // lookup var in dict
+                    rc = find_symvar_l( &input_cbs->local_dict, symvar_entry.name, var_ind,
+                                        &symsubval );
                 } else {
-                    curr->type = sl_symbol;
-                    strcpy_s( curr->value, buf_size, symsubval->value );  // save value in current stack entry
+                    rc = find_symvar( &global_dict, symvar_entry.name, var_ind, &symsubval );
                 }
-            } else {
-                curr->type = sl_text;       // TBD
+                if( rc == 2 ) {             // variable found + resolved
+                    if( !ProcFlags.CW_sep_ignore && splittable && CW_sep_char != 0x00 &&
+                            symsubval->value[0] == CW_sep_char &&
+                            symsubval->value[1] != CW_sep_char ) {
+                        curr->type = sl_split;
+                        strcpy_s( curr->value, buf_size, symsubval->value );  // save value in current stack entry
+                        break;              // line split terminates processing
+                    } else if( (symsubval->base->flags & is_AMP) ||
+                            ((symsubval->value[0] == GML_char) && (symsubval->value[1] == '\0')) ) {
+                        curr->type = sl_text;   // save for late substitution
+                    } else {
+                        curr->type = sl_symbol;
+                        strcpy_s( curr->value, buf_size, symsubval->value );  // save value in current stack entry
+                    }
+                } else {
+                    curr->type = sl_text;
+                }
             }
         }
         if( *curr->end == '\0' ) {
@@ -693,6 +694,91 @@ bool resolve_symvar_functions( char * buf, bool splittable )
     }
     
     return( anything_substituted );
+}
+
+
+/***************************************************************************/
+/*  finalize the subscript value                                           */
+/*  returns true if a split should be done; false otherwise                */
+/*  NOTE: this only works if the first character in *value is '&'          */
+/*        further work will, no doubt, be needed                           */
+/***************************************************************************/
+
+void finalize_subscript( char * * result, bool splittable )
+{
+    char        *       p;                  // points into input buffer
+    char        *       pa;                 // start of valbuf
+    char        *       pchar;              // points into input buffer
+    char        *   *   ppval;              // points to pointer into resbuf
+    char        *       symstart;           // start of symbol name
+    char                valbuf[BUF_SIZE];   // buffer for attribute function and function values
+    int                 rc;
+    int32_t             valsize;
+    sub_index           var_ind;            // subscript value
+    symsub      *       symsubval;          // value of symbol
+    symvar              symvar_entry;
+
+    ProcFlags.unresolved = false;
+
+    if( **result == ampchar ) {
+        p = *result;
+        if( *(p + 1) == ' ' ) {         // not a symbol substition, attribute, or function
+            p++;                        // over '&'
+        } else if( my_isalpha( p[1] ) && p[2] == '\'' && p[3] > ' ' ) { // attribute
+            pchar = p + 2;
+            while( !is_space_tab_char( *pchar ) && (*pchar != '\0') ) pchar++;
+            pa = valbuf;
+            ppval = &pa;
+
+            if( GlobalFlags.firstpass && (input_cbs->fmflags & II_research) ) {
+                add_single_func_research( p + 1 );
+            }
+
+            pchar = scr_single_funcs( p, pchar, ppval );
+            strcpy_s( *result, buf_size, valbuf );
+        } else if( *(p + 1) == '\'' ) {                 // function or text
+            pchar = p + 2;                              // over "&'"
+            while( is_function_char(*pchar) ) pchar++;  // find end of function name
+
+            if( *pchar == '(' ) {                       // &'xyz( is start of multi char function
+                pa = valbuf;
+                ppval = &pa;
+                valsize = buf_size - (pchar - p);
+                pchar = scr_multi_funcs( p, pchar, ppval, valsize );
+                strcpy_s( *result, buf_size, valbuf );  // save value in current stack entry
+            } else {
+                pchar = p;
+            }
+        } else {                                        // symbol
+            pchar = p + 1;                              // over '&'
+            symstart = pchar;                           // remember start of symbol name
+            scan_err = false;
+            pa = valbuf;
+            ppval = &pa;
+            pchar = scan_sym( symstart, &symvar_entry, &var_ind, ppval, splittable );
+            if( scan_err ) {                            // problem with subscript
+                var_ind = atol( valbuf );  // save value for use
+                **result = '\0';            // overwrite with nothing
+                while( *pchar != ')' ) {
+                    pchar++;      // forward to ')'
+                }
+            } else {
+                if( symvar_entry.flags & local_var ) {  // lookup var in dict
+                    rc = find_symvar_l( &input_cbs->local_dict, symvar_entry.name,
+                                        var_ind, &symsubval );
+                } else {
+                    rc = find_symvar( &global_dict, symvar_entry.name, var_ind,
+                                      &symsubval );
+                }
+                if( rc == 2 ) {             // variable found + resolved
+                    strcpy_s( *result, buf_size, symsubval->value );  // overwrite entry
+                } else {
+                    ProcFlags.unresolved = true;
+                }
+            }
+        }
+    }
+    return;
 }
 
 

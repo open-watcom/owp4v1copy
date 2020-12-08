@@ -183,7 +183,7 @@ typedef enum {
 //    type_str    = 0x0080,
 //    type_char   = 0x0100,
     access_fun  = 0x0200,               // get value via function call
-    late_subst  = 0x0400,               // substituted not too early
+    is_AMP      = 0x0400,               // identify predefined symbol AMP
     deleted     = 0x0800
 } symbol_flags;
 

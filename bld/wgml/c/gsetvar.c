@@ -36,7 +36,7 @@
 /* construct symbol name and optionally subscript from input               */
 /***************************************************************************/
 
-char    *scan_sym( char * p, symvar * sym, sub_index * subscript )
+char * scan_sym( char * p, symvar * sym, sub_index * subscript, char * * result, bool splittable )
 {
     char        linestr[MAX_L_AS_STR];
     char    *   pend;
@@ -103,7 +103,7 @@ char    *scan_sym( char * p, symvar * sym, sub_index * subscript )
     }
 
     if( p == sym_start ) {              // special for &*
-        if( *p != '&' ) {               // not &*&xx construct
+        if( *p != ampchar ) {           // not &*&xx construct
 
             if( (sym->flags & local_var)
                 && (input_cbs->fmflags & II_tag_mac) ) {
@@ -117,11 +117,13 @@ char    *scan_sym( char * p, symvar * sym, sub_index * subscript )
     if( quote != '\0' && quote == *p ) {        // over terminating quote
         p++;
     }
+    pend = p;                                   // char after symbol name if not subscripted
+
     if( !scan_err && (*p == '(') ) {    // subscripted ?
-        char    *   psave = p;
-        sub_index   var_ind;
-        symsub  *   symsubval;
-        int         rc;
+        char        *   psave       = p;
+        int             rc;
+        sub_index       var_ind;
+        symsub      *   symsubval;
 
         // find true end of subscript
         p_level = 0;
@@ -136,7 +138,7 @@ char    *scan_sym( char * p, symvar * sym, sub_index * subscript )
             }
             p++;
         }
-        pend = p;                           // pend points to outermost ')'
+        pend = p + 1;                       // character after outermost ')'
 
         if( p_level > 0 ) {                 // at least one missing ')'
             /* Note: missing ')' is not an error in wgml 4.0 */
@@ -158,44 +160,54 @@ char    *scan_sym( char * p, symvar * sym, sub_index * subscript )
                 }
                 sym->flags |= auto_inc + subscripted;
             } else {
-                getnum_block    gn;
-                condcode        cc;
-                char            csave;
+                char            *       pa;
+                char            *   *   ppval;
+                char                    valbuf[BUF_SIZE];
+                condcode                cc;
+                getnum_block            gn;
 
-                gn.argstart      = p;
-                while( *p != '\0' && (*p != ')') ) {
-                    p++;
-                }
+                memcpy_s( valbuf, buf_size, p, pend - p );
+                valbuf[pend - p] = '\0';
+                pa = valbuf;
+                ppval = &pa;
 
-                gn.argstop       = p - 1;
-                csave            = *p;
-                *p               = '\0';    // make nul terminated string
-                gn.ignore_blanks = 0;
-
-                cc = getnum( &gn );     // try numeric expression evaluation
-
-                *p = csave;
-                if( cc == pos || cc == neg ) {
-                    *subscript = gn.result;
-                    if( *p == ')' ) {
-                        p++;
-                    }
-                    SkipDot( p );
-                    sym->flags |= subscripted;
-                } else {
-                    if( !scan_err && !ProcFlags.suppress_msg ) {
-                        g_err( err_sub_invalid, psave );
-                        err_count++;
-                        show_include_stack();
-                    }
+                finalize_subscript( ppval, splittable );
+                if( ProcFlags.unresolved ) {
                     scan_err = true;
-                }
+                } else {
+                    gn.argstart      = valbuf;
+                    gn.argstop       = valbuf;
+                    while( *gn.argstop != '\0' && (*gn.argstop != ')') ) {
+                        gn.argstop++;
+                    }
 
+                    *gn.argstop      = '\0';    // make nul terminated string
+                    gn.argstop--;
+                    gn.ignore_blanks = 0;
+
+                    cc = getnum( &gn );     // try numeric expression evaluation
+
+                    if( cc == pos || cc == neg ) {
+                        *subscript = gn.result;
+                        if( *p == ')' ) {
+                            p++;
+                        }
+                        SkipDot( p );
+                        sym->flags |= subscripted;
+                    } else {
+                        if( !scan_err && !ProcFlags.suppress_msg ) {
+                            xx_line_err( err_sub_invalid, p );
+                        }
+                        scan_err = true;
+                    }
+
+                }
+                if( scan_err ) {
+                   p = psave;
+                }
             }
         }
-        if( scan_err ) {
-           p = psave;
-        }
+        p = pend;
     }
     return( p );
 }
@@ -244,7 +256,7 @@ void    scr_se( void )
 
     subscript = no_subscript;                       // not subscripted
     scan_err = false;
-    p = scan_sym( scan_start, &sym, &subscript );
+    p = scan_sym( scan_start, &sym, &subscript, NULL, false );
 
     if( strcmp( sym.name, MAC_STAR_NAME ) != 0 ) {  // remove trailing blanks from all symbols except *
         valstart = p;
@@ -272,6 +284,9 @@ void    scr_se( void )
         scan_err = true;
     }
     if( !scan_err ) {
+        if( *p == ')' ) {
+            p++;
+        }
         valstart = p;
         if( *p == '=' ) {                       // all other cases have no equal sign (see above)
             p++;

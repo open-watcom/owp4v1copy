@@ -80,7 +80,7 @@ extern  void    gml_set( const gmltag * entry )
                 if( val_start == NULL ) {
                     break;
                 }
-                scan_sym( val_start, &sym, &subscript );
+                scan_sym( val_start, &sym, &subscript, NULL, false );
                 if( scan_err ) {
                     break;
                 }
