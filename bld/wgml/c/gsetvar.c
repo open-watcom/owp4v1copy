@@ -202,12 +202,13 @@ char * scan_sym( char * p, symvar * sym, sub_index * subscript, char * * result,
                     }
 
                 }
-                if( scan_err ) {
-                   p = psave;
-                }
             }
         }
-        p = pend;
+        if( scan_err ) {
+            p = psave;
+        } else {
+            p = pend;
+        }
     }
     return( p );
 }
