@@ -395,7 +395,8 @@ static bool split_input_buffer( void )
 /*  this is the algorithm for unwinding the stack:                         */
 /*    if curr->type is not sl_text, then                                   */
 /*      if curr->type is sl_split, then                                    */
-/*        append tail to buf and split the line                            */
+/*        if subscript, exit immediately                                   */
+/*        if not subscript, split the line                                 */
 /*      otherwise                                                          */
 /*          copy text from curr->end on from buf to tail                   */
 /*          copy the value from curr->value to curr->start                 */
@@ -405,7 +406,7 @@ static bool split_input_buffer( void )
 /*    otherwise do nothing                                                 */
 /***************************************************************************/
 
-static bool parse_r2l( sym_list_entry * stack, char * buf )
+static bool parse_r2l( sym_list_entry * stack, char * buf, bool subscript )
 {
     char            *   p;
     char                tail[BUF_SIZE];
@@ -418,6 +419,9 @@ static bool parse_r2l( sym_list_entry * stack, char * buf )
     while( curr != NULL ) {
         switch( curr->type ) {
         case sl_text:
+            if( subscript ) {
+                ProcFlags.unresolved = true;
+            }
             break;
         case sl_attrib:
             ProcFlags.substituted = true;
@@ -482,28 +486,36 @@ static bool parse_r2l( sym_list_entry * stack, char * buf )
             input_cbs->sym_space = sym_space;
             break;
         case sl_split:
-            ProcFlags.substituted = true;
-            if( !ProcFlags.if_cond && !ProcFlags.dd_macro && !curr->value[0] ) {
-                ProcFlags.null_value = true;
-            }
-            split_input_var( buf, p, &curr->value[1], true );
-            input_cbs->hidden_head->fm_symbol = true;   // new logical input record
-            cw_lg = 0;
-            for( p = buf; *p != ' '; p++ ) cw_lg++;     // length of . plus CW
-            cw_lg++;                                    // plus space after CW
-            if( ProcFlags.scr_cw && (buf + cw_lg == curr->start) ) {
-                input_cbs->hidden_head->sym_space = false;  // space is space after cw
+            if( subscript ) {
+                ProcFlags.substituted = false;
+                ProcFlags.unresolved = true;
             } else {
-                if( curr->start == buf ) {                  // symbol at start of input line
-                    sym_space = true;
-                } else {                                    // symbol not at start of input line
-                    input_cbs->hidden_head->sym_space = (*(curr->start - 1) == ' ');
+                ProcFlags.substituted = true;
+                if( !ProcFlags.if_cond && !ProcFlags.dd_macro && !curr->value[0] ) {
+                    ProcFlags.null_value = true;
                 }
+                split_input_var( buf, curr->end, &curr->value[1], true );
+                input_cbs->hidden_head->fm_symbol = true;   // new logical input record
+                cw_lg = 0;
+                for( p = buf; *p != ' '; p++ ) cw_lg++;     // length of . plus CW
+                cw_lg++;                                    // plus space after CW
+                if( ProcFlags.scr_cw && (buf + cw_lg == curr->start) ) {
+                    input_cbs->hidden_head->sym_space = false;  // space is space after cw
+                } else {
+                    if( curr->start == buf ) {                  // symbol at start of input line
+                        sym_space = true;
+                    } else {                                    // symbol not at start of input line
+                        input_cbs->hidden_head->sym_space = (*(curr->start - 1) == ' ');
+                    }
+                }
+                *curr->start = '\0';
             }
-            *curr->start = '\0';
             break;
         default:
             internal_err( __FILE__, __LINE__ );
+            break;
+        }
+        if( subscript && (curr->type == sl_split) ) {
             break;
         }
         curr = curr->prev;
@@ -604,7 +616,6 @@ static sym_list_entry * parse_l2r( char * buf, bool splittable )
             pa = valbuf;
             ppval = &pa;
             p = scan_sym( symstart, &symvar_entry, &var_ind, ppval, splittable );
-            ProcFlags.suppress_msg = false;
             curr->end = p;
             if( scan_err ) {                        // problem with subscript
                 if( ProcFlags.unresolved ) {
@@ -682,14 +693,14 @@ bool resolve_symvar_functions( char * buf, bool splittable )
     if( stack == NULL ) {
         return( false);                     // no stack to process
     }
-    parse_r2l( stack, buf );
+    parse_r2l( stack, buf, false );
     anything_substituted |= ProcFlags.substituted;
     while( ProcFlags.substituted ) {
         stack = parse_l2r( buf, splittable );
         if( stack == NULL ) {
             break;                      // no stack to process
         }
-        parse_r2l( stack, buf );
+        parse_r2l( stack, buf, false );
         anything_substituted |= ProcFlags.substituted;
     }
     
@@ -699,85 +710,27 @@ bool resolve_symvar_functions( char * buf, bool splittable )
 
 /***************************************************************************/
 /*  finalize the subscript value                                           */
-/*  returns true if a split should be done; false otherwise                */
-/*  NOTE: this only works if the first character in *value is '&'          */
-/*        further work will, no doubt, be needed                           */
+/*  simplified version of resolve_symvar_functions()                       */
+/*  no need to return an indicator if something has been substituted       */
 /***************************************************************************/
 
 void finalize_subscript( char * * result, bool splittable )
 {
-    char        *       p;                  // points into input buffer
-    char        *       pa;                 // start of valbuf
-    char        *       pchar;              // points into input buffer
-    char        *   *   ppval;              // points to pointer into resbuf
-    char        *       symstart;           // start of symbol name
-    char                valbuf[BUF_SIZE];   // buffer for attribute function and function values
-    int                 rc;
-    int32_t             valsize;
-    sub_index           var_ind;            // subscript value
-    symsub      *       symsubval;          // value of symbol
-    symvar              symvar_entry;
+    sym_list_entry  *   stack;
 
-    ProcFlags.unresolved = false;
-
-    if( **result == ampchar ) {
-        p = *result;
-        if( *(p + 1) == ' ' ) {         // not a symbol substition, attribute, or function
-            p++;                        // over '&'
-        } else if( my_isalpha( p[1] ) && p[2] == '\'' && p[3] > ' ' ) { // attribute
-            pchar = p + 2;
-            while( !is_space_tab_char( *pchar ) && (*pchar != '\0') ) pchar++;
-            pa = valbuf;
-            ppval = &pa;
-
-            if( GlobalFlags.firstpass && (input_cbs->fmflags & II_research) ) {
-                add_single_func_research( p + 1 );
-            }
-
-            pchar = scr_single_funcs( p, pchar, ppval );
-            strcpy_s( *result, buf_size, valbuf );
-        } else if( *(p + 1) == '\'' ) {                 // function or text
-            pchar = p + 2;                              // over "&'"
-            while( is_function_char(*pchar) ) pchar++;  // find end of function name
-
-            if( *pchar == '(' ) {                       // &'xyz( is start of multi char function
-                pa = valbuf;
-                ppval = &pa;
-                valsize = buf_size - (pchar - p);
-                pchar = scr_multi_funcs( p, pchar, ppval, valsize );
-                strcpy_s( *result, buf_size, valbuf );  // save value in current stack entry
-            } else {
-                pchar = p;
-            }
-        } else {                                        // symbol
-            pchar = p + 1;                              // over '&'
-            symstart = pchar;                           // remember start of symbol name
-            scan_err = false;
-            pa = valbuf;
-            ppval = &pa;
-            pchar = scan_sym( symstart, &symvar_entry, &var_ind, ppval, splittable );
-            if( scan_err ) {                            // problem with subscript
-                var_ind = atol( valbuf );  // save value for use
-                **result = '\0';            // overwrite with nothing
-                while( *pchar != ')' ) {
-                    pchar++;      // forward to ')'
-                }
-            } else {
-                if( symvar_entry.flags & local_var ) {  // lookup var in dict
-                    rc = find_symvar_l( &input_cbs->local_dict, symvar_entry.name,
-                                        var_ind, &symsubval );
-                } else {
-                    rc = find_symvar( &global_dict, symvar_entry.name, var_ind,
-                                      &symsubval );
-                }
-                if( rc == 2 ) {             // variable found + resolved
-                    strcpy_s( *result, buf_size, symsubval->value );  // overwrite entry
-                } else {
-                    ProcFlags.unresolved = true;
-                }
-            }
-        }
+    stack = parse_l2r( *result, splittable );
+    if( stack == NULL ) {
+        return;                             // no stack to process
     }
+    parse_r2l( stack, *result, true );
+    while( ProcFlags.substituted ) {
+        stack = parse_l2r( *result, splittable );
+        if( stack == NULL ) {
+            break;                      // no stack to process
+        }
+        parse_r2l( stack, *result, true );
+    }
+    
     return;
 }
 

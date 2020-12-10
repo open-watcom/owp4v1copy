@@ -166,11 +166,12 @@ char * scan_sym( char * p, symvar * sym, sub_index * subscript, char * * result,
                 condcode                cc;
                 getnum_block            gn;
 
-                memcpy_s( valbuf, buf_size, p, pend - p );
-                valbuf[pend - p] = '\0';
+                memcpy_s( valbuf, buf_size, p, pend - p - 1 );
+                valbuf[pend - p - 1] = '\0';
                 pa = valbuf;
                 ppval = &pa;
 
+                ProcFlags.unresolved = false;
                 finalize_subscript( ppval, splittable );
                 if( ProcFlags.unresolved ) {
                     scan_err = true;
