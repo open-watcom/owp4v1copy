@@ -660,7 +660,10 @@ static sym_list_entry * parse_l2r( char * buf, bool splittable )
                         curr->type = sl_symbol;
                         strcpy_s( curr->value, buf_size, symsubval->value );  // save value in current stack entry
                     }
-                } else {
+                } else if( symvar_entry.flags & local_var ) {   // undefined locals are set to ''
+                    curr->type = sl_symbol;
+                    curr->value[0] = '\0';
+                } else {                                        // undefined global
                     curr->type = sl_text;
                 }
             }
