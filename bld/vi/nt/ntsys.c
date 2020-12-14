@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  OS/2 specific system interface functions.:
+* Description:  NT specific system interface functions.
 *
 ****************************************************************************/
 
@@ -95,6 +95,7 @@ void MyBeep( void )
 } /* MyBeep */
 
 static char *oldConTitle;
+static DWORD oldConInMode;
 
 /*
  * ScreenInit - get screen info
@@ -108,7 +109,13 @@ void ScreenInit( void )
     InputHandle = CreateFile( "CONIN$", GENERIC_READ | GENERIC_WRITE,
                               FILE_SHARE_READ | FILE_SHARE_WRITE, NULL,
                               OPEN_EXISTING, 0, NULL );
+    GetConsoleMode( InputHandle, &oldConInMode );
+    /* Set ENABLE_EXTENDED_FLAGS to turn off ENABLE_QUICK_EDIT_MODE. */
     SetConsoleMode( InputHandle, ENABLE_MOUSE_INPUT | ENABLE_LINE_INPUT |
+                                 ENABLE_EXTENDED_FLAGS | ENABLE_WINDOW_INPUT |
+                                 ENABLE_ECHO_INPUT | ENABLE_PROCESSED_INPUT );
+    SetConsoleMode( InputHandle, ENABLE_MOUSE_INPUT | ENABLE_LINE_INPUT |
+                                 ENABLE_EXTENDED_FLAGS | /* Quick Edit off */
                                  ENABLE_ECHO_INPUT | ENABLE_PROCESSED_INPUT );
 
     OutputHandle = CreateConsoleScreenBuffer( GENERIC_READ | GENERIC_WRITE,
@@ -143,6 +150,7 @@ void ScreenInit( void )
 void ScreenFini( void )
 {
     CloseHandle( OutputHandle );
+    SetConsoleMode( InputHandle, oldConInMode );
     CloseHandle( InputHandle );
     SetConsoleTitle( oldConTitle );
 
