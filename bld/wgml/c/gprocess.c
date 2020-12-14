@@ -52,9 +52,10 @@ void process_late_subst( char * buf )
     symsub  *   symsubval;      // value of symbol
     symvar      symvar_entry;
 
-    p = strchr( buf, ampchar );  // look for & in buffer
-    while( p != NULL ) {         // & found
-        if( *(p + 1) == ' ' ) {  // not a symbol substition, attribute, or function
+    p = strchr( buf, ampchar ); // look for & in buffer
+    while( p != NULL ) {        // & found
+        if( *(p + 1) == ' ' ) { // not a symbol substition, attribute, or function
+            tokenend = p + 1;
         } else if( my_isalpha( p[1] ) && p[2] == '\'' && p[3] > ' ' ) {   // attribute
             tokenend = p + 3;
         } else if( *(p + 1) == '\'' ) {          // function or text
