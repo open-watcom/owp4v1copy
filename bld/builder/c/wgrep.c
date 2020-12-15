@@ -37,13 +37,15 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <string.h>
-#include <process.h>
 #include <signal.h>
 #include <limits.h>
 #if defined( __UNIX__ )
     #include <dirent.h>
 #else
     #include <direct.h>
+#endif
+#ifdef __WATCOMC__
+    #include <process.h>    /* For _bgetcmd(). */
 #endif
 
 #define  BINC                   1024
@@ -752,6 +754,10 @@ static void extendPath( char *path, char *ext )
     *path = '\0';
 }
 
+#ifdef __UNIX__
+    #include "fnmatch.c"
+#endif
+
 static void executeWgrep( void )
 {
     DIR                 *dirh;
@@ -759,22 +765,37 @@ static void executeWgrep( void )
     unsigned            i;
     char                exp[_MAX_EXT];
     char                ext[_MAX_EXT];
+#ifdef __UNIX__
+    char                dir[_MAX_PATH];
+#else
+    char                *dir;    
+#endif
 
     extendPath( PathBuff, CurrPattern );
 
-    _splitpath( PathBuff, NULL, NULL, NULL, exp );
+#ifdef __UNIX__
+    _splitpath( PathBuff, NULL, dir, NULL, exp );
+#else
+    dir = PathBuff;
+#endif
 
     if( strcmp( CurrPattern, "@@" ) == 0 ) {
         performSearch( CurrPattern );
     } else {
-        dirh = opendir( PathBuff );
+        /* NB: On DOS, OS/2, and Windows, opendir() already performs pattern
+         * matching. On *nix, we have to do it ourselves.
+         */
+        dirh = opendir( dir );
         if( dirh != NULL ) {
             for( ;; ) {
-                if( DoneFlag ) return;
+                if( DoneFlag )
+                    return;
                 dp = readdir( dirh );
-                if( dp == NULL ) break;
+                if( dp == NULL )
+                    break;
 #if defined( __WATCOMC__ ) && !defined( __UNIX__ )
-                if( dp->d_attr & _A_SUBDIR ) continue;
+                if( dp->d_attr & _A_SUBDIR )
+                    continue;
 #else
                 {
                     struct stat sblk;
@@ -784,6 +805,8 @@ static void executeWgrep( void )
                     if( stat( tmp_path, &sblk ) == 0  && S_ISDIR( sblk.st_mode ) ) {
                         continue;
                     }
+                    if( !my_fnmatch( CurrPattern, dp->d_name ) )
+                        continue;
                 }
 #endif
 
@@ -800,8 +823,6 @@ static void executeWgrep( void )
                 performSearch( PathBuff );
             }
             closedir( dirh );
-        } else {
-            performSearch( PathBuff ); // no dir try file fix for Linux
         }
     }
 }

@@ -48,88 +48,7 @@
 #include "pmake.h"
 
 #ifdef __UNIX__
-
-static int __fnmatch( char *pattern, char *string )
-/*************************************************/
-{
-    char    *p;
-    int     len;
-    int     star_char;
-    int     i;
-
-    /*
-     * check pattern section with wildcard characters
-     */
-    star_char = 0;
-    while( ( *pattern == '*' ) || ( *pattern == '?' ) ) {
-        if( *pattern == '?' ) {
-            if( *string == 0 ) {
-                return( 0 );
-            }
-            string++;
-        } else {
-            star_char = 1;
-        }
-        pattern++;
-    }
-    if( *pattern == 0 ) {
-        if( ( *string == 0 ) || star_char ) {
-            return( 1 );
-        } else {
-            return( 0 );
-        }
-    }
-    /*
-     * check pattern section with exact match
-     * ( all characters except wildcards )
-     */
-    p = pattern;
-    len = 0;
-    do {
-        if( star_char ) {
-            if( string[ len ] == 0 ) {
-                return( 0 );
-            }
-            len++;
-        } else {
-            if( *pattern != *string ) {
-                return( 0 );
-            }
-            string++;
-        }
-        pattern++;
-    } while( *pattern && ( *pattern != '*' ) && ( *pattern != '?' ) );
-    if( star_char == 0 ) {
-        /*
-         * match is OK, try next pattern section
-         */
-        return( __fnmatch( pattern, string ) );
-    } else {
-        /*
-         * star pattern section, try locate exact match
-         */
-        while( *string ) {
-            if( *p == *string ) {
-                for( i = 1; i < len; i++ ) {
-                    if( *( p + i ) != *( string + i ) ) {
-                        break;
-                    }
-                }
-                if( i == len ) {
-                    /*
-                     * if rest doesn't match, find next occurence
-                     */
-                    if( __fnmatch( pattern, string + len ) ) {
-                        return( 1 );
-                    }
-                }
-            }
-            string++;
-        }
-        return( 0 );
-    }
-}
-
+    #include "fnmatch.c"
 #endif
 
 static void LogDir( char *dir )
@@ -276,7 +195,7 @@ static copy_entry *BuildList( char *src, char *dst, bool test_abit )
             struct stat buf;
             size_t len = strlen( srcdir );
 
-            if( __fnmatch( pattern, dent->d_name ) == 0 )
+            if( my_fnmatch( pattern, dent->d_name ) == 0 )
                 continue;
 
             strcat( srcdir, dent->d_name );
@@ -557,7 +476,8 @@ static int DoPMake( pmake_data *data )
                 return( res );
             }
         }
-        getcwd( IncludeStk->cwd, sizeof( IncludeStk->cwd ) );
+        if( !getcwd( IncludeStk->cwd, sizeof( IncludeStk->cwd ) ) )
+            perror( "getcwd" );
         if( data->display )
             LogDir( IncludeStk->cwd );
         PMakeCommand( data, cmd );
@@ -590,7 +510,8 @@ static int ProcPMake( char *cmd, bool ignore_errors )
     data->ignore_err = ignore_errors;
     res = DoPMake( data );
     SysChdir( save );
-    getcwd( IncludeStk->cwd, sizeof( IncludeStk->cwd ) );
+    if( !getcwd( IncludeStk->cwd, sizeof( IncludeStk->cwd ) ) )
+        perror( "getcwd" );
     PMakeCleanup( data );
     return( res );
 }
@@ -605,12 +526,14 @@ int RunIt( char *cmd, bool ignore_errors )
     if( BUILTIN( "CD" ) ) {
         res = SysChdir( SkipBlanks( cmd + sizeof( "CD" ) ) );
         if( res == 0 ) {
-            getcwd( IncludeStk->cwd, sizeof( IncludeStk->cwd ) );
+            if( !getcwd( IncludeStk->cwd, sizeof( IncludeStk->cwd ) ) )
+                perror( "getcwd" );
         }
     } else if( BUILTIN( "CDSAY" ) ) {
         res = SysChdir( SkipBlanks( cmd + sizeof( "CDSAY" ) ) );
         if( res == 0 ) {
-            getcwd( IncludeStk->cwd, sizeof( IncludeStk->cwd ) );
+            if( !getcwd( IncludeStk->cwd, sizeof( IncludeStk->cwd ) ) )
+                perror( "getcwd" );
             LogDir( IncludeStk->cwd );
         }
     } else if( BUILTIN( "SET" ) ) {
