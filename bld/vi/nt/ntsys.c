@@ -36,6 +36,7 @@
 #include "vibios.h"
 
 HANDLE  InputHandle, OutputHandle;
+DWORD   ConsoleInputMode;
 COORD   BSize;
 
 extern int PageCnt;
@@ -103,20 +104,45 @@ static DWORD oldConInMode;
 void ScreenInit( void )
 {
     DWORD                       size;
+    DWORD                       dwExtFlags = 0;
+    DWORD                       dwVer;
     CONSOLE_SCREEN_BUFFER_INFO  sbi;
     char                        tmp[256];
 
     InputHandle = CreateFile( "CONIN$", GENERIC_READ | GENERIC_WRITE,
                               FILE_SHARE_READ | FILE_SHARE_WRITE, NULL,
                               OPEN_EXISTING, 0, NULL );
+
+    /* Caveat: If ENABLE_EXTENDED_FLAGS is not set, we cannot determine the
+     * initial state of the flags it controls, i.e. ENABLE_QUICK_EDIT_MODE,
+     * ENABLE_INSERT_MODE, and ENABLE_AUTO_POSITION. The Win32 API is just
+     * broken in that regard, nothing we can do about it.
+     */
     GetConsoleMode( InputHandle, &oldConInMode );
-    /* Set ENABLE_EXTENDED_FLAGS to turn off ENABLE_QUICK_EDIT_MODE. */
-    SetConsoleMode( InputHandle, ENABLE_MOUSE_INPUT | ENABLE_LINE_INPUT |
-                                 ENABLE_EXTENDED_FLAGS | ENABLE_WINDOW_INPUT |
-                                 ENABLE_ECHO_INPUT | ENABLE_PROCESSED_INPUT );
-    SetConsoleMode( InputHandle, ENABLE_MOUSE_INPUT | ENABLE_LINE_INPUT |
-                                 ENABLE_EXTENDED_FLAGS | /* Quick Edit off */
-                                 ENABLE_ECHO_INPUT | ENABLE_PROCESSED_INPUT );
+
+    /* SetConsoleMode fails with ERROR_INVALID_PARAMETER if passed any flags
+     * that are not supported. We need to disable Quick Edit Mode to allow
+     * the mouse mouse to be used, but NT older than 3.51 and Win9x rejects
+     * ENABLE_EXTENDED_FLAGS and ENABLE_QUICK_EDIT_MODE (SetConsoleMode cannot
+     * control Quick Edit Mode and Insert Mode at all, even though the console
+     * supports those). So just do it the  hard way and decide based on the NT
+     * version.
+     */
+    dwVer = GetVersion();
+
+    /* If NT 3.51 or above, preserve ENABLE_INSERT_MODE and ENABLE_AUTO_POSITION,
+     * but not ENABLE_QUICK_EDIT_MODE. Note that ENABLE_EXTENDED_FLAGS must be
+     * forced on, otherwise Quick Edit Mode might not be turned off.
+     */
+    if( !(dwVer & 0x80000000) && (LOBYTE(dwVer) >= 4 || HIBYTE(dwVer) > 50) ) {
+        dwExtFlags = oldConInMode & (ENABLE_INSERT_MODE | ENABLE_AUTO_POSITION);
+        dwExtFlags |= ENABLE_EXTENDED_FLAGS;    /* Required if it was off! */
+    }
+
+    ConsoleInputMode = ENABLE_MOUSE_INPUT | ENABLE_LINE_INPUT |
+                       dwExtFlags | ENABLE_WINDOW_INPUT |
+                       ENABLE_ECHO_INPUT | ENABLE_PROCESSED_INPUT;
+    SetConsoleMode( InputHandle, ConsoleInputMode );
 
     OutputHandle = CreateConsoleScreenBuffer( GENERIC_READ | GENERIC_WRITE,
                                               0, NULL, CONSOLE_TEXTMODE_BUFFER, NULL );

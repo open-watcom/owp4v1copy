@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Spawn a child process.
 *
 ****************************************************************************/
 
@@ -37,14 +36,13 @@
 #include "fcbmem.h"
 
 extern HANDLE   OutputHandle, InputHandle;
+extern DWORD    ConsoleInputMode;
 
 void ResetSpawnScreen( void )
 {
 #ifndef __WIN__
     SetConsoleActiveScreenBuffer( OutputHandle );
-    SetConsoleMode( InputHandle, ENABLE_MOUSE_INPUT | ENABLE_LINE_INPUT |
-                                 ENABLE_EXTENDED_FLAGS | ENABLE_WINDOW_INPUT |
-                                 ENABLE_ECHO_INPUT | ENABLE_PROCESSED_INPUT );
+    SetConsoleMode( InputHandle, ConsoleInputMode );
 #endif
 }
 

@@ -75,14 +75,32 @@ bool global uiset80col( void )
 int intern initbios( void )
 {
     CONSOLE_SCREEN_BUFFER_INFO  sbi;
+    DWORD                       dwVer;
+    DWORD                       dwExtFlags = 0;
 
     InputHandle = CreateFile( "CONIN$", GENERIC_READ | GENERIC_WRITE,
                         FILE_SHARE_READ | FILE_SHARE_WRITE, NULL,
                         OPEN_EXISTING, 0, NULL );
     GetConsoleMode( InputHandle, &oldInputMode );
-    /* ENABLE_EXTENDED_FLAGS must be set to disable ENABLE_QUICK_EDIT_MODE. */
-    SetConsoleMode( InputHandle, ENABLE_MOUSE_INPUT | ENABLE_PROCESSED_INPUT
-                               | ENABLE_EXTENDED_FLAGS );
+
+    /* See ScreenInit in the NT specific code in vi for explanation of the
+     * hairy logic below. The gist is that we need to disable Quick Edit Mode
+     * in order for the mouse to be usable, but that can only be done on NT
+     * versions that support the extended flags. ENABLE_EXTENDED_FLAGS has to
+     * be set to turn ENABLE_QUICK_EDIT_MODE off, but SetConsoleMode fails
+     * if ENABLE_EXTENDED_FLAG is not supported. Thanks, Microsoft.
+     */
+
+    /* NT 3.51 and later supports ENABLE_QUICK_EDIT_MODE. */
+    dwVer = GetVersion();
+    if( !(dwVer & 0x80000000) && (LOBYTE(dwVer) >= 4 || HIBYTE(dwVer) > 50) ) {
+        dwExtFlags = oldInputMode & (ENABLE_INSERT_MODE | ENABLE_AUTO_POSITION);
+        dwExtFlags |= ENABLE_EXTENDED_FLAGS;
+    }
+
+    SetConsoleMode( InputHandle, ENABLE_MOUSE_INPUT | ENABLE_LINE_INPUT
+                    | dwExtFlags | ENABLE_WINDOW_INPUT
+                    | ENABLE_ECHO_INPUT | ENABLE_PROCESSED_INPUT );
 
     oldOutputHandle = GetStdHandle( STD_OUTPUT_HANDLE );
     OutputHandle = CreateConsoleScreenBuffer( GENERIC_READ | GENERIC_WRITE,
