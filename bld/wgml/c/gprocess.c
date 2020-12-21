@@ -470,7 +470,6 @@ static bool parse_r2l( sym_list_entry * stack, char * buf, bool subscript )
             } else {
                 strcat_s( buf, buf_size, tail );        // append tail to buf
             }
-            input_cbs->fm_symbol = false;               // no new logical input record
             if( input_cbs->fm_symbol ) {                    
                 /* keep value if from prior symbol which created its own logical input record */
                 sym_space = input_cbs->sym_space;
@@ -484,6 +483,7 @@ static bool parse_r2l( sym_list_entry * stack, char * buf, bool subscript )
                     }
                 }
             }
+            input_cbs->fm_symbol = false;               // no new logical input record
             input_cbs->sym_space = sym_space;
             break;
         case sl_split:
@@ -504,7 +504,7 @@ static bool parse_r2l( sym_list_entry * stack, char * buf, bool subscript )
                     input_cbs->hidden_head->sym_space = false;  // space is space after cw
                 } else {
                     if( curr->start == buf ) {                  // symbol at start of input line
-                        sym_space = true;
+                        input_cbs->hidden_head->sym_space = true;
                     } else {                                    // symbol not at start of input line
                         input_cbs->hidden_head->sym_space = (*(curr->start - 1) == ' ');
                     }
@@ -653,6 +653,7 @@ static sym_list_entry * parse_l2r( char * buf, bool splittable )
                             symsubval->value[1] != CW_sep_char ) {
                         curr->type = sl_split;
                         strcpy_s( curr->value, buf_size, symsubval->value );  // save value in current stack entry
+                        SkipDot( curr->end );
                         break;              // line split terminates processing
                     } else if( (symsubval->base->flags & is_AMP) ||
                             ((symsubval->value[0] == GML_char) && (symsubval->value[1] == '\0')) ) {
