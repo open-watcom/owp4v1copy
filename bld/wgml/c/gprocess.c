@@ -428,9 +428,6 @@ static bool parse_r2l( sym_list_entry * stack, char * buf, bool subscript )
             ProcFlags.substituted = true;
             strcpy_s( tail, buf_size, curr->end );      // copy tail
             p = curr->start;
-            if( curr->value[0] == CW_sep_char && curr->value[1] == CW_sep_char ) {
-                p++;                                    // skip 1 CW_sep_char
-            }
             strcpy_s( p, buf_size, curr->value );       // copy value
             if( tail[0] == '.' ) {
                 strcat_s( buf, buf_size, tail + 1);     // append tail to buf, skipping initial "."
@@ -441,9 +438,6 @@ static bool parse_r2l( sym_list_entry * stack, char * buf, bool subscript )
         case sl_funct:
             ProcFlags.substituted = true;
             p = curr->start;
-            if( curr->value[0] == CW_sep_char && curr->value[1] == CW_sep_char ) {
-                p++;                                    // skip 1 CW_sep_char
-            }
 
             strcpy_s( tail, buf_size, curr->end );      // copy tail
             p = curr->start;
@@ -461,9 +455,6 @@ static bool parse_r2l( sym_list_entry * stack, char * buf, bool subscript )
             }
             strcpy_s( tail, buf_size, curr->end );      // copy tail
             p = curr->start;
-            if( curr->value[0] == CW_sep_char && curr->value[1] == CW_sep_char ) {
-                p++;                                    // skip 1 CW_sep_char
-            }
             strcpy_s( p, buf_size, curr->value );       // copy value
             if( tail[0] == '.' ) {
                 strcat_s( buf, buf_size, tail + 1);     // append tail to buf, skipping initial "."
