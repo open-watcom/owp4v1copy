@@ -600,64 +600,71 @@ static sym_list_entry * parse_l2r( char * buf, bool splittable )
                 curr->type = sl_text;           // text
             }
         } else {                                // symbol
-            curr->start = p;
-            p++;                                // over '&'
-            symstart = p;                       // remember start of symbol name
-            scan_err = false;
-            ProcFlags.suppress_msg = true;
-            pa = valbuf;
-            ppval = &pa;
-            p = scan_sym( symstart, &symvar_entry, &var_ind, ppval, splittable );
-            curr->end = p;
-            if( scan_err ) {                        // problem with subscript
-                if( ProcFlags.unresolved ) {
-                    curr->type = sl_text;
-                    if( *curr->end == '\0' ) {
-                        break;                      // end of text terminates processing
-                    }
-                    p = curr->end;                  // skip argument
-                    p = strchr( p, ampchar );       // look for next & in buffer
-                } else {
-                    if( !ProcFlags.CW_sep_ignore && splittable && (CW_sep_char != 0x00) &&
-                            (valbuf[0] == CW_sep_char) &&
-                            (valbuf[1] != CW_sep_char) ) {
-                        strcpy_s( curr->value, buf_size, valbuf );  // repurpose curr
-                        curr->start = p + 1;                        // & of symbol causing split
-                        curr->type = sl_split;                        
-                        break;              // line split terminates processing
-                    } else {
-                        var_ind = atol( valbuf );       // save value for use
-                        *curr->value = '\0';            // overwrite with nothing
-                        curr->type = sl_text;                        
-                    }
-                }
+            if( (*(p+1) == '*') && (*(p+2) == ampchar) ) {  // special for &*&<var>
+                curr->start = p;
+                curr->end = p + 2;
+                curr->type = sl_text;
+                p = p + 2;                        
             } else {
-                if( symvar_entry.flags & local_var ) {  // lookup var in dict
-                    rc = find_symvar_l( &input_cbs->local_dict, symvar_entry.name, var_ind,
-                                        &symsubval );
-                } else {
-                    rc = find_symvar( &global_dict, symvar_entry.name, var_ind, &symsubval );
-                }
-                if( rc == 2 ) {             // variable found + resolved
-                    if( !ProcFlags.CW_sep_ignore && splittable && CW_sep_char != 0x00 &&
-                            symsubval->value[0] == CW_sep_char &&
-                            symsubval->value[1] != CW_sep_char ) {
-                        curr->type = sl_split;
-                        strcpy_s( curr->value, buf_size, symsubval->value );  // save value in current stack entry
-                        SkipDot( curr->end );
-                        break;              // line split terminates processing
-                    } else if( (symsubval->base->flags & is_AMP) ||
-                            ((symsubval->value[0] == GML_char) && (symsubval->value[1] == '\0')) ) {
-                        curr->type = sl_text;   // save for late substitution
+                curr->start = p;
+                p++;                                // over '&'
+                symstart = p;                       // remember start of symbol name
+                scan_err = false;
+                ProcFlags.suppress_msg = true;
+                pa = valbuf;
+                ppval = &pa;
+                p = scan_sym( symstart, &symvar_entry, &var_ind, ppval, splittable );
+                curr->end = p;
+                if( scan_err ) {                        // problem with subscript
+                    if( ProcFlags.unresolved ) {
+                        curr->type = sl_text;
+                        if( *curr->end == '\0' ) {
+                            break;                      // end of text terminates processing
+                        }
+                        p = curr->end;                  // skip argument
+                        p = strchr( p, ampchar );       // look for next & in buffer
                     } else {
-                        curr->type = sl_symbol;
-                        strcpy_s( curr->value, buf_size, symsubval->value );  // save value in current stack entry
+                        if( !ProcFlags.CW_sep_ignore && splittable && (CW_sep_char != 0x00) &&
+                                (valbuf[0] == CW_sep_char) &&
+                                (valbuf[1] != CW_sep_char) ) {
+                            strcpy_s( curr->value, buf_size, valbuf );  // repurpose curr
+                            curr->start = p + 1;                        // & of symbol causing split
+                            curr->type = sl_split;                        
+                            break;              // line split terminates processing
+                        } else {
+                            var_ind = atol( valbuf );       // save value for use
+                            *curr->value = '\0';            // overwrite with nothing
+                            curr->type = sl_text;                        
+                        }
                     }
-                } else if( symvar_entry.flags & local_var ) {   // undefined locals are set to ''
-                    curr->type = sl_symbol;
-                    curr->value[0] = '\0';
-                } else {                                        // undefined global
-                    curr->type = sl_text;
+                } else {
+                    if( symvar_entry.flags & local_var ) {  // lookup var in dict
+                        rc = find_symvar_l( &input_cbs->local_dict, symvar_entry.name, var_ind,
+                                            &symsubval );
+                    } else {
+                        rc = find_symvar( &global_dict, symvar_entry.name, var_ind, &symsubval );
+                    }
+                    if( rc == 2 ) {             // variable found + resolved
+                        if( !ProcFlags.CW_sep_ignore && splittable && CW_sep_char != 0x00 &&
+                                symsubval->value[0] == CW_sep_char &&
+                                symsubval->value[1] != CW_sep_char ) {
+                            curr->type = sl_split;
+                            strcpy_s( curr->value, buf_size, symsubval->value );  // save value in current stack entry
+                            SkipDot( curr->end );
+                            break;              // line split terminates processing
+                        } else if( (symsubval->base->flags & is_AMP) ||
+                                ((symsubval->value[0] == GML_char) && (symsubval->value[1] == '\0')) ) {
+                            curr->type = sl_text;   // save for late substitution
+                        } else {
+                            curr->type = sl_symbol;
+                            strcpy_s( curr->value, buf_size, symsubval->value );  // save value in current stack entry
+                        }
+                    } else if( symvar_entry.flags & local_var ) {   // undefined locals are set to ''
+                        curr->type = sl_symbol;
+                        curr->value[0] = '\0';
+                    } else {                                        // undefined global
+                        curr->type = sl_text;
+                    }
                 }
             }
         }
