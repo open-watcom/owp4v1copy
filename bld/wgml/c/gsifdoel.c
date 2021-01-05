@@ -411,6 +411,8 @@ void    scr_if( void )
     firstcondition = true;              // first 2 terms to compare
     garginit();                         // find end of control word
 
+    process_late_subst(scan_start);
+
     cb = input_cbs->if_cb;              // get .if control block
     cb->if_flags[cb->if_level].ifcwif = false;  // reset cwif switch
 
