@@ -810,7 +810,19 @@ void process_line( void )
         return;                         // .* .cm .dm :cmt found
     }
 
-    if( ProcFlags.scr_cw && (toupper(*(buff2 + 1)) == 'I') && (toupper(*(buff2 + 2)) == 'F') ) {
+    /***************************************************************************/
+    /*  pre-identify IF statements                                             */
+    /*  this is needed to avoid an empty symbol from having it's usual effect  */
+    /*  when a line like                                                       */
+    /*    .if &fred eq ''                                                      */
+    /*  is used and "fred" has a null value (matching '')                      */
+    /*  EL is also checked to handle lines like                                */
+    /*    .el .if &fred eq ''                                                  */
+    /*  note that symbol substition is done before IF is actually processed    */ 
+    /*  this can probably be improved                                          */
+    /***************************************************************************/
+    if( ProcFlags.scr_cw && (((toupper(*(buff2 + 1)) == 'I') && (toupper(*(buff2 + 2)) == 'F'))
+                         || ((toupper(*(buff2 + 1)) == 'E') && (toupper(*(buff2 + 2)) == 'L'))) ) {
         ProcFlags.if_cond = true;
     } else {
         ProcFlags.if_cond = false;
