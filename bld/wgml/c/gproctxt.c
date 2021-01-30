@@ -1808,11 +1808,7 @@ void process_text( char *text, font_number font )
         }
     }
 
-    process_late_subst( text );
-    while( resolve_symvar_functions( text, true ) ) {
-        process_late_subst( text );
-    }
-   
+    process_late_subst( text );   
 
     /********************************************************************/
     /*  force a break in when certain conditions involving new input    */
