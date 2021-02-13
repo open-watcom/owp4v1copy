@@ -44,7 +44,7 @@ static  uint32_t        quote_lvl   = 0;    // nesting level of Q phrases
 /*  :CIT :HPx :Q :SF common processing                                        */
 /***************************************************************************/
 
-static void gml_inline_common( const gmltag * entry, int level, e_tags t )
+static void gml_inline_common( const gmltag * entry, font_number font, e_tags t )
 {
     bool        sav_sbl = ProcFlags.skip_blank_line;
     char    *   p;
@@ -72,12 +72,19 @@ static void gml_inline_common( const gmltag * entry, int level, e_tags t )
     init_nest_cb();
     nest_cb->p_stack = copy_to_nest_stack();
 
-    g_phrase_font = level;
-    if( level >= wgml_font_cnt ) {
-        level = FONT0;
+    g_phrase_font = font;
+    if( font >= wgml_font_cnt ) {
+        font = FONT0;
     }
-    nest_cb->font = level;
-    g_curr_font = level;
+
+    /* if pc is to be used, use it before changing g_curr_font */
+    if( ProcFlags.force_pc ) {
+        do_force_pc( NULL );
+    }
+
+    /* this should be g_curr_font, but making it so causes complications see forWiki notes */
+    nest_cb->font = font;
+    g_curr_font = font;
 
     nest_cb->c_tag = t;
 
@@ -89,24 +96,16 @@ static void gml_inline_common( const gmltag * entry, int level, e_tags t )
     if( nest_cb->prev != NULL ) {               // at least one prior entry
         if( nest_cb->prev->prev == NULL ) {     // but only one
             if( nest_cb->font != nest_cb->prev->font ) {           // font actually changed
-                tt_font = level;                // save current value
+                tt_font = font;                 // save current value
             }
         }
     }
 
     if( t == t_Q ) {                            // Q/eQ inserts quote char
         if( (quote_lvl % 2) ) {
-            if( ProcFlags.force_pc ) {
-                do_force_pc( single_q );
-            } else {
-                process_text( single_q, g_curr_font );
-            }
+            process_text( single_q, g_curr_font );
         } else {
-            if( ProcFlags.force_pc ) {
-                do_force_pc( double_q );
-            } else {
-                process_text( double_q, g_curr_font );
-            }
+            process_text( double_q, g_curr_font );
         }
         quote_lvl++;
     }
@@ -115,11 +114,7 @@ static void gml_inline_common( const gmltag * entry, int level, e_tags t )
     p = scan_start;
     SkipDot( p );                       // over '.'
     if( *p != '\0' ) {
-        if( ProcFlags.force_pc ) {
-            do_force_pc( p );
-        } else {
-            process_text( p, g_curr_font );
-        }
+        process_text( p, g_curr_font );
     }
 
     if( (t == t_SF) && sav_sbl ) {      // reset flag, but only if was set on entry, and only for SF

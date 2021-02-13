@@ -33,7 +33,7 @@
 
 
 /***************************************************************************/
-/*  Setup for both proc_p_c() and do_force_pc()                            */
+/*  Setup for both proc_p_pc() and do_force_pc()                           */
 /***************************************************************************/
 
 static void p_pc_setup( p_lay_tag * p_pc )
@@ -178,9 +178,9 @@ extern void do_force_pc( char * p )
 {
     p_pc_setup( &layout_work.pc );
 
-    SkipDot( p );                       // over '.'
-
-    if( *p != '\0' ) {
+    /* Inline tags use NULL because the text font is different from the font needed by PC */
+    if( (p != NULL) && (*p != '\0') ) {
+        SkipDot( p );                       // over '.'
         process_text( p, g_curr_font );
     }
 
