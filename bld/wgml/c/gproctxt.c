@@ -1816,8 +1816,10 @@ void process_text( char *text, font_number font )
     /*  Note: this only works if the tab is in the first logical record */
     /********************************************************************/
 
+    count = 0;
     p = text;
     while( (*p != '\0') && (*p != tab_char) ) { // locate the first wgml tab, if any
+        count++;
         p++;
     }
 
