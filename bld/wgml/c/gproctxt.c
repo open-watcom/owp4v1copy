@@ -1093,6 +1093,7 @@ static uint32_t split_text( text_chars *in_chars, uint32_t limit )
 {
     uint32_t    retval;
     size_t      t_count;
+    uint32_t    p_width;
     uint32_t    t_limit;
     uint32_t    t_width;
 
@@ -1105,9 +1106,9 @@ static uint32_t split_text( text_chars *in_chars, uint32_t limit )
             t_width = cop_text_width( in_chars->text, t_count, in_chars->font );
             if( t_width != t_limit ) {      // not all characters will fit
                 if( t_width < t_limit ) {
-                    while( t_width < t_limit ) {
+                    while( (p_width = cop_text_width( in_chars->text, t_count + 1, in_chars->font )) < t_limit ) {
                         t_count++;
-                        t_width = cop_text_width( in_chars->text, t_count, in_chars->font );
+                        t_width = p_width;
                     }
                 } else {
                     while( t_width > t_limit ) {
