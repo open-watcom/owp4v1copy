@@ -67,6 +67,12 @@ typedef enum {
     FIX_SPECIAL_MASK    = 0x00300000,
 
     FIX_FRAME_SHIFT     = 24,           // contains frame_type
+    FIX_FRAME_T1        = 0x01000000,   // T1-T6 are dummy enums
+    FIX_FRAME_T2        = 0x02000000,   // so the debugger can
+    FIX_FRAME_T3        = 0x03000000,   // break down enum values.
+    FIX_FRAME_T4        = 0x04000000,
+    FIX_FRAME_T5        = 0x05000000,
+    FIX_FRAME_T6        = 0x06000000,
     FIX_FRAME_MASK      = 0x07000000,
 
 
