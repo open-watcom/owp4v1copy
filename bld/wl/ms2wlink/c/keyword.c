@@ -1443,6 +1443,20 @@ static void ProcWarnFixup( const char *arg )
     NotSupported( "warnfixup" );
 }
 
+static void ProcXLX( const char *arg )
+/************************************/
+{
+    // eXtended option -- LX format
+    FmtType = FMT_OS2V2;
+}
+
+static void ProcXPE( const char *arg )
+/************************************/
+{
+    // eXtended option -- PE format
+    FmtType = FMT_NT;
+}
+
 static  switch_entry        OptionsTable[] = {
 /*  option name               processing routine    shortest match */
     "?",                        ProcHelp,               1,
@@ -1484,6 +1498,8 @@ static  switch_entry        OptionsTable[] = {
     "stack",                    ProcStack,              2,
     "tiny",                     ProcTiny,               1,
     "warnfixup",                ProcWarnFixup,          1,
+    "xlx",                      ProcXLX,                3,
+    "xpe",                      ProcXPE,                3,
     NULL
 };
 
