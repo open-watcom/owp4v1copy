@@ -700,9 +700,9 @@ static void GetExport( void )
             gotnodata = TRUE;
         }
     }
-    iopl = 1024;      // arbitrary > 63
+    iopl = 1024;      // arbitrary > 31
     if( gottoken ) {
-        if( !GetNumber( &iopl ) || iopl > 63 ) {
+        if( !GetNumber( &iopl ) || iopl > 31 ) {
             Warning( "iopl value is invalid", OPTION_SLOT );
         } else {
             toklen += 3;    // maximum iopl length + space.
@@ -741,7 +741,7 @@ static void GetExport( void )
         memcpy( currloc, "resident", 8 );
         currloc += 8;
     }
-    if( iopl <= 63 ) {
+    if( iopl <= 31 ) {
         *currloc++ = ' ';
         utoa( iopl * 2, currloc, 10 ); // convert iopl value to a byte value
     } else {
