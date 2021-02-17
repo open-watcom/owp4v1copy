@@ -194,11 +194,13 @@ entry_export * AllocExport( char *name, unsigned len )
     unsigned        chop;
 
     exp = CarveAlloc( CarveExportInfo );
-    exp->isexported = TRUE;
-    exp->isprivate = FALSE;
-    exp->ismovable = FALSE;
     exp->isresident = FALSE;
+    exp->isexported = TRUE;
+    exp->ismovable = FALSE;
+    exp->isanonymous = FALSE;
     exp->isfree = FALSE;
+    exp->isprivate = FALSE;
+    exp->isiopl = FALSE;
     if( name == NULL ) {
         exp->name = NULL;
     } else {
@@ -229,7 +231,6 @@ void MSExportKeyword( length_name *expname, length_name *intname,
     entry_export *  exp;
 
     exp = AllocExport( expname->name, expname->len );
-    exp->isanonymous = FALSE;
     exp->iopl_words = flags & EXPDEF_IOPLMASK;
     exp->isresident = (flags & EXPDEF_RESIDENT) != 0;
     if( intname->len != 0 ) {
@@ -517,7 +518,6 @@ unsigned_16 FindEntryOrdinal( targ_addr addr, group_entry *grp )
     exp = AllocExport( NULL, 0 );
     exp->sym = NULL;
     exp->isexported = FALSE;
-    exp->isanonymous = FALSE;
     exp->ordinal = max_ord + 1;
     exp->ismovable = (grp->segflags & SEG_MOVABLE) != 0;
     exp->next = NULL;

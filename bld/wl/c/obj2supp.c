@@ -37,6 +37,7 @@
 #include "alloc.h"
 #include "mapio.h"
 #include "exeos2.h"
+#include "exeflat.h"
 #include "exeqnx.h"
 #include "exeelf.h"
 #include "loadfile.h"
@@ -1270,6 +1271,43 @@ static unsigned MapOS2FixType( fix_type type )
     return( OS2OffsetFixTypeMap[off] );
 }
 
+static unsigned ChkOS2IntEntry( group_entry *grp, segdata *seg,
+                                frame_spec *tthread, fix_data *fix )
+/******************************************************************/
+{
+    unsigned    int_ordinal = 0;    // 0 = no crazy stuff
+
+    // Fixups to an IOPL (Ring 2) code segment require special
+    // handling in LX/LE executables. However, conforming IOPL
+    // segments do not need that and references between IOPL
+    // segments don't either.
+    if( (grp->segflags & SEG_LEVEL_MASK) != (seg->u.leader->group->segflags & SEG_LEVEL_MASK) ) {
+        if( (grp->segflags & SEG_LEVEL_MASK) == SEG_LEVEL_2 && !(grp->segflags & SEG_CONFORMING) ) {
+
+            // The target has to be in the entry table, otherwise we can't
+            // produce the required call gate fixup.
+            if( (tthread->type & FIX_FRAME_EXT) && (tthread->u.sym->info & SYM_EXPORTED) ) {
+                symbol          *sym = tthread->u.sym;
+                entry_export    *exp = sym->e.export;
+
+                int_ordinal = exp->ordinal;
+                DbgAssert( int_ordinal );   // Better not be zero!
+            } else {
+                // TODO: This is a placeholder error message. If the target is not
+                // explicitly exported, the linker should automatically force it to
+                // be exported and then this case cannot occur.
+                LnkMsg( WRN+MSG_INTERNAL, "s", "IOPL entry is not exported!" );
+                LnkMsg( LOC + ERR + MSG_INVALID_FLAT_RELOC, "a", &fix->loc_addr );
+            }
+        } else {
+            // This might not produce functioning results but
+            // we don't flag this case.
+        }
+    }
+
+    return( int_ordinal );
+}
+
 static void FmtReloc( fix_data *fix, frame_spec *tthread )
 /********************************************************/
 {
@@ -1386,12 +1424,14 @@ static void FmtReloc( fix_data *fix, frame_spec *tthread )
             PUT_U16( fixptr, 0xffff );          // end of chain indicator
         }
     } else if( FmtData.type & MK_OS2_FLAT )  {
-        segdata *targseg;
-        byte    flags;
-        byte    fixtype;
+        segdata     *targseg;
+        byte        flags;
+        byte        fixtype;
+        unsigned    int_ordinal;
 
         fixptr = new_reloc.item.os2f.buff;
         freedll = FALSE;
+        int_ordinal = 0;    // non-zero if internal import from IOPL segment
         dll = NULL;
         if( fix->type & FIX_REL ) {
             fixtype = OSF_32BIT_SELF_REL;
@@ -1426,6 +1466,7 @@ static void FmtReloc( fix_data *fix, frame_spec *tthread )
                 }
                 if( grp != NULL ) {
                     grp->u.miscflags |= SEG_16_ALIAS;
+                    int_ordinal = ChkOS2IntEntry( grp, seg, tthread, fix );
                 }
                 break;
             }
@@ -1440,11 +1481,23 @@ static void FmtReloc( fix_data *fix, frame_spec *tthread )
         grp = seg->u.leader->group;
         PUT_U16( fixptr, ( fix->loc_addr.off - grp->grp_addr.off ) & OSF_PAGE_MASK );
         fixptr += 2;
-        if( !fix->imported ) {
+        if( int_ordinal ) {
+            // Fixups to an IOPL segment must be done through a call gate
+            // and not directly. There is a special fixup type just for this.
+            flags = OSF_INT_ENT_REF;
+            if( int_ordinal > 0xFF ) {
+                PUT_U16( fixptr, int_ordinal );
+                fixptr += 1;
+            } else {
+                flags |= OSF_IMPORD_8BITS;
+                PUT_U8( fixptr, int_ordinal );
+            }
+            fixptr += 1;
+        } else if( !fix->imported ) {
             if( !fix->os2_selfrel ) {
                 targ.off += fix->value;
             }
-            flags = INTERNAL_REFERENCE;
+            flags = OSF_INTERNAL_REF;
             if( targ.seg > 0xFF ) {
                 flags |= OSF_OBJMOD_16BITS;
                 PUT_U16( fixptr, targ.seg );
@@ -1470,9 +1523,9 @@ static void FmtReloc( fix_data *fix, frame_spec *tthread )
                 dll = tthread->u.sym->p.import;
             }
             if( !dll->isordinal ) {
-                flags = IMPORTED_NAME;
+                flags = OSF_IMP_NAME_REF;
             } else {
-                flags = IMPORTED_ORDINAL;
+                flags = OSF_IMP_ORD_REF;
             }
             if( dll->m.modnum == NULL ) {
                 PUT_U8( fixptr, 0 );

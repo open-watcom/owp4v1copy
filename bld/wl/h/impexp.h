@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Declarations related to exports and imports.
 *
 ****************************************************************************/
 
@@ -43,6 +42,7 @@ typedef struct entry_export {
     unsigned_16             isanonymous : 1;
     unsigned_16             isfree : 1;
     unsigned_16             isprivate : 1;
+    unsigned_16             isiopl : 1;
     symbol *                sym;
     char *                  impname;
     targ_addr               addr;
