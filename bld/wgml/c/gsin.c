@@ -82,7 +82,6 @@ static  int32_t round_indent( su * work )
 /* ! .of .il .un are not used in OW documentation                          */
 /* ! a right indent value of the form "0-i" is not used / implemented      */
 /*                                                                         */
-/*                                                                         */
 /***************************************************************************/
 
 void    scr_in( void )
@@ -111,13 +110,8 @@ void    scr_in( void )
         newindent = 0;
         newindentr = 0;
     } else {
-        if( nest_cb->c_tag == t_NONE ) {
-            newindent  = g_indent;          // prepare keeping old values
-            newindentr = g_indentr;
-        } else {
-            newindent  = nest_cb->left_indent;  // prepare keeping old values
-            newindentr = nest_cb->right_indent;
-        }
+        newindent  = g_indent;          // prepare keeping old values
+        newindentr = g_indentr;
         if( *pa == '*' ) {              // keep old indent value
             p = pa + 1;
         } else {
@@ -162,18 +156,13 @@ void    scr_in( void )
             }
         }
     }
-    if( nest_cb->c_tag == t_NONE ) {
-        g_indent = newindent;
-        g_indentr = newindentr;
-    } else {
-        nest_cb->left_indent = newindent;
-        nest_cb->right_indent = newindentr;
-    }
+    g_indent = newindent;
+    g_indentr = newindentr;
 
-    /* Reset margin(s) regardless of ProcFlags.keep_left_margin */
+    /* Reset margin(s) to reflect the current IN offsets */
 
-    t_page.max_width = t_page.last_pane->col_width + g_indentr + nest_cb->right_indent;
-    t_page.cur_left = g_indent + nest_cb->left_indent + nest_cb->align;
+    t_page.cur_left = g_indent;
+    t_page.max_width = t_page.last_pane->col_width + g_indentr;
 
     /* Reduce t_page.cur_left to 0 if g_indent made it negative */
 
