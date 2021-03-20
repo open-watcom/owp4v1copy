@@ -58,9 +58,8 @@ void gml_lq( const gmltag * entry )
     nest_cb->c_tag = t_LQ;
 
     nest_cb->left_indent = conv_hor_unit( &layout_work.lq.left_indent, g_curr_font )
-                            + nest_cb->prev->left_indent + nest_cb->prev->align;
-    nest_cb->right_indent = -1 * conv_hor_unit( &layout_work.lq.right_indent, g_curr_font )
-                            + nest_cb->prev->right_indent;
+                             + nest_cb->prev->align;
+    nest_cb->right_indent = -1 * conv_hor_unit( &layout_work.lq.right_indent, g_curr_font );
 
     nest_cb->lm = t_page.cur_left;
     nest_cb->rm = t_page.max_width;
@@ -71,13 +70,10 @@ void gml_lq( const gmltag * entry )
 
     set_skip_vars( &layout_work.lq.pre_skip, NULL, NULL, 1, g_curr_font );
 
-    t_page.cur_left = nest_cb->lm + nest_cb->left_indent;
-    t_page.max_width = nest_cb->rm + nest_cb->right_indent;
+    t_page.cur_left += nest_cb->left_indent;
+    t_page.max_width += nest_cb->right_indent;
 
-    t_page.cur_width = t_page.cur_left;
     ProcFlags.keep_left_margin = true;  // keep special LQ indent
-
-    t_page.cur_width = t_page.cur_left;
 
     if( t_page.cur_width > t_page.cur_left ) {
         t_page.cur_left = t_page.cur_width;
