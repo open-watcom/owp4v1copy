@@ -344,6 +344,13 @@ static void scan_gml( void )
                                 xx_tag_err( err_tag_expected, "GD");
                                 ProcFlags.need_gd = false;
                             }
+                        } else if( !nest_cb->in_list ) {
+                            if( (gml_tags[k].tagclass & list_tag) == 0 ) {
+                                // tag is not a list tag
+                                gml_tags[k].gmlproc( &gml_tags[k] );
+                            } else {
+                                xx_line_err( err_no_list, tok_start );
+                            }
                         } else if( ProcFlags.need_li_lp ) {
                             if( (gml_tags[k].tagclass & li_lp_tag) != 0 ) {
                                 // tag is LP or LI

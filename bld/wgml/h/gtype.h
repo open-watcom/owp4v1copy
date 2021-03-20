@@ -460,10 +460,11 @@ typedef enum {
 typedef enum {
     no_class        = 0,                // tag is not assigned a class
     def_tag         = 1,                // marks DDHD, DD, GD
-    ip_start_tag    = 2,                // marks CIT, HP0, HP1, HP2, HP3, SF, Q
-    ip_end_tag      = 4,                // marks eCIT, eHP0, eHP1, eHP2, eHP3, eSF, eQ
-    li_lp_tag       = 8,                // marks LI LP
-    index_tag       = 16,               // marks I1, I2, I3, IH1, IH2, IH3
+    index_tag       = 2,                // marks I1, I2, I3, IH1, IH2, IH3
+    ip_start_tag    = 4,                // marks CIT, HP0, HP1, HP2, HP3, SF, Q
+    ip_end_tag      = 8,                // marks eCIT, eHP0, eHP1, eHP2, eHP3, eSF, eQ
+    li_lp_tag       = 16,               // marks LI LP
+    list_tag        = 32,               // marks DTHD, DDHD, DT, DD, GT, GD, LI, LP
 } classflags;
 
 typedef struct gmltag {
@@ -872,14 +873,14 @@ typedef struct nest_stack {
 } nest_stack;
 
 /***************************************************************************/
-/*  Stack of margins and other values for nested tags                      */
+/* Stack of margins and other values for nested tags                       */
 /*                                                                         */
-/*  Primarily for tag/etag pairs, to catch mismatches and report the error */
-/*  Inevitably, other item were added, some of them very tag-specific      */
-/*  "on entry" indicates the field is intended to save the value found     */
-/*  when the start tag is processed so it can be restored by the end tag   */
-/*  "current" fields are for values pertaining to the current tag pair     */
-/*  the lists depend heavily on this stack                                 */
+/* Originally for tag/etag pairs, to catch mismatches and report the error */
+/* Inevitably, other item were added, some of them very tag-specific       */
+/* "on entry" indicates the field is intended to save the value found      */
+/* when the start tag is processed so it can be restored by the end tag    */
+/* "current" fields are for values pertaining to the current tag/block     */
+/* the lists depend heavily on this stack                                  */
 /***************************************************************************/
 
 struct dl_lay_level;    // avoids include circularity with gtypelay.h
@@ -907,12 +908,13 @@ typedef struct tag_cb {
     uint32_t                post_skip;      // current attribute value
     uint32_t                tsize;          // current attribute value
     uint32_t                xl_pre_skip;    // parent list pre_skip value (used by LP)
-    text_space              spacing;        // spacing on entry (not spacing per layout)
+    text_space              spacing;        // spacing on entry
     uint8_t                 headhi;         // current attribute value
     uint8_t                 termhi;         // current attribute value
     font_number             font;           // font on entry
-    bool                    dl_break : 1;   // current attribute value
     bool                    compact  : 1;   // current attribute value
+    bool                    dl_break : 1;   // current attribute value
+    bool                    in_list  : 1;   // true if inside a list, including current tag
     e_tags                  c_tag;          // enum of tag
 } tag_cb;
 

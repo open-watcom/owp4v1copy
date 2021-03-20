@@ -262,6 +262,7 @@ void gml_dl( const gmltag * entry )
     nest_cb->headhi = headhi;
     nest_cb->termhi = termhi;
     nest_cb->tsize = tsize;
+    nest_cb->in_list = true;
 
     nest_cb->lm = t_page.cur_left;
     nest_cb->rm = t_page.max_width;
@@ -366,6 +367,7 @@ void gml_gl( const gmltag * entry )
     nest_cb->xl_pre_skip = conv_vert_unit( &nest_cb->u.gl_layout->pre_skip, g_text_spacing, g_curr_font );
     nest_cb->tsize = conv_hor_unit( &nest_cb->u.gl_layout->align, g_curr_font );
     nest_cb->termhi = termhi;
+    nest_cb->in_list = true;
 
     nest_cb->lm = t_page.cur_left;
     nest_cb->rm = t_page.max_width;
@@ -455,6 +457,7 @@ void gml_ol( const gmltag * entry )
     nest_cb->right_indent = -1 * conv_hor_unit( &nest_cb->u.ol_layout->right_indent, g_curr_font )
                             + nest_cb->right_indent;
     nest_cb->xl_pre_skip = conv_vert_unit( &nest_cb->u.ol_layout->pre_skip, g_text_spacing, g_curr_font );
+    nest_cb->in_list = true;
 
     nest_cb->lm = t_page.cur_left;
     nest_cb->rm = t_page.max_width;
@@ -542,6 +545,7 @@ void gml_sl( const gmltag * entry )
     nest_cb->right_indent = -1 * conv_hor_unit( &nest_cb->u.sl_layout->right_indent, g_curr_font )
                             + nest_cb->right_indent;
     nest_cb->xl_pre_skip = conv_vert_unit( &nest_cb->u.sl_layout->pre_skip, g_text_spacing, g_curr_font );
+    nest_cb->in_list = true;
 
     nest_cb->lm = t_page.cur_left;
     nest_cb->rm = t_page.max_width;
@@ -630,6 +634,7 @@ void gml_ul( const gmltag * entry )
     nest_cb->right_indent = -1 * conv_hor_unit( &nest_cb->u.ul_layout->right_indent, g_curr_font )
                             + nest_cb->right_indent;
     nest_cb->xl_pre_skip = conv_vert_unit( &nest_cb->u.ul_layout->pre_skip, g_text_spacing, g_curr_font );
+    nest_cb->in_list = true;
 
     nest_cb->lm = t_page.cur_left;
     nest_cb->rm = t_page.max_width;
@@ -855,12 +860,6 @@ static  void    gml_li_ol( const gmltag * entry )
     char        *   pn;
     uint32_t        num_len;
 
-    if( nest_cb == NULL ) {
-        xx_nest_err( err_li_lp_no_list );   // tag must be in a list
-        scan_start = scan_stop + 1;
-        return;
-    }
-
     scr_process_break();
 
     scan_err = false;
@@ -927,12 +926,6 @@ static  void    gml_li_sl( const gmltag * entry )
 {
     char        *   p;
 
-    if( nest_cb == NULL ) {
-        xx_nest_err( err_li_lp_no_list );   // tag must be in a list
-        scan_start = scan_stop + 1;
-        return;
-    }
-
     scr_process_break();
 
     scan_err = false;
@@ -976,10 +969,6 @@ static  void    gml_li_ul( const gmltag * entry )
 {
     char        *   p;
     char            bullet[2];
-
-    if( nest_cb == NULL ) {
-        xx_nest_err( err_li_lp_no_list );   // tag must be in a list
-    }
 
     scr_process_break();
 
@@ -1090,12 +1079,6 @@ void    gml_lp( const gmltag * entry )
     scan_err = false;
     p = scan_start;
 
-    if( nest_cb == NULL ) {
-        xx_nest_err( err_li_lp_no_list );   // tag must be in a list
-        scan_start = scan_stop + 1;
-        return;
-    }
-
     if( nest_cb->c_tag == t_LP ) {          // restore margins saved by prior LP
         t_page.cur_left = nest_cb->lm;
         t_page.max_width = nest_cb->rm;
@@ -1182,12 +1165,6 @@ void gml_dthd( const gmltag * entry )
     scr_process_break();
 
     p = scan_start;
-
-    if( nest_cb == NULL ) {
-        xx_nest_err( err_li_lp_no_list );   // tag must be in a list
-        scan_start = scan_stop + 1;
-        return;
-    }
 
     if( nest_cb->c_tag == t_LP ) {      // terminate :LP if active
         end_lp();
@@ -1305,12 +1282,6 @@ void gml_dt( const gmltag * entry )
     scr_process_break();
 
     p = scan_start;
-
-    if( nest_cb == NULL ) {
-        xx_nest_err( err_li_lp_no_list );   // tag must be in a list
-        scan_start = scan_stop + 1;
-        return;
-    }
 
     if( nest_cb->c_tag == t_LP ) {      // terminate :LP if active
         end_lp();
@@ -1448,12 +1419,6 @@ void gml_gt( const gmltag * entry )
     scr_process_break();
 
     p = scan_start;
-
-    if( nest_cb == NULL ) {
-        xx_nest_err( err_li_lp_no_list );   // tag must be in a list
-        scan_start = scan_stop + 1;
-        return;
-    }
 
     if( nest_cb->c_tag == t_LP ) {      // terminate :LP if active
         end_lp();

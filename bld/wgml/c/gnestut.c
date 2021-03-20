@@ -58,12 +58,15 @@ void init_nest_cb( void )
         wk->right_indent = 0;
         wk->post_skip    = 0;
         wk->tsize        = 0;
-        wk->termhi       = 0;
         wk->headhi       = 0;
-        wk->dl_break     = false;
-        wk->compact      = false;
+        wk->termhi       = 0;
         wk->font         = g_curr_font;
-    }
+        wk->compact      = false;
+        wk->dl_break     = false;
+        wk->in_list      = false;
+   } else {
+        wk->in_list      = nest_cb->in_list;
+   }
 
     nest_cb = wk;                       // new top of stack
     return;

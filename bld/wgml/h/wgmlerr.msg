@@ -666,8 +666,8 @@ pick( ERR_2ND_DOCNUM,           "Document number already defined",
 pick( ERR_NO_LI_LP,             "LI or LP tag must follow the start of a list",
                                 "LI or LP tag must follow the start of a list")
 
-pick( ERR_LI_LP_NO_LIST,        "LI or LP tag only allowed in a list",
-                                "LI or LP tag only allowed in a list" )
+pick( ERR_NO_LIST,              "List tag used outside of any list",
+                                "List tag used outside of any list" )
 
 pick( ERR_LEVEL_SKIPPED,        "For the level attribute (layout tag %s)",
                                 "For the level attribute (layout tag %s)" )

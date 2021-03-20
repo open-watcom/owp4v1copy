@@ -60,15 +60,15 @@
 
   pickg( CMT,      3,      gml_cmt,        tag_only | tag_is_general, 0,  0 )
   pickg( DATE,     4,      gml_date,       tag_out_txt, titlep_tag,  0 )
-  pickg( DD,       2,      gml_dd,         tag_out_txt,  0, def_tag )
-  pickg( DDHD,     4,      gml_ddhd,       tag_out_txt,  0, def_tag )
+  pickg( DD,       2,      gml_dd,         tag_out_txt,  0, def_tag | list_tag )
+  pickg( DDHD,     4,      gml_ddhd,       tag_out_txt,  0, def_tag | list_tag )
 
   pickg( DL,       2,      gml_dl,         tag_out_txt, 0,  0 )
   pickg( EDL,      3,      gml_edl,        tag_out_txt, 0,  0 )
 
   pickg( DOCNUM,   6,      gml_docnum,     tag_out_txt, titlep_tag,  0 )
-  pickg( DT,       2,      gml_dt,         tag_out_txt, 0,  0 )
-  pickg( DTHD,     4,      gml_dthd,       tag_out_txt, 0,  0 )
+  pickg( DT,       2,      gml_dt,         tag_out_txt, 0,  list_tag )
+  pickg( DTHD,     4,      gml_dthd,       tag_out_txt, 0,  list_tag )
 
   pickg( FIG,      3,      gml_fig,        tag_out_txt, 0,  0 )
   pickg( EFIG,     4,      gml_efig,       tag_out_txt, figcap_tag,  0 )
@@ -89,9 +89,9 @@
   pickg( GL,       2,      gml_gl,         tag_out_txt, 0,  0 )
   pickg( EGL,      3,      gml_egl,        tag_out_txt, 0,  0 )
 
-  pickg( GD,       2,      gml_gd,         tag_out_txt,  0, def_tag )
+  pickg( GD,       2,      gml_gd,         tag_out_txt,  0, def_tag | list_tag )
   pickg( GRAPHIC,  7,      gml_graphic,    tag_out_txt, titlep_tag | address_tag,  0 )
-  pickg( GT,       2,      gml_gt,         tag_out_txt, 0,  0 )
+  pickg( GT,       2,      gml_gt,         tag_out_txt, 0,  list_tag )
   pickg( H0,       2,      gml_h0,         0,   0,  0 )
   pickg( H1,       2,      gml_h1,         0,   0,  0 )
   pickg( H2,       2,      gml_h2,         0,   0,  0 )
@@ -125,9 +125,9 @@
   pickg( INDEX,    5,      gml_index,      tag_out_txt, 0,  0 )
   pickg( IREF,     4,      gml_iref,       tag_out_txt, 0,  0 )
   pickg( LAYOUT,   6,      gml_layout,     0,   0,  0 )
-  pickg( LI,       2,      gml_li,         tag_out_txt,  0, li_lp_tag )
+  pickg( LI,       2,      gml_li,         tag_out_txt,  0, li_lp_tag | list_tag )
   pickg( LIREF,    5,      gml_dummy,      tag_out_txt, 0,  0 )
-  pickg( LP,       2,      gml_lp,         tag_out_txt,  0, li_lp_tag )
+  pickg( LP,       2,      gml_lp,         tag_out_txt,  0, li_lp_tag | list_tag )
 
   pickg( LQ,       2,      gml_lq,         tag_out_txt, 0,  0 )
   pickg( ELQ,      3,      gml_elq,        tag_out_txt, 0,  0 )
