@@ -274,9 +274,10 @@ static void split_at_CW_sep_char( char * splitpos ) {
         if( splitpos == NULL ) {        // splitpos not yet known
             splitpos = strchr( buff2 + 2, CW_sep_char );
         }
-        if( (splitpos != NULL) && (*(splitpos + 1) != '\0') ) {
-
-            if( (*(splitpos - 1) == '\'') && (*(splitpos + 1) == '\'') ) {
+        if( splitpos != NULL ) {
+            if( *(splitpos + 1) == '\0' ) {
+                *splitpos = '\0';               // remove CW_sep_char from input record
+            } else if( (*(splitpos - 1) == '\'') && (*(splitpos + 1) == '\'') ) {
                 ;
             // hack for testing macro repchars docs\doc\hlp\fmtmacro.gml(174)
                                         // don't split &'index("&x.",';') TBD
@@ -287,12 +288,6 @@ static void split_at_CW_sep_char( char * splitpos ) {
 
                     buff2_lg = strnlen_s( buff2, buf_size ) - 1;
                     *(buff2 + buff2_lg) = '\0'; // terminate 1. part
-#if 0
-                } else {                // ignore 1 CW_sep_char
-                    memmove_s( splitpos, splitpos - buff2 + buff2_lg + 1,
-                               splitpos + 1, splitpos - buff2 + buff2_lg );
-                    buff2_lg = strnlen_s( buff2, buf_size );
-#endif
                 }
             }
         }
