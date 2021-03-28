@@ -233,6 +233,7 @@ char * scan_sym( char * p, symvar * sym, sub_index * subscript, char * * result,
 /*         .se n2a =  (1+(2+5)/6)                                          */
 /*         .se n2b =  -1+(2+5)/6)                                          */
 /*  Note 1: these apply only to ', the first of which must be present      */
+/*          at least one space must precede the initial '                  */
 /*  Note 2: these apply to all delimiters: ', ", /, |, !, ^, 0x9b and,     */
 /*          apparently, 0xdd and 0x60                                      */
 /*          the final delimiter must be followed by a space or '\0'        */
@@ -321,19 +322,25 @@ void    scr_se( void )
                     valstart = gn.resultstr;
                 }                               // if notnum treat as character value
             }
-
             rc = add_symvar( working_dict, sym.name, valstart, subscript, sym.flags );
 
-        } else if( *p == '\'' ) {                       // \' without equal sign
-            p++;
-            while( *p != '\0' && (*valstart != *p) ) {  // look for final \'
+        } else if( *p == '\'' ) {               // \' may introduce valid value
+            if( *(p - 1) == ' ' ) {             // but must be preceded by a space
                 p++;
+                while( *p != '\0' && (*valstart != *p) ) {  // look for final \'
+                    p++;
+                }
+                valstart++;                                 // delete initial \'
+                if( (valstart < p) && (*p == '\'') ) {      // delete \' at end
+                    *p = '\0';
+                }
+                rc = add_symvar( working_dict, sym.name, valstart, subscript, sym.flags );
+            } else {                                        // matches wgml 4.0
+                if( !ProcFlags.suppress_msg ) {
+                    xx_line_err ( err_eq_expected, p);
+                }
+                scan_err = true;
             }
-            valstart++;                                 // delete initial \'
-            if( (valstart < p) && (*p == '\'') ) {      // delete \' at end
-                *p = '\0';
-            }
-            rc = add_symvar( working_dict, sym.name, valstart, subscript, sym.flags );
         } else if( !strncmp( p, "off", 3 ) ) {       // OFF
             p += 3;
             rc = find_symvar( working_dict, sym.name, subscript, &symsubval );
