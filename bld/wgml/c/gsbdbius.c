@@ -150,8 +150,10 @@ static void scr_style_common( style_cw_type type, style_cw_info * cw_info )
 
     if( cc == omit ) {                  // same as BD 1
         script_style.style |= type;
-        cw_info->count = 1;
-        cw_info->scope = SCS_count;
+        if( type != SCT_bi ) {
+            cw_info->count = 1;
+            cw_info->scope = SCS_count;
+        }
         pa = scan_start;                // nothing following
     } else {                            // "pos", "quotes", "quote0"
         SkipSpaces( p );                // first token start
