@@ -154,7 +154,6 @@ void    scr_label( void )
     labelcb     *   lb;
     char            linestr[MAX_L_AS_STR];
 
-    scan_start += 2;                // over dots
     SkipSpaces( scan_start );       // may be ...LABEL or ...<blanks>LABEL, skip over blanks
     if( *scan_start == '\0'  ) {    // no label?
         scan_err = true;

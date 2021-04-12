@@ -483,7 +483,7 @@ static void     scan_script( void )
             *pt++ = SCR_char;
             *pt   = '\0';
             me = NULL;
-            scan_start = p + 2;
+            scan_start++;
             toklen = 2;
     } else {
         if( *p == '\'' ) {                  // .'
