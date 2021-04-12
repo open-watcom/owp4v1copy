@@ -526,12 +526,15 @@ static void     scan_script( void )
         scan_start = p;
 
         pt = token_buf;
-        while( is_macro_char( *p ) ) {      // end of controlword
+        toklen = 0;
+        while( toklen < MAC_NAME_LENGTH ) { 
+            if( is_space_tab_char( *p ) || (*p == '\0') ) { // largest possible macro/cw
+                break;
+            }
            *pt++ = my_tolower( *p++ );      // copy lowercase to TokenBuf
+           toklen++;
         }
         *pt = '\0';
-
-        toklen = pt - token_buf;
 
         if( !ProcFlags.CW_sep_ignore &&
                 ((*token_buf == '\0') || (*token_buf == ' ') || (toklen == 0)) ) {
@@ -540,9 +543,6 @@ static void     scan_script( void )
             return;
         }
 
-        if( toklen >= MAC_NAME_LENGTH ) {
-            token_buf[MAC_NAME_LENGTH] = '\0';
-        }
         if( !ProcFlags.macro_ignore ) {
             me = find_macro( macro_dict, token_buf );
         } else {
@@ -568,6 +568,8 @@ static void     scan_script( void )
         add_macro_parms( p + 1 );
         scan_restart = scan_stop + 1;
     } else if( !ProcFlags.literal ) {    // try script controlword if not in LI
+        scan_start += SCR_KW_LENGTH;
+        p = scan_start;
         cwfound = false;
         if( (cb->fmflags & II_research) && GlobalFlags.firstpass ) {
             if( cb->fmflags & II_tag_mac ) {
@@ -582,36 +584,37 @@ static void     scan_script( void )
             add_SCR_tag_research( token_buf );
         }
 
-        if( toklen == SCR_KW_LENGTH ) {
-            for( k = 0; k < SCR_TAGMAX; ++k ) {
-                if( !strcmp( scr_tags[k].tagname, token_buf ) ) {
-                    if( !ProcFlags.layout && !ProcFlags.fb_document_done
-                            && (scr_tags[k].cwflags & cw_o_t) ) {
+        for( k = 0; k < SCR_TAGMAX; ++k ) {
+            if( !strncmp( scr_tags[k].tagname, token_buf, SCR_KW_LENGTH ) ) {
+                if( !ProcFlags.layout && !ProcFlags.fb_document_done
+                                        && (scr_tags[k].cwflags & cw_o_t) ) {
 
-                        /********************************************************/
-                        /* this is the first control word which produces output */
-                        /* start the document, the layout is done               */
-                        /* start_doc_sect() calls do_layout_end_processing()    */
-                        /********************************************************/
+                    /********************************************************/
+                    /* this is the first control word which produces output */
+                    /* start the document, the layout is done               */
+                    /* start_doc_sect() calls do_layout_end_processing()    */
+                    /********************************************************/
 
-                        start_doc_sect();
-                    }
-                    if( ProcFlags.literal  ) {  // .li active
-                        if( !strcmp( token_buf, "li" ) ) {  // .li
-                            scan_start = p; // found, process
-                            scr_tags[k].tagproc();
-                        }
-                    } else {
-                        scan_start = p; // script controlword found, process
-                        if( scr_tags[k].cwflags & cw_break ) {
-                            ProcFlags.force_pc = false;
-                            scr_process_break();// output incomplete line, if any
-                        }
+                    start_doc_sect();
+                }
+                ProcFlags.CW_noblank = false;           // blank after CW is default
+                if( ProcFlags.literal  ) {              // .li active
+                    if( !strcmp( token_buf, "li" ) ) {  // .li
+                        ProcFlags.CW_noblank = (*p != ' ');
+                        scan_start = p; // found, process
                         scr_tags[k].tagproc();
                     }
-                    cwfound = true;
-                    break;
+                } else {
+                    scan_start = p; // script controlword found, process
+                    if( scr_tags[k].cwflags & cw_break ) {
+                        ProcFlags.force_pc = false;
+                        scr_process_break();// output incomplete line, if any
+                    }
+                    ProcFlags.CW_noblank = (*p != ' ');
+                    scr_tags[k].tagproc();
                 }
+                cwfound = true;
+                break;
             }
         }
         if( !cwfound ) {

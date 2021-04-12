@@ -28,6 +28,9 @@
 *                        only used options are implemented
 *                        i.e.   n ON DELETE
 *               not implemented 0 OFF       nested perform
+*               OFF was implemented to act as DELETE
+*               neither is fully implemented, nor (I suppose) is ON,
+*               since PE nesting is not supported
 *
 *  comments are from script-tso.txt
 ****************************************************************************/
@@ -151,14 +154,21 @@ void    scr_pe( void )
             switch( len ) {
             case 2 :
                 if( !strnicmp( "ON", pa, 2 ) ) {
-                    init_pe_line( INT_MAX );
+                    init_pe_line( INT_MAX );    // partial implementation (no nesting)
+                } else {
+                    xx_opt_err( cwcurr, pa );
+                }
+                break;
+            case 3 :
+                if( !strnicmp( "OFF", pa, 3 ) ) {
+                    reset_pe_cb();              // partial implementation (no nesting)
                 } else {
                     xx_opt_err( cwcurr, pa );
                 }
                 break;
             case 6 :
                 if( !strnicmp( "DELETE", pa, 6 ) ) {
-                    reset_pe_cb();
+                    reset_pe_cb();              // partial implementation (no nesting)
                 } else {
                     xx_opt_err( cwcurr, pa );
                 }

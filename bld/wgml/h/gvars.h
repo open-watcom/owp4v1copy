@@ -93,6 +93,7 @@ typedef struct proc_flags {
     unsigned        if_cond             : 1;// symbol substitution in if condition
     unsigned        macro_ignore        : 1;// .. in col 1-2
     unsigned        CW_indented         : 1;// scr cw line was indented
+    unsigned        CW_noblank          : 1;// no blank between CW/macro and first operand
     unsigned        CW_sep_ignore       : 1;// ignore scr cw separator
     unsigned        in_macro_define     : 1;// macro definition active
     unsigned        in_fb_fk_block      : 1;// inside FB/FK block
