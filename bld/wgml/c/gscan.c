@@ -815,6 +815,15 @@ void set_if_then_do( ifcb * cb )
             } else if( !strcmp( cw, "th" ) || !strcmp( cw, "el" ) ) {
                 cb->if_flags[cb->if_level].ifcwte = true;
             }
+        } else {
+            /* this may need to be modified to catch macros beginning with if, do or th */
+            if( !strcmp( cw, "if" ) ) {
+                cb->if_flags[cb->if_level].ifcwif = true;
+            } else if( !strcmp( cw, "do" ) ) {
+                cb->if_flags[cb->if_level].ifcwdo = true;
+            } else if( !strcmp( cw, "th" ) || !strcmp( cw, "el" ) ) {
+                cb->if_flags[cb->if_level].ifcwte = true;
+            }
         }
     }
 }
