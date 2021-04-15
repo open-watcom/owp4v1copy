@@ -154,15 +154,15 @@ void scr_ix( void )
 {
     bool            do_major;           // true if reference is a major reference
     bool            do_nothing;         // true if index string/ref is duplicate
-    condcode        cc;                 // result code
-    entry_list  *   entry;
-    int             lvl;                // max index level in control word data
-    int             k;
     char        *   ix[3] = { NULL, NULL, NULL };   // index string start pointers
     char        *   p;
     char            pix_char;           // major reference prefix char ($pix)
     char        *   ref = NULL;         // ref string start pointer
+    condcode        cc;                 // result code
+    entry_list  *   entry;
     getnum_block    gn;
+    int             lvl;                // max index level in control word data
+    int             k;
     ix_h_blk    *   ixbase[3] = { NULL, NULL, NULL };   // current list base
     ix_h_blk    *   ixhwork;            // insertion point/found match item
     ix_h_blk    *   ixhwk;              // index block
@@ -188,10 +188,11 @@ void scr_ix( void )
     pix_char = *(dictval->value);
     wkpage = page + 1;                  // predicted number of current page
 
-    garginit();                         // over control word
+    p = scan_start;
 
     /* Check for no operands, a structure number, or a DUMP/PURGE line */
 
+    tok_start = NULL;                   // clear token start address
     cc = getarg();                      // get next operand
     if( cc == omit || cc == quotes0 ) { // no operands
 
