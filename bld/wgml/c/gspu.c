@@ -128,38 +128,50 @@ static  errno_t open_pu_file( int n )
 
 void    scr_pu( void )
 {
-    int             workn;
-    condcode        cc;
     char        *   p;
+    char        *   pa;
+    condcode        cc;                 // result code
+    getnum_block    gn;
+    int             len;
+    int             workn;
 
-    garginit();                         // find end of CW
+    p = scan_start;
+    SkipSpaces( p );                    // next word start
+    pa = p;
+    SkipNonSpaces( p );                 // end of word
+    len = p - pa;
 
-    cc = getarg();                      // workfile number
+    if( len == 0 ) {                    // omitted
+        workn = 1;                      // "1" is default
+    } else {
 
-    if( cc == omit ) {
-        numb_err();                     // we need workfile number
-        return;
+        gn.argstart = pa;
+        gn.argstop = p;
+        gn.ignore_blanks = 0;
+        cc = getnum( &gn );
+
+        if( cc != notnum ) {                // number found
+            if( (len > 1) || (cc !=pos)  || (*pa < '1') || (*pa > '9') ) {
+                numb_err();
+                return;
+            }
+            workn = *pa - '0';              // workfile specified
+            pa++;
+            SkipSpaces( pa );               // next word start
+        } else {
+            workn = 1;                      // workfile not given, "1" is default
+        }
     }
-
-    p = tok_start;
-
-    if( (arg_flen > 1) || (*p < '1') || (*p > '9') ) {
-        numb_err();
-        return;
-    }
-    workn = *p - '0';
-    scan_restart = scan_stop + 1;
-
-    cc = getarg();                      // text follows
-
-    if( cc == omit ) {                  // no then close workfile
+    if( *pa == '\0' ) {                 // no text follows
         close_pu_file( workn );
         return;
     }
 
     open_pu_file( workn );              // open if not already done
-    fputs( tok_start, workfile[workn - 1] );
+    fputs( pa, workfile[workn - 1] );
     fputc( '\n', workfile[workn - 1] );
 
+    scan_restart = scan_stop + 1;
     return;
 }
+
