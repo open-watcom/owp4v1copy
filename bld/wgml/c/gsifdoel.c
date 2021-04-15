@@ -392,24 +392,25 @@ static bool ifcompare( termcb * t1, relop r, termcb * t2 )
 
 void    scr_if( void )
 {
-    ifcb            *   cb;             // if stack ptr
-
-    condcode        cct1;
-    condcode        cct2;
-    condcode        ccrelop;
-    termcb          t1;                 // first argument
-    termcb          t2;                 // second argument
-    relop           relation;           // the relation between t1 and t2
-    logop           logical;            // if more than 1 condition
     bool            ifcond;             // current condition
     bool            totalcondition;     // resultant condition
     bool            firstcondition;     // first comparison .if
     char            linestr[MAX_L_AS_STR];
+    char        *   p;
+    condcode        cct1;
+    condcode        cct2;
+    condcode        ccrelop;
+    ifcb        *   cb;                 // if stack ptr
+    logop           logical;            // if more than 1 condition
+    relop           relation;           // the relation between t1 and t2
+    termcb          t1;                 // first argument
+    termcb          t2;                 // second argument
 
     scan_err = false;
 
     firstcondition = true;              // first 2 terms to compare
-    garginit();                         // find end of control word
+    p = scan_start;
+    tok_start = NULL;
 
     process_late_subst(scan_start);
 
