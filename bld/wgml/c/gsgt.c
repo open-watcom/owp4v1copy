@@ -365,12 +365,11 @@ void    scr_gt( void )
         f_print
     } function;
 
-    garginit();                         // find end of CW
-
     /***********************************************************************/
     /*  isolate tagname   or use previous if tagname *                     */
     /***********************************************************************/
 
+    tok_start = NULL;
     cc = getarg();                      // Tagname
 
     if( cc == omit ) {
