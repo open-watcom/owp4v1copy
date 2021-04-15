@@ -29,10 +29,11 @@
 *                        i.e.   ODD EVEN and NOSTART per default
 *               not implemented are the other options
 *
+*                        .cc (conditional column) script control word
 *                        .cp (conditional page) script control word
 *                        only used options are implemented
 *                        i.e. .cp numbervalue
-*
+*               note: conditional page/column appear unimplemented by wgml 4.0
 *
 *  comments are from script-tso.txt
 ****************************************************************************/
@@ -166,7 +167,6 @@ void scr_pa( void )
         }
         break;
     default:
-        xx_opt_err( cwcurr, pa );
         break;
     }
     scan_restart = scan_stop +1;
