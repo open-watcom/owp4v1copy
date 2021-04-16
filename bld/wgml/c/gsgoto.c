@@ -370,8 +370,6 @@ void    scr_go( void )
     input_cbs->if_cb->if_level = 0;     // .go terminates
     ProcFlags.keep_ifstate = false;     // ... all .if controls
 
-    garginit();
-
     cc = getarg();
     if( cc != pos ) {
         scan_err = true;
