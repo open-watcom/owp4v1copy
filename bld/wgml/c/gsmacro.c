@@ -678,8 +678,6 @@ void    scr_em( void )
 
     cb = input_cbs;
 
-    garginit();
-
     cc = getarg();
 
     if( cc == omit ) {
@@ -698,7 +696,10 @@ void    scr_em( void )
          */
         len = 0;
         pn  = macname;
-        while( is_macro_char( *p ) && len < MAC_NAME_LENGTH ) {
+        while( len < MAC_NAME_LENGTH ) {
+            if( is_space_tab_char( *p ) || (*p == '\0') ) {     // largest possible macro/cw
+                break;
+            }
             *pn++ = *p++;           // copy macroname
             len++;
         }
