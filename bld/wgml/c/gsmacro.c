@@ -576,8 +576,6 @@ void    scr_me( void )
 
     if( input_cbs->prev != NULL ) {     // if not master document file
 
-        garginit();
-
         cc = getarg();
         if( cc != omit ) {              // line operand present
 
