@@ -480,7 +480,6 @@ void    scr_ga( void )
     saveatt = ' ';
     att_flags = 0;
     val_flags = 0;
-    garginit();                         // find end of CW
 
     cc = getarg();                      // Tagname or *
 
