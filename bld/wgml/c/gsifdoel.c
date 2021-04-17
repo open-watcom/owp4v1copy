@@ -749,7 +749,6 @@ void    scr_do( void )
     char        linestr[MAX_L_AS_STR];
 
     scan_err = false;
-    garginit();                         // find end of control word
     cc = getarg();
 
     cb->if_flags[cb->if_level].ifcwdo = false;
