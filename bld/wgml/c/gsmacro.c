@@ -285,8 +285,10 @@ void    free_lines( inp_line * line )
 
 void    scr_dm( void )
 {
+    char            cw[9];
     char        *   nmstart;
     char        *   p;
+    char        *   pa;
     char        *   pn;
     char            save;
     int             len;
@@ -304,8 +306,6 @@ void    scr_dm( void )
 
     cb = input_cbs;
 
-    garginit();
-
     cc = getarg();
 
     if( cc == omit ) {
@@ -317,15 +317,17 @@ void    scr_dm( void )
         return;
     }
 
-    p   = tok_start;
-
     /*  truncate name if too long WITHOUT error msg
      *  this is wgml 4.0 behaviour
      *
      */
     len = 0;
+    p   = tok_start;
     pn  = macname;
-    while( is_macro_char( *p ) && len < MAC_NAME_LENGTH ) {
+    while( len < MAC_NAME_LENGTH ) {
+        if( is_space_tab_char( *p ) || (*p == '\0') ) { // largest possible macro name
+            break;
+        }
         *pn++ = my_tolower( *p++ );     // copy lowercase macroname
         len++;
     }
@@ -372,7 +374,7 @@ void    scr_dm( void )
         sepchar = *p++;
         nmstart = p;
         while( *p != '\0' ) {
-            while( *p != '\0' && *p != sepchar ) {  // look for seperator
+            while( *p != '\0' && *p != sepchar ) {  // look for separator
                 ++p;
             }
             len = p - nmstart;
@@ -421,74 +423,85 @@ void    scr_dm( void )
             if( cb->s.f->flags & (FF_eof | FF_err) ) {
                 break;                  // out of read loop
             }
+
+            len = 0;
             p = buff2;
-            if( *p == SCR_char ) {      // possible macro end
-                int second = (*(p + 1) == SCR_char);// for ..dm case
-
-                if( my_tolower( *(p + 1 + second) ) == 'd' &&
-                    my_tolower( *(p + 2 + second) ) == 'm' &&
-                    (*(p + 3 + second) == ' ' || *(p + 3 + second) == '\0') ) {
-
-                    garginit();
-
-                    cc = getarg();
-                    if( cc == omit ) {  // only .dm  means macro end
-                        compend = 1;
-                        break;          // out of read loop
-                    }
-                    p = scan_start;
-                    save = *p;
-                    *p = '\0';
-                    if( strnicmp( macname, tok_start, MAC_NAME_LENGTH ) ) {
-                        // macroname from begin different from end
-                        err_count++;
-                        // SC--005 Macro '%s' is not being defined
-                        g_err( err_mac_def_not, tok_start );
-                        ulongtodec( cb->s.f->lineno, linestr );
-                        g_info( inf_file_line, linestr, cb->s.f->filename );
-                        *p = save;
-                        free_lines( head );
-                        return;
-                    }
-                    *p = save;
-                    cc = getarg();
-                    if( cc == omit ) {
-                        err_count++;
-                        // SC--048 A control word parameter is missing
-                        g_err( err_mac_def_miss );
-                        ulongtodec( cb->s.f->lineno, linestr );
-                        g_info( inf_file_line, linestr, cb->s.f->filename );
-                        free_lines( head );
-                        return;
-                    }
-                    p = scan_start;
-                    save = *p;
-                    *p = '\0';
-                    if( stricmp( tok_start, "end") ) {
-                        err_count++;
-                        // SC--002 The control word parameter '%s' is invalid
-                        g_err( err_mac_def_inv, tok_start );
-                        ulongtodec( cb->s.f->lineno, linestr );
-                        g_info( inf_file_line, linestr, cb->s.f->filename );
-                        free_lines( head );
-                        return;
-                    }
-                    compend = 1;
-                    break;              // out of read loop
+            pa = cw;
+            if( *p == SCR_char ) {              // only test script control words
+                p++;
+                if( (*p == SCR_char)  || (*p == '\'') ) {
+                    pa++;                       // over ".." or ".'"
                 }
+                while( len < MAC_NAME_LENGTH ) { 
+                    if( is_space_tab_char( *p ) || (*p == '\0') ) { // largest possible macro/cw
+                        break;
+                    }
+                   *pa++ = my_tolower( *p++ );  // copy lowercase to TokenBuf
+                   len++;
+                }
+                *pa = '\0';
+                if( !strncmp( cw, "dm", SCR_KW_LENGTH ) ) {
+                    if( (len == SCR_KW_LENGTH) || ((len > SCR_KW_LENGTH) &&
+                                (find_macro( macro_dict, cw ) == NULL)) ) { // .dm control word
+                        cc = getarg();
+                        if( cc == omit ) {  // only .dm  means macro end
+                            compend = 1;
+                            break;          // out of read loop
+                        }
+                        p = scan_start;
+                        save = *p;
+                        *p = '\0';
+                        if( strnicmp( macname, tok_start, MAC_NAME_LENGTH ) ) {
+                            // macroname from begin different from end
+                            err_count++;
+                            // SC--005 Macro '%s' is not being defined
+                            g_err( err_mac_def_not, tok_start );
+                            ulongtodec( cb->s.f->lineno, linestr );
+                            g_info( inf_file_line, linestr, cb->s.f->filename );
+                            *p = save;
+                            free_lines( head );
+                            return;
+                        }
+                        *p = save;
+                        cc = getarg();
+                        if( cc == omit ) {
+                            err_count++;
+                            // SC--048 A control word parameter is missing
+                            g_err( err_mac_def_miss );
+                            ulongtodec( cb->s.f->lineno, linestr );
+                            g_info( inf_file_line, linestr, cb->s.f->filename );
+                            free_lines( head );
+                            return;
+                        }
+                        p = scan_start;
+                        save = *p;
+                        *p = '\0';
+                        if( stricmp( tok_start, "end") ) {
+                            err_count++;
+                            // SC--002 The control word parameter '%s' is invalid
+                            g_err( err_mac_def_inv, tok_start );
+                            ulongtodec( cb->s.f->lineno, linestr );
+                            g_info( inf_file_line, linestr, cb->s.f->filename );
+                            free_lines( head );
+                            return;
+                        }
+                        compend = 1;
+                        break;              // out of read loop
+                    }
+                }
+                work = mem_alloc( sizeof( inp_line ) + cb->s.f->usedlen );
+                work->next = NULL;
+                strcpy_s( work->value, cb->s.f->usedlen + 1, buff2 );
+                if( last != NULL ) {
+                    last->next = work;
+                }
+                last = work;
+                if( head == NULL ) {
+                    head = work;
+                }
+                macro_line_count++;
             }
-            work = mem_alloc( sizeof( inp_line ) + cb->s.f->usedlen );
-            work->next = NULL;
-            strcpy_s( work->value, cb->s.f->usedlen + 1, buff2 );
-            if( last != NULL ) {
-                last->next = work;
-            }
-            last = work;
-            if( head == NULL ) {
-                head = work;
-            }
-            macro_line_count++;
-        }                               // end read loop
+        }                                   // end read loop
         if( cb->s.f->flags & (FF_eof | FF_err) ) {
             err_count++;
             // error SC--004 End of file reached
