@@ -438,7 +438,7 @@ typedef enum {
 
 /************************************************************************/
 /*  These are used in two places:                                       */
-/*    In rs_loc, they indicate that a restricted area has been endered  */
+/*    In rs_loc, they indicate that a restricted area has been entered  */
 /*    In gmltag.taglocs, they indicate that this tag is allowed in that */
 /*      restricted area                                                 */
 /************************************************************************/
