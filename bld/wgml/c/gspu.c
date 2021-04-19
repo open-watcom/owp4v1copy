@@ -150,18 +150,20 @@ void    scr_pu( void )
         gn.ignore_blanks = 0;
         cc = getnum( &gn );
 
-        if( cc != notnum ) {                // number found
+        if( cc != notnum ) {            // number found
             if( (len > 1) || (cc !=pos)  || (*pa < '1') || (*pa > '9') ) {
                 numb_err();
                 return;
             }
-            workn = *pa - '0';              // workfile specified
+            workn = *pa - '0';          // workfile specified
             pa++;
-            SkipSpaces( pa );               // next word start
+            SkipSpaces( pa );           // next word start
         } else {
-            workn = 1;                      // workfile not given, "1" is default
+            workn = 1;                  // workfile not given, "1" is default
         }
     }
+    scan_restart = scan_stop + 1;       // do here because returns below all need it
+
     if( *pa == '\0' ) {                 // no text follows
         close_pu_file( workn );
         return;
@@ -171,7 +173,6 @@ void    scr_pu( void )
     fputs( pa, workfile[workn - 1] );
     fputc( '\n', workfile[workn - 1] );
 
-    scan_restart = scan_stop + 1;
     return;
 }
 
