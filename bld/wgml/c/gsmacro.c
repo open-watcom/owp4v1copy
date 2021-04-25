@@ -489,18 +489,18 @@ void    scr_dm( void )
                         break;              // out of read loop
                     }
                 }
-                work = mem_alloc( sizeof( inp_line ) + cb->s.f->usedlen );
-                work->next = NULL;
-                strcpy_s( work->value, cb->s.f->usedlen + 1, buff2 );
-                if( last != NULL ) {
-                    last->next = work;
-                }
-                last = work;
-                if( head == NULL ) {
-                    head = work;
-                }
-                macro_line_count++;
             }
+            work = mem_alloc( sizeof( inp_line ) + cb->s.f->usedlen );
+            work->next = NULL;
+            strcpy_s( work->value, cb->s.f->usedlen + 1, buff2 );
+            if( last != NULL ) {
+                last->next = work;
+            }
+            last = work;
+            if( head == NULL ) {
+                head = work;
+            }
+            macro_line_count++;
         }                                   // end read loop
         if( cb->s.f->flags & (FF_eof | FF_err) ) {
             err_count++;
