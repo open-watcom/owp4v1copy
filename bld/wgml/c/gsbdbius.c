@@ -143,8 +143,6 @@ static void scr_style_common( style_cw_type type, style_cw_info * cw_info )
         script_style.font = g_curr_font;
     }
 
-    garginit();         // find end of control word
-
     p = scan_start;     // for use later
     cc = getarg();      // sets token_start, scan_start and scan_end
 

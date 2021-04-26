@@ -641,8 +641,6 @@ void    scr_th( void )
         show_ifcb( "then", cb );
     }
 
-    garginit();                         // find end of control word
-
     SkipSpaces( scan_start );
 
     if( *scan_start ) {                 // rest of line is not empty split
@@ -712,7 +710,6 @@ void    scr_el( void )
     if( (input_cbs->fmflags & II_research) && GlobalFlags.firstpass ) {
         show_ifcb( "else", cb );
     }
-    garginit();                         // find end of control word
 
     SkipSpaces( scan_start );
 

@@ -28,7 +28,7 @@
 *                        only used options are implemented
 *                        i.e.   ODD EVEN and NOSTART per default
 *               not implemented are the other options
-*
+*                        .pa does not check for page number changes
 *                        .cc (conditional column) script control word
 *                        .cp (conditional page) script control word
 *                        only used options are implemented
@@ -127,6 +127,14 @@ void scr_pa( void )
     cwcurr[3] = '\0';
 
     start_doc_sect();
+
+    /**********************************************************/
+    /* This will need to be seriously altered, probably using */
+    /* get_arg(), because PA can be followed by a number      */
+    /* which is to be used to set the page number of the new  */
+    /* page.                                                  */
+    /**********************************************************/
+
     p = scan_start;
     SkipSpaces( p );                    // next word start
     pa = p;
@@ -167,6 +175,7 @@ void scr_pa( void )
         }
         break;
     default:
+        do_output( true );
         break;
     }
     scan_restart = scan_stop +1;

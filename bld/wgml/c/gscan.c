@@ -565,9 +565,11 @@ static void     scan_script( void )
         }
         add_macro_cb_entry( me, NULL );
         inc_inc_level();
-        add_macro_parms( p + 1 );
+        if( *p == ' ' ) {               // matches wgml 4.0: macro runs without arguments
+            add_macro_parms( p + 1 );
+        }
         scan_restart = scan_stop + 1;
-    } else if( !ProcFlags.literal ) {    // try script controlword if not in LI
+    } else if( !ProcFlags.literal ) {   // try script controlword if not in LI
         scan_start += SCR_KW_LENGTH;
         p = scan_start;
         cwfound = false;

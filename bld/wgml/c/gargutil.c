@@ -80,24 +80,6 @@ bool is_quote_char( char c )
 }
 
 /***************************************************************************/
-/* locate the end of the script control word                               */
-/***************************************************************************/
-
-void garginit( void )
-{
-    char    *   p;
-
-    p = buff2;                          // adress of input buffer
-    scan_stop = buff2 + buff2_lg - 1;   // store scan stop address
-    while( *p != ' ' && p <= scan_stop ) {// search end of script control word
-        p++;
-    }
-    scan_start = p;                     // store control word end address
-
-    tok_start = NULL;                   // clear token start address
-}
-
-/***************************************************************************/
 /*  scan blank delimited argument perhaps quoted                           */
 /*                                                                         */
 /*  extension: if unquoted and equalsign, then quoted parm allowed         */
