@@ -173,7 +173,7 @@ mac_entry   * find_macro( mac_entry * dict, const char * name )
     wk   = NULL;
     curr = dict;
     while( curr != NULL) {
-        if( !strcmp( curr->name, name ) ) {
+        if( !strncmp( curr->name, name, MAC_NAME_LENGTH ) ) {
             wk = curr;
             break;
         }

@@ -527,10 +527,7 @@ static void     scan_script( void )
 
         pt = token_buf;
         toklen = 0;
-        while( toklen < MAC_NAME_LENGTH ) { 
-            if( is_space_tab_char( *p ) || (*p == '\0') ) { // largest possible macro/cw
-                break;
-            }
+        while( !is_space_tab_char( *p ) && (*p != '\0') ) {
            *pt++ = my_tolower( *p++ );      // copy lowercase to TokenBuf
            toklen++;
         }
@@ -565,9 +562,7 @@ static void     scan_script( void )
         }
         add_macro_cb_entry( me, NULL );
         inc_inc_level();
-        if( *p == ' ' ) {               // matches wgml 4.0: macro runs without arguments
-            add_macro_parms( p + 1 );
-        }
+        add_macro_parms( p + 1 );
         scan_restart = scan_stop + 1;
     } else if( !ProcFlags.literal ) {   // try script controlword if not in LI
         scan_start += SCR_KW_LENGTH;
