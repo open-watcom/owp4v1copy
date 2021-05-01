@@ -1765,6 +1765,7 @@ void process_text( char *text, font_number font )
     const char          *   p;
     const char          *   pa;
 
+    bool                    line_split;
     bool                    stop_fnd;
     bool                    wrap_done       = false;
     font_number             temp_font       = 0;
@@ -2129,6 +2130,7 @@ void process_text( char *text, font_number font )
             /* this avoids breaking tab scopes, but it is correct?     */
             /***********************************************************/
 
+            line_split = false;
             while( !tabbing &&
                     ((int32_t)(n_chars->x_address + n_chars->width) > (int32_t)t_page.max_width) ) {
 
@@ -2176,6 +2178,7 @@ void process_text( char *text, font_number font )
                             s_chars->prev = NULL;
                         }
                         t_line->last->next = NULL;
+                        line_split = true;
                     }
                 }
 
@@ -2291,8 +2294,8 @@ void process_text( char *text, font_number font )
                     // s_chars must be repositioned to the start of the line
                     offset = s_chars->x_address - t_page.cur_left;
                     s_chars->x_address = t_page.cur_left;
-                    if( t_line->line_height < wgml_fonts[font].line_height ) {
-                        t_line->line_height = wgml_fonts[font].line_height;
+                    if( t_line->line_height < wgml_fonts[s_chars->font].line_height ) {
+                        t_line->line_height = wgml_fonts[s_chars->font].line_height;
                     }
                     // now reposition the remainder of the list
                     s_chars = s_chars->next;
@@ -2406,9 +2409,13 @@ void process_text( char *text, font_number font )
         } else {
             t_line->last->next = n_chars;
             n_chars->prev = t_line->last;
-            if( t_line->line_height < wgml_fonts[font].line_height ) {
-                t_line->line_height = wgml_fonts[font].line_height;
+            if( !line_split || !ProcFlags.CW_noblank ) {    // TBD -- other conditions may apply
+                if( t_line->line_height < wgml_fonts[font].line_height ) {
+                    t_line->line_height = wgml_fonts[font].line_height;
+                }
             }
+            ProcFlags.CW_noblank = false;
+            line_split = false;
         }
         t_line->last = n_chars;
         if( t_line->first == t_line->last ) {
