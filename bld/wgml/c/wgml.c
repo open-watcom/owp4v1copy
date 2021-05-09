@@ -757,7 +757,6 @@ static  void    init_pass( void )
     apage               = 0;            // absolute pageno 1 - n
     page                = 0;            // current pageno (in body 1 - n)
     line                = 0;            // current output lineno on page
-    lc                  = 0;            // remaining lines on page
     post_space          = 0;
 
     init_tag_att();                     // reset last defined GML tag

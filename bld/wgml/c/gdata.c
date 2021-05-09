@@ -109,7 +109,6 @@ void init_global_vars( void )
     apage               = 0;            // absolute pageno 1 - n
     page                = 0;            // current pageno (in body 1 - n)
     line                = 0;            // current output lineno on page
-    lc                  = 0;            // remaining lines on page
     g_curr_font         = FONT0;
     g_prev_font         = FONT0;
     tm                  = 0;            // top margin              &$tm

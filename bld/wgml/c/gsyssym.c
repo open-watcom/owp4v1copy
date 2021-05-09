@@ -555,9 +555,16 @@ static void syslayoutfun( symvar * e ) // LAYOUT cmdline option or :LAYOUT tag s
     return;
 }
 
-static void syslcfun( symvar * e )      // remaining linecount on page
+static void syslcfun( symvar * e )      // remaining lines in column
 {
-    ulongtodec( lc, syslcstr );
+    uint32_t    column_lines;
+
+    if( t_page.cur_depth == 0 ) {
+        column_lines = 0;
+    } else {
+        column_lines = ((t_page.max_depth - t_page.cur_depth) * LPI) / 1000;
+    }
+    ulongtodec( column_lines, syslcstr );
     return;
 }
 
