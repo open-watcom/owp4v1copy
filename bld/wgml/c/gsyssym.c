@@ -562,7 +562,7 @@ static void syslcfun( symvar * e )      // remaining lines in column
     if( t_page.cur_depth == 0 ) {
         column_lines = 0;
     } else {
-        column_lines = ((t_page.max_depth - t_page.cur_depth) * LPI) / 1000;
+        column_lines = ((t_page.max_depth - t_page.cur_depth) * LPI) / g_resv;
     }
     ulongtodec( column_lines, syslcstr );
     return;
