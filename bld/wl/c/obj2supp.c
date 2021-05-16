@@ -255,6 +255,10 @@ static void GetFrameAddr( frame_spec *frame, targ_addr *addr,
 {
     switch( frame->type ) {
     case FIX_FRAME_SEG:
+        if( !frame->u.sdata ) {
+          LnkMsg( LOC+ERR+MSG_FIXUP_MISSING_THREAD, "dA", frame->type, tgt_addr );
+          break;
+        }
         *addr = frame->u.sdata->u.leader->seg_addr;
         addr->off += frame->u.sdata->a.delta;
         break;
