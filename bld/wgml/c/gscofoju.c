@@ -289,8 +289,6 @@ void    scr_co( void )
         break;
     case 2 :                            // only ON valid
         if( !strnicmp( "ON", pa, 2 ) ) {
-            ProcFlags.concat = true;
-            ProcFlags.sk_co = false;
 
             /* must have text and it must have been started by CO OFF */
 
@@ -376,6 +374,8 @@ void    scr_co( void )
                 }
             }
             scan_restart = pa + len;
+            ProcFlags.concat = true;
+            ProcFlags.sk_co = false;
         } else {
             xx_opt_err( cwcurr, pa );
         }
@@ -383,6 +383,7 @@ void    scr_co( void )
     case 3 :                            // only OFF valid
         if( !strnicmp( "OFF", pa, 3 ) ) {
             ProcFlags.concat = false;
+            ProcFlags.sk_co = false;
             cur_doc_el_group = alloc_doc_el_group( gt_co );
             cur_doc_el_group->next = t_doc_el_group;
             t_doc_el_group = cur_doc_el_group;
