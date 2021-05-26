@@ -1877,14 +1877,13 @@ void insert_col_main( doc_element * a_element )
         /*      they do count ... and start a new page                  */
         /****************************************************************/
 
+        depth = cur_skip + a_element->depth;
         if( (a_element->type == el_text) && a_element->element.text.overprint
                 && (t_page.cur_depth != t_page.max_depth) ) {
-            depth = cur_skip;
+            depth -= a_element->element.text.first->line_height;
             if( a_element->sk ) {
                 t_page.max_depth -= a_element->element.text.first->line_height;
             }
-        } else {
-            depth = cur_skip + a_element->depth;
         }
 
         if( ((a_element->type == el_text) && a_element->element.text.vspace_next) ) {
