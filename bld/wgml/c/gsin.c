@@ -95,12 +95,13 @@ void    scr_in( void )
     int32_t         newindent;
     int32_t         newindentr;
 
+    static  int32_t oldindent;
+
     cwcurr[0] = SCR_char;
     cwcurr[1] = 'i';
     cwcurr[2] = 'n';
     cwcurr[3] = '\0';
 
-    ProcFlags.in_reduced = false;       // flag, if on, is active until next IN
     p = scan_start;
     SkipSpaces( p );                    // next word start
     pa = p;
@@ -123,11 +124,7 @@ void    scr_in( void )
                 err_count++;
                 show_include_stack();
             } else {
-                if( indentwork.su_relative ) {
-                    newindent += round_indent( &indentwork );
-                } else {
-                    newindent = round_indent( &indentwork );
-                }
+                newindent = round_indent( &indentwork );
             }
         }
         SkipSpaces( p );
@@ -161,12 +158,21 @@ void    scr_in( void )
 
     /* Reset margin(s) to reflect the current IN offsets */
 
-    t_page.cur_left = g_indent;
+    if( indentwork.su_relative ) {
+        if( ProcFlags.in_reduced ) {
+            t_page.cur_left = oldindent;
+        }
+        t_page.cur_left += g_indent;
+    } else {
+        t_page.cur_left = g_indent;
+    }
     t_page.max_width = t_page.last_pane->col_width + g_indentr;
 
     /* Reduce t_page.cur_left to 0 if g_indent made it negative */
 
+    ProcFlags.in_reduced = false;       // flag, if on, is active until next IN
     if( ((int32_t) t_page.page_left + t_page.cur_left) < 0 ) {
+        oldindent = t_page.cur_left;
         t_page.cur_left = 0;
         ProcFlags.in_reduced = true;        // set flag to record virtual reduction of in value
     }
