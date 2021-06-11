@@ -150,7 +150,6 @@
 .dm uterm end
 .*
 .dm uindex begin
-uindex=2
 .ix '&*'
 .dm uindex end
 .*
