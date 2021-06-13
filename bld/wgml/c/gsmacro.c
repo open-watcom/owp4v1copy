@@ -126,6 +126,10 @@ void    add_macro_cb_entry( mac_entry * me, gtentry * ge )
 /*              &*0=1                                                      */
 /*              &*1="a b"c"                                                */
 /*  while, if a space precedes "c", then "c" becomes the value of *2       */
+/*  Trailing spaces are removed, unless                                    */
+/*    the entire operand consists of space characters                      */
+/*    the line ends in a symbol that evaluates to an empty string          */
+/*    the space occurred before a separator character that split the line  */
 /*  Note: the parsing rules are a bit different from those used in         */
 /*        getarg(), so that function is not used                           */
 /***************************************************************************/
@@ -138,8 +142,25 @@ void    add_macro_parms( char * p )
     char        starbuf[12];
     condcode    cc;
     int         star0;
+    size_t      len;
+    size_t      o_len;
 
     if( *p != '\0' ) {
+
+        /* remove trailing spaces if appropriate */
+
+        o_len = strlen( p );
+        len = o_len;
+        if( !ProcFlags.null_value && (input_cbs->prev->hidden_head == NULL) && (len != 0) ) {
+            while( *(p + len - 1) == ' ' ) {        // remove trailing spaces
+                len--;
+                if( len == 0 ) {                    // empty operand
+                    len = o_len;
+                    break;
+                }
+            }
+            *(p + len) = '\0';                      // end after last non-space character
+        }
 
         /* the name used for * is a macro because it may have to be changed -- TBD */
 

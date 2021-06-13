@@ -238,20 +238,8 @@ static condcode gargterm( termcb * t )
         }
         // prepare string   quoted or unquoted
         t->term_length = arg_flen;
-        if( t->term_length == 0 ) {
-            t->term_string = mem_alloc( 1 );
-            t->term_string[0] = '\0';
-        } else {
-            while( *(tok_start + t->term_length - 1) == ' ' ) {    // trim spaces at end
-                t->term_length--;
-                if( t->term_length == 0 ) {   // empty quoted string
-                        t->term_length = arg_flen;
-                        break;
-                }
-            }
-            t->term_string = mem_alloc( t->term_length + 1 );
-            strncpy_s( t->term_string, t->term_length + 1, tok_start, t->term_length );
-        }
+        t->term_string = mem_alloc( t->term_length + 1 );
+        strncpy_s( t->term_string, t->term_length + 1, tok_start, t->term_length );
     } else {
         scan_start = gn.argstart;
         t->numeric = true;
