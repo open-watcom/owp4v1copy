@@ -298,8 +298,8 @@ pick( ERR_LABEL_ZERO,           "Label lineno not greater 0",
 pick( ERR_TAG_MAC_NAME,         "Tag macro name missing / invalid",
                                 "Tag macro name missing / invalid" )
 
-pick( ERR_TAG_FUNC_INV,         "Tag function missing / invalid (not ADD, CHANGE, OFF, ON, DELETE, PRINT",
-                                "Tag function missing / invalid (not ADD, CHANGE, OFF, ON, DELETE, PRINT" )
+pick( ERR_TAG_FUNC_INV,         "Tag function missing / invalid (not ADD, CHANGE, OFF, ON, DELETE, PRINT)",
+                                "Tag function missing / invalid (not ADD, CHANGE, OFF, ON, DELETE, PRINT)" )
 
 pick( ERR_TAG_OPT_INV,          "Tag option invalid",
                                 "Tag option invalid" )
