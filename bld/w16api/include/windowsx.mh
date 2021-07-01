@@ -1,0 +1,846 @@
+/*
+ *  windowsx.h  Win16 extension macros
+ *
+:include crwatcnt.sp
+ */
+
+#ifndef _INC_WINDOWSX
+#define _INC_WINDOWSX
+
+:include readonly.sp
+
+:include cpluspro.sp
+
+/* Message cracker macros */
+#define HANDLE_MSG( x, p1, f ) \
+    case (p1): \
+        return HANDLE_##p1( x, wParam, lParam, f )
+#define HANDLE_WM_COMPACTING( x, p1, p2, f ) \
+    ((f)( x, (UINT)(p1) ), 0L)
+#define FORWARD_WM_COMPACTING( x, p, f ) \
+    (void)(f)( x, WM_COMPACTING, (WPARAM)(UINT)(p), 0L )
+#define HANDLE_WM_WININICHANGE( x, p1, p2, f ) \
+    ((f)( x, (LPCSTR)(p2) ), 0L)
+#define FORWARD_WM_WININICHANGE( x, p, f ) \
+    (void)(f)( x, WM_WININICHANGE, 0, (LPARAM)(LPCSTR)(p) )
+#define HANDLE_WM_SYSCOLORCHANGE( x, p1, p2, f ) \
+    ((f)( x ), 0L)
+#define FORWARD_WM_SYSCOLORCHANGE( x, f ) \
+    (void)(f)( x, WM_SYSCOLORCHANGE, 0, 0L )
+#define HANDLE_WM_QUERYNEWPALETTE( x, p1, p2, f ) \
+    MAKELRESULT( (BOOL)(f)( x ), 0 )
+#define FORWARD_WM_QUERYNEWPALETTE( x, f ) \
+    (BOOL)(DWORD)(f)( x, WM_QUERYNEWPALETTE, 0, 0L )
+#define HANDLE_WM_PALETTEISCHANGING( x, p1, p2, f ) \
+    ((f)( x, (HWND)(p1) ), 0L)
+#define FORWARD_WM_PALETTEISCHANGING( x, p, f ) \
+    (void)(f)( x, WM_PALETTEISCHANGING, (WPARAM)(HWND)(p), 0L )
+#define HANDLE_WM_PALETTECHANGED( x, p1, p2, f ) \
+    ((f)( x, (HWND)(p1) ), 0L)
+#define FORWARD_WM_PALETTECHANGED( x, p, f ) \
+    (void)(f)( x, WM_PALETTECHANGED, (WPARAM)(HWND)(p), 0L )
+#define HANDLE_WM_FONTCHANGE( x, p1, p2, f ) \
+    ((f)( x ), 0L)
+#define FORWARD_WM_FONTCHANGE( x, f ) \
+    (void)(f)( x, WM_FONTCHANGE, 0, 0L )
+#define HANDLE_WM_SPOOLERSTATUS( x, p1, p2, f ) \
+    ((f)( x, (UINT)(p1), (int)LOWORD( p2 ) ), 0L)
+#define FORWARD_WM_SPOOLERSTATUS( x, p1, p2, f ) \
+    (void)(f)( x, WM_SPOOLERSTATUS, (WPARAM)(p1), MAKELPARAM( (UINT)(p2), 0 ) )
+#define HANDLE_WM_DEVMODECHANGE( x, p1, p2, f ) \
+    ((f)( x, (LPCSTR)(p2) ), 0L)
+#define FORWARD_WM_DEVMODECHANGE( x, p, f ) \
+    (void)(f)( x, WM_DEVMODECHANGE, 0, (LPARAM)(LPCSTR)(p) )
+#define HANDLE_WM_TIMECHANGE( x, p1, p2, f ) \
+    ((f)( x ), 0L)
+#define FORWARD_WM_TIMECHANGE( x, f ) \
+    (void)(f)( x, WM_TIMECHANGE, 0, 0L )
+#define HANDLE_WM_POWER( x, p1, p2, f ) \
+    ((f)( x, (int)(p1) ), 0L)
+#define FORWARD_WM_POWER( x, p, f ) \
+    (void)(f)( x, WM_POWER, (WPARAM)(p), 0L )
+#define HANDLE_WM_QUERYENDSESSION( x, p1, p2, f ) \
+    MAKELRESULT( (BOOL)(f)( x ), 0 )
+#define FORWARD_WM_QUERYENDSESSION( x, p ) \
+    (BOOL)(DWORD)(f)( x, WM_QUERYENDSESSION, 0, 0L )
+#define HANDLE_WM_ENDSESSION( x, p1, p2, f ) \
+    ((f)( x, (BOOL)(p1) ), 0L)
+#define FORWARD_WM_ENDSESSION( x, p, f ) \
+    (void)(f)( x, WM_ENDSESSION, (WPARAM)(BOOL)(p), 0L )
+#define HANDLE_WM_QUIT( x, p1, p2, f ) \
+    ((f)( x, (int)(p1) ), 0L)
+#define FORWARD_WM_QUIT( x, p, f ) \
+    (void)(f)( x, WM_QUIT, (WPARAM)(p), 0L )
+#define HANDLE_WM_SYSTEMERROR( x, p1, p2, f ) \
+    ((f)( (x), (int)(p1) ), 0L)
+#define FORWARD_WM_SYSTEMERROR( x, p, f ) \
+    (void)(f)( (x), WM_SYSTEMERROR, (WPARAM)(p), 0L )
+#define HANDLE_WM_CREATE( x, p1, p2, f ) \
+    ((f)( x, (CREATESTRUCT FAR*)(p2) ) ? 0L : (LRESULT)-1L)
+#define FORWARD_WM_CREATE( x, p, f ) \
+    (BOOL)(DWORD)(f)( x, WM_CREATE, 0, (LPARAM)(CREATESTRUCT FAR*)(p) )
+#define HANDLE_WM_NCCREATE( x, p1, p2, f ) \
+    (LRESULT)(DWORD)(BOOL)(f)( x, (CREATESTRUCT FAR*)(p2) )
+#define FORWARD_WM_NCCREATE( x, p, f ) \
+    (BOOL)(DWORD)(f)( x, WM_NCCREATE, 0, (LPARAM)(CREATESTRUCT FAR*)(p) )
+#define HANDLE_WM_DESTROY( x, p1, p2, f ) \
+    ((f)( x ), 0L)
+#define FORWARD_WM_DESTROY( x, f ) \
+    (void)(f)( x, WM_DESTROY, 0, 0L )
+#define HANDLE_WM_NCDESTROY( x, p1, p2, f ) \
+    ((f)( x ), 0L)
+#define FORWARD_WM_NCDESTROY( x, f ) \
+    (void)(f)( x, WM_NCDESTROY, 0, 0L )
+#define HANDLE_WM_SHOWWINDOW( x, p1, p2, f ) \
+    ((f)( x, (BOOL)(p1), LOWORD(p2) ), 0L)
+#define FORWARD_WM_SHOWWINDOW( x, p1, p2, f ) \
+    (void)(f)( x, WM_SHOWWINDOW, (WPARAM)(BOOL)(p1), MAKELPARAM( (UINT)(p2), 0 ) )
+#define HANDLE_WM_SETREDRAW( x, p1, p2, f ) \
+    ((f)( x, (BOOL)(p1) ), 0L)
+#define FORWARD_WM_SETREDRAW( x, p, f ) \
+    (void)(f)( x, WM_SETREDRAW, (WPARAM)(p), 0L )
+#define HANDLE_WM_ENABLE( x, p1, p2, f ) \
+    ((f)( x, (BOOL)(p1) ), 0L)
+#define FORWARD_WM_ENABLE( x, p, f ) \
+    (void)(f)( x, WM_ENABLE, (WPARAM)(BOOL)(p1), 0L )
+#define HANDLE_WM_SETTEXT( x, p1, p2, f ) \
+    ((f)( x, (LPCSTR)(p2) ), 0L)
+#define FORWARD_WM_SETTEXT( x, p, f ) \
+    (void)(f)( x, WM_SETTEXT, 0, (LPARAM)(LPCSTR)(p) )
+#define HANDLE_WM_GETTEXT( x, p1, p2, f ) \
+    (LRESULT)(DWORD)(int)(f)( x, (int)(p1), (LPSTR)(p2) )
+#define FORWARD_WM_GETTEXT( x, p1, p2, f ) \
+    (int)(DWORD)(f)( x, WM_GETTEXT, (WPARAM)(int)(p1), (LPARAM)(LPSTR)(p2) )
+#define HANDLE_WM_GETTEXTLENGTH( x, p1, p2, f ) \
+    (LRESULT)(DWORD)(int)(f)( x )
+#define FORWARD_WM_GETTEXTLENGTH( x, f ) \
+    (int)(DWORD)(f)( x, WM_GETTEXTLENGTH, 0, 0L )
+#define HANDLE_WM_WINDOWPOSCHANGING( x, p1, p2, f ) \
+    (LRESULT)(DWORD)(BOOL)(f)( x, (WINDOWPOS FAR*)(p2) )
+#define FORWARD_WM_WINDOWPOSCHANGING( x, p, f ) \
+    (BOOL)(DWORD)(f)( x, WM_WINDOWPOSCHANGING, 0, (LPARAM)(WINDOWPOS FAR*)(p) )
+#define HANDLE_WM_WINDOWPOSCHANGED( x, p1, p2, f ) \
+    ((f)( x, (const WINDOWPOS FAR*)(p2) ), 0L)
+#define FORWARD_WM_WINDOWPOSCHANGED( x, p, f ) \
+    (void)(f)( x, WM_WINDOWPOSCHANGED, 0, (LPARAM)(const WINDOWPOS FAR*)(p) )
+#define HANDLE_WM_MOVE( x, p1, p2, f ) \
+    ((f)( x, (int)LOWORD( p2 ), (int)HIWORD( p2 ) ), 0L)
+#define FORWARD_WM_MOVE( x, p1, p2, f ) \
+    (void)(f)( x, WM_MOVE, 0, MAKELPARAM( (int)(p1), (int)(p2) ) )
+#define HANDLE_WM_SIZE( x, p1, p2, f ) \
+    ((f)( x, (UINT)(p1), (int)LOWORD( p2 ), (int)HIWORD( p2 ) ), 0L)
+#define FORWARD_WM_SIZE( x, p1, p2, p3, f ) \
+    (void)(f)( x, WM_SIZE, (WPARAM)(UINT)(p1), MAKELPARAM( (int)(p2), (int)(p3) ) )
+#define HANDLE_WM_CLOSE( x, p1, p2, f ) \
+    ((f)( x ), 0L)
+#define FORWARD_WM_CLOSE( x, f ) \
+    (void)(f)( x, WM_CLOSE, 0, 0L )
+#define HANDLE_WM_QUERYOPEN( x, p1, p2, f ) \
+    MAKELRESULT( (BOOL)(f)( x ), 0 )
+#define FORWARD_WM_QUERYOPEN( x, f ) \
+    (BOOL)(DWORD)(f)( x, WM_QUERYOPEN, 0, 0L )
+#define HANDLE_WM_GETMINMAXINFO( x, p1, p2, f ) \
+    ((f)( x, (MINMAXINFO FAR*)(p2) ), 0L)
+#define FORWARD_WM_GETMINMAXINFO( x, p, f ) \
+    (void)(f)( x, WM_GETMINMAXINFO, 0, (LPARAM)(MINMAXINFO FAR*)(p) )
+#define HANDLE_WM_PAINT( x, p1, p2, f ) \
+    ((f)( x ), 0L)
+#define FORWARD_WM_PAINT( x, f ) \
+    (void)(f)( x, WM_PAINT, 0, 0L )
+#define HANDLE_WM_ERASEBKGND( x, p1, p2, f ) \
+    (LRESULT)(DWORD)(BOOL)(f)( x, (HDC)(p1) )
+#define FORWARD_WM_ERASEBKGND( x, p, f ) \
+    (BOOL)(DWORD)(f)( x, WM_ERASEBKGND, (WPARAM)(HDC)(p), 0L )
+#define HANDLE_WM_ICONERASEBKGND( x, p1, p2, f ) \
+    (LRESULT)(DWORD)(BOOL)(f)( x, (HDC)(p1) )
+#define FORWARD_WM_ICONERASEBKGND( x, p, f ) \
+    (BOOL)(DWORD)(f)( x, WM_ICONERASEBKGND, (WPARAM)(HDC)(p), 0L )
+#define HANDLE_WM_NCPAINT( x, p1, p2, f ) \
+    ((f)( x, (HRGN)(p1) ), 0L)
+#define FORWARD_WM_NCPAINT( x, p, f ) \
+    (void)(f)( x, WM_NCPAINT, (WPARAM)(HRGN)( p ), 0L )
+#define HANDLE_WM_NCCALCSIZE( x, p1, p2, f ) \
+    (LRESULT)(DWORD)(UINT)(f)( x, (BOOL)(p1), (NCCALCSIZE_PARAMS FAR *)(p2) )
+#define FORWARD_WM_NCCALCSIZE( x, p1, p2, f ) \
+    (UINT)(DWORD)(f)( x, WM_NCCALCSIZE, (WPARAM)(p1), (LPARAM)(NCCALCSIZE_PARAMS FAR *)(p2) )
+#define HANDLE_WM_NCHITTEST( x, p1, p2, f ) \
+    (LRESULT)(DWORD)(UINT)(f)( x, (int)LOWORD( p2 ), (int)HIWORD( p2 ) )
+#define FORWARD_WM_NCHITTEST( x, p1, p2, f ) \
+    (UINT)(DWORD)(f)( x, WM_NCHITTEST, 0, MAKELPARAM( (int)(p1), (int)(p2) ) )
+#define HANDLE_WM_QUERYDRAGICON( x, p1, p2, f ) \
+    (LRESULT)(DWORD)(UINT)(f)( x )
+#define FORWARD_WM_QUERYDRAGICON( x, f ) \
+    (HICON)(UINT)(DWORD)(f)( x, WM_QUERYDRAGICON, 0, 0L )
+#ifdef _INC_SHELLAPI
+    #define HANDLE_WM_DROPFILES( x, p1, p2, f ) \
+        ((f)( x, (HDROP)(p1) ), 0L)
+    #define FORWARD_WM_DROPFILES( x, p, f ) \
+        (void)(f)( x, WM_DROPFILES, (WPARAM)(p), 0L )
+#endif
+#define HANDLE_WM_ACTIVATE( x, p1, p2, f ) \
+    ((f)( x, (UINT)(p1), (HWND)LOWORD( p2 ), (BOOL)HIWORD( p2 ) ), 0L)
+#define FORWARD_WM_ACTIVATE( x, p1, p2, p3, f ) \
+    (void)(f)( x, WM_ACTIVATE, (WPARAM)(UINT)(p1), MAKELPARAM( (UINT)(HWND)(p2), (UINT)(BOOL)(p3) ) )
+#define HANDLE_WM_ACTIVATEAPP( x, p1, p2, f ) \
+    ((f)( x, (BOOL)(p1), (HTASK)LOWORD( p2 ) ), 0L)
+#define FORWARD_WM_ACTIVATEAPP( x, p1, p2, f ) \
+    (void)(f)( x, WM_ACTIVATEAPP, (WPARAM)(BOOL)(p1), MAKELPARAM( (p2), 0 ) )
+#define HANDLE_WM_NCACTIVATE( x, p1, p2, f ) \
+    (LRESULT)(DWORD)(BOOL)(f)( x, (BOOL)(p1), (HWND)LOWORD( p2 ), (BOOL)HIWORD( p2 ) )
+#define FORWARD_WM_NCACTIVATE( x, p1, p2, p3, f ) \
+    (BOOL)(DWORD)(f)( x, WM_NCACTIVATE, (WPARAM)(BOOL)(p1), MAKELPARAM( (UINT)(HWND)(p2), (UINT)(BOOL)(p3) ) )
+#define HANDLE_WM_SETFOCUS( x, p1, p2, f ) \
+    ((f)( x, (HWND)(p1) ), 0L)
+#define FORWARD_WM_SETFOCUS( x, p, f ) \
+    (void)(f)( x, WM_SETFOCUS, (WPARAM)(HWND)(p), 0L )
+#define HANDLE_WM_KILLFOCUS( x, p1, p2, f ) \
+    ((f)( x, (HWND)(p1) ), 0L)
+#define FORWARD_WM_KILLFOCUS( x, p, f ) \
+    (void)(f)( x, WM_KILLFOCUS, (WPARAM)(HWND)(p), 0L )
+#define HANDLE_WM_KEYDOWN( x, p1, p2, f ) \
+    ((f)( x, (UINT)(p1), TRUE, (int)LOWORD( p2 ), (UINT)HIWORD( p2 ) ), 0L)
+#define FORWARD_WM_KEYDOWN( x, p1, p2, p3, f ) \
+    (void)(f)( x, WM_KEYDOWN, (WPARAM)(UINT)(p1), MAKELPARAM( (UINT)(p2), (UINT)(p3) ) )
+#define HANDLE_WM_KEYUP( x, p1, p2, f ) \
+    ((f)( x, (UINT)(p1), FALSE, (int)LOWORD( p2 ), (UINT)HIWORD( p2 ) ), 0L )
+#define FORWARD_WM_KEYUP( x, p1, p2, p3, f ) \
+    (void)(f)( x, WM_KEYUP, (WPARAM)(UINT)(p1), MAKELPARAM( (UINT)(p2), (UINT)(p3) ) )
+#define HANDLE_WM_CHAR( x, p1, p2, f ) \
+    ((f)( x, (UINT)(p1), (int)LOWORD( p2 ) ), 0L)
+#define FORWARD_WM_CHAR( x, p1, p2, f ) \
+    (void)(f)( x, WM_CHAR, (WPARAM)(UINT)(p1), MAKELPARAM( (UINT)(p2), 0 ) )
+#define HANDLE_WM_DEADCHAR( x, p1, p2, f ) \
+    ((f)( x, (UINT)(p1), (int)LOWORD( p2 ) ), 0L)
+#define FORWARD_WM_DEADCHAR( x, p1, p2, f ) \
+    (void)(f)( x, WM_DEADCHAR, (WPARAM)(p1), MAKELPARAM( (UINT)(p2), 0 ) )
+#define HANDLE_WM_SYSKEYDOWN( x, p1, p2, f ) \
+    ((f)( x, (UINT)(p1), TRUE, (int)LOWORD( p2 ), (UINT)HIWORD( p2 ) ), 0L)
+#define FORWARD_WM_SYSKEYDOWN( x, p1, p2, p3, f ) \
+    (void)(f)( x, WM_SYSKEYDOWN, (WPARAM)(UINT)(p1), MAKELPARAM( (UINT)(p2), (UINT)(p3) ) )
+#define HANDLE_WM_SYSKEYUP( x, p1, p2, f ) \
+    ((f)( x, (UINT)(p1), FALSE, (int)LOWORD( p2 ), (UINT)HIWORD( p2 ) ), 0L)
+#define FORWARD_WM_SYSKEYUP( x, p1, p2, p3, f ) \
+    (void)(f)( x, WM_SYSKEYUP, (WPARAM)(UINT)(p1), MAKELPARAM( (UINT)(p2), (UINT)(p3) ) )
+#define HANDLE_WM_SYSCHAR( x, p1, p2, f ) \
+    ((f)( x, (UINT)(p1), (int)LOWORD( p2 ) ), 0L)
+#define FORWARD_WM_SYSCHAR( x, p1, p2, f ) \
+    (void)(f)( x, WM_SYSCHAR, (WPARAM)(UINT)(p1), MAKELPARAM( (UINT)(p2), 0 ) )
+#define HANDLE_WM_SYSDEADCHAR( x, p1, p2, f ) \
+    ((f)( x, (UINT)(p1), (int)LOWORD( p2 ) ), 0L)
+#define FORWARD_WM_SYSDEADCHAR( x, p1, p2, f ) \
+    (void)(f)( x, WM_SYSDEADCHAR, (WPARAM)(UINT)(p1), MAKELPARAM( (UINT)(p2), 0 ) )
+#define HANDLE_WM_MOUSEMOVE( x, p1, p2, f ) \
+    ((f)( x, (int)LOWORD( p2 ), (int)HIWORD( p2 ), (UINT)(p1) ), 0L)
+#define FORWARD_WM_MOUSEMOVE( x, p1, p2, p3, f ) \
+    (void)(f)( x, WM_MOUSEMOVE, (WPARAM)(UINT)(p3), MAKELPARAM( p1, p2 ) )
+#define HANDLE_WM_LBUTTONDOWN( x, p1, p2, f ) \
+    ((f)( x, FALSE, (int)LOWORD( p2 ), (int)HIWORD( p2 ), (UINT)(p1) ), 0L)
+#define FORWARD_WM_LBUTTONDOWN( x, p1, p2, p3, p4, f ) \
+    (void)(f)( x, (p1) ? WM_LBUTTONDBLCLK : WM_LBUTTONDOWN, (WPARAM)(UINT)(p4), \
+    MAKELPARAM( p2, p3 ) )
+#define HANDLE_WM_LBUTTONDBLCLK( x, p1, p2, f ) \
+    ((f)( x, TRUE, (int)LOWORD( p2 ), (int)HIWORD( p2 ), (UINT)(p1) ), 0L)
+#define HANDLE_WM_LBUTTONUP( x, p1, p2, f ) \
+    ((f)( x, (int)LOWORD( p2 ), (int)HIWORD( p2 ), (UINT)(p1) ), 0L)
+#define FORWARD_WM_LBUTTONUP( x, p1, p2, p3, f ) \
+    (void)(f)( x, WM_LBUTTONUP, (WPARAM)(UINT)(p3), MAKELPARAM( p1, p2 ) )
+#define HANDLE_WM_RBUTTONDOWN( x, p1, p2, f ) \
+    ((f)( x, FALSE, (int)LOWORD( p2 ), (int)HIWORD( p2 ), (UINT)(p1) ), 0L)
+#define FORWARD_WM_RBUTTONDOWN( x, p1, p2, p3, p4, f ) \
+    (void)(f)( x, (p1) ? WM_RBUTTONDBLCLK : WM_RBUTTONDOWN, (WPARAM)(UINT)(p4), \
+    MAKELPARAM( p2, p3 ) )
+#define HANDLE_WM_RBUTTONDBLCLK( x, p1, p2, f ) \
+    ((f)( x, TRUE, (int)LOWORD( p2 ), (int)HIWORD( p2 ), (UINT)(p1) ), 0L)
+#define HANDLE_WM_RBUTTONUP( x, p1, p2, f ) \
+    ((f)( x, (int)LOWORD( p2 ), (int)HIWORD( p2 ), (UINT)(p1) ), 0L)
+#define FORWARD_WM_RBUTTONUP( x, p1, p2, p3, f ) \
+    (void)(f)( x, WM_RBUTTONUP, (WPARAM)(UINT)(p3), MAKELPARAM( p1, p2 ) )
+#define HANDLE_WM_MBUTTONDOWN( x, p1, p2, f ) \
+    ((f)( x, FALSE, (int)LOWORD( p2 ), (int)HIWORD( p2 ), (UINT)(p1) ), 0L)
+#define FORWARD_WM_MBUTTONDOWN( x, p1, p2, p3, p4 ) \
+    (void)(f)( x, (p1) ? WM_MBUTTONDBLCLK : WM_MBUTTONDOWN, (WPARAM)(UINT)(p4), \
+    MAKELPARAM( p2, p3 ) )
+#define HANDLE_WM_MBUTTONDBLCLK( x, p1, p2, f ) \
+    ((f)( x, TRUE, (int)LOWORD( p2 ), (int)HIWORD( p2 ), (UINT)(p1) ), 0L)
+#define HANDLE_WM_MBUTTONUP( x, p1, p2, f ) \
+    ((f)( x, (int)LOWORD( p2 ), (int)HIWORD( p2 ), (UINT)(p1) ), 0L)
+#define FORWARD_WM_MBUTTONUP( x, p1, p2, p3, f ) \
+    (void)(f)( x, WM_MBUTTONUP, (WPARAM)(UINT)(p3), MAKELPARAM( p1, p2 ) )
+#define HANDLE_WM_MOUSEWHEEL( x, p1, p2, f ) \
+    ((f)( x, (int)LOWORD( p2 ), (int)HIWORD( p2 ), \
+    (int)HIWORD( p1 ), (int)LOWORD( p1 ) ), 0L)
+#define FORWARD_WM_MOUSEWHEEL( x, p1, p2, p3, p4, f ) \
+    (void)(f)( x, WM_MOUSEWHEEL, MAKEWPARAM( p4, p3 ), MAKELPARAM( p1, p2 ) )
+#define HANDLE_WM_NCMOUSEMOVE( x, p1, p2, f ) \
+    ((f)( x, (int)LOWORD( p2 ), (int)HIWORD( p2 ), (UINT)(p1) ), 0L)
+#define FORWARD_WM_NCMOUSEMOVE( x, p1, p2, p3, f ) \
+    (void)(f)( x, WM_NCMOUSEMOVE, (WPARAM)(UINT)(p3), MAKELPARAM( p1, p2 ) ), 0L)
+#define HANDLE_WM_NCLBUTTONDOWN( x, p1, p2, f ) \
+    ((f)( x, FALSE, (int)LOWORD( p2 ), (int)HIWORD( p2 ), (UINT)(p1) ), 0L)
+#define FORWARD_WM_NCLBUTTONDOWN( x, p1, p2, p3, p4, f ) \
+    (void)(f)( x, (p1) ? WM_NCLBUTTONDBLCLK : WM_NCLBUTTONDOWN, (WPARAM)(UINT)p4, \
+    MAKELPARAM( p2, p3 ) )
+#define HANDLE_WM_NCLBUTTONDBLCLK( x, p1, p2, f ) \
+    ((f)( x, TRUE, (int)LOWORD( p2 ), (int)HIWORD( p2 ), (UINT)(p1) ), 0L)
+#define HANDLE_WM_NCLBUTTONUP( x, p1, p2, f ) \
+    ((f)( x, (int)LOWORD( p2 ), (int)HIWORD( p2 ), (UINT)(p1) ), 0L)
+#define FORWARD_WM_NCLBUTTONUP( x, p1, p2, p3, f ) \
+    (void)(f)( x, WM_NCLBUTTONUP, (WPARAM)(UINT)(p3), MAKELPARAM( p1, p2 ) )
+#define HANDLE_WM_NCRBUTTONDOWN( x, p1, p2, f ) \
+    ((f)( x, FALSE, (int)LOWORD( p2 ), (int)HIWORD( p2 ), (UINT)(p1) ), 0L)
+#define FORWARD_WM_NCRBUTTONDOWN( x, p1, p2, p3, p4, f ) \
+    (void)(f)( x, (p1) ? WM_NCRBUTTONDBLCLK : WM_NCRBUTTONDOWN, (WPARAM)(UINT)p4, \
+    MAKELPARAM( p2, p3 ) )
+#define HANDLE_WM_NCRBUTTONDBLCLK( x, p1, p2, f ) \
+    ((f)( x, TRUE, (int)LOWORD( p2 ), (int)HIWORD( p2 ), (UINT)(p1) ), 0L)
+#define HANDLE_WM_NCRBUTTONUP( x, p1, p2, f ) \
+    ((f)( x, (int)LOWORD( p2 ), (int)HIWORD( p2 ), (UINT)(p1) ), 0L)
+#define FORWARD_WM_NCRBUTTONUP( x, p1, p2, p3, f ) \
+    (void)(f)( x, WM_NCRBUTTONUP, (WPARAM)(UINT)(p3), MAKELPARAM( p1, p2 ) )
+#define HANDLE_WM_NCMBUTTONDOWN( x, p1, p2, f ) \
+    ((f)( x, FALSE, (int)LOWORD( p2 ), (int)HIWORD( p2 ), (UINT)(p1) ), 0L)
+#define FORWARD_WM_NCMBUTTONDOWN( x, p1, p2, p3, p4, f ) \
+    (void)(f)( x, (p1) ? WM_NCMBUTTONDBLCLK : WM_NCMBUTTONDOWN, (WPARAM)(UINT)p4, \
+    MAKELPARAM( p2, p3 ) )
+#define HANDLE_WM_NCMBUTTONDBLCLK( x, p1, p2, f ) \
+    ((f)( x, TRUE, (int)LOWORD( p2 ), (int)HIWORD( p2 ), (UINT)(p1) ), 0L)
+#define HANDLE_WM_NCMBUTTONUP( x, p1, p2, f ) \
+    ((f)( x, (int)LOWORD( p2 ), (int)HIWORD( p2 ), (UINT)(p1) ), 0L)
+#define FORWARD_WM_NCMBUTTONUP( x, p1, p2, p3, f ) \
+    (void)(f)( x, WM_NCMBUTTONUP, (WPARAM)(UINT)(p3), MAKELPARAM( p1, p2 ) )
+#define HANDLE_WM_MOUSEACTIVATE( x, p1, p2, f ) \
+    (LRESULT)(DWORD)(int)(f)( x, (HWND)(p1), (UINT)LOWORD( p2 ), (UINT)HIWORD( p2 ) )
+#define FORWARD_WM_MOUSEACTIVATE( x, p1, p2, p3, f ) \
+    (int)(DWORD)(f)( x, WM_MOUSEACTIVATE, (WPARAM)(HWND)(p1), MAKELPARAM( p2, p3 ) )
+#define HANDLE_WM_CANCELMODE( x, p1, p2, f ) \
+    ((f)( x ), 0L)
+#define FORWARD_WM_CANCELMODE( x, f ) \
+    (void)(f)( x, WM_CANCELMODE, 0, 0L )
+#define HANDLE_WM_TIMER( x, p1, p2, f ) \
+    ((f)( x, (UINT)(p1) ), 0L)
+#define FORWARD_WM_TIMER( x, p, f ) \
+    (void)(f)( x, WM_TIMER, (WPARAM)(UINT)(p), 0L )
+#define HANDLE_WM_INITMENU( x, p1, p2, f ) \
+    ((f)( x, (HMENU)(p1) ), 0L)
+#define FORWARD_WM_INITMENU( x, p, f ) \
+    (void)(f)( x, WM_INITMENU, (WPARAM)(HMENU)(p), 0L )
+#define HANDLE_WM_INITMENUPOPUP( x, p1, p2, f ) \
+    ((f)( x, (HMENU)(p1), (int)LOWORD( p2 ), (BOOL)HIWORD( p2 ) ), 0L)
+#define FORWARD_WM_INITMENUPOPUP( x, p1, p2, p3, f ) \
+    (void)(f)( x, WM_INITMENUPOPUP, (WPARAM)(HMENU)(p1), MAKELPARAM( p2, p3 ) )
+#define HANDLE_WM_MENUSELECT( x, p1, p2, f ) \
+    ((n)( (x), (HMENU)(p2), (LOWORD( p2 ) & MF_POPUP) ? 0 : (int)(p1), \
+    (LOWORD( p2 ) & MF_POPUP) ? (HMENU)(p1) : 0, LOWORD( p2 )), 0L )
+#define FORWARD_WM_MENUSELECT( x, p1, p2, p3, p4, f ) \
+    (void)(f)( x, WM_MENUSELECT, ((p4) & MF_POPUP) ? (WPARAM)(HMENU)(p3) : (WPARAM)(int)(p2), \
+    MAKELPARAM( (p4), (p1) ) )
+#define HANDLE_WM_MENUCHAR( x, p1, p2, f ) \
+    (LRESULT)(DWORD)(f)( x, (UINT)(p1), LOWORD( p2 ), (HMENU)HIWORD( p2 ) )
+#define FORWARD_WM_MENUCHAR( x, p1, p2, p3, f ) \
+    (DWORD)(f)( x, WM_MENUCHAR, (WPARAM)(UINT)(p1), MAKELPARAM( (p2), (UINT)(p3) ) )
+#define HANDLE_WM_COMMAND( x, p1, p2, f ) \
+    ((f)( x, (int)(p1), (HWND)LOWORD( p2 ), (UINT)HIWORD( p2 ) ), 0L )
+#define FORWARD_WM_COMMAND( x, p1, p2, p3, f ) \
+    (void)(f)( x, WM_COMMAND, (WPARAM)(int)(p1), MAKELPARAM( (UINT)(p2), (p3) ) )
+#define HANDLE_WM_HSCROLL( x, p1, p2, f ) \
+    ((f)( x, (HWND)HIWORD( p2 ), (UINT)(p1), (int)LOWORD( (p2) ), 0L )
+#define FORWARD_WM_HSCROLL( x, p1, p2, p3, f ) \
+    (void)(f)( x, WM_HSCROLL, (WPARAM)(UINT)(p2), MAKELPARAM( (p3), (UINT)(p1) ) )
+#define HANDLE_WM_VSCROLL( x, p1, p2, f ) \
+    ((f)( x, (HWND)HIWORD( p2 ), (UINT)(p1), (int)LOWORD( (p2) ), 0L )
+#define FORWARD_WM_VSCROLL( x, p1, p2, p3, f ) \
+    (void)(f)( x, WM_VSCROLL, (WPARAM)(UINT)(p2), MAKELPARAM( (p3), (UINT)(p1) ) )
+#define HANDLE_WM_CUT( x, p1, p2, f ) \
+    ((f)( x ), 0L)
+#define FORWARD_WM_CUT( x, f ) \
+    (void)(f)( x, WM_CUT, 0, 0L )
+#define HANDLE_WM_COPY( x, p1, p2, f ) \
+    ((f)( x ), 0L)
+#define FORWARD_WM_COPY( x, f ) \
+    (void)(f)( x, WM_COPY, 0, 0L )
+#define HANDLE_WM_PASTE( x, p1, p2, f ) \
+    ((f)( x ), 0L)
+#define FORWARD_WM_PASTE( x, f ) \
+    (void)(f)( x, WM_PASTE, 0, 0L )
+#define HANDLE_WM_CLEAR( x, p1, p2, f ) \
+    ((f)( x ), 0L)
+#define FORWARD_WM_CLEAR( x, f ) \
+    (void)(f)( x, WM_CLEAR, 0, 0L )
+#define HANDLE_WM_UNDO( x, p1, p2, f ) \
+    ((f)( x ), 0L)
+#define FORWARD_WM_UNDO( x, f ) \
+    (void)(f)( x, WM_UNDO, 0, 0L )
+#define HANDLE_WM_RENDERFORMAT( x, p1, p2, f ) \
+    (LRESULT)(UINT)(HANDLE)(f)( x, (UINT)(p1) )
+#define FORWARD_WM_RENDERFORMAT( x, p, f ) \
+    (HANDLE)(UINT)(f)( x, WM_RENDERFORMAT, (WPARAM)(UINT)(p), 0L )
+#define HANDLE_WM_RENDERALLFORMATS( x, p1, p2, f ) \
+    ((f)( x ), 0L)
+#define FORWARD_WM_RENDERALLFORMATS( x, f ) \
+    (void)(f)( x, WM_RENDERALLFORMATS, 0, 0L )
+#define HANDLE_WM_DESTROYCLIPBOARD( x, p1, p2, f ) \
+    ((f)( x ), 0L)
+#define FORWARD_WM_DESTROYCLIPBOARD( x, f ) \
+    (void)(f)( x, WM_DESTROYCLIPBOARD, 0, 0L )
+#define HANDLE_WM_DRAWCLIPBOARD( x, p1, p2, f ) \
+    ((f)( x ), 0L)
+#define FORWARD_WM_DRAWCLIPBOARD( x, f ) \
+    (void)(f)( x, WM_DRAWCLIPBOARD, 0, 0L )
+#define HANDLE_WM_PAINTCLIPBOARD( x, p1, p2, f ) \
+    ((f)( x, (HWND)(p1), (const PAINTSTRUCT FAR*)GlobalLock( (HGLOBAL)LOWORD( p2 ) ) ), \
+    GlobalUnlock( (HGLOBAL)LOWORD( p2 ) ), 0L)
+#define FORWARD_WM_PAINTCLIPBOARD( x, p1, p2, f ) \
+    (void)(f)( x, WM_PAINTCLIPBOARD, (WPARAM)(HWND)(p1), (LPARAM)(p2) )
+#define HANDLE_WM_SIZECLIPBOARD( x, p1, p2, f ) \
+    ((f)( x, (HWND)(p1), (const RECT FAR*)GlobalLock( (HGLOBAL)LOWORD( p2 ) ) ), \
+    GlobalUnlock( (HGLOBAL)LOWORD( p2 ) ), 0L)
+#define FORWARD_WM_SIZECLIPBOARD( x, p1, p2, f ) \
+    (void)(f)( x, WM_SIZECLIPBOARD, (WPARAM)(HWND)(p1), (LPARAM)(p2) )
+#define HANDLE_WM_VSCROLLCLIPBOARD( x, p1, p2, f ) \
+    ((f)( x, (HWND)(p1), LOWORD( p2 ), (int)HIWORD( p2 ) ), 0L)
+#define FORWARD_WM_VSCROLLCLIPBOARD( x, p1, p2, p3, f ) \
+    (void)(f)( x, WM_VSCROLLCLIPBOARD, (WPARAM)(HWND)(p1), MAKELPARAM( p2, p3 ) )
+#define HANDLE_WM_HSCROLLCLIPBOARD( x, p1, p2, f ) \
+    ((f)( x, (HWND)(p1), LOWORD( p2 ), (int)HIWORD( p2 ) ), 0L)
+#define FORWARD_WM_HSCROLLCLIPBOARD( x, p1, p2, p3, f ) \
+    (void)(f)( x, WM_HSCROLLCLIPBOARD, (WPARAM)(HWND)(p1), MAKELPARAM( p2, p3 ) )
+#define HANDLE_WM_ASKCBFORMATNAME( x, p1, p2, f ) \
+    ((f)( x, (int)(p1), (LPSTR)(p2) ), 0L)
+#define FORWARD_WM_ASKCBFORMATNAME( x, p1, p2, f ) \
+    (void)(f)( x, WM_ASKCBFORMATNAME, (WPARAM)(int)(p1), (LPARAM)(p2) )
+#define HANDLE_WM_CHANGECBCHAIN( x, p1, p2, f ) \
+    ((f)( x, (HWND)(p1), (HWND)LOWORD( p2 ) ), 0L)
+#define FORWARD_WM_CHANGECBCHAIN( x, p1, p2, f ) \
+    (void)(f)( x, WM_CHANGECBCHAIN, (WPARAM)(HWND)(p1), MAKELPARAM( (UINT)(p2), 0 ) )
+#define HANDLE_WM_SETCURSOR( x, p1, p2, f ) \
+    (LRESULT)(DWORD)(BOOL)(f)( x, (HWND)(p1), (UINT)LOWORD( p2 ), (UINT)HIWORD( p2 ) )
+#define FORWARD_WM_SETCURSOR( x, p1, p2, p3, f ) \
+    (BOOL)(DWORD)(f)( x, WM_SETCURSOR, (WPARAM)(HWND)(p1), MAKELPARAM( p2, p3 ) )
+#define HANDLE_WM_SYSCOMMAND( x, p1, p2, f ) \
+    ((f)( x, (UINT)(p1), (int)LOWORD( p2 ), (int)HIWORD( p2 ) ), 0L)
+#define FORWARD_WM_SYSCOMMAND( x, p1, p2, p3, f ) \
+    (void)(f)( x, WM_SYSCOMMAND, (WPARAM)(UINT)(p1), MAKELPARAM( p2, p3 ) )
+#define HANDLE_WM_MDICREATE( x, p1, p2, f ) \
+    (LRESULT)(DWORD)(UINT)(f)( x, (MDICREATESTRUCT FAR*)(p2) )
+#define FORWARD_WM_MDICREATE( x, p, f ) \
+    (HWND)(UINT)(DWORD)(f)( x, WM_MDICREATE, 0, (LPARAM)(p) )
+#define HANDLE_WM_MDIDESTROY( x, p1, p2, f ) \
+    ((f)( x, (HWND)(p1) ), 0L)
+#define FORWARD_WM_MDIDESTROY( x, p, f ) \
+    (void)(f)( x, WM_MDIDESTROY, (WPARAM)(p), 0L )
+#define HANDLE_WM_MDIACTIVATE( x, p1, p2, f ) \
+    ((f)( x, (BOOL)(p1), (HWND)LOWORD( p2 ), (HWND)HIWORD( p2 )), 0L )
+#define FORWARD_WM_MDIACTIVATE( x, p1, p2, p3, f ) \
+    (void)(f)( x, WM_MDIACTIVATE, (WPARAM)(p1), MAKELPARAM( (p2), (p3) ) )
+#define HANDLE_WM_MDIRESTORE( x, p1, p2, f ) \
+    ((f)( x, (HWND)(p1) ), 0L)
+#define FORWARD_WM_MDIRESTORE( x, p, f ) \
+    (void)(f)( x, WM_MDIRESTORE, (WPARAM)(p), 0L)
+#define HANDLE_WM_MDINEXT( x, p1, p2, f ) \
+    ((f)( (x), (HWND)(p1), (BOOL)LOWORD( p2 )), 0L )
+#define FORWARD_WM_MDINEXT( x, p1, p2, f ) \
+    (HWND)(UINT)(f)( x, WM_MDINEXT, (WPARAM)(p1), MAKELPARAM( (p2), 0 ) )
+#define HANDLE_WM_MDIMAXIMIZE( x, p1, p2, f ) \
+    ((f)( x, (HWND)(p1) ), 0L)
+#define FORWARD_WM_MDIMAXIMIZE( x, p, f ) \
+    (void)(f)( x, WM_MDIMAXMIZE, (WPARAM)(p), 0L )
+#define HANDLE_WM_MDITILE( x, p1, p2, f ) \
+    (LRESULT)(DWORD)(f)( x, (UINT)(p1) )
+#define FORWARD_WM_MDITILE( x, p, f ) \
+    (BOOL)(DWORD)(f)( x, WM_MDITILE, (WPARAM)(p), 0L )
+#define HANDLE_WM_MDICASCADE( x, p1, p2, f ) \
+    (LRESULT)(DWORD)(f)( x, (UINT)(p1) )
+#define FORWARD_WM_MDICASCADE( x, p, f ) \
+    (BOOL)(DWORD)(f)( x, WM_MDICASCADE, (WPARAM)(p), 0L )
+#define HANDLE_WM_MDIICONARRANGE( x, p1, p2, f ) \
+    ((f)( x ), 0L)
+#define FORWARD_WM_MDIICONARRANGE( x, f ) \
+    (void)(f)( x, WM_MDIICONARRANGE, 0, 0L )
+#define HANDLE_WM_MDIGETACTIVE( x, p1, p2, f ) \
+    (LRESULT)(UINT)(f)( x )
+#define FORWARD_WM_MDIGETACTIVE( x, f ) \
+    (HWND)(UINT)(f)( x, WM_MDIGETACTIVE, 0, 0L )
+#define HANDLE_WM_MDISETMENU( x, p1, p2, f ) \
+    (LRESULT)(UINT)(f)( x, (BOOL)(p1), (HMENU)LOWORD( p2 ), (HMENU)HIWORD( p2 ) )
+#define FORWARD_WM_MDISETMENU( x, p1, p2, p3, f ) \
+    (HMENU)(UINT)(f)( x, WM_MDISETMENU, (WPARAM)(p1), MAKELPARAM( (p2), (p3) ) )
+#define HANDLE_WM_CHILDACTIVATE( x, p1, p2, f ) \
+    ((f)( x ), 0L)
+#define FORWARD_WM_CHILDACTIVATE( x, f ) \
+    (void)(f)( x, WM_CHILDACTIVATE, 0, 0L )
+#define HANDLE_WM_INITDIALOG( x, p1, p2, f ) \
+    (LRESULT)(DWORD)(UINT)(BOOL)(f)( x, (HWND)(p1), p2 )
+#define FORWARD_WM_INITDIALOG( x, p1, p2, f ) \
+    (BOOL)(DWORD)(f)( x, WM_INITDIALOG, (WPARAM)(HWND)(p1), p2 )
+#define HANDLE_WM_NEXTDLGCTL( x, p1, p2, f ) \
+    (LRESULT)(UINT)(HWND)(f)( x, (HWND)(p1), (BOOL)LOWORD( p2 ) )
+#define FORWARD_WM_NEXTDLGCTL( x, p1, p2, f ) \
+    (HWND)(UINT)(f)( x, WM_NEXTDLGCTL, (WPARAM)(HWND)(p1), MAKELPARAM( (p2), 0 ) )
+#define HANDLE_WM_PARENTNOTIFY( x, p1, p2, f ) \
+    ((f)( x, (UINT)(p1), (HWND)LOWORD( p2 ), (UINT)HIWORD( p2 )), 0L )
+#define FORWARD_WM_PARENTNOTIFY( x, p1, p2, p3, f ) \
+    (void)(f)( x, WM_PARENTNOTIFY, (WPARAM)(UINT)(p1), MAKELPARAM((UINT)(HWND)(p2), (UINT)(p3) ) )
+#define HANDLE_WM_ENTERIDLE( x, p1, p2, f ) \
+    ((f)( x, (UINT)(p1), (HWND)LOWORD( p2 ) ), 0L)
+#define FORWARD_WM_ENTERIDLE( x, p1, p2, f ) \
+    (void)(f)( x, WM_ENTERIDLE, (WPARAM)(UINT)(p1), MAKELPARAM( (UINT)(HWND)(p2), 0 ) )
+#define HANDLE_WM_GETDLGCODE( x, p1, p2, f ) \
+    (LRESULT)(DWORD)(UINT)(f)( x, (MSG FAR*)(p2) )
+#define FORWARD_WM_GETDLGCODE( x, p, f ) \
+    (UINT)(DWORD)(f)( x, WM_GETDLGCODE, (SELECTOROF( p ) ? p->wParam : 0), (LPARAM)(p) )
+#define HANDLE_WM_CTLCOLOR( x, p1, p2, f ) \
+    (LRESULT)(UINT)(HBRUSH)(f)( x, (HDC)(p1), (HWND)LOWORD( p2 ), (int)HIWORD(lParam) )
+#define FORWARD_WM_CTLCOLOR( x, p1, p2, f ) \
+    (HBRUSH)(UINT)(f)( x, WM_CTLCOLOR, (WPARAM)(HDC)(p1), MAKELPARAM( (UINT)(HWND)(p2), (UINT)(int)(p3)))
+#define HANDLE_WM_SETFONT( x, p1, p2, f ) \
+    ((f)( x, (HFONT)(p1), (BOOL)(p2) ), 0L)
+#define FORWARD_WM_SETFONT( x, p1, p2, f ) \
+    (void)(f)( x, WM_SETFONT, (WPARAM)(HFONT)(p1), (LPARAM)(BOOL)(p2) )
+#define HANDLE_WM_GETFONT( x, p1, p2, f ) \
+    (LRESULT)(UINT)(HFONT)(f)( x )
+#define FORWARD_WM_GETFONT( x, f ) \
+    (HFONT)(UINT)(f)( x, WM_GETFONT, 0, 0L )
+#define HANDLE_WM_DRAWITEM( x, p1, p2, f ) \
+    ((f)( x, (const DRAWITEMSTRUCT FAR*)(p2) ), 0L)
+#define FORWARD_WM_DRAWITEM( x, p, f ) \
+    (void)(f)( x, WM_DRAWITEM, 0, (LPARAM)(const DRAWITEMSTRUCT FAR*)(p) )
+#define HANDLE_WM_MEASUREITEM( x, p1, p2, f ) \
+    ((f)( x, (MEASUREITEMSTRUCT FAR*)(p2) ), 0L )
+#define FORWARD_WM_MEASUREITEM( x, p, f ) \
+    (void)(f)( x, WM_MEASUREITEM, 0, (LPARAM)(MEASUREITEMSTRUCT FAR*)(p) )
+#define HANDLE_WM_DELETEITEM( x, p1, p2, f ) \
+    ((f)( x, (const DELETEITEMSTRUCT FAR*)(p2) ), 0L )
+#define FORWARD_WM_DELETEITEM( x, p, f ) \
+    (void)(f)( x, WM_DELETEITEM, 0, (LPARAM)(const DELETEITEMSTRUCT FAR*)(p) )
+#define HANDLE_WM_COMPAREITEM( x, p1, p2, f ) \
+    (LRESULT)(DWORD)(int)(f)( x, (const COMPAREITEMSTRUCT FAR*)(p) )
+#define FORWARD_WM_COMPAREITEM( x, p, f ) \
+    (int)(DWORD)(f)( x, WM_COMPAREITEM, 0, (LPARAM)(const COMPAREITEMSTRUCT FAR*)(p) )
+#define HANDLE_WM_VKEYTOITEM( x, p1, p2, f ) \
+    (LRESULT)(DWORD)(int)(f)( x, (UINT)( p1 ), (HWND)LOWORD( p2 ), (int)HIWORD( p2 ) )
+#define FORWARD_WM_VKEYTOITEM( x, p1, p2, p3, f ) \
+    (int)(DWORD)(f)( x, WM_VKEYTOITEM, (WPARAM)(UINT)(p1), MAKELPARAM((UINT)(p2), (UINT)(p3) ) )
+#define HANDLE_WM_CHARTOITEM( x, p1, p2, f ) \
+    (LRESULT)(DWORD)(int)(f)( x, (UINT)( p1 ), (HWND)LOWORD( p2 ), (int)HIWORD( p2 ) )
+#define FORWARD_WM_CHARTOITEM( x, p1, p2, p3, f ) \
+    (int)(DWORD)(f)( x, WM_CHARTOITEM, (WPARAM)(UINT)(p1), MAKELPARAM((UINT)(p2), (UINT)(p3) ) )
+#define HANDLE_WM_QUEUESYNC( x, p1, p2, f ) \
+    ((f)( x ), 0L)
+#define FORWARD_WM_QUEUESYNC( x, f ) \
+    (void)(f)( x, WM_QUEUESYNC, 0, 0L )
+#if (WINVER >= 0x030A)
+    #define HANDLE_WM_COMMNOTIFY( x, p1, p2, f ) \
+        ((f)( x, (int)(p1), LOWORD( p2 ) ), 0L)
+    #define FORWARD_WM_COMMNOTIFY( x, p1, p2, f ) \
+        (void)(f)( x, WM_COMMNOTIFY, (WPARAM)(p1), MAKELPARAM( p2, 0 ) )
+#endif
+
+/* Functions implemented as macros */
+#define GetInstanceModule( x )      GetModuleHandle( (LPCSTR)MAKELP( 0, x ) )
+#define GlobalPtrHandle( x )        ((HGLOBAL)LOWORD( GlobalHandle( SELECTOROF( x ) ) ))
+#define GlobalLockPtr( x )          ((BOOL)SELECTOROF( GlobalLock( GlobalPtrHandle( x ) ) ))
+#define GlobalUnlockPtr( x )        GlobalUnlock( GlobalPtrHandle( x ) )
+#define GlobalAllocPtr( p1, p2 )    GlobalLock( GlobalAlloc( p1, p2 ) )
+#define GlobalReAllocPtr( x, p1, p2 ) \
+    (GlobalUnlockPtr( x ), GlobalLock( GlobalReAlloc( GlobalPtrHandle( x ), p1, p2 ) ))
+#define GlobalFreePtr( x ) \
+    (GlobalUnlockPtr( x ), (BOOL)(ULONG_PTR)GlobalFree( GlobalPtrHandle( x ) ))
+#define DeletePen( x )              DeleteObject( (HGDIOBJ)(HPEN)(x) )
+#define SelectPen( x, p )           ((HPEN)SelectObject( x, (HGDIOBJ)(HPEN)(x) ))
+#define GetStockPen( x )            ((HPEN)GetStockObject( x ))
+#define DeleteBrush( x )            DeleteObject( (HGDIOBJ)(HBRUSH)(x) )
+#define SelectBrush( x, p )         ((HBRUSH)SelectObject( x, (HGDIOBJ)(HBRUSH)(x) ))
+#define GetStockBrush( x )          ((HBRUSH)GetStockObject( x ))
+#define DeleteRgn( x )              DeleteObject( (HGDIOBJ)(HRGN)(x) )
+#define CopyRgn( x, p )             CombineRgn( x, p, 0, RGN_COPY )
+#define IntersectRgn( x, p1, p2 )   CombineRgn( x, p1, p2, RGN_AND )
+#define SubtractRgn( x, p1, p2 )    CombineRgn( x, p1, p2, RGN_DIFF )
+#define UnionRgn( x, p1, p2 )       CombineRgn( x, p1, p2, RGN_OR )
+#define XorRgn( x, p1, p2 )         CombineRgn( x, p1, p2, RGN_XOR )
+#define DeletePalette( x )          DeleteObject( (HGDIOBJ)(HPALETTE)(x) )
+#define DeleteFont( x )             DeleteObject( (HGDIOBJ)(HFONT)(x) )
+#define SelectFont( x, p )          ((HFONT)SelectObject( x, (HGDIOBJ)(HFONT)(p) ))
+#define GetStockFont( x )           ((HFONT)GetStockObject( x ))
+#define DeleteBitmap( x )           DeleteObject( (HGDIOBJ)(HBITMAP)(x) )
+#define SelectBitmap( x, p )        ((HBITMAP)SelectObject( x, (HGDIOBJ)(HBITMAP)(p) ))
+#define InsetRect( x, p1, p2 )      InflateRect( x, -(p1), -(p2) )
+#define GetWindowInstance( x )      ((HINSTANCE)GetWindowWord( x, GWW_HINSTANCE ))
+#define GetWindowStyle( x )         ((DWORD)GetWindowLong( x, GWL_STYLE ))
+#define GetWindowExStyle( x )       ((DWORD)GetWindowLong( x, GWL_EXSTYLE ))
+#define GetWindowOwner( x )         GetWindow( x, GW_OWNER )
+#define GetFirstChild( x )          GetTopWindow( x )
+#define GetFirstSibling( x )        GetWindow( x, GW_HWNDFIRST )
+#define GetLastSibling( x )         GetWindow( x, GW_HWNDLAST )
+#define GetNextSibling( x )         GetWindow( x, GW_HWNDNEXT )
+#define GetPrevSibling( x )         GetWindow( x, GW_HWNDPREV )
+#define GetWindowID( x )            GetDlgCtrlID( x )
+#define SetWindowRedraw( x, p ) \
+    ((void)SendMessage( x, WM_SETREDRAW, (WPARAM)(BOOL)(p), 0L ))
+#define SubclassWindow( x, p ) \
+    ((WNDPROC)SetWindowLongPtr( x, GWLP_WNDPROC, (LPARAM)(WNDPROC)(p) ))
+#define IsMinimized( x )            IsIconic( x )
+#define IsMaximized( x )            IsZoomed( x )
+#define IsRestored( x ) \
+    ((GetWindowStyle( x ) & (WS_MINIMIZE | WS_MAXIMIZE)) == 0L)
+#define SetWindowFont( x, p1, p2 )  FORWARD_WM_SETFONT( x, p1, p2, SendMessage )
+#define GetWindowFont( x )          FORWARD_WM_GETFONT( x, SendMessage )
+#if (WINVER >= 0x030A)
+    #define MapWindowRect( p1, p2, p3 ) \
+        MapWindowPoints( p1, p2, (POINT FAR*)(p3), 2 )
+#endif
+#define IsLButtonDown()             (GetKeyState( VK_LBUTTON ) < 0)
+#define IsRButtonDown()             (GetKeyState( VK_RBUTTON ) < 0)
+#define IsMButtonDown()             (GetKeyState( VK_MBUTTON ) < 0)
+#define SubclassDialog( x, p ) \
+    SetWindowLongPtr( x, DWLP_DLGPROC, (LPARAM)(p) )
+#define SetDlgMsgResult( x, p1, p2 ) \
+    (((p1) == WM_CTLCOLOR || (p1) == WM_COMPAREITEM || (p1) == WM_VKEYTOITEM ||  \
+    (p1) == WM_CHARTOITEM || (p1) == WM_QUERYDRAGICON || (p1) == WM_INITDIALOG)  \
+    ? (BOOL)LOWORD( p1 ) : (SetWindowLong((x), DWL_MSGRESULT, (LPARAM)(LRESULT)(p1)), TRUE))
+#define DefDlgProcEx( x, p1, p2, p3, p4 ) \
+    (*(p4) = TRUE, DefDlgProc( x, p1, p2, p3 ))
+#define CheckDefDlgRecursion( x ) \
+    if( *(x) ) { \
+        *(x) = FALSE; \
+        return FALSE; \
+    }
+#define Static_Enable( x, p )       EnableWindow( x, p )
+#define Static_GetText( x, p1, p2 ) GetWindowText( x, p1, p2 )
+#define Static_GetTextLength( x )   GetWindowTextLength( x )
+#define Static_SetText( x, p )      SetWindowText( x, p )
+#define Static_SetIcon( x, p ) \
+    (HICON)(UINT)SendMessage( x, STM_SETICON, (WPARAM)(HICON)(p), 0L )
+#define Static_GetIcon( x, p ) \
+    (HICON)(UINT)SendMessage( x, STM_GETICON, 0, 0L )
+#define Button_Enable( x, p )       EnableWindow( x, p )
+#define Button_GetText( x, p1, p2 ) GetWindowText( x, p1, p2 )
+#define Button_GetTextLength( x )   GetWindowTextLength( x )
+#define Button_SetText( x, p )      SetWindowText( x, p )
+#define Button_GetCheck( x ) \
+    (int)(DWORD)SendMessage( x, BM_GETCHECK, 0, 0L )
+#define Button_SetCheck( x, p ) \
+    (void)SendMessage( x, BM_SETCHECK, (WPARAM)(int)(p), 0L )
+#define Button_GetState( x ) \
+    (int)(DWORD)SendMessage( x, BM_GETSTATE, 0, 0L )
+#define Button_SetState( x, p ) \
+    (UINT)(DWORD)SendMessage( x, BM_SETSTATE, (WPARAM)(int)(p), 0L )
+#define Button_SetStyle( x, p1, p2 ) \
+    (void)SendMessage( x, BM_SETSTYLE, (WPARAM)LOWORD( p1 ), \
+    MAKELPARAM( ((p2) ? TRUE : FALSE), 0 ) )
+#define Edit_Enable( x, p )         EnableWindow( x, p )
+#define Edit_GetText( x, p1, p2 )   GetWindowText( x, p1, p2 )
+#define Edit_GetTextLength( x )     GetWindowTextLength( x )
+#define Edit_SetText( x, p )        SetWindowText( x, p )
+#define Edit_LimitText( x, p ) \
+    (void)SendMessage( x, EM_LIMITTEXT, (WPARAM)(p), 0L )
+#define Edit_GetLineCount( x ) \
+    (int)(DWORD)SendMessage( x, EM_GETLINECOUNT, 0, 0L )
+#define Edit_GetLine( x, p1, p2, p3 ) \
+    ((*((int FAR *)(p2)) = (p3)), (int)(DWORD)SendMessage( x, EM_GETLINE, (WPARAM)(int)(p1), \
+    (LPARAM)(LPSTR)(p2) ))
+#define Edit_GetRect( x, p ) \
+    (void)SendMessage( x, EM_GETRECT, 0, (LPARAM)(RECT FAR*)(p) )
+#define Edit_SetRect( x, p ) \
+    (void)SendMessage( x, EM_SETRECT, 0, (LPARAM)(const RECT FAR*)(p) )
+#define Edit_SetRectNoPaint( x, p ) \
+    (void)SendMessage( x, EM_SETRECTNP, 0, (LPARAM)(const RECT FAR*)(p) )
+#define Edit_GetSel( x ) \
+    (DWORD)SendMessage( x, EM_GETSEL, 0, 0L )
+#define Edit_SetSel( x, p1, p2 ) \
+    (void)SendMessage( x, EM_SETSEL, 0, MAKELPARAM( (p1), (p2) ) )
+#define Edit_ReplaceSel( x, p ) \
+    (void)SendMessage( x, EM_REPLACESEL, 0, (LPARAM)(LPCSTR)(p) )
+#define Edit_GetModify( x ) \
+    (BOOL)(DWORD)SendMessage( x, EM_GETMODIFY, 0, 0L )
+#define Edit_SetModify( x, p ) \
+    (void)SendMessage( x, EM_SETMODIFY, (WPARAM)(UINT)(p), 0L )
+#define Edit_LineFromChar( x, p ) \
+    (int)(DWORD)SendMessage( x, EM_LINEFROMCHAR, (WPARAM)(int)(p), 0L )
+#define Edit_LineIndex( x, p ) \
+    (int)(DWORD)SendMessage( x, EM_LINEINDEX, (WPARAM)(int)(p), 0L )
+#define Edit_LineLength( x, p ) \
+    (int)(DWORD)SendMessage( x, EM_LINELENGTH, (WPARAM)(int)(p), 0L )
+#define Edit_Scroll( x, p1, p2 ) \
+    (void)SendMessage( x, EM_LINESCROLL, 0, MAKELPARAM( (p1), (p2) ) )
+#define Edit_CanUndo( x ) \
+    (BOOL)(DWORD)SendMessage( x, EM_CANUNDO, 0, 0L )
+#define Edit_Undo( x ) \
+    (BOOL)(DWORD)SendMessage( x, EM_UNDO, 0, 0L )
+#define Edit_EmptyUndoBuffer( x ) \
+    (void)SendMessage( x, EM_EMPTYUNDOBUFFER, 0, 0L )
+#define Edit_SetPasswordChar( x, p ) \
+    (void)SendMessage( x, EM_SETPASSWORDCHAR, (WPARAM)(UINT)(p), 0L )
+#define Edit_SetTabStops( x, p1, p2 ) \
+    (void)SendMessage( x, EM_SETTABSTOPS, (WPARAM)(int)(p1), (LPARAM)(const int FAR*)(p2) )
+#define Edit_FmtLines( x, p ) \
+    (BOOL)(DWORD)SendMessage( x, EM_FMTLINES, (WPARAM)(BOOL)(p), 0L )
+#define Edit_GetHandle( x ) \
+    (HLOCAL)(UINT)SendMessage( x, EM_GETHANDLE, 0, 0L )
+#define Edit_SetHandle( x, p ) \
+    (void)SendMessage( x, EM_SETHANDLE, (WPARAM)(UINT)(HLOCAL)(p), 0L )
+#if (WINVER >= 0x030A)
+    #define Edit_GetFirstVisibleLine( x ) \
+        (int)(DWORD)SendMessage( x, EM_GETFIRSTVISIBLELINE, 0, 0L )
+    #define Edit_SetReadOnly( x, p ) \
+        (BOOL)(DWORD)SendMessage( x, EM_SETREADONLY, (WPARAM)(BOOL)(p), 0L )
+    #define Edit_GetPasswordChar( x ) \
+        (char)(DWORD)SendMessage( x, EM_GETPASSWORDCHAR, 0, 0L )
+    #define Edit_SetWordBreakProc( x, p ) \
+        (void)SendMessage( x, EM_SETWORDBREAKPROC, 0, (LPARAM)(EDITWORDBREAKPROC)(p) )
+    #define Edit_GetWordBreakProc( x ) \
+        (EDITWORDBREAKPROC)SendMessage( x, EM_GETWORDBREAKPROC, 0, 0L )
+#endif
+#define ScrollBar_Enable( x, p )    EnableScrollBar( x, SB_CTL, p )
+#define ScrollBar_Show( x, p )      ShowWindow( x, (p) ? SW_SHOWNORMAL : SW_HIDE )
+#define ScrollBar_SetPos( x, p1, p2 ) \
+    SetScrollPos( x, SB_CTL, p1, p2 )
+#define ScrollBar_GetPos( x ) \
+    GetScrollPos( x, SB_CTL )
+#define ScrollBar_SetRange( x, p1, p2, p3 ) \
+    SetScrollRange( x, SB_CTL, p1, p2, p3 )
+#define ScrollBar_GetRange( x, p1, p2 ) \
+    GetScrollRange( x, SB_CTL, p1, p2 )
+#define ListBox_Enable( x, p )      EnableWindow( x, p )
+#define ListBox_GetCount( x ) \
+    (int)(DWORD)SendMessage( x, LB_GETCOUNT, 0, 0L )
+#define ListBox_ResetContent( x ) \
+    (BOOL)(DWORD)SendMessage( x, LB_RESETCONTENT, 0, 0L )
+#define ListBox_AddString( x, p ) \
+    (int)(DWORD)SendMessage( x, LB_ADDSTRING, 0, (LPARAM)(LPCSTR)(p) )
+#define ListBox_InsertString( x, p1, p2 ) \
+    (int)(DWORD)SendMessage( x, LB_INSERTSTRING, (WPARAM)(int)(p1), (LPARAM)(LPCSTR)(p2) )
+#define ListBox_AddItemData( x, p ) \
+    (int)(DWORD)SendMessage( x, LB_ADDSTRING, 0, (LPARAM)(p) )
+#define ListBox_InsertItemData( x, p1, p2 ) \
+    (int)(DWORD)SendMessage( x, LB_INSERTSTRING, (WPARAM)(int)(p1), (LPARAM)(p2) )
+#define ListBox_DeleteString( x, p ) \
+    (int)(DWORD)SendMessage( x, LB_DELETESTRING, (WPARAM)(int)(p), 0L )
+#define ListBox_GetTextLen( x, p ) \
+    (int)(DWORD)SendMessage( x, LB_GETTEXTLEN, (WPARAM)(int)(p), 0L )
+#define ListBox_GetText( x, p1, p2 ) \
+    (int)(DWORD)SendMessage( x, LB_GETTEXT, (WPARAM)(int)(p1), (LPARAM)(LPCSTR)(p2) )
+#define ListBox_GetItemData( x, p ) \
+    (LRESULT)(ULONG_PTR)SendMessage( x, LB_GETITEMDATA, (WPARAM)(int)(p), 0L )
+#define ListBox_SetItemData( x, p1, p2 ) \
+    (int)(DWORD)SendMessage( x, LB_SETITEMDATA, (WPARAM)(int)(p1), (LPARAM)(p2) )
+#if (WINVER >= 0x030A)
+    #define ListBox_FindString( x, p1, p2 ) \
+        (int)(DWORD)SendMessage( x, LB_FINDSTRING, (WPARAM)(int)(p1), (LPARAM)(LPCSTR)(p2) )
+    #define ListBox_FindItemData( x, p1, p2 ) \
+        (int)(DWORD)SendMessage( x, LB_FINDSTRING, (WPARAM)(int)(p1), (LPARAM)(p2) )
+    #define ListBox_SetSel( x, p1, p2 ) \
+        (int)(DWORD)SendMessage( x, LB_SETSEL, (WPARAM)(BOOL)(p1), MAKELPARAM( (p2), 0 ) )
+    #define ListBox_SelItemRange( x, p1, p2, p3 ) \
+        (int)(DWORD)SendMessage( x, LB_SELITEMRANGE, (WPARAM)(BOOL)(p1), MAKELPARAM( p2, p3 ) )
+    #define ListBox_GetCurSel( x ) \
+        (int)(DWORD)SendMessage( x, LB_GETCURSEL, 0, 0L )
+    #define ListBox_SetCurSel( x, p ) \
+        (int)(DWORD)SendMessage( x, LB_SETCURSEL, (WPARAM)(int)(p), 0L )
+    #define ListBox_SelectString( x, p1, p2 ) \
+        (int)(DWORD)SendMessage( x, LB_SELECTSTRING, (WPARAM)(int)(p1), \
+        (LPARAM)(LPCSTR)(p2) )
+    #define ListBox_SelectItemData( x, p1, p2 ) \
+        (int)(DWORD)SendMessage( x, LB_SELECTSTRING, (WPARAM)(int)(p1), (LPARAM)(p2) )
+    #define ListBox_GetSel( x, p ) \
+        (int)(DWORD)SendMessage( x, LB_GETSEL, (WPARAM)(int)(p), 0L )
+    #define ListBox_GetSelCount( x ) \
+        (int)(DWORD)SendMessage( x, LB_GETSELCOUNT, 0, 0L )
+    #define ListBox_GetTopIndex( x ) \
+        (int)(DWORD)SendMessage( x, LB_GETTOPINDEX, 0, 0L )
+    #define ListBox_GetSelItems( x, p1, p2 ) \
+        (int)(DWORD)SendMessage( x, LB_GETSELITEMS, (WPARAM)(int)(p1), (LPARAM)(int *)(p2) )
+    #define ListBox_SetTopIndex( x, p ) \
+        (int)(DWORD)SendMessage( x, LB_SETTOPINDEX, (WPARAM)(int)(p), 0L )
+    #define ListBox_SetColumnWidth( x, p ) \
+        (void)SendMessage( x, LB_SETCOLUMNWIDTH, (WPARAM)(int)(p), 0L )
+    #define ListBox_GetHorizontalExtent( x ) \
+        (int)(DWORD)SendMessage( x, LB_GETHORIZONTALEXTENT, 0, 0L )
+    #define ListBox_SetHorizontalExtent( x, p ) \
+        (void)SendMessage( x, LB_SETHORIZONTALEXTENT, (WPARAM)(int)(p), 0L )
+    #define ListBox_SetTabStops( x, p1, p2 ) \
+        (BOOL)(DWORD)SendMessage( x, LB_SETTABSTOPS, (WPARAM)(int)(p1), (LPARAM)(int FAR*)(p2) )
+    #define ListBox_GetItemRect( x, p1, p2 ) \
+        (int)(DWORD)SendMessage( x, LB_GETITEMRECT, (WPARAM)(int)(p1), (LPARAM)(RECT FAR*)(p2) )
+    #define ListBox_SetCaretIndex( x, p ) \
+        (int)(DWORD)SendMessage( x, LB_SETCARETINDEX, (WPARAM)(int)(p), 0L )
+    #define ListBox_GetCaretIndex( x ) \
+        (int)(DWORD)SendMessage( x, LB_GETCARETINDEX, 0, 0L )
+    #define ListBox_FindStringExact( x, p1, p2 ) \
+        (int)(DWORD)SendMessage( x, LB_FINDSTRINGEXACT, (WPARAM)(int)(p1), \
+        (LPARAM)(LPCSTR)(p2) )
+    #define ListBox_SetItemHeight( x, p1, p2 ) \
+        (int)(DWORD)SendMessage( x, LB_SETITEMHEIGHT, (WPARAM)(int)(p1), MAKELPARAM( p2, 0 ) )
+    #define ListBox_GetItemHeight( x, p ) \
+        (int)(DWORD)SendMessage( x, LB_GETITEMHEIGHT, (WPARAM)(int)(p), 0L )
+#endif
+#define ListBox_Dir( x, p1, p2 ) \
+    (int)(DWORD)SendMessage( x, LB_DIR, (WPARAM)(UINT)(p1), (LPARAM)(LPCSTR)(p2) )
+#define ComboBox_Enable( x, p )     EnableWindow( x, p )
+#define ComboBox_GetText( x, p1, p2 )   GetWindowText( x, p1, p2 )
+#define ComboBox_GetTextLength( x ) GetWindowTextLength( x )
+#define ComboBox_SetText( x, p )    SetWindowText( x, p )
+#define ComboBox_LimitText( x, p ) \
+    (int)(DWORD)SendMessage( x, CB_LIMITTEXT, (WPARAM)(int)(p), 0L )
+#define ComboBox_GetEditSel( x ) \
+    (DWORD)SendMessage( x, CB_GETEDITSEL, 0, 0L )
+#define ComboBox_SetEditSel( x, p1, p2 ) \
+    (int)(DWORD)SendMessage( x, CB_SETEDITSEL, 0, MAKELPARAM( p1, p2 ) )
+#define ComboBox_GetCount( x ) \
+    (int)(DWORD)SendMessage( x, CB_GETCOUNT, 0, 0L )
+#define ComboBox_ResetContent( x ) \
+    (int)(DWORD)SendMessage( x, CB_RESETCONTENT, 0, 0L )
+#define ComboBox_AddString( x, p ) \
+    (int)(DWORD)SendMessage( x, CB_ADDSTRING, 0, (LPARAM)(LPCSTR)(p) )
+#define ComboBox_InsertString( x, p1, p2 ) \
+    (int)(DWORD)SendMessage( x, CB_INSERTSTRING, (WPARAM)(int)(p1), (LPARAM)(LPCSTR)(p2) )
+#define ComboBox_AddItemData( x, p ) \
+    (int)(DWORD)SendMessage( x, CB_ADDSTRING, 0, (LPARAM)(p) )
+#define ComboBox_InsertItemData( x, p1, p2 ) \
+    (int)(DWORD)SendMessage( x, CB_INSERTSTRING, (WPARAM)(int)(p1), (LPARAM)(p2) )
+#define ComboBox_DeleteString( x, p ) \
+    (int)(DWORD)SendMessage( x, CB_DELETESTRING, (WPARAM)(int)(p), 0L )
+#define ComboBox_GetLBTextLen( x, p ) \
+    (int)(DWORD)SendMessage( x, CB_GETLBTEXTLEN, (WPARAM)(int)(p), 0L )
+#define ComboBox_GetLBText( x, p1, p2 ) \
+    (int)(DWORD)SendMessage( x, CB_GETLBTEXT, (WPARAM)(int)(p1), (LPARAM)(LPCSTR)(p2) )
+#define ComboBox_GetItemData( x, p ) \
+    (LRESULT)(ULONG_PTR)SendMessage( x, CB_GETITEMDATA, (WPARAM)(int)(p), 0L )
+#define ComboBox_SetItemData( x, p1, p2 ) \
+    (int)(DWORD)SendMessage( x, CB_SETITEMDATA, (WPARAM)(int)(p1), (LPARAM)(p2) )
+#define ComboBox_FindString( x, p1, p2 ) \
+    (int)(DWORD)SendMessage( x, CB_FINDSTRING, (WPARAM)(int)(p1), (LPARAM)(LPCSTR)(p2) )
+#define ComboBox_FindItemData( x, p1, p2 ) \
+    (int)(DWORD)SendMessage( x, CB_FINDSTRING, (WPARAM)(int)(p1), (LPARAM)(p2) )
+#define ComboBox_GetCurSel( x ) \
+    (int)(DWORD)SendMessage( x, CB_GETCURSEL, 0, 0L )
+#define ComboBox_SetCurSel( x, p ) \
+    (int)(DWORD)SendMessage( x, CB_SETCURSEL, (WPARAM)(int)(p), 0L )
+#define ComboBox_SelectString( x, p1, p2 ) \
+    (int)(DWORD)SendMessage( x, CB_SELECTSTRING, (WPARAM)(int)(p1), (LPARAM)(LPCSTR)(p2) )
+#define ComboBox_SelectItemData( x, p1, p2 ) \
+    (int)(DWORD)SendMessage( x, CB_SELECTSTRING, (WPARAM)(int)(p1), (LPARAM)(p2) )
+#define ComboBox_Dir( x, p1, p2 ) \
+    (int)(DWORD)SendMessage( x, CB_DIR, (WPARAM)(UINT)(p1), (LPARAM)(LPCSTR)(p2) )
+#define ComboBox_ShowDropdown( x, p ) \
+    (BOOL)(DWORD)SendMessage( x, CB_SHOWDROPDOWN, (WPARAM)(BOOL)(p), 0L )
+#if (WINVER >= 0x030A)
+    #define ComboBox_FindStringExact( x, p1, p2 ) \
+        (int)(DWORD)SendMessage( x, CB_FINDSTRINGEXACT, (WPARAM)(int)(p1), \
+        (LPARAM)(LPCSTR)(p2) )
+    #define ComboBox_GetDroppedState( x ) \
+        (BOOL)(DWORD)SendMessage( x, CB_GETDROPPEDSTATE, 0, 0L )
+    #define ComboBox_GetDroppedControlRect( x, p ) \
+        (void)SendMessage( x, CB_GETDROPPEDCONTROLRECT, 0, (LPARAM)(RECT FAR*)(p) )
+    #define ComboBox_GetItemHeight( x ) \
+        (int)(DWORD)SendMessage( x, CB_GETITEMHEIGHT, 0, 0L )
+    #define ComboBox_SetItemHeight( x, p1 ) \
+        (int)(DWORD)SendMessage( x, CB_SETITEMHEIGHT, (WPARAM)(int)(p1), 0L)
+    #define ComboBox_GetExtendedUI( x ) \
+        (UINT)(DWORD)SendMessage( x, CB_GETEXTENDEDUI, 0, 0L )
+    #define ComboBox_SetExtendedUI( x, p ) \
+        (int)(DWORD)SendMessage( x, CB_SETEXTENDEDUI, (WPARAM)(UINT)(p), 0L )
+#endif
+
+:include cplusepi.sp
+
+#endif /* _INC_WINDOWSX */

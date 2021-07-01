@@ -45,6 +45,7 @@ headers =            &
         win16.h      &
         win386.h     &
         windows.h    &
+        windowsx.h   &
         winsock.h
 
 libs =               &
