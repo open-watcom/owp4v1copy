@@ -965,15 +965,14 @@ char * get_att_start( char * p )
                     /*******************************************************/
 
                     strcpy_s( buf, strlen( buff2 ) + 1, buff2 );
-                    process_line();
                     scan_start = buff2;
                     scan_stop  = buff2 + buff2_lg;
                     if( (*scan_start == SCR_char) ||    // cw found: end-of-tag
                         (*scan_start == GML_char) ) {   // tag found: end-of-tag
-                        strcpy_s( buff2, strlen( buf ) + 1, buf );
                         ProcFlags.reprocess_line = true;
                         break;
                     } else {
+                        process_line();
                         p = scan_start; // new line is part of current tag
                         continue;
                     }
