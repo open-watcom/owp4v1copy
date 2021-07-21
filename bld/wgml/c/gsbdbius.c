@@ -140,7 +140,7 @@ static void scr_style_common( style_cw_type type, style_cw_info * cw_info )
     int                 len;
 
     if( script_style.style == SCT_none ) {  // save current font if no script style
-        script_style.font = g_curr_font;
+        script_style.font = layout_work.defaults.font;
     }
 
     p = scan_start;     // for use later
