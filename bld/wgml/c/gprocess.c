@@ -105,11 +105,11 @@ void process_late_subst( char * buf )
 /*  split_input
  *  The (physical) line is split
  *  The second part will be processed by the next getline()
- *   pushing any already split part down
+ *  pushing any already split part down
  *
  */
 
-void split_input( char * buf, char * split_pos, bool sol )
+void split_input( char * buf, char * split_pos, i_flags fmflags )
 {
     inp_line    *   wk;
     size_t          len;
@@ -118,7 +118,7 @@ void split_input( char * buf, char * split_pos, bool sol )
     if( len > 0 ) {
         wk = mem_alloc( len + sizeof( inp_line ) );
         wk->next = input_cbs->hidden_head;
-        wk->sol  = sol;
+        wk->fmflags  = fmflags;
         wk->fm_symbol = false;
         wk->sym_space = false;
         strcpy(wk->value, split_pos );  // save second part
@@ -129,7 +129,6 @@ void split_input( char * buf, char * split_pos, bool sol )
         }
 
         *split_pos = '\0';              // terminate first part
-        input_cbs->fmflags &= ~II_eol;  // not last part of line
     }
     return;
 }
@@ -140,7 +139,7 @@ void split_input( char * buf, char * split_pos, bool sol )
  *  used if a substituted variable starts with CW_sep_char
  */
 
-static void split_input_var( char * buf, char * split_pos, char * part2, bool sol )
+static void split_input_var( char * buf, char * split_pos, char * part2, i_flags fmflags )
 {
     inp_line    *   wk;
     size_t          len;
@@ -149,7 +148,7 @@ static void split_input_var( char * buf, char * split_pos, char * part2, bool so
     if( len > 0 ) {
         wk = mem_alloc( len + sizeof( inp_line ) );
         wk->next = input_cbs->hidden_head;
-        wk->sol  = sol;
+        wk->fmflags  = fmflags;
         wk->fm_symbol = false;
         wk->sym_space = sym_space;
 
@@ -241,7 +240,13 @@ static void split_at_GML_tag( void )
                         }
                     }
                 }
-                split_input( buff2, pchar, false );// split line
+                if( input_cbs->fmflags & II_eol ) {
+                    split_input( buff2, pchar, II_eol );
+                    input_cbs->fmflags &= ~II_eol;
+                } else {
+                    split_input( buff2, pchar, II_none );
+                }
+                input_cbs->fmflags &= ~II_eol;  // not last part of line
                 if( ProcFlags.literal ) {   // if literal active
                     if( li_cnt < LONG_MAX ) {// we decrement, adjust for split line
                         li_cnt++;
@@ -284,7 +289,7 @@ static void split_at_CW_sep_char( char * splitpos ) {
             } else {
 
                 if( *(splitpos + 1) != CW_sep_char ) {
-                    split_input( buff2, splitpos + 1, true );// split after CW_sep_char
+                    split_input( buff2, splitpos + 1, II_sol | II_eol );// split after CW_sep_char
 
                     buff2_lg = strnlen_s( buff2, buf_size ) - 1;
                     *(buff2 + buff2_lg) = '\0'; // terminate 1. part
@@ -481,7 +486,12 @@ static bool parse_r2l( sym_list_entry * stack, char * buf, bool subscript )
                 if( !ProcFlags.if_cond && !ProcFlags.dd_macro && !curr->value[0] ) {
                     ProcFlags.null_value = true;
                 }
-                split_input_var( buf, curr->end, &curr->value[1], true );
+                if( input_cbs->fmflags & II_eol ) {
+                    split_input_var( buf, curr->end, &curr->value[1], II_eol );
+                    input_cbs->fmflags &= ~II_eol;  // not last part of line
+                } else {
+                    split_input_var( buf, curr->end, &curr->value[1], II_none );
+                }
                 input_cbs->hidden_head->fm_symbol = true;   // new logical input record
                 cw_lg = 0;
                 for( p = buf; *p != ' '; p++ ) cw_lg++;     // length of . plus CW

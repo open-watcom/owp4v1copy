@@ -372,6 +372,14 @@ static  void    get_macro_line( void )
         *buff2              = '\0';
     } else {
         cb->lineno++;
+        if( ProcFlags.utc ) { 
+            input_cbs->fmflags &= ~II_eol;
+        } else if( (input_cbs->fmflags & II_macro) && input_cbs->fm_symbol
+                && !input_cbs->sym_space ) {
+            input_cbs->fmflags &= ~(II_sol | II_eol);
+        } else {
+            input_cbs->fmflags |= (II_sol | II_eol);
+        }
         cb->flags          &= ~FF_eof;
         input_cbs->fmflags &= ~II_eof;
         strcpy_s( buff2, buf_size, cb->macline->value );
@@ -401,12 +409,8 @@ bool    get_line( bool display_line )
         pline = input_cbs->hidden_head;
         input_cbs->hidden_head = input_cbs->hidden_head->next;
 
-        if( pline->sol ) {
-            input_cbs->fmflags |=  II_sol;  // start of logical record
-        } else {
-            input_cbs->fmflags &= ~II_sol;  // not at start of input line
-        }
-
+        input_cbs->fmflags &=  ~(II_sol | II_eol);  // clear current flags
+        input_cbs->fmflags |= pline->fmflags;       // use flags from hidden_head
         input_cbs->fm_symbol = pline->fm_symbol;
         input_cbs->sym_space = pline->sym_space;
 
@@ -414,7 +418,6 @@ bool    get_line( bool display_line )
 
         if( input_cbs->hidden_head == NULL ) {  // last part of split line
             input_cbs->hidden_tail = NULL;
-            input_cbs->fmflags |= II_eol;
         }
     } else {
         if( input_cbs->pe_cb.count > 0 ) {  // .pe perform active

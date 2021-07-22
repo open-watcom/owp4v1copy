@@ -256,13 +256,30 @@ typedef enum {
 } fflags;
 
 /***************************************************************************/
+/*  Flags for input                                                        */
+/***************************************************************************/
+
+typedef enum {
+    II_none     = 0x00,                 // neutral entry (inp_line only)
+    II_file     = 0x01,                 // inputcb is file (inputcb only)
+    II_macro    = 0x02,                 // inputcb is macro (inputcb only)
+    II_tag      = 0x04,                 // inputcb is macro via tag (inputcb only)
+    II_tag_mac  = II_tag | II_macro,    // input is tag or macro (inputcb only)
+    II_input    = II_file | II_macro | II_tag, // all input types (inputcb only)
+    II_research = 0x08,                 // research mode (for file only) (inputcb only)
+    II_eof      = 0x10,                 // end of file (input) (inputcb only)
+    II_sol      = 0x20,                 // start of line
+    II_eol      = 0x40,                 // end of line (last part)
+} i_flags;
+
+/***************************************************************************/
 /*  List of (defined macro / input) lines                                  */
 /*    also used for in_buf_pool in this case fixed length buf_size         */
 /***************************************************************************/
 
 typedef struct inp_line {
     struct inp_line *   next;           // next line
-    bool                sol;            // Start Of Line if split line
+    i_flags             fmflags;        // II_none, II_sol, and II_eol only
     bool                fm_symbol;      // hidden_head is from a symbol substition
     bool                sym_space;      // symbol substitution was preceeded by a space
     char                value[1];       // line content variable length
@@ -368,22 +385,6 @@ typedef struct pecb {                   // for .pe control
     int     ll;                         // length of line
     int     count;                      // value of .pe n  active if > 0
 } pecb;
-
-/***************************************************************************/
-/*  Flags for input                                                        */
-/***************************************************************************/
-
-typedef enum {
-    II_file     = 0x01,                 // inputcb is file
-    II_macro    = 0x02,                 // inputcb is macro
-    II_tag      = 0x04,                 // inputcb is macro via tag
-    II_tag_mac  = II_tag | II_macro,    // input is tag or macro
-    II_input    = II_file | II_macro | II_tag, // all input types
-    II_research = 0x08,                 // research mode (for file only)
-    II_eof      = 0x10,                 // end of file (input)
-    II_sol      = 0x20,                 // start of line
-    II_eol      = 0x40                  // end of line (last part)
-} i_flags;
 
 /***************************************************************************/
 /*  input stack for files and macros                                       */

@@ -80,7 +80,7 @@ void    scr_br( void )
     if( *p != '\0' ) {
         SkipSpaces( p );
         if( *p != '\0' ) {
-            split_input( scan_start, p, false );// line operand
+            split_input( scan_start, p, II_none );// line operand
         }
     }
     scr_process_break();                // break processing

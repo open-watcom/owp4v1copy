@@ -516,7 +516,7 @@ static void     scan_script( void )
 
             if( pchar != NULL ) {
                 if( *(pchar + 1) != '\0' ) {    // only split if more follows
-                    split_input( buff2, pchar + 1, false );// ignore CW_sep_char
+                    split_input( buff2, pchar + 1, II_none );// ignore CW_sep_char
                 }
                 *pchar= '\0';               // delete CW_sep_char
                 buff2_lg = strlen( buff2 ); // new length of first part

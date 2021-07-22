@@ -319,7 +319,7 @@ extern  void        finalize_subscript( char * * result, bool splittable );
 extern  void        process_late_subst( char * buf );
 extern  void        process_line( void );
 extern  bool        resolve_symvar_functions( char * buf, bool splittable );
-extern  void        split_input( char * buf, char * split_pos, bool startofline );
+extern  void        split_input( char * buf, char * split_pos, i_flags fmflags );
 
 
 /* gproctxt.c                           */
