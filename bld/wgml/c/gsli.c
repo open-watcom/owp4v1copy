@@ -113,7 +113,8 @@ void    scr_li( void )
                     if( !ProcFlags.literal ) {
                         li_cnt = 1;
                         ProcFlags.literal = true;
-                        split_input( scan_start, pa, II_none );
+//                        split_input( scan_start, pa, II_none );
+                        split_input( scan_start, pa, input_cbs->fmflags & (II_sol | II_eol) );
                         scan_restart = pa;
                     }
                 }
@@ -126,7 +127,8 @@ void    scr_li( void )
                     if( !ProcFlags.literal ) {
                         li_cnt = 1;
                         ProcFlags.literal = true;
-                        split_input( scan_start, pa, II_none );
+//                        split_input( scan_start, pa, II_none );
+                        split_input( scan_start, pa, input_cbs->fmflags & (II_sol | II_eol) );
                         scan_restart = pa;
                     }
                 }
@@ -135,7 +137,8 @@ void    scr_li( void )
                 if( !ProcFlags.literal ) {
                     li_cnt = 1;
                     ProcFlags.literal = true;
-                    split_input( scan_start, pa, II_none );
+//                    split_input( scan_start, pa, II_none );
+                    split_input( scan_start, pa, input_cbs->fmflags & (II_sol | II_eol) );
                     scan_restart = pa;
                 }
                 break;
