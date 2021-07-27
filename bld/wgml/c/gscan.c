@@ -102,7 +102,7 @@ static void scan_gml( void )
     char            csave;
     bool            processed;
     gtentry     *   ge;                 // GML user tag entry
-    mac_entry   *   me;                // script macro for processing GML tag
+    mac_entry   *   me;                 // script macro for processing GML tag
     char            linestr[MAX_L_AS_STR];
     char            tok_upper[TAG_NAME_LENGTH + 1];
 
@@ -516,7 +516,7 @@ static void     scan_script( void )
 
             if( pchar != NULL ) {
                 if( *(pchar + 1) != '\0' ) {    // only split if more follows
-                    split_input( buff2, pchar + 1, II_none );// ignore CW_sep_char
+                    split_input( buff2, pchar + 1, II_sol | II_eol );   // split after CW_sep_char
                 }
                 *pchar= '\0';               // delete CW_sep_char
                 buff2_lg = strlen( buff2 ); // new length of first part

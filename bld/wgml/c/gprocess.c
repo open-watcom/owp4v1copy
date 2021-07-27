@@ -240,12 +240,7 @@ static void split_at_GML_tag( void )
                         }
                     }
                 }
-                if( input_cbs->fmflags & II_eol ) {
-                    split_input( buff2, pchar, II_eol );
-                    input_cbs->fmflags &= ~II_eol;
-                } else {
-                    split_input( buff2, pchar, II_none );
-                }
+                split_input( buff2, pchar, input_cbs->fmflags & II_eol ); // split at GML tag
                 input_cbs->fmflags &= ~II_eol;  // not last part of line
                 if( ProcFlags.literal ) {   // if literal active
                     if( li_cnt < LONG_MAX ) {// we decrement, adjust for split line
@@ -486,12 +481,8 @@ static bool parse_r2l( sym_list_entry * stack, char * buf, bool subscript )
                 if( !ProcFlags.if_cond && !ProcFlags.dd_macro && !curr->value[0] ) {
                     ProcFlags.null_value = true;
                 }
-                if( input_cbs->fmflags & II_eol ) {
-                    split_input_var( buf, curr->end, &curr->value[1], II_eol );
-                    input_cbs->fmflags &= ~II_eol;  // not last part of line
-                } else {
-                    split_input_var( buf, curr->end, &curr->value[1], II_none );
-                }
+                split_input_var( buf, curr->end, &curr->value[1], input_cbs->fmflags & II_eol );
+                input_cbs->fmflags &= ~II_eol;              // not last part of line
                 input_cbs->hidden_head->fm_symbol = true;   // new logical input record
                 cw_lg = 0;
                 for( p = buf; *p != ' '; p++ ) cw_lg++;     // length of . plus CW

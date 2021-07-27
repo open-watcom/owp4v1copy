@@ -614,7 +614,7 @@ void    scr_me( void )
         if( cc != omit ) {              // line operand present
 
             free_lines( input_cbs->hidden_head );       // clear stacked input
-            split_input( buff2, tok_start, II_sol );    // stack line operand
+            split_input( buff2, tok_start, input_cbs->fmflags & (II_sol | II_eol) );    // stack line operand
 
             // now move stacked line to previous input stack
 
@@ -750,7 +750,7 @@ void    scr_em( void )
         show_include_stack();
         return;
     } else {
-        split_input( buff2, tok_start, II_sol );    // stack line operand in input
+        split_input( buff2, tok_start, input_cbs->fmflags & (II_sol | II_eol) );    // stack line operand
     }
     scan_restart = scan_stop + 1;
     return;

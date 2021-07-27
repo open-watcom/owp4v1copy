@@ -565,11 +565,7 @@ void    scr_if( void )
     }
 
     if( *scan_start ) {                 // rest of line is not empty
-        if( input_cbs->fmflags & II_sol ) {
-            split_input( buff2, scan_start, II_sol );   // split and process next
-        } else {
-            split_input( buff2, scan_start, II_none );  // split and process next
-        }
+        split_input( buff2, scan_start, input_cbs->fmflags & (II_sol | II_eol) );   // split and process next
     } else if( (input_cbs->hidden_head != NULL) &&  !(input_cbs->hidden_head->fmflags & II_sol) &&
                (input_cbs->fmflags & II_sol) ) {
         input_cbs->hidden_head->fmflags |= II_sol;      // propagate II_sol to potential text
@@ -651,11 +647,7 @@ void    scr_th( void )
     SkipSpaces( scan_start );
 
     if( *scan_start ) {                 // rest of line is not empty
-        if( input_cbs->fmflags & II_sol ) {
-            split_input( buff2, scan_start, II_sol );   // split and process next
-        } else {
-            split_input( buff2, scan_start, II_none );  // split and process next
-        }
+        split_input( buff2, scan_start, input_cbs->fmflags & (II_sol | II_eol) );   // split and process next
     } else if( (input_cbs->hidden_head != NULL) &&  !(input_cbs->hidden_head->fmflags & II_sol) &&
                (input_cbs->fmflags & II_sol) ) {
         input_cbs->hidden_head->fmflags |= II_sol;      // propagate II_sol to potential text
@@ -728,11 +720,7 @@ void    scr_el( void )
     SkipSpaces( scan_start );
 
     if( *scan_start ) {                 // rest of line is not empty
-        if( input_cbs->fmflags & II_sol ) {
-            split_input( buff2, scan_start, II_sol );   // split and process next
-        } else {
-            split_input( buff2, scan_start, II_none );  // split and process next
-        }
+        split_input( buff2, scan_start, input_cbs->fmflags & (II_sol | II_eol) );   // split and process next
     } else if( (input_cbs->hidden_head != NULL) &&  !(input_cbs->hidden_head->fmflags & II_sol) &&
                (input_cbs->fmflags & II_sol) ) {
         input_cbs->hidden_head->fmflags |= II_sol;      // propagate II_sol to potential text
