@@ -675,6 +675,9 @@ pick( ERR_LEVEL_SKIPPED,        "For the level attribute (layout tag %s)",
 pick( INFO_LEVEL_SKIPPED,       "Level number %d must be specified",
                                 "Level number %d must be specified" )
                                 
+pick( WNG_HDREF_CO_OFF,         "HDREF with concatenation OFF is not supported",
+                                "HDREF with concatenation OFF is not supported" )
+
 /* cop file errors */
 
 pick( ERR_BLOCK_NOT_FOUND,      "For %s block %s: name not defined\n",

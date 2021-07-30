@@ -459,6 +459,15 @@ void xx_warn_cc( const msg_ids errid, const char * arg1, const char * arg2 )
     return;
 }
 
+void xx_line_warn( const msg_ids errid, const char * pa )
+{
+    wng_count++;
+    g_warn( errid );
+    file_mac_info();
+    show_line_error( pa );
+    return;
+}
+
 void xx_val_line_warn( const msg_ids errid, const char * cw, const char * pa )
 {
     wng_count++;

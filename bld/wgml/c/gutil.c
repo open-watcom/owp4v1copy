@@ -369,8 +369,10 @@ static bool su_expression( su * in_su )
 
 /***************************************************************************/
 /*  insert space characters into t_element as if they were text            */
-/*  this is done at the end of the last text_line, in case of wrapping     */
-/*  t_element must be a text element                                       */
+/*  when concatenation is on, this is done at the end of the last          */
+/*    text_line, in case of wrapping                                       */
+/*    t_element must be a text element                                     */
+/*  when concatenation is off, a new doc_element must be created           */
 /*  NOTE: invoked by add_dt_space()                                        */
 /*        used with items affected by DT/DD used inside a macro            */
 /***************************************************************************/
@@ -383,27 +385,31 @@ static void add_spaces_t_element( char * spaces )
     text_line   *   line;
     uint32_t        start;
 
-    if( t_element->type != el_text ) {
-        internal_err( __FILE__, __LINE__ );
-    }
-
-    line = t_element->element.text.first;
-    while( line->next != NULL ) {
-        line = line->next;
-    }
-    font = line->last->font;
     spc_cnt = strlen( spaces );
-    if( spc_cnt > 0 ) {
-        start = line->last->x_address + line->last->width;
-        sav_chars = line->last;
-        line->last->next = process_word( layout_work.note.spaces, spc_cnt, font, false );
-        line->last = line->last->next;
-        line->last->prev = sav_chars;
-        line->last->type = tx_norm;
-        line->last->x_address = start;
+    if( spc_cnt > 0 ) {                                 // must have something to add
+        if( t_element != NULL ) {                       // t_element exists
+            if( t_element->type != el_text ) {          // must be text
+                internal_err( __FILE__, __LINE__ );
+            }
 
-        if( wgml_fonts[font].line_height > line->line_height ) {
-            line->line_height = wgml_fonts[font].line_height;
+            line = t_element->element.text.first;
+            while( line->next != NULL ) {
+                line = line->next;
+            }
+            font = line->last->font;
+            start = line->last->x_address + line->last->width;
+            sav_chars = line->last;
+            line->last->next = process_word( layout_work.note.spaces, spc_cnt, font, false );
+            line->last = line->last->next;
+            line->last->prev = sav_chars;
+            line->last->type = tx_norm;
+            line->last->x_address = start;
+
+            if( wgml_fonts[font].line_height > line->line_height ) {
+                line->line_height = wgml_fonts[font].line_height;
+            }
+        } else {                                        // too complicated
+            xx_line_warn( wng_hdref_co_off, buff2 );
         }
     }
     return;
