@@ -374,6 +374,8 @@ static  void    get_macro_line( void )
         cb->lineno++;
         if( ProcFlags.utc ) { 
             input_cbs->fmflags &= ~II_eol;
+        } else if( ProcFlags.ct ) {
+            input_cbs->fmflags &= ~II_sol;            
         } else if( (input_cbs->fmflags & II_macro) && input_cbs->fm_symbol
                 && !input_cbs->sym_space ) {
             input_cbs->fmflags &= ~(II_sol | II_eol);
