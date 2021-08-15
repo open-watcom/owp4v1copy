@@ -2179,6 +2179,14 @@ void process_text( char *text, font_number font )
                         }
                         t_line->last->next = NULL;
                         line_split = true;
+                        h_chars = t_line->first;    // reset line height 
+                        t_line->line_height = wgml_fonts[h_chars->font].line_height;
+                        while( h_chars != NULL ){
+                            if( t_line->line_height < wgml_fonts[h_chars->font].line_height ) {
+                                t_line->line_height = wgml_fonts[h_chars->font].line_height;
+                            }
+                            h_chars = h_chars->next;
+                        }
                     }
                 }
 
@@ -2409,7 +2417,8 @@ void process_text( char *text, font_number font )
         } else {
             t_line->last->next = n_chars;
             n_chars->prev = t_line->last;
-            if( !line_split || !ProcFlags.CW_noblank ) {    // TBD -- other conditions may apply
+            if( !line_split || ((n_chars->prev != NULL) &&
+                    (n_chars->x_address != (n_chars->prev->x_address + n_chars->prev->width))) ) {   // TBD -- other conditions may apply
                 if( t_line->line_height < wgml_fonts[font].line_height ) {
                     t_line->line_height = wgml_fonts[font].line_height;
                 }
