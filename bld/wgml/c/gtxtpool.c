@@ -548,9 +548,14 @@ void    add_tag_cb_to_pool( tag_cb * a_cb )
     nest_stack  *   ns;
     nest_stack  *   nsv;
 
-    if( a_cb == NULL ) {
+    if( a_cb == NULL ) {        // nothing to do
         return;
     }
+
+    if( a_cb == tt_stack ) {    // tt_stack will be invalid after a_cb is processedf
+        tt_stack = NULL;
+    }
+
     g_text_spacing = a_cb->spacing;         // reset spacing to prior value
     for( ns = a_cb->p_stack; ns != NULL; ns = nsv ) {
         nsv = ns->prev;
