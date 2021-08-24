@@ -293,14 +293,16 @@ static void scr_cc_cp_common( bool do_pa )
     } else {
         p = pa;
         scanerr = cw_val_to_su( &p, &cpwork );
-        if( scanerr ) {
-            xx_err_cc( err_miss_inv_opt_value, cwcurr, pa );
-        } else {
+        /* error message done in cw_val_to_su */
+        if( !scanerr ) {
             test_space = conv_vert_unit( &cpwork, 0, g_curr_font );
-            if( test_space > 0 ) {                  // ignore values < 1
+            if( test_space < 0 ) {
+                xx_line_err( err_spc_not_valid, pa );
+            } else if( test_space > 0 ) {               // do nothing for 0
                 if( cpwork.su_u == SU_chars_lines ) {   // recompute value if from line count
                     test_space = (cpwork.su_whole * g_text_spacing * g_resv) / LPI;
                 }
+                /* test must be done before the break is */
                 if( ( test_space + t_page.cur_depth) > t_page.max_depth ) {
                     do_output( do_pa );
                 }
