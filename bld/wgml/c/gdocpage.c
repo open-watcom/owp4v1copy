@@ -1911,7 +1911,7 @@ void insert_col_main( doc_element * a_element )
             if( t_page.cur_depth > t_page.max_depth ) {
                 cur_doc_el_group->first->depth -= (t_page.cur_depth - t_page.max_depth);
             }
-        } else if( ((depth + t_page.cur_depth) > t_page.max_depth) ) {
+        } else if( (depth + t_page.cur_depth) > t_page.max_depth ) {
 
             /****************************************************************/
             /* Normal processing: check to see if a_element will fit only   */

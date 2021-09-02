@@ -302,8 +302,7 @@ static void scr_cc_cp_common( bool do_pa )
                 if( cpwork.su_u == SU_chars_lines ) {   // recompute value if from line count
                     test_space = (cpwork.su_whole * g_text_spacing * g_resv) / LPI;
                 }
-                /* test must be done before the break is */
-                if( ( test_space + t_page.cur_depth) > t_page.max_depth ) {
+                if( ( test_space + t_page.cur_depth) > t_page.max_depth ) { // won't fit
                     do_output( do_pa );
                 }
             }
