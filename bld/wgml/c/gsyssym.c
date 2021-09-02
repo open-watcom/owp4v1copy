@@ -558,8 +558,13 @@ static void syslayoutfun( symvar * e ) // LAYOUT cmdline option or :LAYOUT tag s
 static void syslcfun( symvar * e )      // remaining lines in column
 {
     uint32_t    column_lines;
+    uint32_t    net_depth;
 
-    column_lines = ((t_page.max_depth - t_page.cur_depth) * LPI) / g_resv;
+    net_depth = t_page.max_depth - t_page.cur_depth;
+    if (t_line != NULL && (t_line->line_height <= net_depth) ) {
+        net_depth -= t_line->line_height;
+    }
+    column_lines = (net_depth * LPI) / g_resv;
     ulongtodec( column_lines, syslcstr );
     return;
 }
