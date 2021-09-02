@@ -177,7 +177,7 @@ static void sysadoddfun( symvar * e )
 
 static void sysapagefun( symvar * e )   // absolute page
 {
-    ulongtodec( apage, sysapagestr );
+    ulongtodec( apage + 1, sysapagestr );   // to match wgml 4.0
     return;
 }
 
