@@ -1881,7 +1881,7 @@ void insert_col_main( doc_element * a_element )
         if( (a_element->type == el_text) && a_element->element.text.overprint
                 && (t_page.cur_depth != t_page.max_depth) ) {
             depth -= a_element->element.text.first->line_height;
-            if( a_element->sk ) {
+            if( a_element->sk_val ) {
                 t_page.max_depth -= a_element->element.text.first->line_height;
             }
         }

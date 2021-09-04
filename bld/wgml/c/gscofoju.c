@@ -321,7 +321,7 @@ void    scr_co( void )
                                         last_group->last->subs_skip + last_group->last->depth;
 
                     while( cur_el != NULL ) {
-                        if( cur_el->sk ) {                      // new sub-block
+                        if( cur_el->sk_val ) {                  // new sub-block
                             last_group->next = alloc_doc_el_group( gt_co );
                             last_group = last_group->next;
                             last_group->first = cur_el;
@@ -349,7 +349,7 @@ void    scr_co( void )
                         /* 3. The block will fit in a column with no other text         */
                         /****************************************************************/
 
-                        if( cur_doc_el_group->first->sk
+                        if( cur_doc_el_group->first->sk_val
                             && ((cur_doc_el_group->depth + t_page.cur_depth) > t_page.max_depth)
                             && (cur_doc_el_group->depth <= t_page.max_depth) ) {
 

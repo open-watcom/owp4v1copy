@@ -1142,7 +1142,7 @@ typedef struct doc_element {
             vspace_element      vspace;
     } element;
             element_type        type;   // placement avoids padding warning
-            bool                sk;     // true if preceded by SK -1 or SK > 0 (used with CO)
+            bool                sk_val;     // true if preceded by SK -1 or SK > 0 (used with CO)
 } doc_element;
 
 /********************************************************************/
