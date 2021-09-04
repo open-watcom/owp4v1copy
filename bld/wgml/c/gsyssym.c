@@ -749,7 +749,10 @@ static void syspixfun( symvar * e )
 
 static void sysplfun( symvar * e )
 {
-    var_wng( e->name, e );
+    uint32_t    column_lines;
+
+    column_lines = (t_page.max_depth * LPI) / g_resv;
+    ulongtodec( column_lines, sysplstr );
     return;
 }
 
