@@ -154,6 +154,9 @@ void  scr_process_break( void )
             g_blank_units_lines = wgml_fonts[g_curr_font].line_height;
             cur_el = init_doc_el( el_vspace, 0 );
             insert_col_main( cur_el );
+            if( t_element->type == el_text ) {   // not clear what to do for other types
+                t_element->element.text.overprint = true;
+            }
         }
 
         while( t_element != NULL ) {

@@ -1884,6 +1884,9 @@ void insert_col_main( doc_element * a_element )
             if( a_element->sk_val ) {
                 t_page.max_depth -= a_element->element.text.first->line_height;
             }
+            if( ProcFlags.in_reduced ) {
+                a_element->element.text.overprint = false;  // line must appear in output
+            }
         }
 
         if( ((a_element->type == el_text) && a_element->element.text.vspace_next) ) {
