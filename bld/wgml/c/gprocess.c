@@ -367,16 +367,16 @@ static bool split_input_buffer( void )
             }
 
             /***************************************************************/
-            /*  for records starting  .' which were not indented ignore    */
-            /*  control word separator                                     */
+            /*  for records starting  .' which were not indented or which  */
+            /*  were indented but all indents were .'                      */
             /*  or if control word separator is 0x00                       */
+            /*  ignore control word separator                              */
             /***************************************************************/
 
-            if( (!ProcFlags.CW_indented && (*(buff2 + k) == '\'')) || (CW_sep_char == '\0') ) {
+            if( (!ProcFlags.CW_force_sep && (*(buff2 + k) == '\'')) || (CW_sep_char == '\0') ) {
                 ProcFlags.CW_sep_ignore = true;
             } else {
                 ProcFlags.CW_sep_ignore = false;
-
                 split_at_CW_sep_char( NULL );
             }
         }

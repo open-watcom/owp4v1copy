@@ -488,7 +488,7 @@ static void     scan_script( void )
     } else {
         if( *p == '\'' ) {                  // .'
             p++;
-            if( !ProcFlags.CW_indented ) {  // only change if not indented
+            if( !ProcFlags.CW_force_sep ) {     // only change if not indented or all indents were .'
                 ProcFlags.CW_sep_ignore = true;
             }
         } else {                            // no ': set per CW_sep_char

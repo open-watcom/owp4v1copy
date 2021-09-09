@@ -282,6 +282,9 @@ static  void    del_input_cb_entry( void )
 /* remove leading .' from input                                            */
 /* set related flags                                                       */
 /* special processing for   .:tag  construct                               */
+/* Note: in constructs like                                                */
+/*       .  ., .  .', .'  ., and .' .'                                     */
+/*       only ".' .'" results in the separator being ignored               */
 /***************************************************************************/
 
 static void remove_indentation( void )
@@ -290,7 +293,7 @@ static void remove_indentation( void )
     char    *   pb;
     int         offset;
 
-    ProcFlags.CW_indented = false;
+    ProcFlags.CW_force_sep = false;
     ProcFlags.CW_sep_ignore = false;
 
     p = buff2;
@@ -298,13 +301,8 @@ static void remove_indentation( void )
             ((buff2_lg > 2) && (*p == SCR_char && *(p + 1) == '\'' && *(p + 2) == ' ')) ) {
         p++;                                        // over SCR_char
         if( *p == ' ' ) {
-            ProcFlags.CW_indented = true;
-            ProcFlags.CW_sep_ignore = false;
+            ProcFlags.CW_force_sep = true;
         } else {                                    // *p == '\''
-            if( !ProcFlags.CW_indented ) {          // first indent
-                ProcFlags.CW_indented = true;
-                ProcFlags.CW_sep_ignore = true;
-            }
             p++;                                    // over '
         }
         SkipSpaces( p );                            // skip blanks
