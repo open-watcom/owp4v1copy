@@ -358,7 +358,7 @@ void scr_fk( void )
                 while( cur_el != NULL ) {
                     sav_el = cur_el->next;
                     cur_el->next = NULL;
-                        insert_col_main( cur_el );
+                    insert_col_main( cur_el );
                     cur_el = sav_el;
                 }
                 cur_doc_el_group->first = NULL;
@@ -374,8 +374,21 @@ void scr_fk( void )
     case fbk_dump :
         g_keep_nest( "FK" );                // catch nesting errors
         if( n_page.fk_queue != NULL ) {
-            scr_process_break();
-            next_column();
+            while( n_page.fk_queue != NULL ) {
+                cur_doc_el_group = n_page.fk_queue;
+                n_page.fk_queue = n_page.fk_queue->next;
+                cur_el = cur_doc_el_group->first;
+                while( cur_el != NULL ) {
+                    sav_el = cur_el->next;
+                    cur_el->next = NULL;
+                    insert_col_main( cur_el );
+                    cur_el = sav_el;
+                }
+                cur_doc_el_group->first = NULL;
+                cur_doc_el_group->next = NULL;
+                add_doc_el_group_to_pool( cur_doc_el_group );
+            }
+            n_page.last_fk_queue = NULL;
         }
         break;
     case fbk_none :
