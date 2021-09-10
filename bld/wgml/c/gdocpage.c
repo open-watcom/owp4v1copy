@@ -1036,7 +1036,6 @@ static void update_column( void )
     bool                splittable;
     doc_element     *   cur_el;
     doc_el_group    *   cur_group;
-    doc_el_group    *   sav_group;
     uint32_t            depth;
 
     t_page.cur_col = &t_page.last_pane->cols[t_page.last_pane->cur_col];
@@ -1269,10 +1268,6 @@ static void update_column( void )
                 add_doc_el_group_to_pool( cur_group );
                 ProcFlags.col_started = true;
             }
-            sav_group = n_page.fk_queue;
-            n_page.fk_queue = n_page.fk_queue->next;
-            sav_group->next = NULL;
-            add_doc_el_group_to_pool( sav_group );
         }
     }
 
