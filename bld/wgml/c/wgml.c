@@ -282,6 +282,7 @@ static  void    del_input_cb_entry( void )
 /* remove leading .' from input                                            */
 /* set related flags                                                       */
 /* special processing for   .:tag  construct                               */
+/*   and for .  ; or .;                                                    */
 /* Note: in constructs like                                                */
 /*       .  ., .  .', .'  ., and .' .'                                     */
 /*       only ".' .'" results in the separator being ignored               */
@@ -297,15 +298,21 @@ static void remove_indentation( void )
     ProcFlags.CW_sep_ignore = false;
 
     p = buff2;
-    while( ((buff2_lg > 1) && (*p == SCR_char && is_space_tab_char(*(p + 1)))) ||
-            ((buff2_lg > 2) && (*p == SCR_char && *(p + 1) == '\'' && *(p + 2) == ' ')) ) {
+    while( ((buff2_lg > 1) && (*p == SCR_char) && (is_space_tab_char(*(p + 1)))) ||
+            ((buff2_lg > 2) && (*p == SCR_char) && (((*(p + 1) == '\'') && (*(p + 2) == ' ')) ||
+            (*(p + 1) == CW_sep_char))) ) {
         p++;                                        // over SCR_char
         if( *p == ' ' ) {
             ProcFlags.CW_force_sep = true;
         } else {                                    // *p == '\''
-            p++;                                    // over '
+            p++;                                    // over ' or ;
         }
         SkipSpaces( p );                            // skip blanks
+        if( *p == CW_sep_char ) {
+            if( ProcFlags.CW_force_sep && (CW_sep_char != NULL) ) { // only if valid
+                p++;                                // skip CW_sep_char
+            }
+        }
         if( *p == SCR_char && *(p + 1) == GML_char ) {
             p++;                                    // skip SCR_char
         }
