@@ -95,6 +95,7 @@ typedef struct proc_flags {
     unsigned        CW_force_sep        : 1;// scr cw line was indented and separator must be recognized
     unsigned        CW_noblank          : 1;// no blank between CW/macro and first operand
     unsigned        CW_sep_ignore       : 1;// ignore scr cw separator
+    unsigned        indented_text       : 1;// text was indented      
     unsigned        in_macro_define     : 1;// macro definition active
     unsigned        in_fb_fk_block      : 1;// inside FB/FK block
     unsigned        in_figcap           : 1;// FIGCAP in progress

@@ -129,6 +129,7 @@ void split_input( char * buf, char * split_pos, i_flags fmflags )
         }
 
         *split_pos = '\0';              // terminate first part
+        ProcFlags.indented_text = false;// split done
     }
     return;
 }
@@ -379,6 +380,10 @@ static bool split_input_buffer( void )
                 ProcFlags.CW_sep_ignore = false;
                 split_at_CW_sep_char( NULL );
             }
+        } else if( ProcFlags.indented_text ) {       // text, but preceded by indent
+            ProcFlags.CW_sep_ignore = false;
+            ProcFlags.indented_text = false;
+            split_at_CW_sep_char( NULL );
         }
     }
     return( true );                     // further processing needed
