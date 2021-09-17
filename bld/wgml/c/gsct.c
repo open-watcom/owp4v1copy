@@ -63,10 +63,12 @@
 /*     .ct tinued text.                                                   */
 /*     produces:  This is an example of continued text.                   */
 /*                                                                        */
-/*                                                                         */
-/*  Extension: if text starts with . or : process as control line          */
-/*                                                                         */
-/*                                                                         */
+/*  Extension: if text starts with . or : process as control line         */
+/*                                                                        */
+/*  Note: ProcFlags.fsp is used to control whether or not post_space      */
+/*        is allowed or is reduced to zero. Not reducing it to zero       */
+/*        matches wgml 4.0's behavior, but not the above description.     */
+/*                                                                        */
 /**************************************************************************/
 
 void    scr_ct( void )
@@ -74,6 +76,9 @@ void    scr_ct( void )
     char        *   p;
 
     p = scan_start;                     // next char after .ct
+    if( is_space_tab_char( *p ) && (*p != '\0') && is_space_tab_char( *(p + 1) ) ) {
+        ProcFlags.fsp = true;           // keep post_space
+    }
     if( *p != '\0' ) {                  // line operand specified
         SkipSpaces( p );
         if( *p != '\0' ) {
