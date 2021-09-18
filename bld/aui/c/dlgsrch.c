@@ -197,6 +197,12 @@ static void     SetDlgStatus( gui_window *gui, dlg_search *dlg )
     dlg->direction = 0;
     GUISetChecked( gui, CTL_SRCH_CASE, dlg->case_ignore );
     GUISetChecked( gui, CTL_SRCH_RX, dlg->use_rx );
+#ifdef __OS2__
+#ifndef TXT_LEN
+#define TXT_LEN 2048
+#endif
+    GUILimitEditText( gui, CTL_SRCH_EDIT, TXT_LEN ); // 2020-06-22 SHL allow more than 32 chars input
+#endif
     GUISetText( gui, CTL_SRCH_EDIT, dlg->wnd->searchitem );
     DlgSetHistory( gui, dlg->history, cmd, CTL_SRCH_EDIT, CTL_SRCH_LIST );
 }

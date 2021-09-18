@@ -1119,6 +1119,12 @@ extern bool GetFileNameEvent( gui_window *gui, gui_event gui_ev, void *param )
             return( FALSE );
         }
         dlg->initted = TRUE;
+#ifdef __OS2__
+#ifndef TXT_LEN
+#define TXT_LEN 2048
+#endif
+        GUILimitEditText( gui, CTL_EDIT, TXT_LEN ); // 2020-06-22 SHL allow more than 32 chars input
+#endif
         GUISetFocus( gui, CTL_EDIT );
         return( TRUE );
         break;

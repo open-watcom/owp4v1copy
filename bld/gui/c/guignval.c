@@ -82,6 +82,12 @@ static bool GetNewFunction( gui_window *gui, gui_event gui_ev, void *param )
     info = GUIGetExtra( gui );
     switch( gui_ev ) {
     case GUI_INIT_DIALOG :
+#ifdef __OS2__
+#ifndef TXT_LEN
+#define TXT_LEN 2048
+#endif
+        GUILimitEditText( gui, EDIT, TXT_LEN ); // 2020-06-22 SHL allow more than 32 chars input
+#endif
         info->ret_val = GUI_RET_CANCEL;
         break;
     case GUI_CONTROL_CLICKED :

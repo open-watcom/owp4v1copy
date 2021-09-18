@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Support for CTL_LIST_LIST listboxes
 *
 ****************************************************************************/
 
@@ -90,6 +89,9 @@ static bool SourceEvent( gui_window * gui, gui_event gui_ev, void * param )
         for(curr = dlg->next( NULL ); curr != NULL; curr = dlg->next( curr )) {
             AddText( gui, dlg->name( curr ) );
         }
+#ifdef __OS2__
+        GUILimitEditText( gui, CTL_LIST_EDIT, TXT_LEN ); // 2020-06-22 SHL allow more than 32 chars input
+#endif
         GUISetFocus( gui, CTL_LIST_EDIT );
         return( TRUE );
     case GUI_CONTROL_CLICKED:

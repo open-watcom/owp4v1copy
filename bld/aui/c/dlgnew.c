@@ -73,6 +73,12 @@ extern bool DlgNewEvent( gui_window * gui, gui_event event, void * param )
     dlgnew = GUIGetExtra( gui );
     switch( event ) {
     case GUI_INIT_DIALOG:
+#ifdef __OS2__
+#ifndef TXT_LEN
+#define TXT_LEN 2048
+#endif
+        GUILimitEditText( gui, CTL_NEW_EDIT, TXT_LEN ); // 2020-06-22 SHL allow more than 32 chars input
+#endif
         GUISetText( gui, CTL_NEW_EDIT, dlgnew->buff);
         GUISetFocus( gui, CTL_NEW_EDIT );
         dlgnew->buff[0] = '\0';
