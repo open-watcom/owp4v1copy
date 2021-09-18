@@ -50,6 +50,7 @@
 #include "machtype.h"
 #include "dbginfo.h"
 #include "cv4.h"
+#include "hll.h"
 #include "tistrail.h"
 
 #include "wstrip.h"
@@ -509,7 +510,8 @@ static int TryCV4( int h, info_info *info )
     if( memcmp( head.sig, CV4_NB09, sizeof( head.sig ) ) != 0
      && memcmp( head.sig, CV4_NB08, sizeof( head.sig ) ) != 0
      && memcmp( head.sig, CV4_NB07, sizeof( head.sig ) ) != 0
-     && memcmp( head.sig, CV4_NB05, sizeof( head.sig ) ) != 0 ) {
+     && memcmp( head.sig, CV4_NB05, sizeof( head.sig ) ) != 0
+     && memcmp( head.sig, HLL_NB04, sizeof( head.sig ) ) != 0 ) {
         return( 0 );
     }
     info->len = head.offset;
