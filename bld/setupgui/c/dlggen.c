@@ -163,8 +163,15 @@ static void SetDefaultVals( gui_window *gui, a_dialog_header *curr_dialog )
         case GUI_CHECK_BOX:
             GUISetChecked( gui, VarGetId( var_handle ), VarGetIntVal( var_handle ) != 0 );
             break;
-        case GUI_EDIT_MLE:
         case GUI_EDIT:
+#ifdef __OS2__
+#ifndef TXT_LEN
+#define TXT_LEN 2048
+#endif
+            GUILimitEditText( gui, VarGetId( var_handle ), TXT_LEN ); // 2020-06-22 SHL allow more than 32 chars input
+            // Drop thru
+#endif
+        case GUI_EDIT_MLE:
             GUISetText( gui, VarGetId( var_handle ), VarGetStrVal( var_handle ) );
             break;
         default:
