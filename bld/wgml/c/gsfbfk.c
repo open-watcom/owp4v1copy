@@ -202,7 +202,6 @@ void scr_fb( void )
     switch( cur_cmd) {
     case fbk_begin :
         g_keep_nest( "FB" );                // catch nesting errors
-        ProcFlags.in_fb_fk_block = true;
         save_state();
         sav_group_type = cur_group_type;
         cur_group_type = gt_fb;
@@ -228,7 +227,6 @@ void scr_fb( void )
                 block_queue_end = block_queue_end->next;
             }
             restore_state();
-            ProcFlags.in_fb_fk_block = false;
         } else {
             xx_line_err( err_no_fb_begin, p );
         }
@@ -325,7 +323,6 @@ void scr_fk( void )
     switch( cur_cmd) {
     case fbk_begin :
         g_keep_nest( "FK" );                // catch nesting errors
-        ProcFlags.in_fb_fk_block = true;
         ProcFlags.ix_in_block = true;
         save_state();
         sav_group_type = cur_group_type;
@@ -366,7 +363,6 @@ void scr_fk( void )
                 add_doc_el_group_to_pool( cur_doc_el_group );
             }
             restore_state();
-            ProcFlags.in_fb_fk_block = false;
         } else {
             xx_line_err( err_no_fk_begin, p );
         }

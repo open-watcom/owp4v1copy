@@ -1890,9 +1890,7 @@ void process_text( char *text, font_number font )
             pa = p;
             SkipSpacesTabs( p );
             tab_space = p - pa;
-            if( !ProcFlags.in_fb_fk_block ) {
-                post_space = 0;
-            }
+            post_space = 0;
         } else {
             // ".co off": compute initial spacing from initial spaces
             tab_space = 0;
