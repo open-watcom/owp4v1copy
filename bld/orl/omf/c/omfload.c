@@ -208,7 +208,7 @@ static orl_return       processExplicitFixup( omf_file_handle ofh, int is32,
     assert( *buffer );
     assert( cur );
     assert( *cur > 0 );
-    assert( **buffer & 0x80 );
+    assert( **buffer & FIXUPP_FIXUP );
 
     wordsize = OmfGetWordSize( is32 );
 
@@ -216,14 +216,16 @@ static orl_return       processExplicitFixup( omf_file_handle ofh, int is32,
     len = *cur;
 
     datum = buf[0];
-    m = ( datum & 0x40 ) != 0;
-    location = ( datum >> 2 ) & 0x0f;
-    offset = ( ( datum & 0x03 ) << 8 ) | buf[1];
+    m = ( datum & FIXDAT_MBIT ) != 0;           // 1 = Seg relative, 0 = Self relative
+    location = ( datum >> 2 ) & 0x0f;           // Method
+    offset = ( ( datum & 0x03 ) << 8 ) | buf[1];        // Index
     datum = buf[2];
     buf += 3;
     len -= 3;
 
-    if( 0x80 & datum ) {
+    // datum is fix data
+    if( FIXDAT_FTHREAD & datum ) {
+        // Frame subrecord
         thred = ( datum >> 4 ) & 0x03;
         fmethod = ofh->frame_thred[thred].method;
         fidx = ofh->frame_thred[thred].idx;
@@ -244,7 +246,7 @@ static orl_return       processExplicitFixup( omf_file_handle ofh, int is32,
         }
     }
 
-    if( 0x08 & datum ) {
+    if( FIXDAT_TTHREAD & datum ) {
         thred = datum & 0x03;
         tmethod = ofh->target_thred[thred].method;
         tidx = ofh->target_thred[thred].idx;
@@ -259,8 +261,8 @@ static orl_return       processExplicitFixup( omf_file_handle ofh, int is32,
         }
     }
 
-    if( datum & 0x04 ) {
-        displacement = 0;
+    if( datum & FIXDAT_PBIT ) {
+        displacement = 0;               // No displacement present
     } else {
         displacement = getUWord( buf, wordsize );
         buf += wordsize;
