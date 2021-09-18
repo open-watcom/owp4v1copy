@@ -18,6 +18,10 @@ all: .SYMBOLIC $(books)
     @%null
 
 $(books) : .SYMBOLIC
-    @wmake -h -f ../mif/onebook.mif hbook=$@ dotarget=$(dotarget) header=$(header)
+!ifeq verbose 1
+    wmake $(__MAKEOPTS__) -h -f ../mif/onebook.mif hbook=$@ dotarget=$(dotarget) header=$(header)
+!else
+    @wmake $(__MAKEOPTS__) -h -f ../mif/onebook.mif hbook=$@ dotarget=$(dotarget) header=$(header)
+!endif
 
 !include ../mif/clean.mif

@@ -161,7 +161,11 @@ curr_dir=$+$(%cwd)$-
 !else
     @cd $(docs_root:/=\)\$(host_os)
 !endif
-    @wmake -h hbook=wbrw header=1
+!ifeq verbose 1
+    wmake $(__MAKEOPTS__) -h hbook=wbrw header=1
+!else
+    @wmake $(__MAKEOPTS__) -h hbook=wbrw header=1
+!endif
     @cd $(curr_dir)
 !endif
 
