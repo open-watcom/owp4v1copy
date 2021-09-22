@@ -822,7 +822,7 @@ void out_head_page( ffh_entry * in_entry, ref_entry * in_ref, uint32_t in_pageno
         if( in_pageno != in_entry->pageno ) {    // page number changed
             in_entry->pageno = in_pageno;
             if( GlobalFlags.lastpass ) {
-                if( (in_ref->id != NULL) && in_ref->id[0] ) {
+                if( (in_ref != NULL) && (in_ref->id != NULL) && in_ref->id[0] ) {
                     hd_fwd_refs = init_fwd_ref( hd_fwd_refs, in_ref->id );
                 }
                 ProcFlags.new_pagenr = true;
