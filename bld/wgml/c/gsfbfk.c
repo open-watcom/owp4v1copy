@@ -94,6 +94,50 @@ static void restore_state( void )
 }
 
 /**************************************************************************/
+/* split cur_doc_el_group                                                 */
+/* cur_el_group->next must be NULL                                        */
+/* returns pointer to last doc_el_group formed                            */
+/* Note: this function is very specialized                                */
+/**************************************************************************/
+
+static doc_el_group * do_split( void )
+{
+    doc_el_group    *   cur_group;
+    doc_el_group    *   last_group;
+    doc_element     *   cur_el;
+    doc_element     *   last_el;
+    uint32_t            depth;
+
+    cur_group = cur_doc_el_group;
+    last_group = cur_group;
+    cur_el = cur_doc_el_group->first;
+    while( cur_el != NULL ) {           // process all doc_elements
+        while( (cur_el != NULL) && !cur_el->do_split ) {    // find split position
+            last_el = cur_el;
+            cur_el = cur_el->next;
+        }
+        if( cur_el != NULL ) {          // do split
+            last_group->next = alloc_doc_el_group( cur_group->owner );
+            last_el->next = NULL;
+            last_group->last = last_el;
+            last_group->next->last = last_group->last;
+            last_group = last_group->next;
+            last_group->first = cur_el;
+            while( cur_el != NULL ) {   // adjust group depth;
+                depth = cur_el->depth + cur_el->blank_lines + cur_el->subs_skip;
+                cur_group->depth -= depth;
+                last_group->depth += depth;
+                cur_el = cur_el->next;
+            }
+            cur_group = last_group;
+            cur_el = last_group->first; // restore value
+            cur_el = cur_el->next;      // cur_el->do_skip is true, restart with next doc_element
+        }
+    }                                   // find next split
+    return (last_group);
+}
+
+/**************************************************************************/
 /* get the parameters for FB and FK                                       */
 /**************************************************************************/
 
@@ -193,16 +237,16 @@ static char * get_params( const char * scw_name ) {
 
 void scr_fb( void )
 {
-    char    *   p;
-    doc_element *   cur_el;
-    doc_element *   sav_el;
+    char            *   p;
+    doc_el_group    *   last_group;
 
     p = get_params( "FB" );
 
     switch( cur_cmd) {
     case fbk_begin :
+        scr_process_break();                // FB does this; FK does not
         g_keep_nest( "FB" );                // catch nesting errors
-        save_state();
+//        save_state();
         sav_group_type = cur_group_type;
         cur_group_type = gt_fb;
         cur_doc_el_group = alloc_doc_el_group( gt_fb );
@@ -219,14 +263,14 @@ void scr_fb( void )
             cur_doc_el_group = t_doc_el_group;
             t_doc_el_group = t_doc_el_group->next;
             cur_doc_el_group->next = NULL;
+            last_group = do_split();
             if( block_queue == NULL ) {
                 block_queue = cur_doc_el_group;
-                block_queue_end = block_queue;
             } else {
                 block_queue_end->next = cur_doc_el_group;
-                block_queue_end = block_queue_end->next;
             }
-            restore_state();
+            block_queue_end = last_group;
+//            restore_state();
         } else {
             xx_line_err( err_no_fb_begin, p );
         }
@@ -236,21 +280,8 @@ void scr_fb( void )
 
         /* Dump all pending blocks*/
 
-        while( block_queue != NULL ) {
-            cur_doc_el_group = block_queue;
-            block_queue = block_queue->next;
-            cur_doc_el_group->next = NULL;
-            cur_el = cur_doc_el_group->first;
-            while( cur_el != NULL ) {
-                sav_el = cur_el->next;
-                cur_el->next = NULL;
-                insert_col_main( cur_el );
-                cur_el = sav_el;
-            }
-            cur_doc_el_group->first = NULL;
-            add_doc_el_group_to_pool( cur_doc_el_group );
-        }
-        block_queue_end = NULL;
+        fb_blocks_out();
+
         break;
     case fbk_none :
         xx_val_line_err( err_no_operand, "FB", p - 1 );
@@ -314,9 +345,12 @@ void scr_fb( void )
 
 void scr_fk( void )
 {
-    char        *   p;
-    doc_element *   cur_el;
-    doc_element *   sav_el;
+    char            *   p;
+    doc_el_group    *   cur_group;  // current group from n_page, not cur_doc_el_group
+    doc_el_group    *   last_group;
+    doc_element     *   cur_el;
+    doc_element     *   sav_el;
+    uint32_t            depth;
 
     p = get_params( "FK" );
 
@@ -341,15 +375,15 @@ void scr_fk( void )
             cur_doc_el_group = t_doc_el_group;
             t_doc_el_group = t_doc_el_group->next;
             cur_doc_el_group->next = NULL;
+            last_group = do_split();
             if( (n_page.fk_queue != NULL) ||
                     (t_page.cur_depth + cur_doc_el_group->depth > t_page.max_depth) ) {
                 if( n_page.fk_queue == NULL ) {
                     n_page.fk_queue = cur_doc_el_group;
-                    n_page.last_fk_queue = n_page.fk_queue;
                 } else {
                     n_page.last_fk_queue->next = cur_doc_el_group;
-                    n_page.last_fk_queue = n_page.last_fk_queue->next;
                 }
+                n_page.last_fk_queue = last_group;
             } else {
                 cur_el = cur_doc_el_group->first;
                 while( cur_el != NULL ) {
@@ -371,20 +405,52 @@ void scr_fk( void )
         g_keep_nest( "FK" );                // catch nesting errors
         if( n_page.fk_queue != NULL ) {
             while( n_page.fk_queue != NULL ) {
-                cur_doc_el_group = n_page.fk_queue;
-                n_page.fk_queue = n_page.fk_queue->next;
-                cur_el = cur_doc_el_group->first;
-                while( cur_el != NULL ) {
-                    sav_el = cur_el->next;
-                    cur_el->next = NULL;
-                    insert_col_main( cur_el );
-                    cur_el = sav_el;
+                cur_group = n_page.fk_queue;
+                if( (t_page.cur_depth + cur_group->depth) > t_page.max_depth ) {
+                    if( (t_page.cur_depth == 0) && (cur_group->depth > t_page.max_depth) ) { // split FK block too large for any page
+                        cur_el = cur_group->first;
+                        depth = cur_el->depth;
+                        depth += cur_el->blank_lines;
+                        if( t_page.cur_depth == 0 ) {   // at top of page -- TBD
+                            depth += cur_el->top_skip;
+                        } else {
+                            depth += cur_el->subs_skip;
+                        }
+                        while( (cur_el != NULL) &&
+                                ((t_page.cur_depth + depth) <= t_page.max_depth) ) {
+                            cur_group->first = cur_group->first->next;
+                            cur_el->next = NULL;
+                            insert_col_main( cur_el );
+                            cur_group->depth -= depth;
+                            cur_el = cur_group->first;
+                            depth = cur_el->depth;
+                            depth += cur_el->blank_lines;
+                            if( t_page.cur_depth == 0 ) {   // at top of page -- TBD
+                                depth += cur_el->top_skip;
+                            } else {
+                                depth += cur_el->subs_skip;
+                            }
+                        }
+                    } else {
+                        break;                      // can't split, keep for next column
+                    }
+                } else {                            // group fits on current page
+                    cur_el = cur_doc_el_group->first;
+                    while( cur_el != NULL ) {
+                        cur_group->first = cur_group->first->next;
+                        cur_el->next = NULL;
+                        insert_col_main( cur_el );
+                        cur_group->depth -= depth;
+                        cur_el = cur_group->first;
+                    }
                 }
-                cur_doc_el_group->first = NULL;
-                cur_doc_el_group->next = NULL;
-                add_doc_el_group_to_pool( cur_doc_el_group );
+                if( cur_group->depth == 0 ) {       // this is n_page.fk_queue
+                    n_page.fk_queue = n_page.fk_queue->next;
+                    cur_group->next = NULL;
+                    add_doc_el_group_to_pool( cur_group );
+                }
             }
-            n_page.last_fk_queue = NULL;
+            next_column();
         }
         break;
     case fbk_none :
@@ -405,27 +471,33 @@ void scr_fk( void )
 
 void fb_blocks_out( void )
 {
-    doc_element *   cur_el;
-    doc_element *   sav_el;
+    doc_el_group    *   cur_group;  // current group from block_queue, not cur_doc_el_group
+    doc_element     *   cur_el;
+    doc_element     *   sav_el;
 
     if( block_queue != NULL ) {
-        next_column();
         while( block_queue != NULL ) {
-            cur_doc_el_group = block_queue;
+            cur_group = block_queue;
             block_queue = block_queue->next;
-            cur_el = cur_doc_el_group->first;
+            if( (t_page.cur_depth != 0) &&
+                    ((t_page.cur_depth + cur_group->depth) > t_page.max_depth) && 
+                    ((cur_group->depth <= t_page.max_depth)) ) {
+                /* Put block in new column */
+                next_column();
+            }
+            /* Output cur_group doc_element by doc_element */
+            cur_el = cur_group->first;
             while( cur_el != NULL ) {
                 sav_el = cur_el->next;
                 cur_el->next = NULL;
                 insert_col_main( cur_el );
                 cur_el = sav_el;
             }
-            cur_doc_el_group->first = NULL;
-            cur_doc_el_group->next = NULL;
-            add_doc_el_group_to_pool( cur_doc_el_group );
+            cur_group->first = NULL;
+            cur_group->next = NULL;
+            add_doc_el_group_to_pool( cur_group );
         }
         block_queue_end = NULL;
-        last_page_out();
     }
 
     return;

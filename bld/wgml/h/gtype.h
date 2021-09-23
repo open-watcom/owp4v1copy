@@ -1141,8 +1141,9 @@ typedef struct doc_element {
             vline_element       vline;
             vspace_element      vspace;
     } element;
-            element_type        type;   // placement avoids padding warning
-            bool                sk_val; // true if preceded by SK -1 or SK > 0 (used with CO)
+            element_type        type;       // placement avoids padding warning
+            bool                do_split;   // split the group with this element starting the new group
+            bool                sk_val;     // true if preceded by SK -1 or SK > 0 (used with CO)
 } doc_element;
 
 /********************************************************************/

@@ -1309,7 +1309,7 @@ void start_doc_sect( void )
         break;
     case   doc_sect_egdoc :
         page_c = 1;                             // as per wgml 4.0
-        page_e = ej_yes;
+        page_e = ej_odd;                        // as per wgml 4.0
         page_r = false;                         // no page number reset
         page_s = layout_work.defaults.spacing;  // default spacing
         header = false;                         // no section header
@@ -1361,7 +1361,11 @@ void start_doc_sect( void )
         } else if( page_e != ej_yes ) {
             internal_err( __FILE__, __LINE__ );
         }
-        set_section_banners( ds );
+        if( ds == doc_sect_egdoc ) {
+            set_section_banners( ProcFlags.doc_sect );  // retain last section's banners
+        } else {
+            set_section_banners( ds );
+        }
         reset_t_page();
 
         g_skip = 0;                     // ignore remaining skip value
@@ -1402,6 +1406,10 @@ void start_doc_sect( void )
     g_curr_font = layout_work.defaults.font;
     t_page.cur_width = g_indent;
     ProcFlags.doc_sect = ds;
+
+    if( (block_queue != NULL) && (ds == doc_sect_egdoc) ) {
+        fb_blocks_out();
+    }
 }
 
 /***************************************************************************/
@@ -1730,7 +1738,9 @@ extern void gml_egdoc( const gmltag * entry )
     }
 
     gml_doc_xxx( doc_sect_egdoc );
-    fb_blocks_out();
+    if( block_queue != NULL ) {     // avoids blank last page if nothing will follow
+        start_doc_sect();
+    }
 }
 
 /***************************************************************************/

@@ -748,6 +748,7 @@ doc_element * init_doc_el( element_type type, uint32_t depth )
     g_subs_skip = 0;
     curr->top_skip = g_top_skip;
     g_top_skip = 0;
+    curr->do_split = false;
 
     if( type == el_text ) {             // overprint applies to text lines
         curr->element.text.overprint = ProcFlags.overprint;

@@ -1767,6 +1767,8 @@ void insert_col_main( doc_element * a_element )
     uint32_t        cur_skip;
     uint32_t        depth;
 
+    static  bool    last_co;
+
     /****************************************************************/
     /*  alternate procesing: accumulate elements for later          */
     /*  submission                                                  */
@@ -1779,7 +1781,11 @@ void insert_col_main( doc_element * a_element )
             t_doc_el_group->last = t_doc_el_group->first;
             t_doc_el_group->depth = (a_element->blank_lines + a_element->subs_skip +
                                      a_element->depth);
+            last_co = ProcFlags.concat;
         } else {
+            if( last_co != ProcFlags.concat ) { // FB/FK, at least, need this
+                a_element->do_split = true;     // split block when closed
+            }
             t_doc_el_group->last->next = a_element;
             t_doc_el_group->last = t_doc_el_group->last->next;
             t_doc_el_group->depth += (a_element->blank_lines + a_element->subs_skip +
@@ -1788,6 +1794,7 @@ void insert_col_main( doc_element * a_element )
                 a_element->depth += g_units_spacing;
                 t_doc_el_group->depth += g_units_spacing;
             }
+            last_co = ProcFlags.concat;
         }
         return;
     }
