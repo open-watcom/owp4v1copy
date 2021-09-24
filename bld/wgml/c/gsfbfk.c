@@ -28,9 +28,7 @@
 *
 ****************************************************************************/
 
-
 #include "wgml.h"
-
 
 typedef enum {
     fbk_none,   // initial value
@@ -49,6 +47,7 @@ typedef struct {
     doc_element *   text_el;    // for t_element
     text_line   *   last_line;  // for t_el_last
     text_line   *   text_line;  // for t_line
+    uint32_t        cur_left;   // for t_page.cur_left
     uint32_t        cur_width;  // for t_page.cur_width
     uint32_t        subs_skip;  // for g_subs_skip
 } print_vars;
@@ -62,19 +61,22 @@ static  uint32_t        sav_post_space; // save/restore post_space for line afte
 /* save the "printing variables", as the TSO calls them                   */
 /**************************************************************************/
 
-static void save_state( void )
+static void save_state( bool fb )
 {
-    sav_state.text_el = t_element;
-    t_element = NULL;
-    sav_state.last_line = t_el_last;
-    t_el_last = NULL;
-    sav_state.text_line = t_line;
-    t_line = NULL;
-    sav_state.cur_width = t_page.cur_width;
-    t_page.cur_width = t_page.cur_left;
-    sav_state.subs_skip = g_subs_skip;
-    g_subs_skip = 0;
-
+    if( fb ) {
+        sav_state.cur_left = t_page.cur_left;
+    } else {
+        sav_state.text_el = t_element;
+        t_element = NULL;
+        sav_state.last_line = t_el_last;
+        t_el_last = NULL;
+        sav_state.text_line = t_line;
+        t_line = NULL;
+        sav_state.cur_width = t_page.cur_width;
+        t_page.cur_width = t_page.cur_left;
+        sav_state.subs_skip = g_subs_skip;
+        g_subs_skip = 0;
+    }
     return;
 }
 
@@ -82,13 +84,18 @@ static void save_state( void )
 /* restore the "printing variables", as the TSO calls them                */
 /**************************************************************************/
 
-static void restore_state( void )
+static void restore_state( bool fb )
 {
-    t_element = sav_state.text_el;
-    t_el_last = sav_state.last_line;
-    t_line = sav_state.text_line;
-    t_page.cur_width = sav_state.cur_width;
-    g_subs_skip = sav_state.subs_skip;
+    if( fb ) {
+        t_page.cur_left = sav_state.cur_left;
+        t_page.cur_width = t_page.cur_left;
+    } else {
+        t_element = sav_state.text_el;
+        t_el_last = sav_state.last_line;
+        t_line = sav_state.text_line;
+        t_page.cur_width = sav_state.cur_width;
+        g_subs_skip = sav_state.subs_skip;
+    }
 
     return;
 }
@@ -246,7 +253,7 @@ void scr_fb( void )
     case fbk_begin :
         scr_process_break();                // FB does this; FK does not
         g_keep_nest( "FB" );                // catch nesting errors
-//        save_state();
+        save_state( true );
         sav_group_type = cur_group_type;
         cur_group_type = gt_fb;
         cur_doc_el_group = alloc_doc_el_group( gt_fb );
@@ -270,7 +277,7 @@ void scr_fb( void )
                 block_queue_end->next = cur_doc_el_group;
             }
             block_queue_end = last_group;
-//            restore_state();
+            restore_state( true );
         } else {
             xx_line_err( err_no_fb_begin, p );
         }
@@ -358,7 +365,7 @@ void scr_fk( void )
     case fbk_begin :
         g_keep_nest( "FK" );                // catch nesting errors
         ProcFlags.ix_in_block = true;
-        save_state();
+        save_state( false );
         sav_group_type = cur_group_type;
         cur_group_type = gt_fk;
         cur_doc_el_group = alloc_doc_el_group( gt_fk );
@@ -396,7 +403,7 @@ void scr_fk( void )
                 cur_doc_el_group->next = NULL;
                 add_doc_el_group_to_pool( cur_doc_el_group );
             }
-            restore_state();
+            restore_state( false );
         } else {
             xx_line_err( err_no_fk_begin, p );
         }
