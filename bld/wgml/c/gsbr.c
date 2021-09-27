@@ -100,25 +100,7 @@ void  scr_process_break( void )
     doc_element *   cur_el;
     text_chars  *   marker  = NULL;
 
-    if( ProcFlags.dd_starting ) {    // DD : no text before break
-        if( t_line != NULL ) {
-            process_line_full( t_line, ((ProcFlags.justify != ju_off) &&
-                (ProcFlags.justify != ju_on) && (ProcFlags.justify != ju_half)) );
-        }
-        set_skip_vars( NULL, NULL, NULL, g_text_spacing, g_curr_font );
-        g_subs_skip = wgml_fonts[g_curr_font].line_height;
-        t_line = alloc_text_line();
-        t_line->line_height = wgml_fonts[g_curr_font].line_height;
-        t_line->first = NULL;
-        if( t_element == NULL ) {
-            t_element = init_doc_el( el_text, wgml_fonts[g_curr_font].line_height );
-            t_element->element.text.first = t_line;
-        } else {
-            t_element->element.text.first->next = t_line;
-        }
-        t_element->depth += t_line->line_height;
-        t_line = NULL;
-    } else if( t_line != NULL ) {
+    if( t_line != NULL ) {
         if( t_line->first != NULL ) {
 
             /* Insert a marker if CO OFF and post_space > 0 */
@@ -211,7 +193,6 @@ void  scr_process_break( void )
     }
     set_h_start();      // to stop paragraph indent from being used after a break
     ProcFlags.dd_space = false;
-    ProcFlags.dd_starting = false;
     ProcFlags.para_starting = false;
     ProcFlags.para_has_text = false;
     ProcFlags.skips_valid = false;

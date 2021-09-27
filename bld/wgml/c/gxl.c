@@ -80,6 +80,16 @@ static void gml_xl_lp_common( e_tags t )
 
     end_lp();                           // terminate :LP if active
 
+    if( ProcFlags.dd_starting ) {
+        scr_process_break();
+        t_element = alloc_doc_el( el_vspace );
+        t_element->depth = wgml_fonts[g_curr_font].line_height;
+        insert_col_main( t_element );
+        t_element = NULL;
+        t_el_last = NULL;
+        ProcFlags.dd_starting = false;       
+    }
+
     init_nest_cb();
     nest_cb->p_stack = copy_to_nest_stack();
 
@@ -1287,6 +1297,16 @@ void gml_dt( const gmltag * entry )
         end_lp();
     }
 
+    if( ProcFlags.dd_starting ) {
+        scr_process_break();
+        t_element = alloc_doc_el( el_vspace );
+        t_element->depth = wgml_fonts[g_curr_font].line_height;
+        insert_col_main( t_element );
+        t_element = NULL;
+        t_el_last = NULL;
+        ProcFlags.dd_starting = false;       
+    }
+
     g_curr_font = nest_cb->termhi;
     t_page.cur_left = nest_cb->lm + nest_cb->left_indent;   // left start
     t_page.cur_width = t_page.cur_left;
@@ -1359,6 +1379,7 @@ void gml_dd( const gmltag * entry )
         xx_nest_err_cc( err_tag_preceding_2, "DT", "DD" );
     }
 
+    ProcFlags.dd_starting = false;
     p = scan_start;
     g_curr_font = layout_work.dd.font;
     t_page.cur_left = nest_cb->lm + nest_cb->left_indent + nest_cb->tsize;   // left start

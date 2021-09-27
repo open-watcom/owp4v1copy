@@ -567,6 +567,15 @@ static void gml_hx_common( const gmltag * entry, hdsrc hn_lvl )
     scr_process_break();                    // commit any prior text
     start_doc_sect();                       // in case not already done
 
+    if( ProcFlags.dd_starting ) {
+        t_element = alloc_doc_el( el_vspace );
+        t_element->depth = wgml_fonts[g_curr_font].line_height;
+        insert_col_main( t_element );
+        t_element = NULL;
+        t_el_last = NULL;
+        ProcFlags.dd_starting = false;       
+    }
+
     id[0] = '\0';                           // null string if no id found
     switch( hn_lvl ) {
     case   hds_h0:
